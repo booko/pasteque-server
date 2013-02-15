@@ -23,11 +23,14 @@ namespace Pasteque;
 
 const ABSPATH = __DIR__; // Base path. Also to check if a call
                          // originates from api.php
-
 // Load
 require_once(ABSPATH . "/inc/load.php");
 
-// Check credentials
-
-// Call API
-
+// Check user authentication
+if (!is_user_logged_in()) {
+    $ret = array("error" => "Not logged");
+    return json_encode($ret);
+} else {
+    require_once(ABSPATH . "/inc/load_logged.php");
+    api_content();
+}

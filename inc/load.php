@@ -57,6 +57,7 @@ require_once(_check_core_module('database'));
 require_once(_check_core_module('modules'));
 
 // Load static tools
+require_once(ABSPATH . "/inc/date_utils.php");
 require_once(ABSPATH . "/inc/url_broker.php");
 require_once(ABSPATH . "/inc/i18n.php");
 require_once(ABSPATH . "/inc/i18n_aliases.php");

@@ -20,22 +20,22 @@
 
 namespace Pasteque;
 
-$action = $_GET['action'];
-$ret = NULL;
-
-switch ($action) {
-case 'get':
-    if (!isset($_GET['id'])) {
-       $ret	= FALSE;
-       break;
-    }
-    $ret = UsersService::get($_GET['id']);
-    break;
-case 'getAll':
-    $ret = UsersService::getAll();
-    break;
+/** Reverse function of strftime. Given a string date and a format,
+ * creates the timestamp.
+ */
+function timefstr($format, $date) {
+    $dateTime = DateTime::createFromFormat($format, $date);
+    return $dateTime->getTimestamp();
 }
 
-echo(json_encode($ret));
+function stdtimefstr($date) {
+    if ($date != null) {
+        return timefstr("Y-m-d H:i:s", $date);
+    } else {
+        return null;
+    }
+}
 
-?>
+function stdstrftime($time) {
+    return strftime("%Y-%m-%d %H:%M:%S", $time);
+}

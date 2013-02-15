@@ -1,32 +1,32 @@
 <?php
-//    POS-Tech API
+//    Pastèque Web back office
 //
-//    Copyright (C) 2012 Scil (http://scil.coop)
+//    Copyright (C) 2013 Scil (http://scil.coop)
 //
-//    This file is part of POS-Tech.
+//    This file is part of Pastèque.
 //
-//    POS-Tech is free software: you can redistribute it and/or modify
+//    Pastèque is free software: you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
 //    the Free Software Foundation, either version 3 of the License, or
 //    (at your option) any later version.
 //
-//    POS-Tech is distributed in the hope that it will be useful,
+//    Pastèque is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //    GNU General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
-//    along with POS-Tech.  If not, see <http://www.gnu.org/licenses/>.
+//    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once(dirname(dirname(__FILE__)) . "/services/CategoriesService.php");
+namespace Pasteque;
 
 $action = $_GET['action'];
-$ret = null;
+$ret = NULL;
 
 switch ($action) {
 case 'get':
     if (!isset($_GET['id'])) {
-       $ret = false;
+       $ret = FALSE;
        break;
     }
     $ret = CategoriesService::get($_GET['id']);
@@ -35,31 +35,28 @@ case 'getAll':
     $ret = CategoriesService::getAll();
     break;
 case 'create':
-    if (!isset($_GET['label'])) {
-        $ret = false;
+    $json = json_decode($_POST['category'], true);
+    $cat = Category::__form($json);
+    if ($cat == NULL) {
+        $ret = FALSE;
         break;
     }
-    $parent = null;
-    if (isset($_GET['parent_id'])) {
-        $parent = $_GET['parent_id'];
-    }
-    $cat = new Category($parent, $_GET['label']);
     $ret = CategoriesService::createCat($cat);
     break;
 case 'delete':
-    if (!isset($_GET['id'])) {
-        $ret = false;
+    if (!isset($_POST['id'])) {
+        $ret = FALSE;
         break;
     }
-    $ret = CategoriesService::deleteCat($_GET['id']);
+    $ret = CategoriesService::deleteCat($_POST['id']);
     break;
 case 'update':
-    if (!isset($_GET['id']) || !isset($_GET['label'])
-        || !isset($_GET['parent_id'])) {
-        $ret = false;
+    $json = json_decode($_POST['category'], true);
+    $cat = Category::__form($json);
+    if ($cat == NULL) {
+        $ret = FALSE;
         break;
     }
-    $cat = Category::__build($_GET['id'], $_GET['parent_id'], $_GET['label']);
     $ret = CategoriesService::updateCat($cat);
     break;
 }
