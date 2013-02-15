@@ -1,0 +1,21 @@
+{
+"Home": "Home",
+
+"Edit": "Edit",
+"Delete": "Delete",
+"Save": "Save",
+
+"Product.name": "Name",
+"Product.ref": "Reference",
+"Product.tax_cat_id": "VAT",
+"Product.price_sell": "Price sell",
+
+"Category.name": "Name",
+"Category.parent_id": "Parent",
+
+"TaxCat.name": "Name",
+"Tax.rate": "Rate",
+"Tax.start_date": "Valid from",
+
+"User.name": "Name"
+}

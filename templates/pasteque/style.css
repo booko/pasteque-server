@@ -1,0 +1,26 @@
+#menu-container {
+	width: 200px;
+	float: left;
+}
+
+.content {
+	margin-left: 200px;
+}
+
+form {
+	width: 600px;
+}
+
+label {
+	display: inline-block;
+	width: 250px;
+}
+input {
+	width: 330px;
+}
+button {
+	border: 0;
+	background: none;
+	cursor: pointer;
+	padding: 0;
+}

@@ -1,0 +1,24 @@
+{
+"Products": "Produits",
+"Add a product": "Ajouter un produit",
+"No product found": "Aucun produit trouvé",
+"Edit a product": "Édition d'un produit",
+"Sell price + taxes": "Prix de vente + taxes",
+
+"Categories": "Categories",
+"Edit a category": "Édition d'une categorie",
+"Add a category": "Ajouter une catégorie",
+"%d categories": "%d categories",
+"No category found": "Pas de categorie trouvée",
+
+"Taxes": "Taxes",
+"Add a tax": "Ajouter une taxe",
+"Edit tax": "Édition de la taxe",
+"Rates": "Taux",
+"New tax rate": "Nouveau taux",
+
+"Users": "Utilisateurs",
+"Add an user": "Ajouter un utilisateur",
+"Edit an user": "Édition d'un utilisateur",
+"%d users": "%d utilisateurs"
+}
