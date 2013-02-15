@@ -37,9 +37,9 @@ $products = \Pasteque\ProductsService::getAll();
 <table>
 	<thead>
 		<tr>
-			<th><?php \pi18n("Product.reference"); ?></th>
+			<th><?php \pi18n("Product.ref"); ?></th>
 			<th><?php \pi18n("Product.name"); ?></th>
-			<th><?php \pi18n("Product.tax_cat"); ?></th>
+			<th><?php \pi18n("Product.tax_cat_id"); ?></th>
 			<th></th>
 		</tr>
 	</thead>
