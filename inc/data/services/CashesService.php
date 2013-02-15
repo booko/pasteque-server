@@ -23,28 +23,28 @@ namespace Pasteque;
 class CashesService {
 
     private static function buildDBCash($db_cash) {
-        $cash = Cash::__build($db_cash['MONEY'], $db_cash['HOST'],
-                              $db_cash['HOSTSEQUENCE'],
-                              stdtimefstr($db_cash['DATESTART']),
-                              stdtimefstr($db_cash['DATEEND']));
+        $cash = Cash::__build($db_cash['id'], $db_cash['host'],
+                $db_cash['sequence'], stdtimefstr($db_cash['start']),
+                stdtimefstr($db_cash['end']));
         return $cash;
     }
 
     private static function getLastSequence($host, $pdo) {
-        $stmt = $pdo->prepare("SELECT max(HOSTSEQUENCE) FROM CLOSEDCASH WHERE "
-                              . "HOST = :host");
-        $stmt->execute(array(':host' => $host));
+        $stmt = $pdo->prepare("SELECT max(sequence) FROM cashsessions WHERE "
+                . "HOST = :host");
+        $stmt->bindParam(":host", $host, \PDO::PARAM_STR);
+        $stmt->execute();
         if ($data = $stmt->fetch()) {
             return $data[0];
         } else {
-            return 0;
+            return NULL;
         }
     }
 
     static function getAll() {
         $cashes = array();
         $pdo = PDOBuilder::getPDO();
-        $sql = "SELECT * FROM CLOSEDCASH";
+        $sql = "SELECT * FROM cashsessions";
         foreach ($pdo->query($sql) as $db_cash) {
             $cash = CashesService::buildDBCash($db_cash);
             $cashes[] = $cash;
@@ -54,54 +54,55 @@ class CashesService {
 
     static function get($id) {
         $pdo = PDOBuilder::getPDO();
-        $stmt = $pdo->prepare("SELECT * FROM CLOSEDCASH WHERE MONEY = :id");
-        if ($stmt->execute(array(':id' => $id))) {
+        $stmt = $pdo->prepare("SELECT * FROM cashsessions WHERE id = :id");
+        $stmt->bindParam(":id", $id, \PDO::PARAM_INT);
+        if ($stmt->execute()) {
             if ($row = $stmt->fetch()) {
                 return CashesService::buildDBCash($row);
             }
         }
-        return null;
+        return NULL;
     }
 
     static function getHost($host) {
         $pdo = PDOBuilder::getPDO();
-        $stmt = $pdo->prepare("SELECT * FROM CLOSEDCASH WHERE HOST = :host "
-                              . "ORDER BY HOSTSEQUENCE DESC");
-        if ($stmt->execute(array(':host' => $host))) {
+        $stmt = $pdo->prepare("SELECT * FROM cashsessions WHERE host = :host "
+                . "ORDER BY sequence DESC LIMIT 1");
+        $stmt->bindParam(":host", $host, \PDO::PARAM_STR);
+        if ($stmt->execute()) {
             if ($row = $stmt->fetch()) {
                 return CashesService::buildDBCash($row);
             }
         }
-        return null;
+        return NULL;
     }
 
     static function update($cash) {
         $pdo = PDOBuilder::getPDO();
-        $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-        $startParam = ($cash->isOpened()) ? ':start' : 'NULL';
-        $endParam = ($cash->isClosed()) ? ':end' : 'NULL';
-        $stmt = $pdo->prepare("UPDATE CLOSEDCASH SET DATESTART = $startParam, "
-                              . "DATEEND = $endParam WHERE MONEY = :id");
-        $stmt->bindParam(':id', $cash->id);
+        $open = NULL;
+        $close = NULL;
         if ($cash->isOpened()) {
             $open = stdstrftime($cash->openDate);
-            $stmt->bindParam(':start', $open, PDO::PARAM_INT);
         }
         if ($cash->isClosed()) {
             $close = stdstrftime($cash->closeDate);
-            $stmt->bindParam(':end', $close, PDO::PARAM_INT);
         }
+        $stmt = $pdo->prepare("UPDATE cashsessions SET start = :start, "
+                . "end = :end WHERE id = :id");
+        $stmt->bindParam(":start", $open, \PDO::PARAM_INT);
+        $stmt->bindParam(":end", $close, \PDO::PARAM_INT);
+        $stmt->bindParam(':id', $cash->id, \PDO::PARAM_INT);
         return $stmt->execute();
     }
 
     static function add($host) {
         $pdo = PDOBuilder::getPDO();
-        $id = md5(time() . rand());
-        $stmt = $pdo->prepare("INSERT INTO CLOSEDCASH (MONEY, HOST, "
-                              . "HOSTSEQUENCE) VALUES (:id, :host, :sequence)");
+        $stmt = $pdo->prepare("INSERT INTO cashsessions (host, sequence) "
+                . "VALUES (:host, :sequence)");
         $sequence = CashesService::getLastSequence($host, $pdo) + 1;
-        return $stmt->execute(array(':id' => $id, ':host' => $host,
-                                    ':sequence' => $sequence));
+        $stmt->bindParam(":host", $host, \PDO::PARAM_STR);
+        $stmt->bindParam(":sequence", $sequence, \PDO::PARAM_INT);
+        return $stmt->execute();
     }
 }
 

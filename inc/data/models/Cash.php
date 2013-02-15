@@ -25,30 +25,30 @@ class Cash {
     public $id;
     public $host;
     public $sequence;
-    /** Open date as timestamp */
-    public $openDate;
+    /** Open date as timestamp, may be null */
+    public $startDate;
     /** Close date as timestamp, may be null */
-    public $closeDate;
+    public $endDate;
 
-    static function __build($id, $host, $sequence, $openDate, $closeDate) {
-        $cash = new Cash($host, $sequence, $openDate, $closeDate);
+    static function __build($id, $host, $sequence, $startDate, $endDate) {
+        $cash = new Cash($host, $sequence, $startDate, $endDate);
         $cash->id = $id;
         return $cash;
     }
 
-    function __construct($host, $sequence, $openDate, $closeDate) {
+    function __construct($host, $sequence, $startDate, $endDate) {
         $this->host = $host;
         $this->sequence = $sequence;
-        $this->openDate = $openDate;
-        $this->closeDate = $closeDate;
+        $this->startDate = $startDate;
+        $this->endDate = $endDate;
     }
 
     function isClosed() {
-        return $this->closeDate != null;
+        return $this->endDate != null;
     }
 
     function isOpened() {
-        return $this->openDate != null;
+        return $this->startDate != null;
     }
 }
 
