@@ -62,6 +62,14 @@ class ModelFetch {
         }
         return $data;
     }
+
+    public function fetchAll() {
+        $ret = array();
+        while ($data = $this->fetch()) {
+            $ret[] = $data;
+        }
+        return $ret;
+    }
 }
 
 class ModelService {
@@ -333,6 +341,7 @@ class ModelService {
                 $insStmt->execute();
             }
         }
+        return TRUE;
     }
 
     private static function PDOType($attrType) {

@@ -20,6 +20,7 @@
 
 namespace Pasteque;
 
+const URL_API_PARAM = "a";
 const URL_ACTION_PARAM = "p";
 
 ?>
