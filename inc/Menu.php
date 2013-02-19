@@ -36,23 +36,62 @@ class MenuEntry {
     public function getAction() { return $this->action; }
 }
 
-class Menu {
-
+class MenuSection {
+    private $nameDomain;
+    private $name;
     private $entries;
 
-    public function __construct() {
+    public function __construct($name, $domain = NULL) {
+        $this->name = $name;
+        $this->nameDomain = $domain;
         $this->entries = array();
-        $this->entries[] = new MenuEntry("Home", "home");
     }
 
-    public function register_module_entry($module_name, $name, $action) {
-        $this->entries[] = new MenuEntry($name,
-                get_module_action($module_name, $action),
+    public function addEntry($menuEntry) {
+        $this->entries[] = $menuEntry;
+    }
+
+    public function getName() { return $this->name; }
+    public function getNameDomain() { return $this->nameDomain; }
+    public function getEntries() { return $this->entries; }
+}
+
+class Menu {
+
+    private $sections;
+
+    public function __construct() {
+        $this->sections = array();
+        $this->addSection("general", "General");
+        $entry = new MenuEntry("Home", "home");
+        $this->addEntry("general", $entry);
+    }
+
+    public function addSection($id, $name, $nameDomain = NULL) {
+        if (!isset($this->sections[$id])) {
+            $this->sections[$id] = new MenuSection($name, $nameDomain);
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    public function addEntry($sectionId, $entry) {
+        if (isset($this->sections[$sectionId])) {
+            $this->sections[$sectionId]->addEntry($entry);
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    public function registerModuleEntry($sectionId, $module_name, $name,
+            $action) {
+        $entry = new MenuEntry($name, get_module_action($module_name, $action),
                 $module_name);
+        return $this->addEntry($sectionId, $entry);
     }
 
-    public function get_entries() {
-        return $this->entries;
+    public function getSections() {
+        return $this->sections;
     }
 }
 
