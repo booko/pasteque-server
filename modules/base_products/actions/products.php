@@ -23,10 +23,10 @@
 namespace BaseProducts;
 
 if (isset($_POST['delete-product'])) {
-    \Pasteque\ProductsService::delete($_POST['delete-product']);
+    \Pasteque\ModelService::delete("product", $_POST['delete-product']);
 }
 
-$products = \Pasteque\ProductsService::getAll();
+$products = \Pasteque\ModelService::search("product");
 ?>
 <h1><?php \pi18n("Products", PLUGIN_NAME); ?></h1>
 
@@ -45,15 +45,15 @@ $products = \Pasteque\ProductsService::getAll();
 	</thead>
 	<tbody>
 <?php
-foreach ($products as $product) {
+while ($product = $products->fetch()) {
 ?>
 	<tr>
-		<td><?php echo $product->ref; ?></td>
-		<td><?php echo $product->name; ?></td>
-		<td><?php echo $product->tax_cat_id; ?></td>
+		<td><?php echo $product['ref']; ?></td>
+		<td><?php echo $product['name']; ?></td>
+		<td><?php echo $product['taxcat_id']; ?></td>
 		<td>
-			<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'product_edit', array('id' => $product->id)); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
-			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("product", $product->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>
+			<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'product_edit', array('id' => $product['id'])); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
+			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("product", $product['id'], \Pasteque\get_template_url() . 'img/delete.png') ?></form>
 		</td>
 	</tr>
 <?php

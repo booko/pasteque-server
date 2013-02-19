@@ -23,10 +23,10 @@
 namespace BaseProducts;
 
 if (isset($_POST['delete-taxcat'])) {
-    \Pasteque\TaxesService::deleteCat($_POST['delete-taxcat']);
+    \Pasteque\ModelService::delete("taxcategory", $_POST['delete-taxcat']);
 }
 
-$taxes = \Pasteque\TaxesService::getAll();
+$taxes = \Pasteque\ModelService::search("taxcategory");
 ?>
 <h1><?php \pi18n("Taxes", PLUGIN_NAME); ?></h1>
 
@@ -41,13 +41,13 @@ $taxes = \Pasteque\TaxesService::getAll();
 	</thead>
 	<tbody>
 <?php
-foreach ($taxes as $tax) {
+while ($tax = $taxes->fetch()) {
 ?>
 	<tr>
-		<td><?php echo $tax->name; ?></td>
+		<td><?php echo $tax['name']; ?></td>
 		<td class="edition">
-			<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'tax_edit', array('id' => $tax->id)); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
-			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("taxcat", $tax->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>
+			<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'tax_edit', array('id' => $tax['id'])); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
+			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("taxcat", $tax['id'], \Pasteque\get_template_url() . 'img/delete.png') ?></form>
 		</td>
 	</tr>
 <?php

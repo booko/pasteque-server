@@ -22,23 +22,22 @@
 
 namespace BaseUsers;
 
-if (isset($_POST['id'])) {
-    $edit = \Pasteque\User::__form($_POST);
-    if ($edit !== NULL) {
-        \Pasteque\UsersService::update($edit);
-    }
-} else if (isset($_POST['name'])) {
-    $new = \Pasteque\User::__form($_POST);
-    if ($new !== NULL) {
-        \Pasteque\UsersService::create($new);
+if (isset($_POST['name'])) {
+    $def = \Pasteque\ModelFactory::get("user");
+    if ($def->checkForm($_POST)) {
+        if (isset($_POST['id'])) {
+            \Pasteque\ModelService::update("user", $_POST);
+        } else {
+            \Pasteque\ModelService::create("user", $_POST);
+        }
     }
 }
 
 $user = NULL;
 if (isset($_GET['id'])) {
-    $user = \Pasteque\UsersService::get($_GET['id']);
+    $user = \Pasteque\ModelService::get("user", $_GET['id']);
 }
-$permissions = \Pasteque\UsersService::getPermissions();
+$permissions = \Pasteque\ModelService::search("permission");
 ?>
 <h1><?php \pi18n("Edit an user", PLUGIN_NAME); ?></h1>
 
@@ -47,15 +46,11 @@ $permissions = \Pasteque\UsersService::getPermissions();
 	<?php \Pasteque\form_input("edit", "User", $user, "name", "string", array("required" => true)); ?>
 	<?php \Pasteque\form_send(); ?>
     <h2><?php \pi18n("Permissions", PLUGIN_NAME); ?></h2>
-    <?php foreach ($permissions as $perm) { ?>
-    <?php $checked = (isset($user) && $user->hasPermission($perm)) ? ' checked="true"' : ""; ?>
-    <label for="perm-<?php echo $perm; ?>"><?php echo $perm; ?></label>
-    <input id="perm-<?php echo $perm; ?>" type="checkbox" <?php echo $checked; ?> name="permissions[]" value="<?php echo $perm; ?>">
-    <?php } ?>
+    <?php \Pasteque\form_input("edit", "User", $user, "permission_ids", "pick_multiple", array("model" => "permission")); ?>
 </form>
 <?php if ($user !== NULL) { ?>
 <form action="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'users'); ?>" method="post">
-	<?php \Pasteque\form_delete("user", $user->id); ?>
+	<?php \Pasteque\form_delete("user", $user['id']); ?>
 </form>
 <?php } ?>
 

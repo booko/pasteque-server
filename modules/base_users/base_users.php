@@ -21,6 +21,13 @@
 namespace BaseUsers;
 
 function init() {
+    // Register models
+    $user = \Pasteque\ModelFactory::register("user");
+    $user->addAttribute("permission_ids", \Pasteque\ATTRDEF_MULTREL,
+            array("model" => "permission"));
+    $permissions = \Pasteque\ModelFactory::register("permission");
+    
+    // Register menu
     global $MENU;
     $MENU->addSection("admin", "Administration", PLUGIN_NAME);
     $MENU->registerModuleEntry("admin", PLUGIN_NAME, "Users", "users");

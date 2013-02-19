@@ -21,6 +21,30 @@
 namespace BaseProducts;
 
 function init() {
+    // Register models
+    $productDef = \Pasteque\ModelFactory::register("product");
+    $productDef->addAttribute("ref", \Pasteque\ATTRDEF_STRING,
+            array("required" => TRUE));
+    $productDef->addAttribute("pricesell", \Pasteque\ATTRDEF_DOUBLE,
+            array("required" => TRUE));
+    $productDef->addAttribute("taxcat_id", \Pasteque\ATTRDEF_SINGLEREL,
+            array("model" => "taxcat"));
+    $productDef->addAttribute("category_ids", \Pasteque\ATTRDEF_MULTREL,
+            array("model" => "category"));
+
+    $taxcatDef = \Pasteque\ModelFactory::register("taxcategory");
+    $taxDef = \Pasteque\ModelFactory::register("tax");
+    $taxDef->addAttribute("rate", \Pasteque\ATTRDEF_DOUBLE,
+            array("required" => TRUE));
+    $taxDef->addAttribute("validfrom", \Pasteque\ATTRDEF_DATE);
+    $taxDef->addAttribute("taxcat_id", \Pasteque\ATTRDEF_SINGLEREL,
+            array("model" => "taxcat"));
+    
+    $categoryDef = \Pasteque\ModelFactory::register("category");
+    $categoryDef->addAttribute("parent_id", \Pasteque\ATTRDEF_SINGLEREL,
+            array("model" => "category"));
+
+    // Register menu
     global $MENU;
     $MENU->addSection("catalog", "Catalog", PLUGIN_NAME);
     $MENU->registerModuleEntry("catalog", PLUGIN_NAME, "Taxes", "taxes");

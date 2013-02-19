@@ -21,9 +21,9 @@
 namespace Pasteque;
 
 function form_hidden($form_id, $object, $field) {
-    if ($object != NULL && isset($object->{$field})) {
+    if ($object != NULL && isset($object[$field])) {
         echo '<input type="hidden" name="' . $field . '" value="'
-                . $object->{$field} . "\"/>\n";
+                . $object[$field] . "\"/>\n";
     }
 }
 function form_value_hidden($form_id, $name, $value) {
@@ -44,7 +44,7 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
         echo '<input id="' . $form_id . '-' . $field . '" type="text" name="'
                 . $field . '"';
         if ($object != NULL) {
-            echo ' value="' . $object->{$field} . '"';
+            echo ' value="' . $object[$field] . '"';
         }
         echo "$required />\n";
         break;
@@ -52,7 +52,7 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
         echo '<input id="' . $form_id . '-' . $field . '" type="numeric" name="'
                 . $field . '"';
         if ($object != NULL) {
-            echo ' value="' . $object->{$field} . '"';
+            echo ' value="' . $object[$field] . '"';
         }
         echo "$required />\n";
         break;
@@ -60,7 +60,7 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
         echo '<input id="' . $form_id . '-' . $field
             . '" type="checkbox" name="' . $field . '"';
         if ($object != NULL) {
-            if ($object->{$field}){
+            if ($object[$field]){
                 echo ' checked="checked"';
             }
         } else {
@@ -77,7 +77,7 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
         echo '<input id="' . $form_id . '-' . $field
                 . '" type="number" step="' . $step . '" min="0.00" name="' . $field . '"';
         if ($object != NULL) {
-            echo ' value="' . $object->{$field} . '"';
+            echo ' value="' . $object[$field] . '"';
         }
         echo "$required />\n";
         break;
@@ -85,52 +85,44 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
         echo '<input id="' . $form_id . '-' . $field
                 . '" type="date" name="' . $field . '"';
         if ($object != NULL) {
-            echo ' value="' . strftime("%Y-%m-%d", $object->{$field}) . '"';
+            echo ' value="' . $object[$field] . '"';
         }
         echo "$required />\n";
         break;    
     case 'pick':
         $model = $args['model'];
-        switch ($model) {
-        case 'Category':
-            $data = CategoriesService::getAll();
-            break;
-        case 'TaxCategory':
-            $data = TaxesService::getAll();
-            break;
-        }
+        $data = ModelService::search($model);
         echo '<select id="' . $form_id . '-' . $field . '" name="' . $field . '">';
         if (isset($args['nullable']) && $args['nullable']) {
             echo '<option value=""></option>';
         }
-        foreach ($data as $r) {
+        while ($r = $data->fetch()) {
             $selected = "";
-            if ($object != NULL && ($object->{$field} == $r->id
-                    || $object->{$field}->id == $r->id)) {
+            if ($object != NULL && ($object[$field] == $r['id'])) {
                 $selected = ' selected="true"';
             }
-            echo '<option value="' . $r->id . '"' . $selected . '>'
-                    . $r->name . '</option>';
+            echo '<option value="' . $r['id'] . '"' . $selected . '>'
+                    . $r['name'] . '</option>';
         }
         echo "</select>\n";
         break;
     case 'pick_multiple':
         $model = $args['model'];
-        switch ($model) {
-        case 'Category':
-            $data = CategoriesService::getAll();
-            break;
-        }
-        foreach ($data as $r) {
+        $data = ModelService::search($model);
+        echo '<input type="hidden" name="' . $field . '[]" value="dummy" />';
+        while ($r = $data->fetch()) {
             $selected = "";
-            if ($object != NULL
-                    && (array_search($r->id, $object->{$field}) !== FALSE)) {
-                $selected = ' checked="true"';
+            if ($object != NULL) {
+                foreach ($object[$field] as $val) {
+                    if ($val['id'] == $r['id']) {
+                        $selected = ' checked="true"';
+                    }
+                }
             }
-            $id = $form_id . "-" . $field . "-" .$r->id;
-            echo '<label for="' . $id . '">' . $r->name . '</label>';
+            $id = $form_id . "-" . $field . "-" . $r['id'];
+            echo '<label for="' . $id . '">' . $r['name'] . '</label>';
             echo '<input id="' . $id . '" type="checkbox" name="' . $field
-                    . '[]" value="' . $r->id . '"' . $selected . "/>\n";
+                    . '[]" value="' . $r['id'] . '"' . $selected . "/>\n";
         }
         break;
     }
