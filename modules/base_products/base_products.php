@@ -26,9 +26,9 @@ function init() {
     $productDef->addAttribute("ref", \Pasteque\ATTRDEF_STRING,
             array("required" => TRUE));
     $productDef->addAttribute("pricesell", \Pasteque\ATTRDEF_DOUBLE,
-            array("required" => TRUE));
+            array("required" => TRUE, "readonly" => TRUE));
     $productDef->addAttribute("taxcat_id", \Pasteque\ATTRDEF_SINGLEREL,
-            array("model" => "taxcat"));
+            array("model" => "taxcategory", "onset" => "product_updateprice"));
     $productDef->addAttribute("category_ids", \Pasteque\ATTRDEF_MULTREL,
             array("model" => "category"));
 

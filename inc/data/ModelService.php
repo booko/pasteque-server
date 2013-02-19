@@ -60,6 +60,15 @@ class ModelFetch {
                 $data[$attr->getName()] = $relData->fetchAll(\PDO::FETCH_ASSOC);
             }
         }
+        // Singlerel fields
+        foreach ($def->getAttrs() as $attr) {
+            if ($attr->getType() == ATTRDEF_SINGLEREL) {
+                $name = $attr->getName();
+                $data[$name] = array('id' => $data[$name],
+                        'name' => $data[$name . "_name"]);
+                unset($data[$name . "_name"]);
+            }
+        }
         return $data;
     }
 
@@ -81,22 +90,8 @@ class ModelService {
             return NULL;
         }
         $pdo = PDOBuilder::getPDO();
-        $sql = "SELECT ";
-        // Fields
-        if ($fields == NULL) {
-            $sql .= "* ";
-        } else {
-            foreach ($fields as $field) {
-                $sql .= $field . ", ";
-            }
-            $sql = substr($field, 0, -1);
-        }
-        // Tables
-        $sql .= "FROM " . $def->getName();
-        foreach ($def->getExtTables() as $table) {
-            $sql .= "LEFT JOIN " . $table . " ON " . $table . ".rel_id = "
-                    . $def->getName() . ".id ";
-        }
+        $sql = "SELECT " . ModelService::selectFields($def, $fields);
+        $sql .= " FROM " . ModelService::selectTables($def, $fields);
         // Search
         if ($args !== NULL) {
             $sql .= " WHERE ";
@@ -110,6 +105,7 @@ class ModelService {
         if ($limit != NULL) {
             $sql .= "LIMIT " . intval($start) . "," . intval($limit);
         }
+        var_dump($sql);
         $data = $pdo->query($sql);
         if ($data !== FALSE) {
             return new ModelFetch($name, $data, $fields);
@@ -131,14 +127,7 @@ class ModelService {
         $pdo = PDOBuilder::getPDO();
         $sql = "SELECT ";
         // Fields
-        if ($fields == NULL) {
-            $sql .= "* ";
-        } else {
-            foreach ($fields as $field) {
-                $sql .= $field . ", ";
-            }
-            $sql = substr($sql, 0, -1);
-        }
+        $sql .= ModelService::selectFields($def, $fields);
         // Tables
         $sql .= "FROM " . $def->getName();
         foreach ($def->getExtTables() as $table) {
@@ -360,5 +349,59 @@ class ModelService {
             default:
                 return \PDO::PARAM_STR;
             }
+    }
+
+    private static function selectFields($def, $fields) {
+        if ($fields == NULL) {
+            $selfTbl = $def->getName() . ".";
+            $sql = $selfTbl . "id, " . $selfTbl . "name, ";
+            foreach ($def->getAttrs() as $attr) {
+                $sql .= $selfTbl . ModelService::attrField($attr);
+                $sql .= ", ";
+            }
+            $sql = substr($sql, 0, -2);
+        } else {
+            $sql = "";
+            foreach ($fields as $field) {
+                $sql .= $field . ", ";
+            }
+            $sql = substr($field, 0, -1);
+        }
+        return $sql;
+    }
+
+    private static function attrField($attr) {
+        switch ($attr->getType()) {
+            case ATTRDEF_INT:
+            case ATTRDEF_STRING:
+            case ATTRDEF_DOUBLE:
+            case ATTRDEF_DATE:
+                return $attr->getName();
+            case ATTRDEF_SINGLEREL:
+                // Use model_rel as table name for self relationship
+                return $attr->getName() . ", " . $attr->getRelModel()
+                        . "_rel.name as " . $attr->getName() . "_name";
+            default:
+                return $attr->getName();
+        }
+    }
+
+    private static function selectTables($def, $fields) {
+        $sql = $def->getName();
+        foreach ($def->getAttrs() as $attr) {
+            if ($attr->getType() == ATTRDEF_SINGLEREL) {
+                $selfTbl = $def->getName() . ".";
+                // Use model_rel as table name for self relationship
+                $sql .= " LEFT JOIN " . $attr->getRelModel() . " "
+                        . $attr->getRelModel() . "_rel ON "
+                        . $selfTbl . $attr->getName() . " = "
+                        . $attr->getRelModel() . "_rel.id";
+            }
+        }
+        foreach ($def->getExtTables() as $table) {
+            $sql .= " LEFT JOIN " . $table . " ON " . $table . ".rel_id = "
+                    . $def->getName() . ".id ";
+        }
+        return $sql;
     }
 }
