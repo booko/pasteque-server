@@ -175,8 +175,10 @@ class ModelService {
             return NULL;
         }
         $pdo = PDOBuilder::getPDO();
-        $sql = "DELETE FROM " . $def->getName() . " WHERE id = " . intval($id);
-        return $pdo->query($sql);
+        $sql = "DELETE FROM " . $def->getName() . " WHERE id = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(":id", $id, \PDO::PARAM_INT);
+        return $stmt->execute();
     }
 
     public static function update($name, $values) {
