@@ -1,5 +1,5 @@
 <?php
-//    Pastèque Web back office, Users module
+//    Pastèque Web back office, Products module
 //
 //    Copyright (C) 2013 Scil (http://scil.coop)
 //
@@ -18,7 +18,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace BaseUsers;
+namespace BaseProducts;
 
 if (isset($_POST['delete-user'])) {
     \Pasteque\ModelService::delete("user", $_POST['delete-user']);

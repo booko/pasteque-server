@@ -44,6 +44,12 @@ function init() {
     $categoryDef->addAttribute("parent_id", \Pasteque\ATTRDEF_SINGLEREL,
             array("model" => "category"));
 
+    $userDef = \Pasteque\ModelFactory::register("user");
+    $userDef->addAttribute("permission_ids", \Pasteque\ATTRDEF_MULTREL,
+            array("model" => "permission"));
+
+    $permissionDef = \Pasteque\ModelFactory::register("permission");
+
     $cashDef = \Pasteque\ModelFactory::register("cashsession");
     $cashDef->addAttribute("sequence", \Pasteque\ATTRDEF_INT);
     $cashDef->addAttribute("start", \Pasteque\ATTRDEF_DATE);
@@ -78,6 +84,9 @@ function init() {
     $MENU->registerModuleEntry("catalog", PLUGIN_NAME, "Taxes", "taxes");
     $MENU->registerModuleEntry("catalog", PLUGIN_NAME, "Categories", "categories");
     $MENU->registerModuleEntry("catalog", PLUGIN_NAME, "Products", "products");
+
+    $MENU->addSection("admin", "Administration", PLUGIN_NAME);
+    $MENU->registerModuleEntry("admin", PLUGIN_NAME, "Users", "users");
     \Pasteque\register_i18n(PLUGIN_NAME);
 }
 \Pasteque\hook("module_load", __NAMESPACE__ . "\init");

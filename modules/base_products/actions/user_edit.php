@@ -1,5 +1,5 @@
 <?php
-//    Pastèque Web back office, Users module
+//    Pastèque Web back office, Products module
 //
 //    Copyright (C) 2013 Scil (http://scil.coop)
 //
@@ -20,7 +20,7 @@
 
 // category_edit action
 
-namespace BaseUsers;
+namespace BaseProducts;
 
 if (isset($_POST['name'])) {
     $def = \Pasteque\ModelFactory::get("user");
@@ -37,7 +37,6 @@ $user = NULL;
 if (isset($_GET['id'])) {
     $user = \Pasteque\ModelService::get("user", $_GET['id']);
 }
-$permissions = \Pasteque\ModelService::search("permission");
 ?>
 <h1><?php \pi18n("Edit an user", PLUGIN_NAME); ?></h1>
 

@@ -17,5 +17,12 @@
 "Add a tax": "Ajouter une taxe",
 "Edit tax": "Édition de la taxe",
 "Rates": "Taux",
-"New tax rate": "Nouveau taux"
+"New tax rate": "Nouveau taux",
+
+"Administration": "Administration",
+
+"Users": "Utilisateurs",
+"Add an user": "Ajouter un utilisateur",
+"Edit an user": "Édition d'un utilisateur",
+"%d users": "%d utilisateurs"
 }

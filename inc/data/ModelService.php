@@ -128,7 +128,7 @@ class ModelService {
         // Fields
         $sql .= ModelService::selectFields($def, $fields);
         // Tables
-        $sql .= "FROM " . $def->getName();
+        $sql .= " FROM " . $def->getName();
         foreach ($def->getExtTables() as $table) {
             $sql .= "LEFT JOIN " . $table . " ON " . $table . ".rel_id = "
                     . $def->getName() . ".id ";
