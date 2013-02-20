@@ -44,6 +44,34 @@ function init() {
     $categoryDef->addAttribute("parent_id", \Pasteque\ATTRDEF_SINGLEREL,
             array("model" => "category"));
 
+    $cashDef = \Pasteque\ModelFactory::register("cashsession");
+    $cashDef->addAttribute("sequence", \Pasteque\ATTRDEF_INT);
+    $cashDef->addAttribute("start", \Pasteque\ATTRDEF_DATE);
+    $cashDef->addAttribute("end", \Pasteque\ATTRDEF_DATE);
+
+    $saleDef = \Pasteque\ModelFactory::register("sale");
+    $saleDef->addAttribute("session_id", \Pasteque\ATTRDEF_SINGLEREL,
+            array("model" => "cashsession"));
+    $saleDef->addAttribute("user_id", \Pasteque\ATTRDEF_SINGLEREL,
+            array("model" => "user"));
+    $saleDef->addAttribute("date", \Pasteque\ATTRDEF_DATE);
+
+    $salelineDef = \Pasteque\ModelFactory::register("saleline");
+    $salelineDef->addAttribute("sale_id", \Pasteque\ATTRDEF_SINGLEREL,
+            array("model" => "sale", "required" => TRUE));
+    $salelineDef->addAttribute("order", \Pasteque\ATTRDEF_INT);
+    $salelineDef->addAttribute("product_id", \Pasteque\ATTRDEF_SINGLEREL,
+            array("model" => "product", "required" => TRUE));
+    $salelineDef->addAttribute("taxcat_id", \Pasteque\ATTRDEF_SINGLEREL,
+            array("model" => "taxcategory", "required" => TRUE));
+    $salelineDef->addAttribute("taxrate", \Pasteque\ATTRDEF_DOUBLE);
+    $salelineDef->addAttribute("price", \Pasteque\ATTRDEF_DOUBLE,
+            array("required" => TRUE));
+    $salelineDef->addAttribute("quantity", \Pasteque\ATTRDEF_DOUBLE,
+            array("required" => TRUE));
+    $salelineDef->addAttribute("tax_amount", \Pasteque\ATTRDEF_DOUBLE,
+            array("required" => TRUE));
+
     // Register menu
     global $MENU;
     $MENU->addSection("catalog", "Catalog", PLUGIN_NAME);

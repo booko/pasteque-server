@@ -105,7 +105,6 @@ class ModelService {
         if ($limit != NULL) {
             $sql .= "LIMIT " . intval($start) . "," . intval($limit);
         }
-        var_dump($sql);
         $data = $pdo->query($sql);
         if ($data !== FALSE) {
             return new ModelFetch($name, $data, $fields);
