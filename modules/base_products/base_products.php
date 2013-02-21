@@ -22,7 +22,7 @@ namespace BaseProducts;
 
 function init() {
     global $MENU;
-    $MENU->register_module_entry(PLUGIN_NAME, "Taxes", "taxes");
+    //$MENU->register_module_entry(PLUGIN_NAME, "Taxes", "taxes");
     $MENU->register_module_entry(PLUGIN_NAME, "Categories", "categories");
     $MENU->register_module_entry(PLUGIN_NAME, "Products", "products");
     \Pasteque\register_i18n(PLUGIN_NAME);
