@@ -181,7 +181,7 @@ class ProductsService {
                               . "ATTRIBUTESET_ID, ISCOM, ISSCALE) VALUES "
                               . "(:id, :ref, :code, :name, :buy, :sell, :cat, "
                               . ":tax, :attr, :com, :scale)");
-        return $stmt->execute(array(':ref' => $prd->reference,
+        $stmt->execute(array(':ref' => $prd->reference,
                                     ':code' => $code,
                                     ':name' => $prd->label,
                                     ':buy' => $prd->price_buy,
@@ -192,10 +192,15 @@ class ProductsService {
                                     ':com' => $prd->visible,
                                     ':scale' => $prd->scaled,
                                     ':id' => $id));
+        $catstmt = $pdo->prepare("INSERT INTO PRODUCTS_CAT (PRODUCT, CATORDER) "
+                . "VALUES (:id, NULL)");
+        $catstmt->execute(array(":id" => $id));
     }
     
     static function delete($id) {
         $pdo = PDOBuilder::getPDO();
+        $stmtcat = $pdo->prepare("DELETE FROM PRODUCTS_CAT WHERE PRODUCT = :id");
+        $stmtcat->execute(array(":id" => $id));
         $stmt = $pdo->prepare("DELETE FROM PRODUCTS WHERE ID = :id");
         return $stmt->execute(array(':id' => $id));
     }

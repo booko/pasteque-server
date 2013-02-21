@@ -31,7 +31,7 @@ if (isset($_POST['id'])) {
         $taxRate = $taxCat->getCurrentTax()->rate;
         $sell = $_POST['selltax'] / (1 + $taxRate);
         $prd = \Pasteque\Product::__build($_POST['id'], $_POST['reference'], $_POST['label'], $sell, $cat, $taxCat,
-                TRUE, FALSE, NULL, NULL, NULL);
+                FALSE, FALSE, NULL, NULL, NULL);
         \Pasteque\ProductsService::update($prd);
     }
 } else if (isset($_POST['reference'])) {
@@ -43,7 +43,7 @@ if (isset($_POST['id'])) {
         $taxRate = $taxCat->getCurrentTax()->rate;
         $sell = $_POST['selltax'] / (1 + $taxRate);
         $prd = new \Pasteque\Product($_POST['reference'], $_POST['label'], $sell, $cat, $taxCat,
-                TRUE, FALSE, NULL, NULL, NULL);
+                FALSE, FALSE, NULL, NULL, NULL);
         \Pasteque\ProductsService::create($prd);
     }
 }
