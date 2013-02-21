@@ -32,7 +32,7 @@ $users = \Pasteque\UsersService::getAll();
 
 <p><?php \pi18n("%d users", PLUGIN_NAME, count($users)); ?></p>
 
-<table>
+<table cellspacing="0" cellpadding="0">
 	<thead>
 		<tr>
 			<th><?php \pi18n("User.name"); ?></th>

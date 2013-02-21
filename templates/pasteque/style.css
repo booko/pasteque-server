@@ -7,6 +7,19 @@
 	margin-left: 200px;
 }
 
+.menu {
+	list-style-type: none;
+	border: 1px solid black;
+	border-radius: 20px;
+	width: auto;
+	padding: 5px;
+	width: 80%;
+	margin: 20px 0;
+}
+.menu li {
+	margin: 5px 0 5px 0;
+}
+
 form {
 	width: 600px;
 }
@@ -18,9 +31,50 @@ label {
 input {
 	width: 330px;
 }
-button {
+.edition a,
+.edition button {
+	display: inline-block;
 	border: 0;
 	background: none;
 	cursor: pointer;
 	padding: 0;
+	margin-left: 10px;
+	margin-right: 10px;
+}
+.edition form {
+	display: inline-block;
+	width: auto;
+}
+
+h1 {
+	background-color: #409617;
+	border: 1px solid black;
+	border-radius: 5px;
+	padding-left: 20px;
+	color: #FFF;
+}
+
+table {
+	border: 1px inset black;
+}
+thead tr {
+	background-color: #409617;
+	color: #FFF;
+}
+thead tr:hover {
+	background-color: #409617;
+}
+td {
+	border-top: 1px solid black;
+	padding: 10px 5px 10px 5px;
+}
+th {
+	text-align: left;
+	padding: 20px;
+}
+tr {
+	background-color: #D3FFBF;
+}
+tr:hover {
+	background-color: #91E869;
 }

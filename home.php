@@ -20,6 +20,7 @@
 
 namespace Pasteque;
 
-echo("Welcome!!");
-
 ?>
+<h1>POS-Tech – Interface de gestion</h1>
+
+<p>Cliquez sur le menu de droite pour gérer votre point de vente.</p>

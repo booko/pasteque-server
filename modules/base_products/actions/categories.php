@@ -34,7 +34,7 @@ $categories = \Pasteque\CategoriesService::getAll();
 
 <p><?php \pi18n("%d categories", PLUGIN_NAME, count($categories)); ?></p>
 
-<table class="table table-bordered table-striped table-condensed table-hover">
+<table cellpadding="0" cellspacing="0">
 	<thead>
 		<tr>
 			<th><?php \pi18n("Category.label"); ?></th>

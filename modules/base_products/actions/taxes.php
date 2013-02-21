@@ -32,7 +32,7 @@ $taxes = \Pasteque\TaxesService::getAll();
 
 <p><a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'tax_edit'); ?>" class="btn btn-primary"><?php \pi18n("Add a tax", PLUGIN_NAME); ?></a></p>
 
-<table class="table table-bordered table-striped table-condensed table-hover">
+<table cellpadding="0" cellspacing="0">
 	<thead>
 		<tr>
 			<th><?php \pi18n("TaxCat.label"); ?></th>
