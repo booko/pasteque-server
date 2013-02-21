@@ -23,20 +23,37 @@
 namespace BaseProducts;
 
 if (isset($_POST['id'])) {
-    $edit = \Pasteque\Product::__form($_POST);
-    if ($edit !== NULL) {
-        \Pasteque\ProductsService::update($edit);
+    if (isset($_POST['reference']) && isset($_POST['label'])
+            && isset($_POST['selltax']) && isset($_POST['category'])
+            && isset($_POST['tax_cat'])) {
+        $cat = \Pasteque\Category::__build($_POST['category'], NULL, "dummy");
+        $taxCat = \Pasteque\TaxesService::get($_POST['tax_cat']);
+        $taxRate = $taxCat->getCurrentTax()->rate;
+        $sell = $_POST['selltax'] / (1 + $taxRate);
+        $prd = \Pasteque\Product::__build($_POST['id'], $_POST['reference'], $_POST['label'], $sell, $cat, $taxCat,
+                TRUE, FALSE, NULL, NULL, NULL);
+        \Pasteque\ProductsService::update($prd);
     }
-} else if (isset($_POST['ref'])) {
-    $new = \Pasteque\Product::__form($_POST);
-    if ($new !== NULL) {
-        \Pasteque\ProductsService::create($new);
+} else if (isset($_POST['reference'])) {
+    if (isset($_POST['reference']) && isset($_POST['label'])
+            && isset($_POST['selltax']) && isset($_POST['category'])
+            && isset($_POST['tax_cat'])) {
+        $cat = \Pasteque\Category::__build($_POST['category'], NULL, "dummy");
+        $taxCat = \Pasteque\TaxesService::get($_POST['tax_cat']);
+        $taxRate = $taxCat->getCurrentTax()->rate;
+        $sell = $_POST['selltax'] / (1 + $taxRate);
+        $prd = new \Pasteque\Product($_POST['reference'], $_POST['label'], $sell, $cat, $taxCat,
+                TRUE, FALSE, NULL, NULL, NULL);
+        \Pasteque\ProductsService::create($prd);
     }
 }
 
 $product = NULL;
+$vatprice = "";
 if (isset($_GET['id'])) {
     $product = \Pasteque\ProductsService::get($_GET['id']);
+    $tax = $product->tax_cat->getCurrentTax();
+    $vatprice = $product->price_sell * (1 + $tax->rate);
 }
 $taxes = \Pasteque\TaxesService::getAll();
 $categories = \Pasteque\CategoriesService::getAll();
@@ -47,9 +64,9 @@ $categories = \Pasteque\CategoriesService::getAll();
     <?php \Pasteque\form_hidden("edit", $product, "id"); ?>
 	<?php \Pasteque\form_input("edit", "Product", $product, "reference", "string", array("required" => true)); ?>
 	<?php \Pasteque\form_input("edit", "Product", $product, "label", "string", array("required" => true)); ?>
-	<?php \Pasteque\form_input("edit", "Product", $product, "tax_cat_id", "pick", array("model" => "TaxCategory")); ?>
-	<label for="sell"><?php \pi18n("Sell price + taxes", PLUGIN_NAME); ?></label><input id="sell" type="numeric" name="selltax" />
-	<?php \Pasteque\form_input("edit", "Product", $product, "category_ids", "pick", array("model" => "Category")); ?>
+	<?php \Pasteque\form_input("edit", "Product", $product, "tax_cat", "pick", array("model" => "TaxCategory")); ?>
+	<label for="sell"><?php \pi18n("Sell price + taxes", PLUGIN_NAME); ?></label><input id="sell" type="numeric" name="selltax" value="<?php echo $vatprice; ?>" />
+	<?php \Pasteque\form_input("edit", "Product", $product, "category", "pick", array("model" => "Category")); ?>
 	
 	<?php \Pasteque\form_send(); ?>
 </form>
