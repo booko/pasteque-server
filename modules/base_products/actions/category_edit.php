@@ -22,17 +22,13 @@
 
 namespace BaseProducts;
 
-if (isset($_POST['id'])) {
-    $edit = \Pasteque\Category::__form($_POST);
-    if ($edit !== NULL) {
-    var_dump($edit);
-        \Pasteque\CategoriesService::updateCat($edit);
-    }
-} else if (isset($_POST['name'])) {
-    $new = \Pasteque\Category::__form($_POST);
-    if ($new !== NULL) {
-        \Pasteque\CategoriesService::createCat($new);
-    }
+if (isset($_POST['id']) && isset($_POST['label'])) {
+    $cat = \Pasteque\Category::__build($_POST['id'], NULL,
+            $_POST['label']);
+    \Pasteque\CategoriesService::updateCat($cat);
+} else if (isset($_POST['label'])) {
+    $cat = new \Pasteque\Category(NULL, $_POST['label']);
+    \Pasteque\CategoriesService::createCat($cat);
 }
 
 $category = NULL;
@@ -45,7 +41,6 @@ if (isset($_GET['id'])) {
 <form action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
     <?php \Pasteque\form_hidden("edit", $category, "id"); ?>
 	<?php \Pasteque\form_input("edit", "Category", $category, "label", "string", array("required" => true)); ?>
-	<?php \Pasteque\form_input("edit", "Category", $category, "parent_id", "pick", array("model" => "Category", "nullable" => true)); ?>
 	<?php \Pasteque\form_send(); ?>
 </form>
 <?php if ($category !== NULL) { ?>
