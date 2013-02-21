@@ -35,7 +35,7 @@ $taxes = \Pasteque\TaxesService::getAll();
 <table class="table table-bordered table-striped table-condensed table-hover">
 	<thead>
 		<tr>
-			<th><?php \pi18n("TaxCat.name"); ?></th>
+			<th><?php \pi18n("TaxCat.label"); ?></th>
 			<th></th>
 		</tr>
 	</thead>
@@ -44,7 +44,7 @@ $taxes = \Pasteque\TaxesService::getAll();
 foreach ($taxes as $tax) {
 ?>
 	<tr>
-		<td><?php echo $tax->name; ?></td>
+		<td><?php echo $tax->label; ?></td>
 		<td class="edition">
 			<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'tax_edit', array('id' => $tax->id)); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
 			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("taxcat", $tax->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>

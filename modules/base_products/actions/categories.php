@@ -37,7 +37,7 @@ $categories = \Pasteque\CategoriesService::getAll();
 <table class="table table-bordered table-striped table-condensed table-hover">
 	<thead>
 		<tr>
-			<th><?php \pi18n("Category.name"); ?></th>
+			<th><?php \pi18n("Category.label"); ?></th>
 			<th></th>
 		</tr>
 	</thead>
@@ -46,7 +46,7 @@ $categories = \Pasteque\CategoriesService::getAll();
 foreach ($categories as $category) {
 ?>
 	<tr>
-		<td><?php echo $category->name; ?></td>
+		<td><?php echo $category->label; ?></td>
 		<td class="edition">
 			<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'category_edit', array('id' => $category->id)); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
 			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("cat", $category->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>

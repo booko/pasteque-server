@@ -5,15 +5,15 @@
 "Delete": "Supprimer",
 "Save": "Enregistrer",
 
-"Product.name": "Désignation",
-"Product.ref": "Référence",
+"Product.label": "Désignation",
+"Product.reference": "Référence",
 "Product.tax_cat_id": "TVA",
 "Product.price_sell": "Prix de vente",
 
-"Category.name": "Désignation",
+"Category.label": "Désignation",
 "Category.parent_id": "Parent",
 
-"TaxCat.name": "Désignation",
+"TaxCat.label": "Désignation",
 "Tax.rate": "Taux",
 "Tax.start_date": "Effectif au",
 

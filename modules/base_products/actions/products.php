@@ -38,8 +38,7 @@ $products = \Pasteque\ProductsService::getAll();
 	<thead>
 		<tr>
 			<th><?php \pi18n("Product.reference"); ?></th>
-			<th><?php \pi18n("Product.name"); ?></th>
-			<th><?php \pi18n("Product.tax_cat"); ?></th>
+			<th><?php \pi18n("Product.label"); ?></th>
 			<th></th>
 		</tr>
 	</thead>
@@ -48,9 +47,8 @@ $products = \Pasteque\ProductsService::getAll();
 foreach ($products as $product) {
 ?>
 	<tr>
-		<td><?php echo $product->ref; ?></td>
-		<td><?php echo $product->name; ?></td>
-		<td><?php echo $product->tax_cat_id; ?></td>
+		<td><?php echo $product->reference; ?></td>
+		<td><?php echo $product->label; ?></td>
 		<td>
 			<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'product_edit', array('id' => $product->id)); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
 			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("product", $product->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>

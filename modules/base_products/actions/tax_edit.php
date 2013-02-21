@@ -45,10 +45,8 @@ if (isset($_POST['name'])) {
 }
 
 $tax_cat = NULL;
-$taxes = NULL;
 if (isset($_GET['id'])) {
     $tax_cat = \Pasteque\TaxesService::get($_GET['id']);
-    $taxes = \Pasteque\TaxesService::getTaxes($_GET['id']);
 }
 ?>
 <h1><?php \pi18n("Edit tax", PLUGIN_NAME); ?></h1>
@@ -65,10 +63,10 @@ if (isset($_GET['id'])) {
 </form>
 <?php } ?>
 
-<?php if ($taxes !== NULL) { ?>
+<?php if ($tax_cat->taxes !== NULL) { ?>
 <!-- Tax rates -->
 <h2><?php \pi18n("Rates", PLUGIN_NAME); ?></h2>
-<?php foreach ($taxes as $tax) { ?>
+<?php foreach ($tax_cat->taxes as $tax) { ?>
 <form action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
     <?php \Pasteque\form_hidden("rate$tax->id", $tax, "id"); ?>
     <?php \Pasteque\form_hidden("rate$tax->id", $tax, "tax_cat_id"); ?>

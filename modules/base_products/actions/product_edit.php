@@ -45,13 +45,11 @@ $categories = \Pasteque\CategoriesService::getAll();
 
 <form action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
     <?php \Pasteque\form_hidden("edit", $product, "id"); ?>
-	<?php \Pasteque\form_input("edit", "Product", $product, "ref", "string", array("required" => true)); ?>
-	<?php \Pasteque\form_input("edit", "Product", $product, "name", "string", array("required" => true)); ?>
+	<?php \Pasteque\form_input("edit", "Product", $product, "reference", "string", array("required" => true)); ?>
+	<?php \Pasteque\form_input("edit", "Product", $product, "label", "string", array("required" => true)); ?>
 	<?php \Pasteque\form_input("edit", "Product", $product, "tax_cat_id", "pick", array("model" => "TaxCategory")); ?>
-	<?php \Pasteque\form_input("edit", "Product", $product, "price_sell", "numeric", array("required" => true)); ?>
 	<label for="sell"><?php \pi18n("Sell price + taxes", PLUGIN_NAME); ?></label><input id="sell" type="numeric" name="selltax" />
-	<h2><?php \pi18n("Categories", PLUGIN_NAME); ?></h2>
-	<?php \Pasteque\form_input("edit", "Product", $product, "category_ids", "pick_multiple", array("model" => "Category")); ?>
+	<?php \Pasteque\form_input("edit", "Product", $product, "category_ids", "pick", array("model" => "Category")); ?>
 	
 	<?php \Pasteque\form_send(); ?>
 </form>

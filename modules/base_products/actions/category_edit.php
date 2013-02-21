@@ -44,7 +44,7 @@ if (isset($_GET['id'])) {
 
 <form action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
     <?php \Pasteque\form_hidden("edit", $category, "id"); ?>
-	<?php \Pasteque\form_input("edit", "Category", $category, "name", "string", array("required" => true)); ?>
+	<?php \Pasteque\form_input("edit", "Category", $category, "label", "string", array("required" => true)); ?>
 	<?php \Pasteque\form_input("edit", "Category", $category, "parent_id", "pick", array("model" => "Category", "nullable" => true)); ?>
 	<?php \Pasteque\form_send(); ?>
 </form>

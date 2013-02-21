@@ -110,7 +110,7 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
                 $selected = ' selected="true"';
             }
             echo '<option value="' . $r->id . '"' . $selected . '>'
-                    . $r->name . '</option>';
+                    . $r->label . '</option>';
         }
         echo "</select>\n";
         break;
@@ -128,7 +128,7 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
                 $selected = ' checked="true"';
             }
             $id = $form_id . "-" . $field . "-" .$r->id;
-            echo '<label for="' . $id . '">' . $r->name . '</label>';
+            echo '<label for="' . $id . '">' . $r->label . '</label>';
             echo '<input id="' . $id . '" type="checkbox" name="' . $field
                     . '[]" value="' . $r->id . '"' . $selected . "/>\n";
         }

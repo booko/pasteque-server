@@ -5,15 +5,15 @@
 "Delete": "Delete",
 "Save": "Save",
 
-"Product.name": "Name",
-"Product.ref": "Reference",
+"Product.label": "Name",
+"Product.reference": "Reference",
 "Product.tax_cat_id": "VAT",
 "Product.price_sell": "Price sell",
 
-"Category.name": "Name",
+"Category.label": "Name",
 "Category.parent_id": "Parent",
 
-"TaxCat.name": "Name",
+"TaxCat.label": "Name",
 "Tax.rate": "Rate",
 "Tax.start_date": "Valid from",
 
