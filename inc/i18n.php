@@ -116,6 +116,9 @@ function register_i18n($module_name) {
 }
 
 function detect_preferred_language() {
+    if (! isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+        return NULL;
+    }
     $languages = explode(";", $_SERVER['HTTP_ACCEPT_LANGUAGE']);
     $sublanguage = explode(",", $languages[0]);
     $preferred = $sublanguage[0];
