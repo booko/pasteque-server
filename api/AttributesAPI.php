@@ -18,24 +18,11 @@
 //    You should have received a copy of the GNU General Public License
 //    along with POS-Tech.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace Pasteque;
 
-$action = $_GET['action'];
-$ret = null;
+require_once(dirname(dirname(__FILE__)) . "/inc/constants.php");
 
-switch ($action) {
-case 'get':
-    if (!isset($_GET['id'])) {
-       $ret = false;
-       break;
-    }
-    $ret = UsersService::get($_GET['id']);
-    break;
-case 'getAll':
-    $ret = UsersService::getAll();
-    break;
-}
+$_GET[\Pasteque\URL_ACTION_PARAM] = "AttributesAPI";
 
-echo(json_encode($ret));
+require_once(dirname(dirname(__FILE__)) . "/api.php");
 
 ?>

@@ -18,21 +18,24 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
-// API is the entry point for all API calls.
 namespace Pasteque;
 
-const ABSPATH = __DIR__; // Base path. Also to check if a call
-                         // originates from api.php
-
-// Load
-require_once(ABSPATH . "/inc/load.php");
-
-// Check user authentication
-if (!is_user_logged_in()) {
-    $ret = array("error" => "Not logged");
-    return json_encode($ret);
-} else {
-    require_once(ABSPATH . "/inc/load_logged.php");
-    api_content();
+/** Reverse function of strftime. Given a string date and a format,
+ * creates the timestamp.
+ */
+function timefstr($format, $date) {
+    $dateTime = DateTime::createFromFormat($format, $date);
+    return $dateTime->getTimestamp();
 }
-?>
+
+function stdtimefstr($date) {
+    if ($date != null) {
+        return timefstr("Y-m-d H:i:s", $date);
+    } else {
+        return null;
+    }
+}
+
+function stdstrftime($time) {
+    return strftime("%Y-%m-%d %H:%M:%S", $time);
+}

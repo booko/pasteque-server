@@ -18,7 +18,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with POS-Tech.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once(dirname(dirname(__FILE__)) . "/services/TaxesService.php");
+namespace Pasteque;
 
 $action = $_GET['action'];
 $ret = null;
