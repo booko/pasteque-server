@@ -107,8 +107,8 @@ if ($error !== NULL) {
 			<input type="hidden" id="clearImage" name="clearImage" value="0" />
 		<?php if ($product !== NULL && $product->image !== NULL) { ?>
 			<img id="img" class="image-preview" src="?<?php echo \Pasteque\URL_ACTION_PARAM; ?>=img&w=product&id=<?php echo $product->id; ?>" />
-			<a id="clear" href="" onClick="javascript:clearImage(); return false;"><?php \pi18n("Delete"); ?></a>
-			<a style="display:none" id="restore" href="" onClick="javascript:restoreImage(); return false;"><?php \pi18n("Restore"); ?></a><br />
+			<a class="btn" id="clear" href="" onClick="javascript:clearImage(); return false;"><?php \pi18n("Delete"); ?></a>
+			<a class="btn" style="display:none" id="restore" href="" onClick="javascript:restoreImage(); return false;"><?php \pi18n("Restore"); ?></a><br />
 		<?php } ?>
 			<input type="file" name="image" />
 		</div>
