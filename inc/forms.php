@@ -100,6 +100,9 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
         case 'TaxCategory':
             $data = TaxesService::getAll();
             break;
+        case 'Role':
+            $data = RolesService::getAll();
+            break;
         }
         echo '<select id="' . $form_id . '-' . $field . '" name="' . $field . '">';
         if (isset($args['nullable']) && $args['nullable']) {

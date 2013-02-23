@@ -25,18 +25,20 @@ class User {
     public $id;
     public $name;
     public $password;
+    public $role;
     public $permissions;
 
-    static function __build($id, $name, $password, $permissions) {
-        $user = new User($name, $password, $permissions);
+    static function __build($id, $name, $password, $role) {
+        $user = new User($name, $password, $role);
         $user->id = $id;
         return $user;
     }
 
-    function __construct($name, $password, $permissions) {
+    function __construct($name, $password, $role) {
         $this->name = $name;
         $this->password = $password;
-        $this->permissions = $permissions;
+        $this->role = $role;
+        $this->permissions = $role->permissions;
     }
 }
 

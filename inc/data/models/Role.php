@@ -34,6 +34,7 @@ class Role {
 
     function __construct($name, $permissions) {
         $this->name = $name;
+        $this->label = $name; // For consistency with other classes
         $this->permissions = $permissions;
     }
 

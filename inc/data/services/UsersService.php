@@ -22,15 +22,10 @@ namespace Pasteque;
 
 class UsersService {
 
-    private static function buildDBUser($db_user, $pdo) {
-        $stmt = $pdo->prepare("SELECT PERMISSIONS FROM ROLES WHERE ID = :id");
-        if ($stmt->execute(array(':id' => $db_user['ROLE']))) {
-            if ($row = $stmt->fetch()) {
-                $permissions = $row['PERMISSIONS'];
-            }
-    	}
+    private static function buildDBUser($db_user) {
+        $role = RolesService::get($db_user['ROLE']);
         $user = User::__build($db_user['ID'], $db_user['NAME'],
-                              $db_user['APPPASSWORD'], $permissions);
+                              $db_user['APPPASSWORD'], $role);
         return $user;
     }
 
@@ -57,6 +52,43 @@ class UsersService {
         return null;
     }
 
+    static function update($user) {
+        if ($user->id == null) {
+            return false;
+        }
+        $pdo = PDOBuilder::getPDO();
+        $sql = "UPDATE PEOPLE SET NAME = :name, ROLE = :role";
+        $sql .= " WHERE ID = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(":name", $user->name, \PDO::PARAM_STR);
+        $stmt->bindParam(":role", $user->role->id, \PDO::PARAM_STR);
+        $stmt->bindParam(":id", $user->id, \PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
+    static function create($user) {
+        $pdo = PDOBuilder::getPDO();
+        $id = md5(time() . rand());
+        $sql = "INSERT INTO PEOPLE (ID, NAME, APPPASSWORD, CARD, ROLE, VISIBLE, IMAGE";
+        $sql .= ") VALUES (:id, :name, NULL, NULL, :role, 1, NULL)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(":name", $user->name, \PDO::PARAM_STR);
+        $stmt->bindParam(":role", $user->role->id, \PDO::PARAM_INT);
+        $stmt->bindParam(":id", $id, \PDO::PARAM_INT);
+        if ($stmt->execute() !== FALSE) {
+            return $id;
+        } else {
+            return FALSE;
+        }
+    }
+
+    static function delete($id) {
+        $pdo = PDOBuilder::getPDO();
+        $sql = "DELETE FROM PEOPLE WHERE ID = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(":id", $id, \PDO::PARAM_INT);
+        return $stmt->execute();
+    }
 }
 
 ?>
