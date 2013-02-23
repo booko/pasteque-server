@@ -42,6 +42,27 @@
 	margin-right: 3px;
 }
 
+.btn {
+	background-color: #AAA;
+	background-image: linear-gradient(to bottom, #CCC, #777);
+	background-repeat: repeat-x;
+	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+	border-radius: 10px;
+	color: #FFFFFF;
+	text-decoration: none;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+	font-variant: small-caps;
+	padding: 6px;
+}
+.btn img {
+	margin-right: 3px;
+	vertical-align: middle;
+}
+.btn:hover {
+	background-color: #777;
+	background-image: none;
+}
+
 .message {
 	background-color: #B1EFAD;
 	border: 2px solid #479942;
@@ -79,6 +100,7 @@
 	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 	border-radius: 5px;
 	color: #FFFFFF;
+	text-decoration: none;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 	padding: 3px;
 }
@@ -93,6 +115,7 @@
 	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 	border-radius: 5px;
 	color: #FFFFFF;
+	text-decoration: none;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 	padding: 3px;
 }
@@ -101,16 +124,6 @@
 	background-image: none;
 }
 
-.edition a,
-.edition button {
-	display: inline-block;
-	border: 0;
-	background: none;
-	cursor: pointer;
-	padding: 0;
-	margin-left: 10px;
-	margin-right: 10px;
-}
 .edition form {
 	display: inline-block;
 	width: auto;
