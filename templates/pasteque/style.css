@@ -95,6 +95,15 @@ form.edit  {
 	padding: 15px;
 	
 }
+form.edit fieldset {
+	border: 1px solid #CCC;
+	padding: 10px 0px;
+	margin-top: 15px;
+}
+form.edit fieldset legend {
+	font-weight: bold;
+	margin-left: 20px;
+}
 
 .edit .row {
 	width: 600px;
@@ -103,7 +112,8 @@ form.edit  {
 
 .edit .row label {
 	display: inline-block;
-	width: 30%;
+	width: 27%;
+	margin-left: 3%;
 }
 .edit .row input,
 .edit .row select {

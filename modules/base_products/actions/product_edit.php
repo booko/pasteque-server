@@ -39,7 +39,7 @@ if (isset($_POST['id'])) {
             $img = "";
         }
         $prd = \Pasteque\Product::__build($_POST['id'], $_POST['reference'], $_POST['label'], $_POST['realsell'], $cat, $taxCat,
-                FALSE, FALSE, $_POST['price_buy'], NULL, NULL, $img);
+                FALSE, FALSE, $_POST['price_buy'], NULL, $_POST['barcode'], $img);
         if (\Pasteque\ProductsService::update($prd)) {
             $message = \i18n("Changes saved");
         } else {
@@ -59,7 +59,7 @@ if (isset($_POST['id'])) {
             $img = NULL;
         }
         $prd = new \Pasteque\Product($_POST['reference'], $_POST['label'], $_POST['realsell'], $cat, $taxCat,
-                FALSE, FALSE, $_POST['price_buy'], NULL, NULL, $img);
+                FALSE, FALSE, $_POST['price_buy'], NULL, $_POST['barcode'], $img);
         $id = \Pasteque\ProductsService::create($prd);
         if ($id !== FALSE) {
             $message = \i18n("Product saved. <a href=\"%s\">Go to the product page</a>.", PLUGIN_NAME, \Pasteque\get_module_url_action(PLUGIN_NAME, 'product_edit', array('id' => $id)));
@@ -93,24 +93,10 @@ if ($error !== NULL) {
 
 <form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post" enctype="multipart/form-data">
     <?php \Pasteque\form_hidden("edit", $product, "id"); ?>
-	<?php \Pasteque\form_input("edit", "Product", $product, "reference", "string", array("required" => true)); ?>
+	<fieldset>
+	<legend><?php \pi18n("Display", PLUGIN_NAME); ?></legend>
 	<?php \Pasteque\form_input("edit", "Product", $product, "label", "string", array("required" => true)); ?>
 	<?php \Pasteque\form_input("edit", "Product", $product, "category", "pick", array("model" => "Category")); ?>
-	<?php \Pasteque\form_input("edit", "Product", $product, "tax_cat", "pick", array("model" => "TaxCategory")); ?>
-	<div class="row">
-		<label for="sellvat"><?php \pi18n("Sell price + taxes", PLUGIN_NAME); ?></label>
-		<input id="sellvat" type="numeric" name="selltax" value="<?php echo $vatprice; ?>" />
-	</div>
-	<div class="row">
-		<label for="sell"><?php \pi18n("Product.price_sell"); ?></label>
-		<input type="hidden" id="realsell" name="realsell" <?php if ($product != NULL) echo 'value=' . $product->price_sell; ?> />
-		<input id="sell" type="numeric" name="sell" value="<?php echo $price; ?>" />
-	</div>
-	<?php \Pasteque\form_input("edit", "Product", $product, "price_buy", "numeric"); ?>
-	<div class="row">
-		<label for="margin"><?php \pi18n("Margin", PLUGIN_NAME); ?></label>
-		<input id="margin" type="numeric" disabled="true" />
-	</div>
 	<div class="row">
 		<label for="image"><?php \pi18n("Image"); ?></label>
 		<div style="display:inline-block">
@@ -123,6 +109,37 @@ if ($error !== NULL) {
 			<input type="file" name="image" />
 		</div>
 	</div>
+	</fieldset>
+	<fieldset>
+	<legend><?php \pi18n("Price", PLUGIN_NAME); ?></legend>
+	<?php \Pasteque\form_input("edit", "Product", $product, "tax_cat", "pick", array("model" => "TaxCategory")); ?>
+	<div class="row">
+		<label for="sellvat"><?php \pi18n("Sell price + taxes", PLUGIN_NAME); ?></label>
+		<input id="sellvat" type="numeric" name="selltax" value="<?php echo $vatprice; ?>" />
+	</div>
+	<div class="row">
+		<label for="sell"><?php \pi18n("Product.price_sell"); ?></label>
+		<input type="hidden" id="realsell" name="realsell" <?php if ($product != NULL) echo 'value="' . $product->price_sell. '"'; ?> />
+		<input id="sell" type="numeric" name="sell" value="<?php echo $price; ?>" />
+	</div>
+	<?php \Pasteque\form_input("edit", "Product", $product, "price_buy", "numeric"); ?>
+	<div class="row">
+		<label for="margin"><?php \pi18n("Margin", PLUGIN_NAME); ?></label>
+		<input id="margin" type="numeric" disabled="true" />
+	</div>
+	</fieldset>
+	<fieldset>
+	<legend><?php \pi18n("Referencing", PLUGIN_NAME); ?></legend>
+	<?php \Pasteque\form_input("edit", "Product", $product, "reference", "string", array("required" => true)); ?>
+	<div class="row">
+		<label for="barcode"><?php \pi18n("Product.barcode"); ?></label>
+		<div style="display:inline-block; max-width:65%;">
+			<img id="barcodeImg" src="" />
+			<input id="barcode" type="text" name="barcode" <?php if ($product != NULL) echo 'value="' . $product->barcode . '"'; ?> />
+			<a class="btn" href="" onClick="javascript:generateBarcode(); return false;"><?php \pi18n("Generate"); ?></a>
+		</div>
+	</div>
+	</fieldset>
 	
 	<div class="row actions">
 		<?php \Pasteque\form_send(); ?>
@@ -180,5 +197,40 @@ if ($error !== NULL) {
 		jQuery("#clear").show();
 		jQuery("#restore").hide();
 		jQuery("#clearImage").val(0);
-	}	
+	}
+
+	updateBarcode = function() {
+		var barcode = jQuery("#barcode").val();
+		var src = "?<?php echo \Pasteque\URL_ACTION_PARAM; ?>=img&w=barcode&code=" + barcode;
+		jQuery("#barcodeImg").attr("src", src);
+	}
+	updateBarcode();
+
+	jQuery("#barcode").change(updateBarcode);
+
+	generateBarcode = function() {
+		var first = Math.floor(Math.random() * 9) + 1;
+		var code = new Array();
+		code.push(first);
+		for (var i = 0; i < 11; i++) {
+			var num = Math.floor(Math.random() * 10);
+			code.push(num);
+		}
+		var checksum = 0;
+		for (var i = 0; i < code.length; i++) {
+			var weight = 1;
+			if (i % 2 == 1) {
+				weight = 3;
+			}
+			checksum = checksum + weight * code[i];
+		}
+		checksum = checksum % 10;
+		if (checksum != 0) {
+			checksum = 10 - checksum;
+		}
+		code.push(checksum);
+		var barcode = code.join("");
+		jQuery("#barcode").val(barcode);
+		updateBarcode();
+	}
 </script>
