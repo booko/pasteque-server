@@ -18,6 +18,8 @@
 "Product.tax_cat": "VAT",
 "Product.price_sell": "Sell price",
 "Product.price_buy": "Buy price",
+"Product.scaled": "Sell per kilo",
+"Product.visible": "Active",
 
 "Category.label": "Name",
 "Category.parent_id": "Parent",

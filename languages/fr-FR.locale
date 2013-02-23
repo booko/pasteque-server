@@ -18,6 +18,8 @@
 "Product.tax_cat": "TVA",
 "Product.price_sell": "Prix de vente",
 "Product.price_buy": "Prix d'achat",
+"Product.scaled": "Vente au poids",
+"Product.visible": "En vente",
 
 "Category.label": "Désignation",
 "Category.parent_id": "Parent",

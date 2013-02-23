@@ -38,8 +38,10 @@ if (isset($_POST['id'])) {
         } else {
             $img = "";
         }
+        $scaled = isset($_POST['scaled']) ? 1 : 0;
+        $visible = isset($_POST['visible']) ? 1 : 0;
         $prd = \Pasteque\Product::__build($_POST['id'], $_POST['reference'], $_POST['label'], $_POST['realsell'], $cat, $taxCat,
-                FALSE, FALSE, $_POST['price_buy'], NULL, $_POST['barcode'], $img);
+                $visible, $scaled, $_POST['price_buy'], NULL, $_POST['barcode'], $img);
         if (\Pasteque\ProductsService::update($prd)) {
             $message = \i18n("Changes saved");
         } else {
@@ -58,8 +60,10 @@ if (isset($_POST['id'])) {
         } else {
             $img = NULL;
         }
+        $scaled = isset($_POST['scaled']) ? 1 : 0;
+        $visible = isset($_POST['visible']) ? 1 : 0;
         $prd = new \Pasteque\Product($_POST['reference'], $_POST['label'], $_POST['realsell'], $cat, $taxCat,
-                FALSE, FALSE, $_POST['price_buy'], NULL, $_POST['barcode'], $img);
+                $visible, $scaled, $_POST['price_buy'], NULL, $_POST['barcode'], $img);
         $id = \Pasteque\ProductsService::create($prd);
         if ($id !== FALSE) {
             $message = \i18n("Product saved. <a href=\"%s\">Go to the product page</a>.", PLUGIN_NAME, \Pasteque\get_module_url_action(PLUGIN_NAME, 'product_edit', array('id' => $id)));
@@ -109,9 +113,11 @@ if ($error !== NULL) {
 			<input type="file" name="image" />
 		</div>
 	</div>
+	<?php \Pasteque\form_input("edit", "Product", $product, "visible", "boolean"); ?>
 	</fieldset>
 	<fieldset>
 	<legend><?php \pi18n("Price", PLUGIN_NAME); ?></legend>
+	<?php \Pasteque\form_input("edit", "Product", $product, "scaled", "boolean"); ?>
 	<?php \Pasteque\form_input("edit", "Product", $product, "tax_cat", "pick", array("model" => "TaxCategory")); ?>
 	<div class="row">
 		<label for="sellvat"><?php \pi18n("Sell price + taxes", PLUGIN_NAME); ?></label>

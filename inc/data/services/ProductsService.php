@@ -150,7 +150,7 @@ class ProductsService {
         $sql = "UPDATE PRODUCTS SET REFERENCE = :ref, CODE = :code, "
                 . "NAME = :name, PRICEBUY = :buy, PRICESELL = :sell, "
                 . "CATEGORY = :cat, TAXCAT = :tax, ATTRIBUTESET_ID = :attr, "
-                . "ISCOM = :com, ISSCALE = :scale";
+                . "ISSCALE = :scale";
         if ($prd->image !== "") {
             $sql .= ", IMAGE = :img";
         }
@@ -164,11 +164,22 @@ class ProductsService {
         $stmt->bindParam(":cat", $prd->category->id, \PDO::PARAM_INT);
         $stmt->bindParam(":tax", $prd->tax_cat->id, \PDO::PARAM_INT);
         $stmt->bindParam(":attr", $attr_id, \PDO::PARAM_INT);
-        $stmt->bindParam(":com", $prd->visible, \PDO::PARAM_INT);
         $stmt->bindParam(":scale", $prd->scaled, \PDO::PARAM_INT);
         $stmt->bindParam(":id", $prd->id, \PDO::PARAM_INT);
         if ($prd->image !== "") {
             $stmt->bindParam(":img", $prd->image, \PDO::PARAM_LOB);
+        }
+        if ($prd->visible == 1 || $prd->visible == TRUE) {
+            $vsql = "INSERT INTO PRODUCTS_CAT (PRODUCT, CATORDER) VALUES "
+                    . "(:id, NULL)";
+            $vstmt = $pdo->prepare($vsql);
+            $vstmt->bindParam(":id", $prd->id, \PDO::PARAM_STR);
+            $vstmt->execute();
+        } else {
+            $vsql = "DELETE FROM PRODUCTS_CAT WHERE PRODUCT = :id";
+            $vstmt = $pdo->prepare($vsql);
+            $vstmt->bindParam(":id", $prd->id, \PDO::PARAM_STR);
+            $vstmt->execute();
         }
         return $stmt->execute();
     }
@@ -186,12 +197,12 @@ class ProductsService {
         }
         $sql = "INSERT INTO PRODUCTS (ID, REFERENCE, CODE, NAME, "
                 . "PRICEBUY, PRICESELL, CATEGORY, TAXCAT, "
-                . "ATTRIBUTESET_ID, ISCOM, ISSCALE";
+                . "ATTRIBUTESET_ID, ISSCALE";
         if ($prd->image !== "") {
             $sql .= ", IMAGE";
         }
         $sql .= ") VALUES (:id, :ref, :code, :name, :buy, :sell, :cat, "
-                . ":tax, :attr, :com, :scale";
+                . ":tax, :attr, :scale";
         if ($prd->image !== "") {
             $sql .= ", :img";
         }
@@ -205,7 +216,6 @@ class ProductsService {
         $stmt->bindParam(":cat", $prd->category->id, \PDO::PARAM_INT);
         $stmt->bindParam(":tax", $prd->tax_cat->id, \PDO::PARAM_INT);
         $stmt->bindParam(":attr", $attr_id, \PDO::PARAM_INT);
-        $stmt->bindParam(":com", $prd->visible, \PDO::PARAM_INT);
         $stmt->bindParam(":scale", $prd->scaled, \PDO::PARAM_INT);
         $stmt->bindParam(":id", $id, \PDO::PARAM_INT);
         if ($prd->image !== "") {
@@ -214,9 +224,11 @@ class ProductsService {
         if (!$stmt->execute()) {
             return FALSE;
         }
-        $catstmt = $pdo->prepare("INSERT INTO PRODUCTS_CAT (PRODUCT, CATORDER) "
-                . "VALUES (:id, NULL)");
-        $catstmt->execute(array(":id" => $id));
+        if ($prd->visible == 1 || $prd->visible == TRUE) {
+            $catstmt = $pdo->prepare("INSERT INTO PRODUCTS_CAT (PRODUCT, CATORDER) "
+                    . "VALUES (:id, NULL)");
+            $catstmt->execute(array(":id" => $id));
+        }
         return $id;
     }
     
