@@ -29,8 +29,16 @@ if (isset($_POST['id'])) {
         $cat = \Pasteque\Category::__build($_POST['category'], NULL, "dummy", NULL);
         $taxCat = \Pasteque\TaxesService::get($_POST['tax_cat']);
         $taxRate = $taxCat->getCurrentTax()->rate;
+        if ($_POST['clearImage'] == 1) {
+            $img = NULL;
+        }
+        if (isset($_FILES['image'])) {
+            $img = file_get_contents($_FILES['image']['tmp_name']);
+        } else {
+            $img = "";
+        }
         $prd = \Pasteque\Product::__build($_POST['id'], $_POST['reference'], $_POST['label'], $_POST['realsell'], $cat, $taxCat,
-                FALSE, FALSE, $_POST['price_buy'], NULL, NULL, NULL);
+                FALSE, FALSE, $_POST['price_buy'], NULL, NULL, $img);
         \Pasteque\ProductsService::update($prd);
     }
 } else if (isset($_POST['reference'])) {
@@ -40,8 +48,13 @@ if (isset($_POST['id'])) {
         $cat = \Pasteque\Category::__build($_POST['category'], NULL, "dummy", NULL);
         $taxCat = \Pasteque\TaxesService::get($_POST['tax_cat']);
         $taxRate = $taxCat->getCurrentTax()->rate;
+        if (isset($_FILES['image'])) {
+            $img = file_get_contents($_FILES['image']['tmp_name']);
+        } else {
+            $img = NULL;
+        }
         $prd = new \Pasteque\Product($_POST['reference'], $_POST['label'], $_POST['realsell'], $cat, $taxCat,
-                FALSE, FALSE, $_POST['price_buy'], NULL, NULL, NULL);
+                FALSE, FALSE, $_POST['price_buy'], NULL, NULL, $img);
         \Pasteque\ProductsService::create($prd);
     }
 }
@@ -60,7 +73,7 @@ $categories = \Pasteque\CategoriesService::getAll();
 ?>
 <h1><?php \pi18n("Edit a product", PLUGIN_NAME); ?></h1>
 
-<form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
+<form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post" enctype="multipart/form-data">
     <?php \Pasteque\form_hidden("edit", $product, "id"); ?>
 	<?php \Pasteque\form_input("edit", "Product", $product, "reference", "string", array("required" => true)); ?>
 	<?php \Pasteque\form_input("edit", "Product", $product, "label", "string", array("required" => true)); ?>
@@ -80,6 +93,17 @@ $categories = \Pasteque\CategoriesService::getAll();
 		<label for="margin"><?php \pi18n("Margin", PLUGIN_NAME); ?></label>
 		<input id="margin" type="numeric" disabled="true" />
 	</div>
+	<div class="row">
+		<label for="image"><?php \pi18n("Image", PLUGIN_NAME); ?></label>
+		<div style="display:inline-block">
+			<input type="hidden" id="clearImage" name="clearImage" value="0" />
+		<?php if ($product !== NULL && $product->image !== NULL) { ?>
+			<img id="img" class="image-preview" src="?<?php echo \Pasteque\URL_ACTION_PARAM; ?>=img&w=product&id=<?php echo $product->id; ?>" />
+			<a id="clear" href="" onClick="javascript:clearImage(); return false;"><?php \pi18n("Delete"); ?></a>
+			<a style="display:none" id="restore" href="" onClick="javascript:restoreImage(); return false;"><?php \pi18n("Restore"); ?></a><br />
+		<?php } ?>
+			<input type="file" name="image" />
+		</div>
 	
 	<div class="row actions">
 		<?php \Pasteque\form_send(); ?>
@@ -125,4 +149,17 @@ $categories = \Pasteque\CategoriesService::getAll();
 	jQuery("#edit-tax_cat").change(updateSellPrice);
 	jQuery("#sell").change(updateSellVatPrice);
 	jQuery("#edit-price_buy").change(updateMargin);
+
+	clearImage = function() {
+		jQuery("#img").hide();
+		jQuery("#clear").hide();
+		jQuery("#restore").show();
+		jQuery("#clearImage").val(1);
+	}
+	restoreImage = function() {
+		jQuery("#img").show();
+		jQuery("#clear").show();
+		jQuery("#restore").hide();
+		jQuery("#clearImage").val(0);
+	}	
 </script>

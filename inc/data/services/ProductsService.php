@@ -147,23 +147,30 @@ class ProductsService {
         if ($prd->barcode != null) {
             $code = $prd->barcode;
         }
-        $stmt = $pdo->prepare("UPDATE PRODUCTS SET REFERENCE = :ref, "
-                              . "CODE = :code, NAME = :name, PRICEBUY = :buy, "
-                              . "PRICESELL = :sell, CATEGORY = :cat, "
-                              . "TAXCAT = :tax, ATTRIBUTESET_ID = :attr, "
-                              . "ISCOM = :com, ISSCALE = :scale "
-                              . "WHERE ID = :id");
-        return $stmt->execute(array(':ref' => $prd->reference,
-                                    ':code' => $code,
-                                    ':name' => $prd->label,
-                                    ':buy' => $prd->price_buy,
-                                    ':sell' => $prd->price_sell,
-                                    ':cat' => $prd->category->id,
-                                    ':tax' => $prd->tax_cat->id,
-                                    ':attr' => $attr_id,
-                                    ':com' => $prd->visible,
-                                    ':scale' => $prd->scaled,
-                                    ':id' => $prd->id));
+        $sql = "UPDATE PRODUCTS SET REFERENCE = :ref, CODE = :code, "
+                . "NAME = :name, PRICEBUY = :buy, PRICESELL = :sell, "
+                . "CATEGORY = :cat, TAXCAT = :tax, ATTRIBUTESET_ID = :attr, "
+                . "ISCOM = :com, ISSCALE = :scale";
+        if ($prd->image !== "") {
+            $sql .= ", IMAGE = :img";
+        }
+        $sql .= " WHERE ID = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(":ref", $prd->reference, \PDO::PARAM_STR);
+        $stmt->bindParam(":code", $code, \PDO::PARAM_STR);
+        $stmt->bindParam(":name", $prd->label, \PDO::PARAM_STR);
+        $stmt->bindParam(":buy", $prd->price_buy, \PDO::PARAM_STR);
+        $stmt->bindParam(":sell", $prd->price_sell, \PDO::PARAM_STR);
+        $stmt->bindParam(":cat", $prd->category->id, \PDO::PARAM_INT);
+        $stmt->bindParam(":tax", $prd->tax_cat->id, \PDO::PARAM_INT);
+        $stmt->bindParam(":attr", $attr_id, \PDO::PARAM_INT);
+        $stmt->bindParam(":com", $prd->visible, \PDO::PARAM_INT);
+        $stmt->bindParam(":scale", $prd->scaled, \PDO::PARAM_INT);
+        $stmt->bindParam(":id", $prd->id, \PDO::PARAM_INT);
+        if ($prd->image !== "") {
+            $stmt->bindParam(":img", $prd->image, \PDO::PARAM_LOB);
+        }
+        return $stmt->execute();
     }
     
     static function create($prd) {
@@ -177,22 +184,35 @@ class ProductsService {
         if ($prd->barcode != null) {
             $code = $prd->barcode;
         }
-        $stmt = $pdo->prepare("INSERT INTO PRODUCTS (ID, REFERENCE, CODE, NAME, "
-                              . "PRICEBUY, PRICESELL, CATEGORY, TAXCAT, "
-                              . "ATTRIBUTESET_ID, ISCOM, ISSCALE) VALUES "
-                              . "(:id, :ref, :code, :name, :buy, :sell, :cat, "
-                              . ":tax, :attr, :com, :scale)");
-        $stmt->execute(array(':ref' => $prd->reference,
-                                    ':code' => $code,
-                                    ':name' => $prd->label,
-                                    ':buy' => $prd->price_buy,
-                                    ':sell' => $prd->price_sell,
-                                    ':cat' => $prd->category->id,
-                                    ':tax' => $prd->tax_cat->id,
-                                    ':attr' => $attr_id,
-                                    ':com' => $prd->visible,
-                                    ':scale' => $prd->scaled,
-                                    ':id' => $id));
+        $sql = "INSERT INTO PRODUCTS (ID, REFERENCE, CODE, NAME, "
+                . "PRICEBUY, PRICESELL, CATEGORY, TAXCAT, "
+                . "ATTRIBUTESET_ID, ISCOM, ISSCALE";
+        if ($prd->image !== "") {
+            $sql .= ", IMAGE";
+        }
+        $sql .= ") VALUES (:id, :ref, :code, :name, :buy, :sell, :cat, "
+                . ":tax, :attr, :com, :scale";
+        if ($prd->image !== "") {
+            $sql .= ", :img";
+        }
+        $sql .= ")";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(":ref", $prd->reference, \PDO::PARAM_STR);
+        $stmt->bindParam(":code", $code, \PDO::PARAM_STR);
+        $stmt->bindParam(":name", $prd->label, \PDO::PARAM_STR);
+        $stmt->bindParam(":buy", $prd->price_buy, \PDO::PARAM_STR);
+        $stmt->bindParam(":sell", $prd->price_sell, \PDO::PARAM_STR);
+        $stmt->bindParam(":cat", $prd->category->id, \PDO::PARAM_INT);
+        $stmt->bindParam(":tax", $prd->tax_cat->id, \PDO::PARAM_INT);
+        $stmt->bindParam(":attr", $attr_id, \PDO::PARAM_INT);
+        $stmt->bindParam(":com", $prd->visible, \PDO::PARAM_INT);
+        $stmt->bindParam(":scale", $prd->scaled, \PDO::PARAM_INT);
+        $stmt->bindParam(":id", $id, \PDO::PARAM_INT);
+        if ($prd->image !== "") {
+            $stmt->bindParam(":img", $prd->image, \PDO::PARAM_LOB);
+        }
+        $stmt->execute();
+        var_dump($stmt->errorInfo());
         $catstmt = $pdo->prepare("INSERT INTO PRODUCTS_CAT (PRODUCT, CATORDER) "
                 . "VALUES (:id, NULL)");
         $catstmt->execute(array(":id" => $id));

@@ -65,6 +65,9 @@ class Product {
     public $category;
     public $tax_cat;
     public $attributes_set;
+    /** Contains the binary of the image. NULL if not any.
+     * For the services set this value to "" keep data unchanged.
+     */
     public $image;
 
     static function __build($id, $ref, $label, $price_sell, $category,
