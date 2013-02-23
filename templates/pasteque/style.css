@@ -28,6 +28,7 @@
 	overflow: hidden;
 	border-top-left-radius: 20px;
 	border-top-right-radius: 20px;
+	text-shadow: 2px 2px 0 #333;
 }
 .menu {
 	list-style-type: none;
@@ -40,6 +41,16 @@
 .menu li img {
 	vertical-align: middle;
 	margin-right: 3px;
+}
+.menu a,
+.menu a:visited,
+.menu a:active {
+	color: #304D29;
+	font-weight: bold;
+	text-decoration: none;
+}
+.menu a:hover {
+	color: #446E3A;
 }
 
 .btn {
@@ -141,9 +152,10 @@ form.edit  {
 h1 {
 	background-color: #409617;
 	border: 1px solid black;
-	border-radius: 5px;
-	padding-left: 20px;
+	border-radius: 10px 20px 5px 5px;
+	padding: 8px 20px;
 	color: #FFF;
+	text-shadow: 2px 2px 0 #333;
 }
 
 table {
