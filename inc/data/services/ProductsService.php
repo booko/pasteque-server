@@ -211,11 +211,13 @@ class ProductsService {
         if ($prd->image !== "") {
             $stmt->bindParam(":img", $prd->image, \PDO::PARAM_LOB);
         }
-        $stmt->execute();
-        var_dump($stmt->errorInfo());
+        if (!$stmt->execute()) {
+            return FALSE;
+        }
         $catstmt = $pdo->prepare("INSERT INTO PRODUCTS_CAT (PRODUCT, CATORDER) "
                 . "VALUES (:id, NULL)");
         $catstmt->execute(array(":id" => $id));
+        return $id;
     }
     
     static function delete($id) {

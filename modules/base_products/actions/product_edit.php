@@ -22,6 +22,8 @@
 
 namespace BaseProducts;
 
+$message = NULL;
+$error = NULL;
 if (isset($_POST['id'])) {
     if (isset($_POST['reference']) && isset($_POST['label'])
             && isset($_POST['realsell']) && isset($_POST['category'])
@@ -29,17 +31,20 @@ if (isset($_POST['id'])) {
         $cat = \Pasteque\Category::__build($_POST['category'], NULL, "dummy", NULL);
         $taxCat = \Pasteque\TaxesService::get($_POST['tax_cat']);
         $taxRate = $taxCat->getCurrentTax()->rate;
-        if ($_POST['clearImage'] == 1) {
-            $img = NULL;
-        }
-        if (isset($_FILES['image'])) {
+        if ($_FILES['image']['tmp_name'] !== "") {
             $img = file_get_contents($_FILES['image']['tmp_name']);
+        } else if ($_POST['clearImage']) {
+            $img = NULL;
         } else {
             $img = "";
         }
         $prd = \Pasteque\Product::__build($_POST['id'], $_POST['reference'], $_POST['label'], $_POST['realsell'], $cat, $taxCat,
                 FALSE, FALSE, $_POST['price_buy'], NULL, NULL, $img);
-        \Pasteque\ProductsService::update($prd);
+        if (\Pasteque\ProductsService::update($prd)) {
+            $message = \i18n("Changes saved");
+        } else {
+            $error = \i18n("Unable to save changes");
+        }
     }
 } else if (isset($_POST['reference'])) {
     if (isset($_POST['reference']) && isset($_POST['label'])
@@ -48,14 +53,19 @@ if (isset($_POST['id'])) {
         $cat = \Pasteque\Category::__build($_POST['category'], NULL, "dummy", NULL);
         $taxCat = \Pasteque\TaxesService::get($_POST['tax_cat']);
         $taxRate = $taxCat->getCurrentTax()->rate;
-        if (isset($_FILES['image'])) {
+        if ($_FILES['image']['tmp_name'] !== "") {
             $img = file_get_contents($_FILES['image']['tmp_name']);
         } else {
             $img = NULL;
         }
         $prd = new \Pasteque\Product($_POST['reference'], $_POST['label'], $_POST['realsell'], $cat, $taxCat,
                 FALSE, FALSE, $_POST['price_buy'], NULL, NULL, $img);
-        \Pasteque\ProductsService::create($prd);
+        $id = \Pasteque\ProductsService::create($prd);
+        if ($id !== FALSE) {
+            $message = \i18n("Product saved. <a href=\"%s\">Go to the product page</a>.", PLUGIN_NAME, \Pasteque\get_module_url_action(PLUGIN_NAME, 'product_edit', array('id' => $id)));
+        } else {
+            $error = \i18n("Unable to save changes");
+        }
     }
 }
 
@@ -72,6 +82,14 @@ $taxes = \Pasteque\TaxesService::getAll();
 $categories = \Pasteque\CategoriesService::getAll();
 ?>
 <h1><?php \pi18n("Edit a product", PLUGIN_NAME); ?></h1>
+
+<?php if ($message !== NULL) {
+    echo "<div class=\"message\">" . $message . "</div>\n";
+}
+if ($error !== NULL) {
+    echo "<div class=\"error\">" . $error . "</div>\n";
+}
+?>
 
 <form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post" enctype="multipart/form-data">
     <?php \Pasteque\form_hidden("edit", $product, "id"); ?>
