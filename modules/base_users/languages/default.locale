@@ -1,24 +1,12 @@
 {
-"Products": "Products",
-"Add a product": "Add a product",
-"No product found": "No product found",
-"Edit a product": "Edit a product",
-"Sell price + taxes": "Sell price + taxes",
-
-"Categories": "Categories",
-"Edit categories": "Edit categories",
-"Add a category": "Add a category",
-"%d categories": "%d categories",
-"No category found": "No category found",
-
-"Taxes": "Taxes",
-"Add a tax": "Add a tax",
-"Edit tax": "Edit tax",
-"Rates": "Rates",
-"New tax rate": "New rate",
+"Roles": "Roles",
+"Add a role": "Add a role",
+"Edit a role": "Edit a role",
+"Role saved. <a href=\"%s\">Go to the role page</a>.": "Role saved. <a href=\"%s\">Go to the role page</a>.",
 
 "Users": "Users",
 "Add an user": "Add an user",
 "Edit an user": "Edit an user",
-"%d users": "%d users"
+"%d users": "%d users",
+"User saved. <a href=\"%s\">Go to the user page</a>.": "User saved. <a href=\"%s\">Go to the user page</a>."
 }

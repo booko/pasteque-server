@@ -1,15 +1,19 @@
 {
 "Products": "Products",
 "Add a product": "Add a product",
+"%d products": "%d products",
 "No product found": "No product found",
 "Edit a product": "Edit a product",
 "Sell price + taxes": "Sell price + taxes",
+"Margin": "Margin",
+"Product saved. <a href=\"%s\">Go to the product page</a>.": "Product saved. <a href=\"%s\">Go to the product page</a>.",
 
 "Categories": "Categories",
 "Edit categories": "Edit categories",
 "Add a category": "Add a category",
 "%d categories": "%d categories",
 "No category found": "No category found",
+"Category saved. <a href=\"%s\">Go to the category page</a>.": "Category saved. <a href=\"%s\">Go to the category page</a>.",
 
 "Taxes": "Taxes",
 "Add a tax": "Add a tax",

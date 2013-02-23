@@ -3,12 +3,19 @@
 
 "Edit": "Modifier",
 "Delete": "Supprimer",
+"Restore": "Restaurer",
 "Save": "Enregistrer",
+"Changes saved": "Modifications enregistrées",
+"Unable to save changes": "Impossible d'enregistrer les modifications",
+
+"Image": "Image",
 
 "Product.label": "Désignation",
 "Product.reference": "Référence",
-"Product.tax_cat_id": "TVA",
+"Product.category": "Categorie",
+"Product.tax_cat": "TVA",
 "Product.price_sell": "Prix de vente",
+"Product.price_buy": "Prix d'achat",
 
 "Category.label": "Désignation",
 "Category.parent_id": "Parent",
@@ -17,5 +24,8 @@
 "Tax.rate": "Taux",
 "Tax.start_date": "Effectif au",
 
-"User.name": "Nom"
+"Role.name": "Rôle",
+
+"User.name": "Nom",
+"User.role": "Rôle"
 }

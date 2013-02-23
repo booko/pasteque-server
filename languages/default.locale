@@ -3,12 +3,19 @@
 
 "Edit": "Edit",
 "Delete": "Delete",
+"Restore": "Restore",
 "Save": "Save",
+"Changes saved": "Changes saved",
+"Unable to save changes": "Unable to save changes",
+
+"Image": "Image",
 
 "Product.label": "Name",
 "Product.reference": "Reference",
-"Product.tax_cat_id": "VAT",
-"Product.price_sell": "Price sell",
+"Product.category": "Category",
+"Product.tax_cat": "VAT",
+"Product.price_sell": "Sell price",
+"Product.price_buy": "Buy price",
 
 "Category.label": "Name",
 "Category.parent_id": "Parent",
@@ -17,5 +24,8 @@
 "Tax.rate": "Rate",
 "Tax.start_date": "Valid from",
 
-"User.name": "Name"
+"Role.name": "Role",
+
+"User.name": "Name",
+"User.role": "Role"
 }

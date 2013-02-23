@@ -102,7 +102,7 @@ if ($error !== NULL) {
 		<input id="sellvat" type="numeric" name="selltax" value="<?php echo $vatprice; ?>" />
 	</div>
 	<div class="row">
-		<label for="sell"><?php \pi18n("Sell price", PLUGIN_NAME); ?></label>
+		<label for="sell"><?php \pi18n("Product.price_sell"); ?></label>
 		<input type="hidden" id="realsell" name="realsell" <?php if ($product != NULL) echo 'value=' . $product->price_sell; ?> />
 		<input id="sell" type="numeric" name="sell" value="<?php echo $price; ?>" />
 	</div>
@@ -112,7 +112,7 @@ if ($error !== NULL) {
 		<input id="margin" type="numeric" disabled="true" />
 	</div>
 	<div class="row">
-		<label for="image"><?php \pi18n("Image", PLUGIN_NAME); ?></label>
+		<label for="image"><?php \pi18n("Image"); ?></label>
 		<div style="display:inline-block">
 			<input type="hidden" id="clearImage" name="clearImage" value="0" />
 		<?php if ($product !== NULL && $product->image !== NULL) { ?>
