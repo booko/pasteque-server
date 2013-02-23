@@ -22,7 +22,7 @@ namespace BaseProducts;
 
 function init() {
     global $MENU;
-    $MENU->addSection("catalog", "Catalogue", PLUGIN_NAME);
+    $MENU->addSection("catalog", "Catalog", PLUGIN_NAME);
     $MENU->registerModuleEntry("catalog", PLUGIN_NAME, "menu_tax.png", "Taxes", "taxes");
     $MENU->registerModuleEntry("catalog", PLUGIN_NAME, "menu_category.png", "Categories", "categories");
     $MENU->registerModuleEntry("catalog", PLUGIN_NAME, "menu_product.png", "Products", "products");

@@ -1,9 +1,13 @@
 {
+"Catalog": "Catalogue",
+
 "Products": "Produits",
 "Add a product": "Ajouter un produit",
 "%d products": "%d produits",
 "No product found": "Aucun produit trouvé",
 "Edit a product": "Édition d'un produit",
+"Archived": "Archives",
+
 "Display": "Affichage",
 "Price": "Prix",
 "Referencing": "Referencement",

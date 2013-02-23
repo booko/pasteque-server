@@ -34,6 +34,43 @@ $products = \Pasteque\ProductsService::getAll();
 
 <p><?php \pi18n("%d products", PLUGIN_NAME, count($products)); ?></p>
 
+<h2><?php \pi18n("Catalog", PLUGIN_NAME); ?></h2>
+
+<table cellpadding="0" cellspacing="0">
+	<thead>
+		<tr>
+			<th></th>
+			<th><?php \pi18n("Product.reference"); ?></th>
+			<th><?php \pi18n("Product.label"); ?></th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+<?php
+$par = FALSE;
+$archive = FALSE;
+foreach ($products as $product) {
+if ($product->visible) {
+$par = !$par;
+?>
+	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
+	    <td><img class="thumbnail" src="?<?php echo \Pasteque\URL_ACTION_PARAM; ?>=img&w=product&id=<?php echo $product->id; ?>" />
+		<td><?php echo $product->reference; ?></td>
+		<td><?php echo $product->label; ?></td>
+		<td class="edition">
+			<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'product_edit', array('id' => $product->id)); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
+			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("product", $product->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>
+		</td>
+	</tr>
+<?php
+} else { $archive = TRUE; }
+}
+?>
+	</tbody>
+</table>
+
+<?php if ($archive) { ?>
+<h2><?php \pi18n("Archived", PLUGIN_NAME); ?></h2>
 <table cellpadding="0" cellspacing="0">
 	<thead>
 		<tr>
@@ -47,6 +84,7 @@ $products = \Pasteque\ProductsService::getAll();
 <?php
 $par = FALSE;
 foreach ($products as $product) {
+if (!$product->visible) {
 $par = !$par;
 ?>
 	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
@@ -60,9 +98,12 @@ $par = !$par;
 	</tr>
 <?php
 }
+}
 ?>
 	</tbody>
 </table>
+<?php } // archive end ?>
+
 <?php
 if (count($products) == 0) {
 ?>

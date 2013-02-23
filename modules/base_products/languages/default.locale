@@ -1,8 +1,12 @@
 {
+"Catalog": "Catalog",
+
 "Products": "Products",
 "Add a product": "Add a product",
 "%d products": "%d products",
 "No product found": "No product found",
+"Archived": "Archived",
+
 "Edit a product": "Edit a product",
 "Display": "Display",
 "Price": "Price",
