@@ -52,10 +52,12 @@ if (isset($_GET['id'])) {
 <h1><?php \pi18n("Edit tax", PLUGIN_NAME); ?></h1>
 
 <!-- Tax category edit -->
-<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
+<form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
     <?php \Pasteque\form_hidden("edit", $tax_cat, "id"); ?>
 	<?php \Pasteque\form_input("edit", "TaxCat", $tax_cat, "name", "string", array("required" => true)); ?>
-	<?php \Pasteque\form_send(); ?>
+	<div class="row actions">
+		<?php \Pasteque\form_send(); ?>
+	</div>
 </form>
 <?php if ($tax_cat !== NULL) { ?>
 <form action="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'taxes'); ?>" method="post">
@@ -67,12 +69,14 @@ if (isset($_GET['id'])) {
 <!-- Tax rates -->
 <h2><?php \pi18n("Rates", PLUGIN_NAME); ?></h2>
 <?php foreach ($tax_cat->taxes as $tax) { ?>
-<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
+<form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
     <?php \Pasteque\form_hidden("rate$tax->id", $tax, "id"); ?>
     <?php \Pasteque\form_hidden("rate$tax->id", $tax, "tax_cat_id"); ?>
     <?php \Pasteque\form_input("rate$tax->id", "Tax", $tax, "rate", "float", array("required" => true, "step" => 0.001)); ?>
     <?php \Pasteque\form_input("rate$tax->id", "Tax", $tax, "start_date", "date", array("required" => true)); ?>
-    <?php \Pasteque\form_send(); ?>
+	<div class="row action">
+		<?php \Pasteque\form_send(); ?>
+	</div>
 </form>
 <form action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
 	<?php \Pasteque\form_delete("tax", $tax->id); ?>
@@ -83,10 +87,12 @@ if (isset($_GET['id'])) {
 <!-- New rate -->
 <?php if ($tax_cat !== NULL) { ?>
 <h2><?php \pi18n("New tax rate", PLUGIN_NAME); ?></h2>
-<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
+<form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
     <?php \Pasteque\form_value_hidden("new_rate", "tax_cat_id", $tax_cat->id); ?>
 	<?php \Pasteque\form_input("new_rate", "Tax", NULL, "rate", "float", array("required" => true)); ?>
 	<?php \Pasteque\form_input("new_rate", "Tax", NULL, "start_date", "date", array("required" => true)); ?>
-	<?php \Pasteque\form_send(); ?>
+	<div class="row actions">
+		<?php \Pasteque\form_send(); ?>
+	</div>
 </form>
 <?php } ?>

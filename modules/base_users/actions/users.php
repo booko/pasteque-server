@@ -28,7 +28,7 @@ $users = \Pasteque\UsersService::getAll();
 ?>
 <h1><?php \pi18n("Users", PLUGIN_NAME); ?></h1>
 
-<p><a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'user_edit'); ?>"><?php \pi18n("Add an user", PLUGIN_NAME); ?></a></p>
+<p><a class="btn" href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'user_edit'); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/btn_add.png" /><?php \pi18n("Add an user", PLUGIN_NAME); ?></a></p>
 
 <p><?php \pi18n("%d users", PLUGIN_NAME, count($users)); ?></p>
 

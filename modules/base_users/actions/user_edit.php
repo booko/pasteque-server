@@ -42,7 +42,7 @@ $permissions = \Pasteque\UsersService::getPermissions();
 ?>
 <h1><?php \pi18n("Edit an user", PLUGIN_NAME); ?></h1>
 
-<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
+<form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
     <?php \Pasteque\form_hidden("edit", $user, "id"); ?>
 	<?php \Pasteque\form_input("edit", "User", $user, "name", "string", array("required" => true)); ?>
 	<?php \Pasteque\form_send(); ?>

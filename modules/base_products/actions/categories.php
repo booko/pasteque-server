@@ -30,7 +30,7 @@ $categories = \Pasteque\CategoriesService::getAll();
 ?>
 <h1><?php \pi18n("Categories", PLUGIN_NAME); ?></h1>
 
-<p><a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'category_edit'); ?>" class="btn btn-primary"><?php \pi18n("Add a category", PLUGIN_NAME); ?></a></p>
+<p><a class="btn" href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'category_edit'); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/btn_add.png" /><?php \pi18n("Add a category", PLUGIN_NAME); ?></a></p>
 
 <p><?php \pi18n("%d categories", PLUGIN_NAME, count($categories)); ?></p>
 

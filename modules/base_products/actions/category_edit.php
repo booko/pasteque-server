@@ -38,10 +38,12 @@ if (isset($_GET['id'])) {
 ?>
 <h1><?php \pi18n("Edit a category", PLUGIN_NAME); ?></h1>
 
-<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
+<form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
     <?php \Pasteque\form_hidden("edit", $category, "id"); ?>
 	<?php \Pasteque\form_input("edit", "Category", $category, "label", "string", array("required" => true)); ?>
-	<?php \Pasteque\form_send(); ?>
+	<div class="row actions">
+		<?php \Pasteque\form_send(); ?>
+	</div>
 </form>
 <?php if ($category !== NULL) { ?>
 <form action="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'categories'); ?>" method="post">
