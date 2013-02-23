@@ -79,6 +79,7 @@ require_once(ABSPATH . "/inc/data/models/TaxCat.php");
 require_once(ABSPATH . "/inc/data/models/Ticket.php");
 require_once(ABSPATH . "/inc/data/models/TicketLine.php");
 require_once(ABSPATH . "/inc/data/models/User.php");
+require_once(ABSPATH . "/inc/data/models/Role.php");
 require_once(ABSPATH . "/inc/data/services/AttributesService.php");
 require_once(ABSPATH . "/inc/data/services/CashesService.php");
 require_once(ABSPATH . "/inc/data/services/CategoriesService.php");
@@ -87,6 +88,7 @@ require_once(ABSPATH . "/inc/data/services/ProductsService.php");
 require_once(ABSPATH . "/inc/data/services/TaxesService.php");
 require_once(ABSPATH . "/inc/data/services/TicketsService.php");
 require_once(ABSPATH . "/inc/data/services/UsersService.php");
+require_once(ABSPATH . "/inc/data/services/RolesService.php");
 
 load_base_i18n(detect_preferred_language());
 ?>
