@@ -52,14 +52,26 @@ function tpl_404() {
 
 function tpl_menu() {
     global $MENU;
-    $entries = $MENU->get_entries();
     echo "<div id=\"menu-container\">\n";
     echo "\t<img src=\"" . get_template_url() . "img/logo.png" . "\" />\n";
-    echo "\t<ul class=\"menu\">\n";
-    foreach ($entries as $entry) {
-        echo "\t\t<li><a href=\"" . get_url_action($entry->getAction()) . "\">" . __($entry->getName(), $entry->getNameDomain()) . "</a></li>\n";
+    foreach ($MENU->getSections() as $section) {
+        echo "\t<div class=\"menu-section\">\n";
+        echo "\t\t<div class=\"menu-section-title\">";
+        \pi18n($section->getName(), $section->getNameDomain());
+        echo "</div>\n";
+        echo "\t\t<ul class=\"menu\">\n";
+        foreach ($section->getEntries() as $entry) {
+            echo "\t\t\t<li>";
+            if ($entry->getImg() !== NULL && $entry->getImg() != "") {
+                echo "<img src=\"" . get_template_url() . "img/" . $entry->getImg() . "\" width=\"22\" height=\"22\" />";
+            } else {
+                echo "<img src=\"" . get_template_url() . "img/menu_default.png\" width=\"22\" height=\"22\" />";
+            }
+            echo "<a href=\"" . get_url_action($entry->getAction()) . "\">" . __($entry->getName(), $entry->getNameDomain()) . "</a></li>\n";
+        }
+        echo "\t\t</ul>\n";
+        echo "\t</div>\n";
     }
-    echo "\t</ul>\n";
     echo "</div>";
 }
 

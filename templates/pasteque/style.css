@@ -7,17 +7,39 @@
 	margin-left: 200px;
 }
 
-.menu {
-	list-style-type: none;
+.menu-section {
 	border: 1px solid black;
 	border-radius: 20px;
 	width: auto;
-	padding: 5px;
 	width: 80%;
 	margin: 20px 0;
 }
+.menu-section-title {
+    font-weight: bold;
+    text-align: center;
+	background-color: #409617;
+	background-image: linear-gradient(bottom, rgb(47,69,44) 18%, rgb(63,150,23) 59%);
+	background-image: -o-linear-gradient(bottom, rgb(47,69,44) 18%, rgb(63,150,23) 59%);
+	background-image: -moz-linear-gradient(bottom, rgb(47,69,44) 18%, rgb(63,150,23) 59%);
+	background-image: -webkit-linear-gradient(bottom, rgb(47,69,44) 18%, rgb(63,150,23) 59%);
+	background-image: -ms-linear-gradient(bottom, rgb(47,69,44) 18%, rgb(63,150,23) 59%);
+	color: #FFF;
+	padding: 5px 0 5px 0;
+	overflow: hidden;
+	border-top-left-radius: 20px;
+	border-top-right-radius: 20px;
+}
+.menu {
+	list-style-type: none;
+	padding: 5px 8px;
+	margin: 0px;
+}
 .menu li {
 	margin: 5px 0 5px 0;
+}
+.menu li img {
+	vertical-align: middle;
+	margin-right: 3px;
 }
 
 form {
