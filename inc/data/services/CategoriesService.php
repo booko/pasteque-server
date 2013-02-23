@@ -55,21 +55,41 @@ class CategoriesService {
             return false;
         }
         $pdo = PDOBuilder::getPDO();
-        $stmt = $pdo->prepare('UPDATE CATEGORIES SET NAME = :name, '
-                              . 'PARENTID = :pid WHERE ID = :id');
-        return $stmt->execute(array(':name' => $cat->label,
-                                    ':pid' => $cat->parent_id,
-                                    ':id' => $cat->id));
+        $sql = "UPDATE CATEGORIES SET NAME = :name, PARENTID = :pid";
+        if ($cat->image !== "") {
+            $sql .= ", IMAGE = :img";
+        }
+        $sql .= " WHERE ID = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(":name", $cat->label, \PDO::PARAM_STR);
+        $stmt->bindParam(":pid", $cat->parent_id, \PDO::PARAM_INT);
+        $stmt->bindParam(":id", $cat->id, \PDO::PARAM_INT);
+        if ($cat->image !== "") {
+            $stmt->bindParam(":img", $cat->image, \PDO::PARAM_LOB);
+        }
+        return $stmt->execute();
     }
 
     static function createCat($cat) {
         $pdo = PDOBuilder::getPDO();
         $id = md5(time() . rand());
-        $stmt = $pdo->prepare('INSERT INTO CATEGORIES (ID, NAME, PARENTID) VALUES '
-                              . '(:id, :name, :pid)');
-        return $stmt->execute(array(':id' => $id,
-                                    ':name' => $cat->label,
-                                    ':pid' => $cat->parent_id));
+        $sql = "INSERT INTO CATEGORIES (ID, NAME, PARENTID";
+        if ($cat->image !== "") {
+            $sql .= ", IMAGE";
+        }
+        $sql .= ") VALUES (:id, :name, :pid";
+        if ($cat->image !== "") {
+            $sql .= ", :img";
+        }
+        $sql .= ")";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(":name", $cat->label, \PDO::PARAM_STR);
+        $stmt->bindParam(":pid", $cat->parent_id, \PDO::PARAM_INT);
+        $stmt->bindParam(":id", $id, \PDO::PARAM_INT);
+        if ($cat->image !== "") {
+            $stmt->bindParam(":img", $cat->image, \PDO::PARAM_LOB);
+        }
+        return $stmt->execute();
     }
 
     static function deleteCat($id) {

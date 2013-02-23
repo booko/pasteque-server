@@ -122,6 +122,7 @@ if ($error !== NULL) {
 		<?php } ?>
 			<input type="file" name="image" />
 		</div>
+	</div>
 	
 	<div class="row actions">
 		<?php \Pasteque\form_send(); ?>

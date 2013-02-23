@@ -36,7 +36,7 @@ class Category {
     function __construct($parent_id, $label, $image) {
         $this->parent_id = $parent_id;
         $this->label = $label;
-        $this->img = $image;
+        $this->image = $image;
     }
 
 }

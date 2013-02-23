@@ -23,11 +23,31 @@
 namespace BaseProducts;
 
 if (isset($_POST['id']) && isset($_POST['label'])) {
-    $cat = \Pasteque\Category::__build($_POST['id'], NULL,
-            $_POST['label']);
+    if ($_FILES['image']['tmp_name'] !== "") {
+        $img = file_get_contents($_FILES['image']['tmp_name']);
+    } else if ($_POST['clearImage']) {
+        $img = NULL;
+    } else {
+        $img = "";
+    }
+    $parent_id = NULL;
+    if ($_POST['parent_id'] !== "") {
+        $parent_id = $_POST['parent_id'];
+    }
+    $cat = \Pasteque\Category::__build($_POST['id'], $parent_id,
+            $_POST['label'], $img);
     \Pasteque\CategoriesService::updateCat($cat);
 } else if (isset($_POST['label'])) {
-    $cat = new \Pasteque\Category(NULL, $_POST['label']);
+    if ($_FILES['image']['tmp_name'] !== "") {
+        $img = file_get_contents($_FILES['image']['tmp_name']);
+    } else {
+        $img = NULL;
+    }
+    $parent_id = NULL;
+    if ($_POST['parent_id'] !== "") {
+        $parent_id = $_POST['parent_id'];
+    }
+    $cat = new \Pasteque\Category($parent_id, $_POST['label'], $img);
     \Pasteque\CategoriesService::createCat($cat);
 }
 
@@ -38,9 +58,23 @@ if (isset($_GET['id'])) {
 ?>
 <h1><?php \pi18n("Edit a category", PLUGIN_NAME); ?></h1>
 
-<form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
+<form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post" enctype="multipart/form-data">
     <?php \Pasteque\form_hidden("edit", $category, "id"); ?>
 	<?php \Pasteque\form_input("edit", "Category", $category, "label", "string", array("required" => true)); ?>
+	<?php \Pasteque\form_input("edit", "Category", $category, "parent_id", "pick", array("model" => "Category", "nullable" => TRUE)); ?>
+	<div class="row">
+		<label for="image"><?php \pi18n("Image", PLUGIN_NAME); ?></label>
+		<div style="display:inline-block">
+			<input type="hidden" id="clearImage" name="clearImage" value="0" />
+		<?php if ($category !== NULL && $category->image !== NULL) { ?>
+			<img id="img" class="image-preview" src="?<?php echo \Pasteque\URL_ACTION_PARAM; ?>=img&w=category&id=<?php echo $category->id; ?>" />
+			<a id="clear" href="" onClick="javascript:clearImage(); return false;"><?php \pi18n("Delete"); ?></a>
+			<a style="display:none" id="restore" href="" onClick="javascript:restoreImage(); return false;"><?php \pi18n("Restore"); ?></a><br />
+		<?php } ?>
+			<input type="file" name="image" />
+		</div>
+	</div>
+
 	<div class="row actions">
 		<?php \Pasteque\form_send(); ?>
 	</div>
@@ -50,3 +84,19 @@ if (isset($_GET['id'])) {
     <?php \Pasteque\form_delete("cat", $category->id); ?>
 </form>
 <?php } ?>
+
+<script type="text/javascript">
+	clearImage = function() {
+		jQuery("#img").hide();
+		jQuery("#clear").hide();
+		jQuery("#restore").show();
+		jQuery("#clearImage").val(1);
+	}
+	restoreImage = function() {
+		jQuery("#img").show();
+		jQuery("#clear").show();
+		jQuery("#restore").hide();
+		jQuery("#clearImage").val(0);
+	}	
+</script>
+

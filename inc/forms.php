@@ -108,7 +108,7 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
         foreach ($data as $r) {
             $selected = "";
             if ($object != NULL && ($object->{$field} == $r->id
-                    || $object->{$field}->id == $r->id)) {
+                    || (is_object($object->{$field}) && $object->{$field}->id == $r->id))) {
                 $selected = ' selected="true"';
             }
             echo '<option value="' . $r->id . '"' . $selected . '>'
