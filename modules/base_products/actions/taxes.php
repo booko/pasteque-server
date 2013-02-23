@@ -41,9 +41,11 @@ $taxes = \Pasteque\TaxesService::getAll();
 	</thead>
 	<tbody>
 <?php
+$par = FALSE;
 foreach ($taxes as $tax) {
+$par = !$par;
 ?>
-	<tr>
+	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
 		<td><?php echo $tax->label; ?></td>
 		<td class="edition">
 			<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'tax_edit', array('id' => $tax->id)); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>

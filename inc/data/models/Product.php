@@ -65,20 +65,21 @@ class Product {
     public $category;
     public $tax_cat;
     public $attributes_set;
+    public $image;
 
     static function __build($id, $ref, $label, $price_sell, $category,
                             $tax_cat, $visible, $scaled, $price_buy = null,
-                            $attributes_set = null, $barcode = null) {
+                            $attributes_set = null, $barcode = null, $image) {
         $prd = new Product($ref, $label, $price_sell, $category,
                             $tax_cat, $visible, $scaled, $price_buy,
-                            $attributes_set, $barcode);
+                            $attributes_set, $barcode, $image);
         $prd->id = $id;
         return $prd;
     }
 
     function __construct($ref, $label, $price_sell, $category,
                          $tax_cat, $visible, $scaled, $price_buy = null,
-                         $attributes_set = null, $barcode = null) {
+                         $attributes_set = null, $barcode = null, $image = null) {
         $this->reference = $ref;
         $this->label = $label;
         $this->price_sell = $price_sell;
@@ -89,6 +90,7 @@ class Product {
         $this->category = $category;
         $this->tax_cat = $tax_cat;
         $this->attributes_set = $attributes_set;
+        $this->image = $image;
     }
 
     function getTotalPrice() {

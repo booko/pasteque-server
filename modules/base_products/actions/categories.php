@@ -37,15 +37,19 @@ $categories = \Pasteque\CategoriesService::getAll();
 <table cellpadding="0" cellspacing="0">
 	<thead>
 		<tr>
+			<th></th>
 			<th><?php \pi18n("Category.label"); ?></th>
 			<th></th>
 		</tr>
 	</thead>
 	<tbody>
 <?php
+$par = FALSE;
 foreach ($categories as $category) {
+$par = !$par;
 ?>
-	<tr>
+	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
+		<td><img class="thumbnail" src="?<?php echo \Pasteque\URL_ACTION_PARAM; ?>=img&w=category&id=<?php echo $category->id; ?>" />
 		<td><?php echo $category->label; ?></td>
 		<td class="edition">
 			<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'category_edit', array('id' => $category->id)); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>

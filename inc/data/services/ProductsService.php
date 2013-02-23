@@ -44,7 +44,8 @@ class ProductsService {
                                 $db_prd['NAME'], $db_prd['PRICESELL'],
                                 $cat, $tax_cat, $visible,
                                 ord($db_prd['ISSCALE']) == 1,
-                                $db_prd['PRICEBUY'], $attr, $db_prd['CODE']);
+                                $db_prd['PRICEBUY'], $attr, $db_prd['CODE'],
+                                $db_prd['IMAGE']);
     }
 
     static function getAll($full = false) {

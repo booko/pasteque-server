@@ -24,7 +24,7 @@ class CategoriesService {
 
     private static function buildDBCat($db_cat) {
         return Category::__build($db_cat['ID'], $db_cat['PARENTID'],
-                                 $db_cat['NAME']);
+                                 $db_cat['NAME'], $db_cat['IMAGE']);
     }
 
     static function getAll() {

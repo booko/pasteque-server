@@ -97,6 +97,13 @@ th {
 tr {
 	background-color: #D3FFBF;
 }
+tr.row-odd {
+	background-color: #E5FFD9;
+}
 tr:hover {
 	background-color: #91E869;
+}
+.thumbnail {
+	max-width: 32px;
+	max-height: 32px;
 }

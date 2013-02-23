@@ -37,6 +37,7 @@ $products = \Pasteque\ProductsService::getAll();
 <table cellpadding="0" cellspacing="0">
 	<thead>
 		<tr>
+			<th></th>
 			<th><?php \pi18n("Product.reference"); ?></th>
 			<th><?php \pi18n("Product.label"); ?></th>
 			<th></th>
@@ -44,9 +45,12 @@ $products = \Pasteque\ProductsService::getAll();
 	</thead>
 	<tbody>
 <?php
+$par = FALSE;
 foreach ($products as $product) {
+$par = !$par;
 ?>
-	<tr>
+	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
+	    <td><img class="thumbnail" src="?<?php echo \Pasteque\URL_ACTION_PARAM; ?>=img&w=product&id=<?php echo $product->id; ?>" />
 		<td><?php echo $product->reference; ?></td>
 		<td><?php echo $product->label; ?></td>
 		<td class="edition">

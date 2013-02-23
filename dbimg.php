@@ -1,5 +1,5 @@
 <?php
-//    Pastèque Web back office
+//    Pastèque Web back office, Products module
 //
 //    Copyright (C) 2013 Scil (http://scil.coop)
 //
@@ -18,29 +18,28 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
-// Index is the entry point for everything.
 namespace Pasteque;
 
-const ABSPATH = __DIR__; // Base path. Also to check if a call
-                         // originates from index.php
-// Load
-require_once(ABSPATH . "/inc/load.php");
-
-// Check user authentication
-if (!is_user_logged_in()) {
-    show_login_page();
-} else {
-    require_once(ABSPATH . "/inc/load_logged.php");
-    switch($_GET[URL_ACTION_PARAM]) {
-    case "img":
-        require_once(ABSPATH . "/dbimg.php");
-        break;
-    default:
-        tpl_open();
-        url_content();
-        tpl_close();
-        break;
-    }
+if (@constant("\Pasteque\ABSPATH") === NULL) {
+    die();
 }
 
+switch($_GET['w']) {
+case 'product':
+    $prd = ProductsService::get($_GET['id']);
+    if ($prd->image !== NULL) {
+        echo $prd->image;
+    } else {
+        echo file_get_contents(ABSPATH . "/templates/" . $config['template'] . "/img/default_product.png");
+    }
+    break;
+case 'category':
+    $cat = CategoriesService::get($_GET['id']);
+    if ($cat->image !== NULL) {
+        echo $cat->image;
+    } else {
+        echo file_get_contents(ABSPATH . "/templates/" . $config['template'] . "/img/default_category.png");
+    }
+    break;
+}
 ?>
