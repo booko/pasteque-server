@@ -24,7 +24,7 @@ namespace Pasteque;
  * creates the timestamp.
  */
 function timefstr($format, $date) {
-    $dateTime = DateTime::createFromFormat($format, $date);
+    $dateTime = \DateTime::createFromFormat($format, $date);
     return $dateTime->getTimestamp();
 }
 

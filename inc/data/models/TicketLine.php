@@ -66,7 +66,7 @@ class TicketLine {
     /** Build xml attributes from line data. See TicketLineInfo constructors. */
     private function createAttributes() {
         // Set xml
-        $domimpl = new DOMImplementation();
+        $domimpl = new \DOMImplementation();
         $doctype = $domimpl->createDocumentType('properties', null,
                                                 "http://java.sun.com/dtd/properties.dtd");
         $attrs = $domimpl->createDocument(null, null, $doctype);

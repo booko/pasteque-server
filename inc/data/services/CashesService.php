@@ -77,7 +77,7 @@ class CashesService {
 
     static function update($cash) {
         $pdo = PDOBuilder::getPDO();
-        $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+        $pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
         $startParam = ($cash->isOpened()) ? ':start' : 'NULL';
         $endParam = ($cash->isClosed()) ? ':end' : 'NULL';
         $stmt = $pdo->prepare("UPDATE CLOSEDCASH SET DATESTART = $startParam, "
@@ -85,11 +85,11 @@ class CashesService {
         $stmt->bindParam(':id', $cash->id);
         if ($cash->isOpened()) {
             $open = stdstrftime($cash->openDate);
-            $stmt->bindParam(':start', $open, PDO::PARAM_INT);
+            $stmt->bindParam(':start', $open, \PDO::PARAM_INT);
         }
         if ($cash->isClosed()) {
             $close = stdstrftime($cash->closeDate);
-            $stmt->bindParam(':end', $close, PDO::PARAM_INT);
+            $stmt->bindParam(':end', $close, \PDO::PARAM_INT);
         }
         return $stmt->execute();
     }
