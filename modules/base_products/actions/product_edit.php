@@ -24,49 +24,105 @@ namespace BaseProducts;
 
 if (isset($_POST['id'])) {
     if (isset($_POST['reference']) && isset($_POST['label'])
-            && isset($_POST['selltax']) && isset($_POST['category'])
+            && isset($_POST['realsell']) && isset($_POST['category'])
             && isset($_POST['tax_cat'])) {
-        $cat = \Pasteque\Category::__build($_POST['category'], NULL, "dummy");
+        $cat = \Pasteque\Category::__build($_POST['category'], NULL, "dummy", NULL);
         $taxCat = \Pasteque\TaxesService::get($_POST['tax_cat']);
         $taxRate = $taxCat->getCurrentTax()->rate;
-        $sell = $_POST['selltax'] / (1 + $taxRate);
-        $prd = \Pasteque\Product::__build($_POST['id'], $_POST['reference'], $_POST['label'], $sell, $cat, $taxCat,
-                FALSE, FALSE, NULL, NULL, NULL);
+        $prd = \Pasteque\Product::__build($_POST['id'], $_POST['reference'], $_POST['label'], $_POST['realsell'], $cat, $taxCat,
+                FALSE, FALSE, $_POST['price_buy'], NULL, NULL, NULL);
         \Pasteque\ProductsService::update($prd);
     }
 } else if (isset($_POST['reference'])) {
     if (isset($_POST['reference']) && isset($_POST['label'])
-            && isset($_POST['selltax']) && isset($_POST['category'])
+            && isset($_POST['realsell']) && isset($_POST['category'])
             && isset($_POST['tax_cat'])) {
-        $cat = \Pasteque\Category::__build($_POST['category'], NULL, "dummy");
+        $cat = \Pasteque\Category::__build($_POST['category'], NULL, "dummy", NULL);
         $taxCat = \Pasteque\TaxesService::get($_POST['tax_cat']);
         $taxRate = $taxCat->getCurrentTax()->rate;
-        $sell = $_POST['selltax'] / (1 + $taxRate);
-        $prd = new \Pasteque\Product($_POST['reference'], $_POST['label'], $sell, $cat, $taxCat,
-                FALSE, FALSE, NULL, NULL, NULL);
+        $prd = new \Pasteque\Product($_POST['reference'], $_POST['label'], $_POST['realsell'], $cat, $taxCat,
+                FALSE, FALSE, $_POST['price_buy'], NULL, NULL, NULL);
         \Pasteque\ProductsService::create($prd);
     }
 }
 
 $product = NULL;
 $vatprice = "";
+$price = "";
 if (isset($_GET['id'])) {
     $product = \Pasteque\ProductsService::get($_GET['id']);
     $tax = $product->tax_cat->getCurrentTax();
     $vatprice = $product->price_sell * (1 + $tax->rate);
+    $price = sprintf("%.2f", $product->price_sell);
 }
 $taxes = \Pasteque\TaxesService::getAll();
 $categories = \Pasteque\CategoriesService::getAll();
 ?>
 <h1><?php \pi18n("Edit a product", PLUGIN_NAME); ?></h1>
 
-<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
+<form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
     <?php \Pasteque\form_hidden("edit", $product, "id"); ?>
 	<?php \Pasteque\form_input("edit", "Product", $product, "reference", "string", array("required" => true)); ?>
 	<?php \Pasteque\form_input("edit", "Product", $product, "label", "string", array("required" => true)); ?>
-	<?php \Pasteque\form_input("edit", "Product", $product, "tax_cat", "pick", array("model" => "TaxCategory")); ?>
-	<label for="sell"><?php \pi18n("Sell price + taxes", PLUGIN_NAME); ?></label><input id="sell" type="numeric" name="selltax" value="<?php echo $vatprice; ?>" />
 	<?php \Pasteque\form_input("edit", "Product", $product, "category", "pick", array("model" => "Category")); ?>
+	<?php \Pasteque\form_input("edit", "Product", $product, "tax_cat", "pick", array("model" => "TaxCategory")); ?>
+	<div class="row">
+		<label for="sellvat"><?php \pi18n("Sell price + taxes", PLUGIN_NAME); ?></label>
+		<input id="sellvat" type="numeric" name="selltax" value="<?php echo $vatprice; ?>" />
+	</div>
+	<div class="row">
+		<label for="sell"><?php \pi18n("Sell price", PLUGIN_NAME); ?></label>
+		<input type="hidden" id="realsell" name="realsell" <?php if ($product != NULL) echo 'value=' . $product->price_sell; ?> />
+		<input id="sell" type="numeric" name="sell" value="<?php echo $price; ?>" />
+	</div>
+	<?php \Pasteque\form_input("edit", "Product", $product, "price_buy", "numeric"); ?>
+	<div class="row">
+		<label for="margin"><?php \pi18n("Margin", PLUGIN_NAME); ?></label>
+		<input id="margin" type="numeric" disabled="true" />
+	</div>
 	
-	<?php \Pasteque\form_send(); ?>
+	<div class="row actions">
+		<?php \Pasteque\form_send(); ?>
+	</div>
 </form>
+
+<script type="text/javascript">
+	var tax_rates = new Array();
+<?php foreach ($taxes as $tax) {
+	echo "\ttax_rates['" . $tax->id . "'] = " . $tax->getCurrentTax()->rate . ",\n";
+} ?>
+
+	updateSellPrice = function() {
+		var sellvat = jQuery("#sellvat").val();
+		var rate = tax_rates[jQuery("#edit-tax_cat").val()];
+		var sell = sellvat / (1 + rate);
+		jQuery("#realsell").val(sell);
+		jQuery("#sell").val(sell.toFixed(2));
+		updateMargin();
+	}
+	updateSellVatPrice = function() {
+		// Update sellvat price
+		var sell = jQuery("#sell").val();
+		var rate = tax_rates[jQuery("#edit-tax_cat").val()];
+		var sellvat = sell * (1 + rate);
+		// Round to 2 decimals and refresh sell price to avoid unrounded payments
+		sellvat = sellvat.toFixed(2);
+		jQuery("#sellvat").val(sellvat);
+		updateSellPrice();
+		updateMargin();
+	}
+	updateMargin = function() {
+		var sell = jQuery("#realsell").val();
+		var buy = jQuery("#edit-price_buy").val();
+		var ratio = sell / buy - 1;
+		var margin = (ratio * 100).toFixed(2) + "%";
+		var rate = (sell / buy).toFixed(2);
+		jQuery("#margin").val(margin + "\t\t" + rate);
+	}
+	updateMargin();
+
+	jQuery("#sellvat").change(updateSellPrice);
+	jQuery("#edit-tax_cat").change(updateSellPrice);
+	jQuery("#sell").change(updateSellVatPrice);
+	jQuery("#edit-price_buy").change(updateMargin);
+</script>

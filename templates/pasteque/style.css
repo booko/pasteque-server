@@ -42,17 +42,52 @@
 	margin-right: 3px;
 }
 
-form {
+.edit .row {
 	width: 600px;
+	padding: 5px 0;
 }
 
-label {
+.edit .row label {
 	display: inline-block;
-	width: 250px;
+	width: 30%;
 }
-input {
-	width: 330px;
+.edit .row input,
+.edit .row select {
+	width: 65%;
 }
+.edit .actions {
+	margin-top: 15px;
+	text-align: right;
+}
+.edit .btn-send {
+	background-color: #006DCC;
+	background-image: linear-gradient(to bottom, #0088CC, #0044CC);
+	background-repeat: repeat-x;
+	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+	border-radius: 5px;
+	color: #FFFFFF;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+	padding: 3px;
+}
+.edit .btn-delete:hover {
+	background-color: #0044CC;
+	background-image: none;
+}
+.edit .btn-delete {
+	background-color: #006DCC;
+	background-image: linear-gradient(to bottom, #0088CC, #0044CC);
+	background-repeat: repeat-x;
+	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+	border-radius: 5px;
+	color: #FFFFFF;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+	padding: 3px;
+}
+.edit .btn-send:hover {
+	background-color: #0044CC;
+	background-image: none;
+}
+
 .edition a,
 .edition button {
 	display: inline-block;

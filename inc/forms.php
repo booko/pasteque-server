@@ -31,11 +31,13 @@ function form_value_hidden($form_id, $name, $value) {
 }
 
 function form_input($form_id, $class, $object, $field, $type, $args = array()) {
+    echo "<div class=\"row\">\n";
     if ($type != "pick_multiple") {
         echo '<label for="' . $form_id . '-' . $field . '">';
         echo \i18n($class . "." . $field);
         echo "</label>\n";
     }
+    $required = "";
     if (isset($args['required']) && $args['required']) {
         $required = ' required="true"';
     }
@@ -134,10 +136,11 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
         }
         break;
     }
+    echo "</div>";
 }
 
 function form_send() {
-    echo '<button class="btn btn-primary" type="submit">' . \i18n('Save') . '</button>';
+    echo '<button class="btn-send" type="submit">' . \i18n('Save') . '</button>';
 }
 function form_delete($what, $id, $img_src = NULL) {
     echo '<input type="hidden" name="delete-' . $what . '" value="' . $id . '" />';

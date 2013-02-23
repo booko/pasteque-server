@@ -31,6 +31,7 @@ function tpl_open() {
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title><?php \pi18n("Pastèque"); ?></title>
 	<link rel="stylesheet" type="text/css" href="templates/pasteque/style.css" />
+	<script type="text/javascript" src="templates/pasteque/js/jquery-1.9.1.min.js"></script>
 </head>
 <body>
 <?php tpl_menu(); ?>
