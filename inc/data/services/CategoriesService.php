@@ -89,7 +89,11 @@ class CategoriesService {
         if ($cat->image !== "") {
             $stmt->bindParam(":img", $cat->image, \PDO::PARAM_LOB);
         }
-        return $stmt->execute();
+        if ($stmt->execute() !== FALSE) {
+            return $id;
+        } else {
+            return FALSE;
+        }
     }
 
     static function deleteCat($id) {

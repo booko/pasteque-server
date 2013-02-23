@@ -22,6 +22,8 @@
 
 namespace BaseProducts;
 
+$message = NULL;
+$error = NULL;
 if (isset($_POST['id']) && isset($_POST['label'])) {
     if ($_FILES['image']['tmp_name'] !== "") {
         $img = file_get_contents($_FILES['image']['tmp_name']);
@@ -36,7 +38,11 @@ if (isset($_POST['id']) && isset($_POST['label'])) {
     }
     $cat = \Pasteque\Category::__build($_POST['id'], $parent_id,
             $_POST['label'], $img);
-    \Pasteque\CategoriesService::updateCat($cat);
+    if (\Pasteque\CategoriesService::updateCat($cat)) {
+        $message = \i18n("Changes saved");
+    } else {
+        $error = \i18n("Unable to save changes");
+    }
 } else if (isset($_POST['label'])) {
     if ($_FILES['image']['tmp_name'] !== "") {
         $img = file_get_contents($_FILES['image']['tmp_name']);
@@ -48,7 +54,12 @@ if (isset($_POST['id']) && isset($_POST['label'])) {
         $parent_id = $_POST['parent_id'];
     }
     $cat = new \Pasteque\Category($parent_id, $_POST['label'], $img);
-    \Pasteque\CategoriesService::createCat($cat);
+    $id = \Pasteque\CategoriesService::createCat($cat);
+    if ($id !== FALSE) {
+        $message = \i18n("Category saved. <a href=\"%s\">Go to the category page</a>.", PLUGIN_NAME, \Pasteque\get_module_url_action(PLUGIN_NAME, 'category_edit', array('id' => $id)));
+    } else {
+        $error = \i18n("Unable to save changes");
+    }
 }
 
 $category = NULL;
@@ -57,6 +68,14 @@ if (isset($_GET['id'])) {
 }
 ?>
 <h1><?php \pi18n("Edit a category", PLUGIN_NAME); ?></h1>
+
+<?php if ($message !== NULL) {
+    echo "<div class=\"message\">" . $message . "</div>\n";
+}
+if ($error !== NULL) {
+    echo "<div class=\"error\">" . $error . "</div>\n";
+}
+?>
 
 <form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post" enctype="multipart/form-data">
     <?php \Pasteque\form_hidden("edit", $category, "id"); ?>
