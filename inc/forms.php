@@ -66,7 +66,9 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
                 echo ' checked="checked"';
             }
         } else {
-            echo ' checked="checked"';
+            if (!isset($args['default']) || $args['default'] == TRUE) {
+                echo ' checked="checked"';
+            }
         }
         echo " />\n";
         break;

@@ -117,7 +117,7 @@ if ($error !== NULL) {
 	</fieldset>
 	<fieldset>
 	<legend><?php \pi18n("Price", PLUGIN_NAME); ?></legend>
-	<?php \Pasteque\form_input("edit", "Product", $product, "scaled", "boolean"); ?>
+	<?php \Pasteque\form_input("edit", "Product", $product, "scaled", "boolean", array("default" => FALSE)); ?>
 	<?php \Pasteque\form_input("edit", "Product", $product, "tax_cat", "pick", array("model" => "TaxCategory")); ?>
 	<div class="row">
 		<label for="sellvat"><?php \pi18n("Sell price + taxes", PLUGIN_NAME); ?></label>
