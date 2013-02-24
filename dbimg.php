@@ -41,6 +41,12 @@ case 'category':
         echo file_get_contents(ABSPATH . "/templates/" . $config['template'] . "/img/default_category.png");
     }
     break;
+case 'resource':
+    $res = ResourcesService::get($_GET['id']);
+    if ($res->type == Resource::TYPE_IMAGE) {
+        echo $res->content;
+    }
+    break;
 case 'barcode':
     require_once(ABSPATH . "/lib/barcode-master/php-barcode.php");
     $font = "./lib/barcode-master/NOTTB___.TTF";
