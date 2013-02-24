@@ -1,0 +1,12 @@
+{
+"Stocks": "Stocks",
+
+"Moves": "Mouvement",
+"Stock move": "Mouvement de stock",
+"Operation": "Operation",
+"Input (buy)": "Entrée (achat)",
+"Output (sell)": "Sortie (vente)",
+"Output (return to supplyer": "Sortie (retour au fournisseur)",
+
+"Inventory": "Inventaire"
+}

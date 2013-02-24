@@ -1,0 +1,12 @@
+{
+"Stocks": "Stocks",
+
+"Moves": "Moves",
+"Stock move": "Stock move",
+"Operation": "Operation",
+"Input (buy)": "Input (buy)",
+"Output (sell)": "Output (sell)",
+"Output (return to supplyer)": "Output (return to supplyer)",
+
+"Inventory": "Inventory"
+}
