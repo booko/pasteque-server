@@ -21,9 +21,11 @@
 namespace BaseStocks;
 
 $products = \Pasteque\ProductsService::getAll();
+$stocks = \Pasteque\StocksService::getQties();
+$levels = \Pasteque\StocksService::getLevels();
 ?>
 <h1><?php \pi18n("Inventory", PLUGIN_NAME); ?></h1>
-<div class="error">Not supported yet</div>
+
 <table cellpadding="0" cellspacing="0">
 	<thead>
 		<tr>
@@ -31,6 +33,7 @@ $products = \Pasteque\ProductsService::getAll();
 			<th><?php \pi18n("Product.reference"); ?></th>
 			<th><?php \pi18n("Product.label"); ?></th>
 			<th><?php \pi18n("Quantity"); ?></th>
+			<th><?php \pi18n("Security threshold", PLUGIN_NAME); ?></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -38,12 +41,23 @@ $products = \Pasteque\ProductsService::getAll();
 $par = FALSE;
 foreach ($products as $product) {
 $par = !$par;
+$qty = isset($stocks[$product->id]) ? $stocks[$product->id] : 0;
+$security = isset($levels[$product->id]) ? $levels[$product->id]->security : NULL;
+$max = isset($levels[$product->id]) ? $levels[$product->id]->max : NULL;
+$class = "";
+if ($security !== NULL && $qty < $security) {
+    $class=" warn-level";
+}
+if ($qty < 0 || ($max !== NULL && $qty > $max)) {
+    $class=" alert-level";
+}
 ?>
 	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
 	    <td><img class="thumbnail" src="?<?php echo \Pasteque\URL_ACTION_PARAM; ?>=img&w=product&id=<?php echo $product->id; ?>" />
 		<td><?php echo $product->reference; ?></td>
 		<td><?php echo $product->label; ?></td>
-		<td>???</td>
+		<td class="numeric<?php echo $class; ?>"><?php echo $qty; ?></td>
+		<td class="numeric"><?php echo $security === NULL ? \i18n("Undefined") : $security; ?></td>
 	</tr>
 <?php
 }

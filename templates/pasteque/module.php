@@ -32,6 +32,7 @@ function tpl_open() {
 	<title><?php \pi18n("Pastèque"); ?></title>
 	<link rel="stylesheet" type="text/css" href="templates/pasteque/style.css" />
 	<link rel="stylesheet" type="text/css" href="templates/pasteque/catalog.css" />
+	<link rel="stylesheet" type="text/css" href="templates/pasteque/stock.css" />	
 	<script type="text/javascript" src="templates/pasteque/js/jquery-1.9.1.min.js"></script>
 </head>
 <body>

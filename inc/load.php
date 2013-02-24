@@ -89,6 +89,7 @@ require_once(ABSPATH . "/inc/data/services/TaxesService.php");
 require_once(ABSPATH . "/inc/data/services/TicketsService.php");
 require_once(ABSPATH . "/inc/data/services/UsersService.php");
 require_once(ABSPATH . "/inc/data/services/RolesService.php");
+require_once(ABSPATH . "/inc/data/services/StocksService.php");
 
 load_base_i18n(detect_preferred_language());
 ?>

@@ -183,6 +183,9 @@ td {
 	border-top: 1px solid black;
 	padding: 10px 5px 10px 5px;
 }
+td.numeric {
+	text-align: center;
+}
 th {
 	text-align: left;
 	padding: 20px;

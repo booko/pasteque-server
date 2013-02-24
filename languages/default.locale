@@ -11,6 +11,7 @@
 
 "Image": "Image",
 "Quantity": "Quantity",
+"Undefined": "Undefined",
 
 "Product.label": "Name",
 "Product.reference": "Reference",
