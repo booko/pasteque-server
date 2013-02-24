@@ -86,6 +86,59 @@ class StocksService {
         }
         // TODO: multiple warehouses
     }
+
+    static function getLevel($productId, $warehouseId = NULL) {
+        $pdo = PDOBuilder::getPDO();
+        $lvl = array();
+        if ($warehouseId === NULL) {
+            $sql = "SELECT * FROM STOCKLEVEL WHERE PRODUCT = :id";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(":id", $productId);
+            $stmt->execute();
+            if ($row = $stmt->fetch()) {
+                $lvl = new \stdClass();
+                $lvl->id = $row['ID'];
+                $lvl->product = $row['PRODUCT'];
+                $lvl->location = $row['LOCATION'];
+                $lvl->security = $row['STOCKSECURITY'];
+                $lvl->max = $row['STOCKMAXIMUM'];
+                return $lvl;
+            }
+            return NULL;
+        }
+        // TODO: multiple warehouses
+    }
+
+    static function createLevel($level) {
+        $pdo = PDOBuilder::getPDO();
+        $id = md5(time() . rand());
+        $stmt = $pdo->prepare("INSERT INTO STOCKLEVEL (ID,PRODUCT, LOCATION, "
+                . "STOCKSECURITY, STOCKMAXIMUM) VALUES (:id, :prd, :loc, :sec, "
+                . ":max)");
+        $stmt->bindParam(":id", $id);
+        $stmt->bindParam(":prd", $level->product);
+        $stmt->bindValue(":loc", "0");
+        $stmt->bindParam(":sec", $level->security);
+        $stmt->bindParam(":max", $level->max);
+        if ($stmt->execute()) {
+            return $id;
+        } else {
+            return FALSE;
+        }
+    }
+
+    static function updateLevel($level) {
+        if (!isset($level->id)) {
+            return FALSE;
+        }
+        $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("UPDATE STOCKLEVEL SET STOCKSECURITY = :sec, "
+                . "STOCKMAXIMUM = :max WHERE ID = :id");
+        $stmt->bindParam(":id", $level->id);
+        $stmt->bindParam(":sec", $level->security);
+        $stmt->bindParam(":max", $level->max);
+        return $stmt->execute();
+    }
 }
 
 ?>
