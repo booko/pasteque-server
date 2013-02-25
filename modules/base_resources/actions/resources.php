@@ -47,7 +47,7 @@ foreach ($resources as $res) {
 	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
 		<td><?php echo $res->name; ?></td>
 		<td class="edition">
-			<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'resource_edit', array('id' => $resource->id)); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
+			<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'resource_edit', array('id' => $res->id)); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
 			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("res", $res->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>
 		</td>
 	</tr>
