@@ -66,11 +66,12 @@ function tpl_menu() {
         foreach ($section->getEntries() as $entry) {
             echo "\t\t\t<li>";
             if ($entry->getImg() !== NULL && $entry->getImg() != "") {
-                echo "<img src=\"" . get_template_url() . "img/" . $entry->getImg() . "\" width=\"22\" height=\"22\" />";
+                $img = get_template_url() . "img/" . $entry->getImg();
             } else {
-                echo "<img src=\"" . get_template_url() . "img/menu_default.png\" width=\"22\" height=\"22\" />";
+                $img = get_template_url() . "img/menu_default.png";
             }
-            echo "<a href=\"" . get_url_action($entry->getAction()) . "\">" . __($entry->getName(), $entry->getNameDomain()) . "</a></li>\n";
+            $style = "style=\"background-image:url('$img');\"";
+            echo "<a $style href=\"" . get_url_action($entry->getAction()) . "\">" . __($entry->getName(), $entry->getNameDomain()) . "</a></li>\n";
         }
         echo "\t\t</ul>\n";
         echo "\t</div>\n";

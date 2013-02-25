@@ -37,17 +37,19 @@
 }
 .menu li {
 	margin: 5px 0 5px 0;
-}
-.menu li img {
-	vertical-align: middle;
-	margin-right: 3px;
+	min-height: 22px;
 }
 .menu a,
 .menu a:visited,
 .menu a:active {
+	display: block;
 	color: #304D29;
 	font-weight: bold;
 	text-decoration: none;
+	background-repeat: no-repeat;
+	background-position: 0% 50%;
+	padding-left: 26px;
+	min-height: 22px;
 }
 .menu a:hover {
 	color: #446E3A;
