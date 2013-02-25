@@ -38,13 +38,7 @@ function catalog_category($category, $js) {
 ?>
 <h1><?php \pi18n("Stock move", PLUGIN_NAME); ?></h1>
 
-<?php if ($message !== NULL) {
-    echo "<div class=\"message\">" . $message . "</div>\n";
-}
-if ($error !== NULL) {
-    echo "<div class=\"error\">" . $error . "</div>\n";
-}
-?>
+<?php \Pasteque\tpl_msg_box($message, $error); ?>
 
 <form class="edit" id="move" method="post">
 	<div class="row">

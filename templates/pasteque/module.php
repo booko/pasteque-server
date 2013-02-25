@@ -53,6 +53,15 @@ function tpl_404() {
 <?php
 }
 
+function tpl_msg_box($info, $error) {
+    if ($info !== NULL || $info != "") {
+        echo "<div class=\"message\">" . $info . "</div>\n";
+    }
+    if ($error !== NULL || $error != "") {
+        echo "<div class=\"error\">" . $error . "</div>\n";
+    }
+}
+
 function tpl_menu() {
     global $MENU;
     echo "<div id=\"menu-container\">\n";

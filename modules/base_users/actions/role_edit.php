@@ -143,13 +143,7 @@ if (isset($_GET['id'])) {
 ?>
 <h1><?php \pi18n("Edit a role", PLUGIN_NAME); ?></h1>
 
-<?php if ($message !== NULL) {
-    echo "<div class=\"message\">" . $message . "</div>\n";
-}
-if ($error !== NULL) {
-    echo "<div class=\"error\">" . $error . "</div>\n";
-}
-?>
+<?php \Pasteque\tpl_msg_box($message, $error); ?>
 
 <form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
     <?php \Pasteque\form_hidden("edit", $role, "id"); ?>
