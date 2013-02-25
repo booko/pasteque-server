@@ -7,6 +7,8 @@
 "Input (buy)": "Entrée (achat)",
 "Output (sell)": "Sortie (vente)",
 "Output (return to supplyer": "Sortie (retour au fournisseur)",
+"Stock is below security level!": "Le stock est sous le seuil de sécurité !",
+"Stock is negative!": "Le stock est négatif !",
 
 "Inventory": "Inventaire",
 "Security threshold": "Seuil de sécurité",

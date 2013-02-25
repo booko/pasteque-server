@@ -7,6 +7,8 @@
 "Input (buy)": "Input (buy)",
 "Output (sell)": "Output (sell)",
 "Output (return to supplyer)": "Output (return to supplyer)",
+"Stock is below security level!": "Stock is below security level!",
+"Stock is negative!": "Stock is negative",
 
 "Inventory": "Inventory",
 "Security threshold": "Security threshold",

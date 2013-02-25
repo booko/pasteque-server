@@ -45,18 +45,21 @@ $qty = isset($stocks[$product->id]) ? $stocks[$product->id] : 0;
 $security = isset($levels[$product->id]) ? $levels[$product->id]->security : NULL;
 $max = isset($levels[$product->id]) ? $levels[$product->id]->max : NULL;
 $class = "";
+$help = "";
 if ($security !== NULL && $qty < $security) {
     $class=" warn-level";
+    $help = ' title="' . \i18n("Stock is below security level!", PLUGIN_NAME) . '"';
 }
 if ($qty < 0 || ($max !== NULL && $qty > $max)) {
     $class=" alert-level";
+    $help = ' title="' . \i18n("Stock is negative!", PLUGIN_NAME) . '"';
 }
 ?>
 	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
 	    <td><img class="thumbnail" src="?<?php echo \Pasteque\URL_ACTION_PARAM; ?>=img&w=product&id=<?php echo $product->id; ?>" />
 		<td><?php echo $product->reference; ?></td>
 		<td><?php echo $product->label; ?></td>
-		<td class="numeric<?php echo $class; ?>"><?php echo $qty; ?></td>
+		<td class="numeric<?php echo $class; ?>"<?php echo $help; ?>><?php echo $qty; ?></td>
 		<td class="numeric"><?php echo $security === NULL ? \i18n("Undefined") : $security; ?></td>
 	</tr>
 <?php
