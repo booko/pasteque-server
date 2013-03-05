@@ -1,5 +1,5 @@
 <?php
-//    Pastèque Web back office
+//    Pastèque Web back office, Users module
 //
 //    Copyright (C) 2013 Scil (http://scil.coop)
 //
@@ -18,27 +18,15 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace {
-    function i18n($label, $module = NULL) {
-        $args = func_get_args();
-        $args = array_slice($args, 2);
-        return \Pasteque\__($label, $module, $args);
-    }
+namespace BaseCashes;
 
-    function pi18n($label, $module = NULL) {
-        $args = func_get_args();
-        $args = array_slice($args, 2);
-        echo \Pasteque\__($label, $module, $args);
-    }
-
-    function i18nDate($timestamp) {
-        return \Pasteque\__d($timestamp);
-    }
-    function i18nRevDate($date) {
-        return \Pasteque\__rd($date);
-    }
-
-    function pi18nDate($timestamp) {
-        echo \Pasteque\__d($timestamp);
-    }
+function init() {
+    global $MENU;
+    $MENU->addSection("sales", "Sales", PLUGIN_NAME);
+    $MENU->registerModuleEntry("sales", PLUGIN_NAME, "menu_sessions.png", "Sessions", "sessions");
+    $MENU->registerModuleEntry("sales", PLUGIN_NAME, "menu_sales.png", "Sales report", "sales_report");
+    \Pasteque\register_i18n(PLUGIN_NAME);
 }
+\Pasteque\hook("module_load", __NAMESPACE__ . "\init");
+
+?>

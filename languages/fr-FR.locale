@@ -1,4 +1,6 @@
 {
+"date": "%d/%m/%Y",
+
 "Home": "Accueil",
 
 "Edit": "Modifier",
@@ -33,5 +35,13 @@
 "Role.name": "Rôle",
 
 "User.name": "Nom",
-"User.role": "Rôle"
+"User.role": "Rôle",
+
+"Session.host": "Caisse",
+"Session.openDate": "Date d'ouverture",
+"Session.closeDate": "Date de clôture",
+"Session.tickets": "Tickets",
+"Session.total": "Total",
+
+"Ticket number": "Ticket #"
 }

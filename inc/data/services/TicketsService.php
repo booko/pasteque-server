@@ -40,6 +40,26 @@ class TicketsService {
         return $ticket;
     }
 
+    private static function buildDBTkt($db_tkt, $pdo) {
+        // TODO: add references
+        return Ticket::__build($db_tkt['ID'], $db_tkt['TICKETID'],
+                $db_tkt['PERSON'], $db_tkt['DATENEW'], array(), array(),
+                $db_tkt['MONEY']);
+    }
+
+    static function getBySession($sessId) {
+        $tkts = array();
+        $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("SELECT * FROM `TICKETS` LEFT JOIN RECEIPTS ON "
+                . "TICKETS.ID = RECEIPTS.ID WHERE MONEY = :id");
+        $stmt->bindParam(':id', $sessId);
+        while ($db_tkt = $stmt->fetch()) {
+            $tkt = TicketsService::buildDBTkt($db_tkt, $pdo);
+            $tkts[] = $tkt;
+        }
+        return $tkts;
+    }
+
     static function save($ticket) {
         $pdo = PDOBuilder::getPDO();
         $pdo->beginTransaction();

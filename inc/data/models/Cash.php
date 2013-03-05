@@ -29,6 +29,10 @@ class Cash {
     public $openDate;
     /** Close date as timestamp, may be null */
     public $closeDate;
+    /** Optionnal tickets count */
+    public $tickets;
+    /** Optionnal total */
+    public $total;
 
     static function __build($id, $host, $sequence, $openDate, $closeDate) {
         $cash = new Cash($host, $sequence, $openDate, $closeDate);

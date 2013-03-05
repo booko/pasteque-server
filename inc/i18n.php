@@ -65,12 +65,32 @@ class I18N {
             }
         }
     }
+
+    public function date($timestamp) {
+        if ($timestamp) {
+            return strftime($this->entries['date'], $timestamp);
+        } else {
+            return "";
+        }
+    }
+    /** Convert a string date to a timestamp */
+    public function revDate($date) {
+        return timefstr($this->entries['date'], $date);
+    }
 }
 $I18N = new I18N();
 
 function __($label, $module = NULL, $args = array()) {
     global $I18N;
     return $I18N->get($label, $module, $args);
+}
+function __d($timestamp) {
+    global $I18N;
+    return $I18N->date($timestamp);
+}
+function __rd($date) {
+    global $I18N;
+    return $I18N->revDate($date);
 }
 
 $i18n_modules = array();

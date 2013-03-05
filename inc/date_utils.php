@@ -24,6 +24,11 @@ namespace Pasteque;
  * creates the timestamp.
  */
 function timefstr($format, $date) {
+    // Replace printf format to date format
+    $format = str_replace("%d", "d", $format);
+    $format = str_replace("%m", "m", $format);
+    $format = str_replace("%Y", "Y", $format);
+    $format = str_replace("%y", "y", $format);
     $dateTime = \DateTime::createFromFormat($format, $date);
     return $dateTime->getTimestamp();
 }

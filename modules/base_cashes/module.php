@@ -1,5 +1,5 @@
 <?php
-//    Pastèque Web back office
+//    Pastèque Web back office, Users module
 //
 //    Copyright (C) 2013 Scil (http://scil.coop)
 //
@@ -18,27 +18,9 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace {
-    function i18n($label, $module = NULL) {
-        $args = func_get_args();
-        $args = array_slice($args, 2);
-        return \Pasteque\__($label, $module, $args);
-    }
+namespace BaseCashes;
 
-    function pi18n($label, $module = NULL) {
-        $args = func_get_args();
-        $args = array_slice($args, 2);
-        echo \Pasteque\__($label, $module, $args);
-    }
+const PLUGIN_NAME = "base_cashes";
 
-    function i18nDate($timestamp) {
-        return \Pasteque\__d($timestamp);
-    }
-    function i18nRevDate($date) {
-        return \Pasteque\__rd($date);
-    }
-
-    function pi18nDate($timestamp) {
-        echo \Pasteque\__d($timestamp);
-    }
-}
+require_once(dirname(__FILE__) . "/base_cashes.php");
+?>

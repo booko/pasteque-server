@@ -27,6 +27,8 @@ class CashesService {
                               $db_cash['HOSTSEQUENCE'],
                               stdtimefstr($db_cash['DATESTART']),
                               stdtimefstr($db_cash['DATEEND']));
+        $cash->tickets = $db_cash['TKTS'];
+        $cash->total = $db_cash['TOTAL'];
         return $cash;
     }
 
@@ -44,7 +46,27 @@ class CashesService {
     static function getAll() {
         $cashes = array();
         $pdo = PDOBuilder::getPDO();
-        $sql = "SELECT * FROM CLOSEDCASH";
+        $sql = "SELECT CLOSEDCASH.MONEY, CLOSEDCASH.HOST, "
+                . "CLOSEDCASH.HOSTSEQUENCE, CLOSEDCASH.DATESTART, "
+                . "CLOSEDCASH.DATEEND, "
+                . "COUNT(RECEIPTS.ID) as TKTS, SUM(PAYMENTS.TOTAL) AS TOTAL "
+                . "FROM CLOSEDCASH "
+                . "LEFT JOIN RECEIPTS ON RECEIPTS.MONEY = CLOSEDCASH.MONEY "
+                . "LEFT JOIN PAYMENTS ON PAYMENTS.RECEIPT = RECEIPTS.ID "
+                . "GROUP BY CLOSEDCASH.MONEY "
+                . "ORDER BY DATESTART";
+        foreach ($pdo->query($sql) as $db_cash) {
+            $cash = CashesService::buildDBCash($db_cash);
+            $cashes[] = $cash;
+        }
+        return $cashes;
+    }
+
+    static function getRunning() {
+        $cashes = array();
+        $pdo = PDOBuilder::getPDO();
+        $sql = "SELECT * FROM CLOSEDCASH WHERE DATESTART NOT NULL AND DATEEND "
+                . "IS NULL";
         foreach ($pdo->query($sql) as $db_cash) {
             $cash = CashesService::buildDBCash($db_cash);
             $cashes[] = $cash;

@@ -1,4 +1,6 @@
 {
+"date": "%Y-%m-%d",
+
 "Home": "Home",
 
 "Edit": "Edit",
@@ -33,5 +35,13 @@
 "Role.name": "Role",
 
 "User.name": "Name",
-"User.role": "Role"
+"User.role": "Role",
+
+"Session.host": "Host",
+"Session.openDate": "Open date",
+"Session.closeDate": "Close date",
+"Session.tickets": "Tickets",
+"Session.total": "Total",
+
+"Ticket.number": "Ticket #"
 }

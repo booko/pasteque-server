@@ -62,6 +62,7 @@ require_once(ABSPATH . "/inc/url_broker.php");
 require_once(ABSPATH . "/inc/i18n.php");
 require_once(ABSPATH . "/inc/i18n_aliases.php");
 require_once(ABSPATH . "/inc/Menu.php");
+require_once(ABSPATH . "/inc/Report.php");
 require_once(ABSPATH . "/inc/hooks.php");
 require_once(ABSPATH . "/inc/forms.php");
 require_once(ABSPATH . "/inc/PDOBuilder.php");

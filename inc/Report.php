@@ -18,27 +18,39 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace {
-    function i18n($label, $module = NULL) {
-        $args = func_get_args();
-        $args = array_slice($args, 2);
-        return \Pasteque\__($label, $module, $args);
+namespace Pasteque;
+
+abstract class AbsReport {
+    public abstract function run();
+    public abstract function fetch();
+}
+
+class Report extends AbsReport {
+
+    private $sql;
+    private $params;
+
+    public function __construct($sql) {
+        $this->sql = $sql;
+        $this->params = array();
     }
 
-    function pi18n($label, $module = NULL) {
-        $args = func_get_args();
-        $args = array_slice($args, 2);
-        echo \Pasteque\__($label, $module, $args);
+    public function setParam($param, $value, $type = \PDO::PARAM_STR) {
+        $this->params[$param] = array("value" => $value, "type" => $type);
     }
 
-    function i18nDate($timestamp) {
-        return \Pasteque\__d($timestamp);
-    }
-    function i18nRevDate($date) {
-        return \Pasteque\__rd($date);
+    public function run() {
+        $pdo = PDOBuilder::getPDO();
+        $this->stmt = $pdo->prepare($this->sql);
+        foreach ($this->params as $key => $param) {
+            $this->stmt->bindValue($key, $param['value'], $param['type']);
+        }
+        return $this->stmt->execute();
     }
 
-    function pi18nDate($timestamp) {
-        echo \Pasteque\__d($timestamp);
+    public function fetch() {
+        return $this->stmt->fetch();
     }
 }
+
+?>
