@@ -23,4 +23,4 @@ namespace Pasteque;
 ?>
 <h1>POS-Tech – Interface de gestion</h1>
 
-<p>Cliquez sur le menu de droite pour gérer votre point de vente.</p>
+<p>Cliquez sur le menu de gauche pour gérer votre point de vente.</p>

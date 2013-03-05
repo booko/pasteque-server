@@ -26,21 +26,29 @@ const ABSPATH = __DIR__; // Base path. Also to check if a call
 // Load
 require_once(ABSPATH . "/inc/load.php");
 
+function index_run() {
+    tpl_open();
+    url_content();
+    tpl_close();
+}
+
 // Check user authentication
 if (!is_user_logged_in()) {
     show_login_page();
 } else {
     require_once(ABSPATH . "/inc/load_logged.php");
-    switch($_GET[URL_ACTION_PARAM]) {
-    case "img":
-        require_once(ABSPATH . "/dbimg.php");
-        break;
-    default:
-        tpl_open();
-        url_content();
-        tpl_close();
-        break;
-    }
+    if (isset($_GET[URL_ACTION_PARAM])) {
+        switch($_GET[URL_ACTION_PARAM]) {
+        case "img":
+            require_once(ABSPATH . "/dbimg.php");
+            break;
+        default:
+            index_run();
+            break;
+        }
+    } else {
+        index_run();
+    }    
 }
 
 ?>
