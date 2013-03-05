@@ -1,5 +1,6 @@
 {
 "date": "%Y-%m-%d",
+"datetime": "%Y-%m-%d %h:%M",
 
 "Home": "Home",
 

@@ -29,10 +29,12 @@ class Report extends AbsReport {
 
     private $sql;
     private $params;
+    private $filters;
 
     public function __construct($sql) {
         $this->sql = $sql;
         $this->params = array();
+        $this->filters = array();
     }
 
     public function setParam($param, $value, $type = \PDO::PARAM_STR) {
@@ -49,7 +51,23 @@ class Report extends AbsReport {
     }
 
     public function fetch() {
-        return $this->stmt->fetch();
+        $values = $this->stmt->fetch(\PDO::FETCH_ASSOC);
+        foreach($this->filters as $field => $filters) {
+            if (isset($values[$field])) {
+                foreach ($filters as $filter) {
+                    $val = $filter($values[$field]);
+                    $values[$field] = $val;
+                }
+            }
+        }
+        return $values;
+    }
+
+    public function addFilter($field, $function) {
+        if (!isset($this->filters[$field])) {
+            $this->filters[$field] = array();
+        }
+        $this->filters[$field][] = $function;
     }
 }
 

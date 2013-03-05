@@ -34,11 +34,17 @@ namespace {
     function i18nDate($timestamp) {
         return \Pasteque\__d($timestamp);
     }
+    function i18nDatetime($timestamp) {
+        return \Pasteque\__dt($timestamp);
+    }
     function i18nRevDate($date) {
         return \Pasteque\__rd($date);
     }
 
     function pi18nDate($timestamp) {
         echo \Pasteque\__d($timestamp);
+    }
+    function pi18nDatetime($timestamp) {
+        echo \Pasteque\__dt($timestamp);
     }
 }

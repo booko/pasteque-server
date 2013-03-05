@@ -59,6 +59,10 @@ $headers = array(\i18n("Session.host"), \i18n("Session.openDate"),
 $report = new \Pasteque\Report($sql);
 $report->setParam(":start", $start);
 $report->setParam(":stop", $stop);
+$report->addFilter("DATESTART", "\Pasteque\stdtimefstr");
+$report->addFilter("DATESTART", "\i18nDatetime");
+$report->addFilter("DATEEND", "\Pasteque\stdtimefstr");
+$report->addFilter("DATEEND", "\i18nDatetime");
 ?>
 <h1><?php \pi18n("Sales report", PLUGIN_NAME); ?></h1>
 

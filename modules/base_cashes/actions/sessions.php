@@ -43,7 +43,7 @@ $sessions = \Pasteque\CashesService::getAll();
     if (!$session->isClosed()) { ?>
 		<tr>
 			<td><?php echo $session->host; ?></td>
-			<td><?php \pi18nDate($session->openDate); ?></td>
+			<td><?php \pi18nDatetime($session->openDate); ?></td>
 			<td class="numeric"><?php echo $session->tickets; ?></td>
 			<td class="numeric"><?php echo $session->total; ?></td>
 			<td class="edition">
@@ -72,8 +72,8 @@ $sessions = \Pasteque\CashesService::getAll();
     if ($session->isClosed()) { ?>
 		<tr>
 			<td><?php echo $session->host; ?></td>
-			<td><?php \pi18nDate($session->openDate); ?></td>
-			<td><?php \pi18nDate($session->closeDate); ?></td>
+			<td><?php \pi18nDatetime($session->openDate); ?></td>
+			<td><?php \pi18nDatetime($session->closeDate); ?></td>
 			<td class="numeric"><?php echo $session->tickets; ?></td>
 			<td class="numeric"><?php echo $session->total; ?></td>
 			<td class="edition">

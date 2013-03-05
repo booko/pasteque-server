@@ -73,6 +73,13 @@ class I18N {
             return "";
         }
     }
+    public function datetime($timestamp) {
+        if ($timestamp) {
+            return strftime($this->entries['datetime'], $timestamp);
+        } else {
+            return "";
+        }
+    }
     /** Convert a string date to a timestamp */
     public function revDate($date) {
         return timefstr($this->entries['date'], $date);
@@ -87,6 +94,10 @@ function __($label, $module = NULL, $args = array()) {
 function __d($timestamp) {
     global $I18N;
     return $I18N->date($timestamp);
+}
+function __dt($timestamp) {
+    global $I18N;
+    return $I18N->datetime($timestamp);
 }
 function __rd($date) {
     global $I18N;
