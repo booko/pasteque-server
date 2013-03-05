@@ -18,40 +18,35 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
-// Index is the entry point for everything.
 namespace Pasteque;
 
-const ABSPATH = __DIR__; // Base path. Also to check if a call
-                         // originates from index.php
-// Load
-require_once(ABSPATH . "/inc/load.php");
-
-function index_run() {
-    tpl_open();
-    url_content();
-    tpl_close();
+if (@constant("\Pasteque\ABSPATH") === NULL) {
+    die();
 }
 
-// Check user authentication
-if (!is_user_logged_in()) {
-    show_login_page();
-} else {
-    require_once(ABSPATH . "/inc/load_logged.php");
-    if (isset($_GET[URL_ACTION_PARAM])) {
-        switch($_GET[URL_ACTION_PARAM]) {
-        case "img":
-            require_once(ABSPATH . "/dbimg.php");
-            break;
-        case "report":
-            require_once(ABSPATH . "/report.php");
-            break;
-        default:
-            index_run();
-            break;
-        }
-    } else {
-        index_run();
-    }    
+function report_csv($module, $name) {
+    report_content($module, $name);
+    $report = get_report($name);
+    if ($report === NULL) {
+        die();
+    }
+    $report['report']->run();
+    $output = fopen("php://output", "rb+");
+    $line = $report['headers'];
+    fputcsv($output, $line);
+    while ($line = $report['report']->fetch()) {
+        fputcsv($output, $line);
+    }
 }
 
+switch ($_GET['w']) {
+case 'csv':
+    header("Content-type: text/csv");
+    report_csv($_GET['m'], $_GET['n']);
+    break;
+case 'display':
+default:
+    // TODO: auto format display (input and result)
+    break;
+}
 ?>

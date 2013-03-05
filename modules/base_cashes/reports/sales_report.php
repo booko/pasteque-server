@@ -20,11 +20,8 @@
 
 namespace BaseCashes;
 
-$message = NULL;
-$error = NULL;
-
-$startStr = isset($_POST['start']) ? $_POST['start'] : \i18nDate(time() - 86400);
-$stopStr = isset($_POST['stop']) ? $_POST['stop'] : \i18nDate(time());
+$startStr = isset($_GET['start']) ? $_GET['start'] : \i18nDate(time() - 86400);
+$stopStr = isset($_GET['stop']) ? $_GET['stop'] : \i18nDate(time());
 // Set $start and $stop as timestamps
 $startTime = \i18nRevDate($startStr);
 $stopTime = \i18nRevDate($stopStr);
@@ -63,23 +60,6 @@ $report->addFilter("DATESTART", "\Pasteque\stdtimefstr");
 $report->addFilter("DATESTART", "\i18nDatetime");
 $report->addFilter("DATEEND", "\Pasteque\stdtimefstr");
 $report->addFilter("DATEEND", "\i18nDatetime");
+
+\Pasteque\register_report("sales_report", $report, $fields, $headers);
 ?>
-<h1><?php \pi18n("Sales report", PLUGIN_NAME); ?></h1>
-
-<p><a class="btn" href="<?php echo \Pasteque\get_report_url(PLUGIN_NAME, 'sales_report'); ?>&start=<?php echo $startStr; ?>&stop=<?php echo $stopStr; ?>"><?php \pi18n("Export"); ?></a></p>
-
-<form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
-	<div class="row">
-		<label for="start"><?php \pi18n("Session.openDate"); ?></label>
-		<input type="date" name="start" id="start" value="<?php echo $startStr; ?>" />
-	</div>
-	<div class="row">
-		<label for="stop"><?php \pi18n("Session.closeDate"); ?></label>
-		<input type="date" name="stop" id="stop" value="<?php echo $stopStr; ?>" />
-	</div>
-	<div class="row actions">
-		<?php \Pasteque\form_send(); ?>
-	</div>
-</form>
-
-<?php \Pasteque\tpl_report($report, $fields, $headers); ?>

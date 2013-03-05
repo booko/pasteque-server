@@ -71,4 +71,19 @@ class Report extends AbsReport {
     }
 }
 
+$REPORTS = array();
+
+function register_report($name, $report, $fields, $headers) {
+    global $REPORTS;
+    $REPORTS[$name] = array("report" => $report, "fields" => $fields,
+            "headers" => $headers);
+}
+function get_report($name) {
+    global $REPORTS;
+    if (isset($REPORTS[$name])) {
+        return $REPORTS[$name];
+    } else {
+        return NULL;
+    }
+}
 ?>
