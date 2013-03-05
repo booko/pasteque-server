@@ -81,6 +81,7 @@ require_once(ABSPATH . "/inc/data/models/Ticket.php");
 require_once(ABSPATH . "/inc/data/models/TicketLine.php");
 require_once(ABSPATH . "/inc/data/models/User.php");
 require_once(ABSPATH . "/inc/data/models/Role.php");
+require_once(ABSPATH . "/inc/data/models/Stock.php");
 require_once(ABSPATH . "/inc/data/models/Resource.php");
 require_once(ABSPATH . "/inc/data/services/AttributesService.php");
 require_once(ABSPATH . "/inc/data/services/CashesService.php");

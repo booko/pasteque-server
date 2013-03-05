@@ -22,11 +22,11 @@ namespace Pasteque;
 
 class StocksService {
 
-    private static function buildDBUser($db_user) {
-        $role = RolesService::get($db_user['ROLE']);
-        $user = User::__build($db_user['ID'], $db_user['NAME'],
-                              $db_user['APPPASSWORD'], $role);
-        return $user;
+    private static function buildDBLevel($db_lvl) {
+        $lvl = StockLevel::__build($db_ldl['ID'], $db_lvl['PRODUCT'],
+                $db_lvl['LOCATION'], $db_lvl['STOCKSECURITY'],
+                $db_lvl['STOCKMAXIMUM']);
+        return $lvl;
     }
 
 
@@ -75,11 +75,7 @@ class StocksService {
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             while ($row = $stmt->fetch()) {
-                $lvl = new \stdClass();
-                $lvl->id = $row['ID'];
-                $lvl->location = $row['LOCATION'];
-                $lvl->security = $row['STOCKSECURITY'];
-                $lvl->max = $row['STOCKMAXIMUM'];
+                $lvl = StocksService::buildDBLevel($row);
                 $lvls[$row['PRODUCT']] = $lvl;
             }
             return $lvls;
@@ -96,12 +92,7 @@ class StocksService {
             $stmt->bindParam(":id", $productId);
             $stmt->execute();
             if ($row = $stmt->fetch()) {
-                $lvl = new \stdClass();
-                $lvl->id = $row['ID'];
-                $lvl->product = $row['PRODUCT'];
-                $lvl->location = $row['LOCATION'];
-                $lvl->security = $row['STOCKSECURITY'];
-                $lvl->max = $row['STOCKMAXIMUM'];
+                $lvl = StocksService::buildDBLevel($row);
                 return $lvl;
             }
             return NULL;
