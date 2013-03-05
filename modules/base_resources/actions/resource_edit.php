@@ -92,7 +92,7 @@ if (isset($_GET['id'])) {
 		<img id="preview" name="image" src="?<?php echo $imgContent; ?>" /><br />
 		<input type="file" name="file" />
 		<div class="row actions">
-			<?php \Pasteque\form_send(); ?>
+			<?php \Pasteque\form_save(); ?>
 		</div>
 	</div>
 </form>

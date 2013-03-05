@@ -57,7 +57,7 @@ if (isset($_GET['id'])) {
 	<?php \Pasteque\form_input("edit", "User", $user, "name", "string", array("required" => true)); ?>
 	<?php \Pasteque\form_input("edit", "User", $user, "role", "pick", array("model" => "Role")); ?>
 	<div class="row actions">
-		<?php \Pasteque\form_send(); ?>
+		<?php \Pasteque\form_save(); ?>
 	</div>
 </form>
 <?php if ($user !== NULL) { ?>

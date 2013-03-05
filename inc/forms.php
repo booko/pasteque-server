@@ -145,6 +145,9 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
 }
 
 function form_send() {
+    echo '<button class="btn-send" type="submit">' . \i18n('Send') . '</button>';
+}
+function form_save() {
     echo '<button class="btn-send" type="submit">' . \i18n('Save') . '</button>';
 }
 function form_delete($what, $id, $img_src = NULL) {

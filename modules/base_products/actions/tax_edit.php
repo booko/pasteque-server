@@ -56,7 +56,7 @@ if (isset($_GET['id'])) {
     <?php \Pasteque\form_hidden("edit", $tax_cat, "id"); ?>
 	<?php \Pasteque\form_input("edit", "TaxCat", $tax_cat, "name", "string", array("required" => true)); ?>
 	<div class="row actions">
-		<?php \Pasteque\form_send(); ?>
+		<?php \Pasteque\form_save(); ?>
 	</div>
 </form>
 <?php if ($tax_cat !== NULL) { ?>
@@ -75,7 +75,7 @@ if (isset($_GET['id'])) {
     <?php \Pasteque\form_input("rate$tax->id", "Tax", $tax, "rate", "float", array("required" => true, "step" => 0.001)); ?>
     <?php \Pasteque\form_input("rate$tax->id", "Tax", $tax, "start_date", "date", array("required" => true)); ?>
 	<div class="row action">
-		<?php \Pasteque\form_send(); ?>
+		<?php \Pasteque\form_save(); ?>
 	</div>
 </form>
 <form action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
@@ -92,7 +92,7 @@ if (isset($_GET['id'])) {
 	<?php \Pasteque\form_input("new_rate", "Tax", NULL, "rate", "float", array("required" => true)); ?>
 	<?php \Pasteque\form_input("new_rate", "Tax", NULL, "start_date", "date", array("required" => true)); ?>
 	<div class="row actions">
-		<?php \Pasteque\form_send(); ?>
+		<?php \Pasteque\form_save(); ?>
 	</div>
 </form>
 <?php } ?>

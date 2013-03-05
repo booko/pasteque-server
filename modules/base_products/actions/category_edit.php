@@ -89,7 +89,7 @@ if (isset($_GET['id'])) {
 	</div>
 
 	<div class="row actions">
-		<?php \Pasteque\form_send(); ?>
+		<?php \Pasteque\form_save(); ?>
 	</div>
 </form>
 <?php if ($category !== NULL) { ?>
