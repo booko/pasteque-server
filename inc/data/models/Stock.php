@@ -20,8 +20,31 @@
 
 namespace Pasteque;
 
-class Stock {
+class StockMove {
+    // Reasion constants, see com.openbravo.pos.inventory.MovementReason
+    // to add missing ones
+    const REASON_IN_BUY = 1;
+    const REASON_OUT_SELL = -1;
+    const REASON_OUT_BACK = -3;
 
+    /** Check if the move in in or out. */
+    public static function isIn($reason) {
+        return $reason == StockMove::REASON_IN_BUY;
+    }
+
+    public $date;
+    public $reason;
+    public $location;
+    public $product_id;
+    public $quantity;
+
+    public function __construct($date, $reason, $location, $product_id, $qty) {
+        $this->date = $date;
+        $this->reason = $reason;
+        $this->location = $location;
+        $this->product_id = $product_id;
+        $this->quantity = $qty;
+    }
 }
 
 class StockLevel {

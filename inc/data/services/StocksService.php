@@ -130,6 +130,57 @@ class StocksService {
         $stmt->bindParam(":max", $level->max);
         return $stmt->execute();
     }
+
+    static function addMove($move) {
+        $pdo = PDOBuilder::getPDO();
+        $pdo->beginTransaction();
+        $qty = StockMove::isIn($move->reason)
+                ? $move->quantity : $move->quantity * -1;
+        // Update STOCKCURRENT
+        $stockSql = "UPDATE STOCKCURRENT SET UNITS = (UNITS + :qty) "
+                . "WHERE LOCATION = :loc AND PRODUCT = :prd "
+                . "AND ATTRIBUTESETINSTANCE_ID IS NULL";
+        $stockStmt = $pdo->prepare($stockSql);
+        $stockStmt->bindParam(":qty", $qty);
+        $stockStmt->bindParam(":loc", $move->location);
+        $stockStmt->bindParam(":prd", $move->product_id);
+        $exec = $stockStmt->execute();
+        if ($exec !== FALSE && $stockStmt->rowcount() == 0) {
+            // Unable to update, insert
+            $stockSql = "INSERT INTO STOCKCURRENT (LOCATION, PRODUCT, "
+                    . "ATTRIBUTESETINSTANCE_ID, UNITS) "
+                    . "VALUES (:loc, :prd, NULL, :qty)";
+            $stockStmt = $pdo->prepare($stockSql);
+            $stockStmt->bindParam(":qty", $qty);
+            $stockStmt->bindParam(":loc", $move->location);
+            $stockStmt->bindParam(":prd", $move->product_id);
+            $stockStmt->execute();
+        }
+        if ($stockStmt->rowcount() == 0) {
+            $pdo->rollback();
+            return FALSE;
+        }
+        // Update STOCKDIARY
+        $id = md5(time() . rand());
+        $diarySql = "INSERT INTO STOCKDIARY (ID, DATENEW, REASON, LOCATION, "
+                . "PRODUCT, ATTRIBUTESETINSTANCE_ID, UNITS, PRICE) "
+                . "VALUES (:id, :date, :reason, :loc, :prd, NULL, :qty, :price)";
+        $diaryStmt = $pdo->prepare($diarySql);
+        $diaryStmt->bindParam(":id", $id);
+        $diaryStmt->bindParam(":date", $move->date);
+        $diaryStmt->bindParam(":reason", $move->reason);
+        $diaryStmt->bindParam(":loc", $move->location);
+        $diaryStmt->bindParam(":prd", $move->product_id);
+        $diaryStmt->bindParam(":qty", $qty);
+        $diaryStmt->bindValue(":price", 0.0);
+        if ($diaryStmt->execute()) {
+            $pdo->commit();
+            return TRUE;
+        } else {
+            $pdo->rollback();
+            return FALSE;
+        }
+    }
 }
 
 ?>

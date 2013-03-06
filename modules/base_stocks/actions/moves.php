@@ -22,8 +22,25 @@ namespace BaseStocks;
 
 $message = NULL;
 $error = NULL;
-if (isset($_POST['type'])) {
-    $error = "Not supported yet";
+
+$dateStr = isset($_POST['date']) ? $_POST['date'] : \i18nDate(time());
+$time = \i18nRevDate($dateStr);
+$date = \Pasteque\stdstrftime($time);
+if (isset($_POST['reason'])) {
+    $reason = $_POST['reason'];
+    foreach ($_POST as $key => $value) {
+        if (strpos($key, "qty-") === 0) {
+            $product_id = substr($key, 4);
+            $qty = $value;
+            $move = new \Pasteque\StockMove($date, $reason, "0", $product_id,
+                    $qty);
+            if (\Pasteque\StocksService::addMove($move)) {
+                $message = \i18n("Changes saved");
+            } else {
+                $error = \i18n("Unable to save changes");
+            }
+        }
+    }
 }
 
 $categories = \Pasteque\CategoriesService::getAll();
@@ -40,14 +57,18 @@ function catalog_category($category, $js) {
 
 <?php \Pasteque\tpl_msg_box($message, $error); ?>
 
-<form class="edit" id="move" method="post">
+<form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" id="move" method="post">
 	<div class="row">
-		<label for="type"><?php \pi18n("Operation", PLUGIN_NAME); ?></label>
-		<select id="type" name="type">
-			<option name="input"><?php \pi18n("Input (buy)", PLUGIN_NAME); ?></option>
-			<option name="output"><?php \pi18n("Output (sell)", PLUGIN_NAME); ?></option>
-			<option name="return"><?php \pi18n("Output (return to supplyer)", PLUGIN_NAME); ?></option>
+		<label for="reason"><?php \pi18n("Operation", PLUGIN_NAME); ?></label>
+		<select id="reason" name="reason">
+			<option value="<?php echo \Pasteque\StockMove::REASON_IN_BUY; ?>"><?php \pi18n("Input (buy)", PLUGIN_NAME); ?></option>
+			<option value="<?php echo \Pasteque\StockMove::REASON_OUT_SELL; ?>"><?php \pi18n("Output (sell)", PLUGIN_NAME); ?></option>
+			<option value="<?php echo \Pasteque\StockMove::REASON_OUT_BACK; ?>"><?php \pi18n("Output (return to supplyer)", PLUGIN_NAME); ?></option>
 		</select>
+	</div>
+	<div class="row">
+		<label for="date"><?php \pi18n("Date", PLUGIN_NAME); ?></label>
+		<input type="date" name="date" id="date" value="<?php echo $dateStr; ?>" />
 	</div>
 
 	<div class="catalog-categories-container">
