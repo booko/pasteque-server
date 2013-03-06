@@ -117,6 +117,13 @@ class TicketsService {
                 $pdo->rollback();
                 return false;
             }
+            // Update stock
+            $move = new StockMove($strdate, StockMove::REASON_OUT_SELL,
+                    "0", $line->product_id, $line->quantity);
+            if (!StocksService::addMove($move)) {
+                $pdo->rollback();
+                return false;
+            }
         }
         // Insert payments
         $stmtPay = $pdo->prepare("INSERT INTO PAYMENTS (ID, RECEIPT, PAYMENT, "
