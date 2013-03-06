@@ -30,6 +30,9 @@
 	border-top-right-radius: 20px;
 	text-shadow: 2px 2px 0 #333;
 }
+#version {
+	font-size: xx-small;
+}
 .menu {
 	list-style-type: none;
 	padding: 5px 8px;

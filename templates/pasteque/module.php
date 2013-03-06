@@ -66,6 +66,7 @@ function tpl_menu() {
     global $MENU;
     echo "<div id=\"menu-container\">\n";
     echo "\t<img src=\"" . get_template_url() . "img/logo.png" . "\" />\n";
+    echo "\t<div id=\"version\">" . \Pasteque\VERSION . "</div>\n";
     foreach ($MENU->getSections() as $section) {
         echo "\t<div class=\"menu-section\">\n";
         echo "\t\t<div class=\"menu-section-title\">";
