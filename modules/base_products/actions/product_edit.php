@@ -112,6 +112,7 @@ if (isset($_GET['id'])) {
 $taxes = \Pasteque\TaxesService::getAll();
 $categories = \Pasteque\CategoriesService::getAll();
 
+$level = NULL;
 if ($stocks === TRUE && $product != NULL) {
     $level = \Pasteque\StocksService::getLevel($product->id);
 }
