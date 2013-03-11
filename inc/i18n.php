@@ -114,6 +114,13 @@ function load_base_i18n($language = NULL) {
         $base_i18n = ABSPATH . "/languages/" . $language . ".locale";
         if (file_exists($base_i18n) && is_readable($base_i18n)) {
             $I18N->loadFile($base_i18n);
+        } else if (strpos($language, "-") !== FALSE) {
+            // Check parent language
+            $parent = substr($language, 0, 2);
+            $file = ABSPATH . "/languages/" . $parent . ".locale";
+            if (file_exists($file) && is_readable($file)) {
+                $I18N->loadFile($file);
+            }
         }
     }
 }
@@ -132,9 +139,18 @@ function load_modules_i18n($language = NULL) {
     // Override with requested language
     if ($language !== NULL) {
         foreach ($i18n_modules as $module) {
-            $file = ABSPATH . "/modules/" . $module . "/languages/" . $language . ".locale";
+            $file = ABSPATH . "/modules/" . $module . "/languages/"
+                    . $language . ".locale";
             if (file_exists($file) && is_readable($file)) {
                 $I18N->loadModuleFile($module, $file);
+            } else if (strpos($language, "-") !== FALSE) {
+                // Check parent language
+                $parent = substr($language, 0, 2);
+                $file = ABSPATH . "/modules/" . $module . "/languages/"
+                        . $parent . ".locale";
+                if (file_exists($file) && is_readable($file)) {
+                    $I18N->loadModuleFile($module, $file);
+                }
             }
         }
     }
