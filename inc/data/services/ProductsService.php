@@ -48,10 +48,17 @@ class ProductsService {
                                 $db_prd['IMAGE']);
     }
 
-    static function getAll($full = false) {
+    static function getAll($full = FALSE, $include_hidden = FALSE) {
         $prds = array();
         $pdo = PDOBuilder::getPDO();
-        $stmt = $pdo->prepare("SELECT * FROM PRODUCTS ORDER BY NAME");
+        $sql = NULL;
+        if ($include_hidden) {
+            $sql = "SELECT * FROM PRODUCTS ORDER BY NAME";
+        } else {
+            $sql = "SELECT * FROM PRODUCTS, PRODUCTS_CAT WHERE "
+                    . "PRODUCTS.ID = PRODUCTS_CAT.PRODUCT ORDER BY NAME";
+        }
+        $stmt = $pdo->prepare($sql);
         $stmt->execute();
         while ($db_prd = $stmt->fetch()) {
             if ($full) {
