@@ -22,13 +22,21 @@
 
 namespace BaseProducts;
 
+$message = NULL;
+$error = NULL;
 if (isset($_POST['delete-cat'])) {
-    \Pasteque\CategoriesService::deleteCat($_POST['delete-cat']);
+    if (\Pasteque\CategoriesService::deleteCat($_POST['delete-cat'])) {
+        $message = \i18n("Changes saved");
+    } else {
+        $error = \i18n("Unable to save changes"). ". Une catégorie non vide ne peut être supprimée";
+    }
 }
 
 $categories = \Pasteque\CategoriesService::getAll();
 ?>
 <h1><?php \pi18n("Categories", PLUGIN_NAME); ?></h1>
+
+<?php \Pasteque\tpl_msg_box($message, $error); ?>
 
 <p><a class="btn" href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'category_edit'); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/btn_add.png" /><?php \pi18n("Add a category", PLUGIN_NAME); ?></a></p>
 
