@@ -134,7 +134,7 @@ while ($row = $taxStmt->fetch()) {
 	<tbody>
 <?php foreach ($taxes as $tax) { ?>
 		<tr>
-			<td><?php \pi18n($tax['TAX'], PLUGIN_NAME); ?></td>
+			<td><?php echo $tax['TAX']; ?></td>
 			<td class="numeric"><?php echo $tax['SUM']; ?></td>
 		</tr>
 <?php } ?>

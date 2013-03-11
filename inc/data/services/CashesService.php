@@ -49,12 +49,13 @@ class CashesService {
         $sql = "SELECT CLOSEDCASH.MONEY, CLOSEDCASH.HOST, "
                 . "CLOSEDCASH.HOSTSEQUENCE, CLOSEDCASH.DATESTART, "
                 . "CLOSEDCASH.DATEEND, "
-                . "COUNT(RECEIPTS.ID) as TKTS, SUM(PAYMENTS.TOTAL) AS TOTAL "
+                . "COUNT(DISTINCT(RECEIPTS.ID)) as TKTS, "
+                . "SUM(PAYMENTS.TOTAL) AS TOTAL "
                 . "FROM CLOSEDCASH "
                 . "LEFT JOIN RECEIPTS ON RECEIPTS.MONEY = CLOSEDCASH.MONEY "
                 . "LEFT JOIN PAYMENTS ON PAYMENTS.RECEIPT = RECEIPTS.ID "
                 . "GROUP BY CLOSEDCASH.MONEY "
-                . "ORDER BY DATESTART";
+                . "ORDER BY DATESTART DESC";
         foreach ($pdo->query($sql) as $db_cash) {
             $cash = CashesService::buildDBCash($db_cash);
             $cashes[] = $cash;
