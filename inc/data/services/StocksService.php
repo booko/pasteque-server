@@ -23,7 +23,7 @@ namespace Pasteque;
 class StocksService {
 
     private static function buildDBLevel($db_lvl) {
-        $lvl = StockLevel::__build($db_ldl['ID'], $db_lvl['PRODUCT'],
+        $lvl = StockLevel::__build($db_lvl['ID'], $db_lvl['PRODUCT'],
                 $db_lvl['LOCATION'], $db_lvl['STOCKSECURITY'],
                 $db_lvl['STOCKMAXIMUM']);
         return $lvl;

@@ -55,7 +55,12 @@ class StockLevel {
     public $max;
 
     public function __build($id, $product_id, $location, $security, $max) {
-        $this->id = $id;
+        $stock = new StockLevel($product_id, $location, $security, $max);
+        $stock->id = $id;
+        return $stock;
+    }
+
+    public function __construct($product_id, $location, $security, $max) {
         $this->product_id = $product_id;
         $this->location = $location;
         $this->security = $security;
