@@ -228,10 +228,26 @@ if ($stocks === TRUE && $product != NULL) {
 	}
 	updateMargin();
 
-	jQuery("#sellvat").change(updateSellPrice);
-	jQuery("#edit-tax_cat").change(updateSellPrice);
-	jQuery("#sell").change(updateSellVatPrice);
-	jQuery("#edit-price_buy").change(updateMargin);
+	jQuery("#sellvat").change(function() {
+		var val = jQuery(this).val().replace(",", ".");
+		jQuery(this).val(val);
+		updateSellPrice();
+	});
+	jQuery("#edit-tax_cat").change(function() {
+		var val = jQuery(this).val().replace(",", ".");
+		jQuery(this).val(val);
+		updateSellPrice()
+	});
+	jQuery("#sell").change(function() {
+		var val = jQuery(this).val().replace(",", ".");
+		jQuery(this).val(val);
+		updateSellVatPrice()
+	});
+	jQuery("#edit-price_buy").change(function() {
+		var val = jQuery(this).val().replace(",", ".");
+		jQuery(this).val(val);
+		updateMargin()
+	});
 
 	clearImage = function() {
 		jQuery("#img").hide();
