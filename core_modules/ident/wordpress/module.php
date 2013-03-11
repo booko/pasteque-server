@@ -30,6 +30,14 @@ namespace WordPress {
     function logged_in() {
         return is_user_logged_in();
     }
+    function log($user, $password) {
+        $creds = array();
+        $creds['user_login'] = $user;
+        $creds['user_password'] = $password;
+        $creds['remember'] = FALSE;
+        $user = wp_signon($creds, FALSE);
+        return (!is_wp_error($user));
+    }
     function show_login() {
         auth_redirect();
     }
@@ -42,7 +50,9 @@ namespace Pasteque {
     function is_user_logged_in() {
     	return \WordPress\logged_in();
     }
-    
+    function api_user_login() {
+        return \WordPress\log($_GET['login'], $_GET['password']);
+    }
     function show_login_page() {
         return \WordPress\show_login();
     }

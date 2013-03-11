@@ -29,7 +29,11 @@ if (@constant("\Pasteque\ABSPATH") === NULL) {
 function is_user_logged_in() {
   	return TRUE;
 }
-    
+
+function api_user_login() {
+    return TRUE;
+}
+
 function show_login_page() {
     return NULL;
 }
