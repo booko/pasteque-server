@@ -236,6 +236,8 @@ class ProductsService {
         $pdo = PDOBuilder::getPDO();
         $stmtcat = $pdo->prepare("DELETE FROM PRODUCTS_CAT WHERE PRODUCT = :id");
         $stmtcat->execute(array(":id" => $id));
+        $stmtstk = $pdo->prepare("DELETE FROM STOCKLEVEL WHERE PRODUCT = :id");
+        $stmtstk->execute(array(":id" => $id));
         $stmt = $pdo->prepare("DELETE FROM PRODUCTS WHERE ID = :id");
         return $stmt->execute(array(':id' => $id));
     }
