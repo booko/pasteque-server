@@ -22,13 +22,21 @@
 
 namespace BaseProducts;
 
+$message = NULL;
+$error = NULL;
 if (isset($_POST['delete-product'])) {
-    \Pasteque\ProductsService::delete($_POST['delete-product']);
+    if (\Pasteque\ProductsService::delete($_POST['delete-product'])) {
+        $message = \i18n("Changes saved") ;
+    } else {
+        $message = "Le produit a été placé en archive (car déjà vendu ou en stock)";
+    }
 }
 
 $products = \Pasteque\ProductsService::getAll();
 ?>
 <h1><?php \pi18n("Products", PLUGIN_NAME); ?></h1>
+
+<?php \Pasteque\tpl_msg_box($message, $error); ?>
 
 <p><a class="btn" href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'product_edit'); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/btn_add.png" /><?php \pi18n("Add a product", PLUGIN_NAME); ?></a></p>
 
