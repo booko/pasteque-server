@@ -27,8 +27,12 @@ class CashesService {
                               $db_cash['HOSTSEQUENCE'],
                               stdtimefstr($db_cash['DATESTART']),
                               stdtimefstr($db_cash['DATEEND']));
-        $cash->tickets = $db_cash['TKTS'];
-        $cash->total = $db_cash['TOTAL'];
+        if (isset($db_cash['TKTS'])) {
+            $cash->tickets = $db_cash['TKTS'];
+        }
+        if (isset($db_cash['TOTAL'])) {
+            $cash->total = $db_cash['TOTAL'];
+        }
         return $cash;
     }
 
