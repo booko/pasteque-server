@@ -32,6 +32,13 @@ namespace WordPress {
         return is_user_logged_in();
     }
     function log($user, $password) {
+        // Dirty hack to disable WordPress magic_quotes when using API
+        if ( !get_magic_quotes_gpc() ) {
+            $_POST = array_map('stripslashes_deep', $_POST);
+            $_GET = array_map('stripslashes_deep', $_GET);
+            $_COOKIE = array_map('stripslashes_deep', $_COOKIE);
+            $_REQUEST = array_map('stripslashes_deep', $_REQUEST);
+        }
         $creds = array();
         $creds['user_login'] = $user;
         $creds['user_password'] = $password;
