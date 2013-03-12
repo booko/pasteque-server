@@ -26,6 +26,7 @@ namespace Pasteque {
 }
 
 namespace WordPress {
+    $api_user = NULL;
     require_once($config['wordpress_base_path'] . "/wp-load.php");
     function logged_in() {
         return is_user_logged_in();
@@ -36,13 +37,24 @@ namespace WordPress {
         $creds['user_password'] = $password;
         $creds['remember'] = FALSE;
         $user = wp_signon($creds, FALSE);
-        return (!is_wp_error($user));
+        if (!is_wp_error($user)) {
+            global $api_user;
+            $api_user = $user;
+            return TRUE;
+        } else {
+            return FALSE;
+        }
     }
     function show_login() {
         auth_redirect();
     }
     function get_user_id() {
-        return get_current_user_id();
+        global $api_user;
+        if ($api_user !== NULL) {
+            return $api_user->ID;
+        } else {
+            return get_current_user_id();
+        }
     }
 }
 
@@ -58,11 +70,7 @@ namespace Pasteque {
     }
 
     function get_user_id() {
-        if (!is_user_logged_in()) {
-            return NULL;
-        } else {
-            return \WordPress\get_user_id();
-        }
+        return \WordPress\get_user_id();
     }
 }
 
