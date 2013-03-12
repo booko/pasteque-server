@@ -119,7 +119,7 @@ class TicketsService {
             }
             // Update stock
             $move = new StockMove($strdate, StockMove::REASON_OUT_SELL,
-                    "0", $line->product_id, $line->quantity);
+                    "0", $line->product->id, $line->quantity);
             if (!StocksService::addMove($move)) {
                 $pdo->rollback();
                 return false;
