@@ -25,34 +25,7 @@ $error = NULL;
 
 $startStr = isset($_POST['start']) ? $_POST['start'] : \i18nDate(time() - 86400);
 $stopStr = isset($_POST['stop']) ? $_POST['stop'] : \i18nDate(time());
-// Set $start and $stop as timestamps
-$startTime = \i18nRevDate($startStr);
-$stopTime = \i18nRevDate($stopStr);
-// Sql values
-$start = \Pasteque\stdstrftime($startTime);
-$stop = \Pasteque\stdstrftime($stopTime);
-
-$sql = "SELECT CLOSEDCASH.HOST, CLOSEDCASH.DATESTART, "
-        . "CLOSEDCASH.DATEEND, TICKETS.TICKETID, "
-        . "TAXES.NAME, TAXLINES.AMOUNT AS AMOUNT "
-        . "FROM CLOSEDCASH "
-        . "LEFT JOIN RECEIPTS ON RECEIPTS.MONEY = CLOSEDCASH.MONEY "
-        . "LEFT JOIN TICKETS ON TICKETS.ID = RECEIPTS.ID "
-        . "LEFT JOIN TAXLINES ON TAXLINES.RECEIPT = TICKETS.ID "
-        . "LEFT JOIN TAXES ON TAXLINES.TAXID = TAXES.ID "
-        . "WHERE CLOSEDCASH.DATESTART > :start AND CLOSEDCASH.DATEEND < :stop "
-        . "ORDER BY CLOSEDCASH.DATESTART DESC, TICKETS.TICKETID DESC";
-$fields = array("HOST", "DATESTART", "DATEEND", "TICKETID", "NAME", "AMOUNT");
-$headers = array(\i18n("Session.host"), \i18n("Session.openDate"),
-        \i18n("Session.closeDate"), \i18n("Ticket.number"),
-        \i18n("Tax name", PLUGIN_NAME), \i18n("Tax amount", PLUGIN_NAME));
-$report = new \Pasteque\Report($sql);
-$report->setParam(":start", $start);
-$report->setParam(":stop", $stop);
-$report->addFilter("DATESTART", "\Pasteque\stdtimefstr");
-$report->addFilter("DATESTART", "\i18nDatetime");
-$report->addFilter("DATEEND", "\Pasteque\stdtimefstr");
-$report->addFilter("DATEEND", "\i18nDatetime");
+$report = \Pasteque\get_report(PLUGIN_NAME, "taxes_report");
 ?>
 <h1><?php \pi18n("Taxes report", PLUGIN_NAME); ?></h1>
 
@@ -72,4 +45,4 @@ $report->addFilter("DATEEND", "\i18nDatetime");
 	</div>
 </form>
 
-<?php \Pasteque\tpl_report($report, $fields, $headers); ?>
+<?php \Pasteque\tpl_report($report); ?>

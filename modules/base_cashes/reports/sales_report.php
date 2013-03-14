@@ -20,8 +20,18 @@
 
 namespace BaseCashes;
 
-$startStr = isset($_GET['start']) ? $_GET['start'] : \i18nDate(time() - 86400);
-$stopStr = isset($_GET['stop']) ? $_GET['stop'] : \i18nDate(time());
+$startStr = NULL;
+$stopStr = NULL;
+if (isset($_GET['start']) || isset($_POST['start'])) {
+    $startStr = isset($_GET['start']) ? $_GET['start'] : $_POST['start'];
+} else {
+    $startStr = \i18nDate(time() - 86400);
+}
+if (isset($_GET['stop']) || isset($_POST['stop'])) {
+    $stopStr = isset($_GET['stop']) ? $_GET['stop'] : $_POST['stop'];
+} else {
+    $stopStr = \i18nDate(time());
+}
 // Set $start and $stop as timestamps
 $startTime = \i18nRevDate($startStr);
 $stopTime = \i18nRevDate($stopStr);
@@ -48,7 +58,7 @@ $headers = array(\i18n("Session.host"), \i18n("Session.openDate"),
         \i18n("Session.closeDate"), \i18n("Ticket.number"),
         \i18n("Product name", PLUGIN_NAME), \i18n("Category name", PLUGIN_NAME),
         \i18n("Units", PLUGIN_NAME), \i18n("Sell", PLUGIN_NAME));
-$report = new \Pasteque\Report($sql);
+$report = new \Pasteque\Report($sql, $headers, $fields);
 $report->setParam(":start", $start);
 $report->setParam(":stop", $stop);
 $report->addFilter("DATESTART", "\Pasteque\stdtimefstr");
@@ -56,5 +66,5 @@ $report->addFilter("DATESTART", "\i18nDatetime");
 $report->addFilter("DATEEND", "\Pasteque\stdtimefstr");
 $report->addFilter("DATEEND", "\i18nDatetime");
 
-\Pasteque\register_report("sales_report", $report, $fields, $headers);
+\Pasteque\register_report(PLUGIN_NAME, "sales_report", $report);
 ?>

@@ -90,30 +90,28 @@ function tpl_menu() {
 }
 
 /** Display a report.
- * @param $report The Report to display (may not be run)
- * @param $fields {array} The array of field names
- * @param $headers {array} The header for each field in the same order
+ * @param $report Report data, as given by get_report
  */
-function tpl_report($report, $fields, $headers) {
+function tpl_report($report) {
     $report->run();
     echo "<table cellspacing=\"0\" cellpadding=\"0\">\n";
     echo "\t<thead>\n";
     echo "\t\t<tr>\n";
-	foreach ($headers as $header) {
-	    echo "\t\t\t<th>" . $header . "</th>\n";
-	}
-	echo "\t\t</tr>\n";
-	echo "\t<thead>\n";
-	echo "\t<tbody>\n";
-	while ($row = $report->fetch()) {
-	    echo "\t\t<tr>\n";
-    	foreach ($fields as $field) {
-	        echo "\t\t\t<td>" . $row[$field] . "</td>\n";
+    foreach ($report->headers as $header) {
+        echo "\t\t\t<th>" . $header . "</th>\n";
+    }
+    echo "\t\t</tr>\n";
+    echo "\t<thead>\n";
+    echo "\t<tbody>\n";
+    while ($row = $report->fetch()) {
+        echo "\t\t<tr>\n";
+        foreach ($report->fields as $field) {
+            echo "\t\t\t<td>" . $row[$field] . "</td>\n";
         }
         echo "\t\t</tr>\n";
     }
-	echo "\t</tbody>\n";
-	echo "</table>\n";
+    echo "\t</tbody>\n";
+    echo "</table>\n";
 }
 
 ?>

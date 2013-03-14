@@ -23,41 +23,10 @@ namespace BaseCashes;
 $message = NULL;
 $error = NULL;
 
+
 $startStr = isset($_POST['start']) ? $_POST['start'] : \i18nDate(time() - 86400);
 $stopStr = isset($_POST['stop']) ? $_POST['stop'] : \i18nDate(time());
-// Set $start and $stop as timestamps
-$startTime = \i18nRevDate($startStr);
-$stopTime = \i18nRevDate($stopStr);
-// Sql values
-$start = \Pasteque\stdstrftime($startTime);
-$stop = \Pasteque\stdstrftime($stopTime);
-
-$sql = "SELECT CLOSEDCASH.HOST, CLOSEDCASH.DATESTART, "
-        . "CLOSEDCASH.DATEEND, TICKETS.TICKETID, PRODUCTS.NAME AS PRD_NAME, "
-        . "CATEGORIES.NAME AS CAT_NAME, "
-        . "TICKETLINES.UNITS, TICKETLINES.PRICE * TICKETLINES.UNITS AS SELL "
-        . "FROM CLOSEDCASH "
-        . "LEFT JOIN RECEIPTS ON RECEIPTS.MONEY = CLOSEDCASH.MONEY "
-        . "LEFT JOIN TICKETS ON TICKETS.ID = RECEIPTS.ID "
-        . "LEFT JOIN TICKETLINES ON TICKETLINES.TICKET = TICKETS.ID "
-        . "LEFT JOIN PRODUCTS ON TICKETLINES.PRODUCT = PRODUCTS.ID "
-        . "LEFT JOIN CATEGORIES ON PRODUCTS.CATEGORY = CATEGORIES.ID "
-        . "WHERE CLOSEDCASH.DATESTART > :start AND CLOSEDCASH.DATEEND < :stop "
-        . "ORDER BY CLOSEDCASH.DATESTART DESC, TICKETS.TICKETID DESC, "
-        . "TICKETLINES.LINE DESC";
-$fields = array("HOST", "DATESTART", "DATEEND", "TICKETID", "PRD_NAME",
-        "CAT_NAME", "UNITS", "SELL");
-$headers = array(\i18n("Session.host"), \i18n("Session.openDate"),
-        \i18n("Session.closeDate"), \i18n("Ticket.number"),
-        \i18n("Product name", PLUGIN_NAME), \i18n("Category name", PLUGIN_NAME),
-        \i18n("Units", PLUGIN_NAME), \i18n("Sell", PLUGIN_NAME));
-$report = new \Pasteque\Report($sql);
-$report->setParam(":start", $start);
-$report->setParam(":stop", $stop);
-$report->addFilter("DATESTART", "\Pasteque\stdtimefstr");
-$report->addFilter("DATESTART", "\i18nDatetime");
-$report->addFilter("DATEEND", "\Pasteque\stdtimefstr");
-$report->addFilter("DATEEND", "\i18nDatetime");
+$report = \Pasteque\get_report(PLUGIN_NAME, "sales_report");
 ?>
 <h1><?php \pi18n("Sales report", PLUGIN_NAME); ?></h1>
 
@@ -77,4 +46,4 @@ $report->addFilter("DATEEND", "\i18nDatetime");
 	</div>
 </form>
 
-<?php \Pasteque\tpl_report($report, $fields, $headers); ?>
+<?php \Pasteque\tpl_report($report); ?>

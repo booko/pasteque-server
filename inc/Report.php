@@ -28,11 +28,15 @@ abstract class AbsReport {
 class Report extends AbsReport {
 
     private $sql;
+    public $headers;
+    public $fields;
     private $params;
     private $filters;
 
-    public function __construct($sql) {
+    public function __construct($sql, $headers, $fields) {
         $this->sql = $sql;
+        $this->headers = $headers;
+        $this->fields = $fields;
         $this->params = array();
         $this->filters = array();
     }
@@ -73,15 +77,15 @@ class Report extends AbsReport {
 
 $REPORTS = array();
 
-function register_report($name, $report, $fields, $headers) {
+function register_report($module, $name, $report) {
     global $REPORTS;
-    $REPORTS[$name] = array("report" => $report, "fields" => $fields,
-            "headers" => $headers);
+    $REPORTS[$module . ":" . $name] = $report;
 }
-function get_report($name) {
+function get_report($module, $name) {
+    report_content($module, $name);
     global $REPORTS;
-    if (isset($REPORTS[$name])) {
-        return $REPORTS[$name];
+    if (isset($REPORTS[$module . ":" . $name])) {
+        return $REPORTS[$module . ":" . $name];
     } else {
         return NULL;
     }

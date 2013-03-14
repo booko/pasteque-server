@@ -25,16 +25,15 @@ if (@constant("\Pasteque\ABSPATH") === NULL) {
 }
 
 function report_csv($module, $name) {
-    report_content($module, $name);
-    $report = get_report($name);
+    $report = get_report($module, $name);
     if ($report === NULL) {
         die();
     }
-    $report['report']->run();
+    $report->run();
     $output = fopen("php://output", "rb+");
-    $line = $report['headers'];
+    $line = $report->headers;
     fputcsv($output, $line);
-    while ($line = $report['report']->fetch()) {
+    while ($line = $report->fetch()) {
         fputcsv($output, $line);
     }
 }
