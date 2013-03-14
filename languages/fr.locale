@@ -47,5 +47,28 @@
 "Session.tickets": "Tickets",
 "Session.total": "Total",
 
-"Ticket number": "Ticket #"
+"Ticket number": "Ticket #",
+
+
+"Customer.number": "Numéro",
+"Customer.key": "Clé",
+"Customer.disp_name": "Nom",
+"Customer.card": "Carte",
+"Customer.visible": "Actif",
+"Customer.max_debt": "Dette max",
+"Customer.curr_debt": "Dette actuelle",
+"Customer.debt_date": "Date",
+"Customer.note": "Note",
+"Customer.first_name": "Prénom",
+"Customer.last_name": "Nom",
+"Customer.email": "Email",
+"Customer.phone1": "Téléphone",
+"Customer.phone2": "Autre téléphone",
+"Customer.fax": "Fax",
+"Customer.addr1": "Addresse",
+"Customer.addr2": "Addresse",
+"Customer.zip_code": "Code postal",
+"Customer.city": "Ville",
+"Customer.region": "Département",
+"Customer.country": "Pays"
 }

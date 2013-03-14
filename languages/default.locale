@@ -47,5 +47,27 @@
 "Session.tickets": "Tickets",
 "Session.total": "Total",
 
-"Ticket.number": "Ticket #"
+"Ticket.number": "Ticket #",
+
+"Customer.number": "Number",
+"Customer.key": "Key",
+"Customer.disp_name": "Name",
+"Customer.card": "Card",
+"Customer.visible": "Active",
+"Customer.max_debt": "Max debt",
+"Customer.curr_debt": "Current debt",
+"Customer.debt_date": "Debt date",
+"Customer.note": "Note",
+"Customer.first_name": "First name",
+"Customer.last_name": "Last name",
+"Customer.email": "Email",
+"Customer.phone1": "Phone",
+"Customer.phone2": "Other phone",
+"Customer.fax": "Fax",
+"Customer.addr1": "Address",
+"Customer.addr2": "Address",
+"Customer.zip_code": "Zip code",
+"Customer.city": "City",
+"Customer.region": "Region",
+"Customer.country": "Country"
 }

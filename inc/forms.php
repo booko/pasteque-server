@@ -50,6 +50,14 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
         }
         echo "$required />\n";
         break;
+    case 'text':
+        echo '<textarea id="' . $form_id . '-' . $field . '" name="' . $field
+                . '">';
+        if ($object != NULL) {
+            echo $object->{$field};
+        }
+        echo '</textarea>';
+        break;
     case 'numeric':
         echo '<input id="' . $form_id . '-' . $field . '" type="numeric" name="'
                 . $field . '"';
