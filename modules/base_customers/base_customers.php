@@ -24,6 +24,7 @@ function init() {
     global $MENU;
     $MENU->addSection("customers", "Customers", PLUGIN_NAME);
     $MENU->registerModuleEntry("customers", PLUGIN_NAME, "menu_customers.png", "Customers", "customers");
+    $MENU->registerModuleEntry("customers", PLUGIN_NAME, "menu_cust_taxes.png", "Customer taxes", "cust_taxes");
     \Pasteque\register_i18n(PLUGIN_NAME);
 }
 \Pasteque\hook("module_load", __NAMESPACE__ . "\init");

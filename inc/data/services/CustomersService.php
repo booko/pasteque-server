@@ -80,7 +80,7 @@ class CustomersService {
         $stmt->bindParam(":key", $cust->key, \PDO::PARAM_STR);
         $stmt->bindParam(":num", $cust->number, \PDO::PARAM_STR);
         $stmt->bindParam(":name", $cust->disp_name, \PDO::PARAM_STR);
-        $stmt->bindParam(":tax_id", $cust->tax_id, \PDO::PARAM_INT);
+        $stmt->bindParam(":tax_id", $cust->cust_tax_id, \PDO::PARAM_STR);
         $stmt->bindParam(":card", $cust->card, \PDO::PARAM_STR);
         $stmt->bindParam(":max_debt", $cust->max_debt, \PDO::PARAM_STR);
         $stmt->bindParam(":addr", $cust->addr1, \PDO::PARAM_STR);
@@ -119,7 +119,7 @@ class CustomersService {
         $stmt->bindParam(":key", $cust->key, \PDO::PARAM_STR);
         $stmt->bindParam(":num", $cust->number, \PDO::PARAM_STR);
         $stmt->bindParam(":name", $cust->disp_name, \PDO::PARAM_STR);
-        $stmt->bindParam(":tax_id", $cust->tax_id, \PDO::PARAM_INT);
+        $stmt->bindParam(":tax_id", $cust->cust_tax_id, \PDO::PARAM_STR);
         $stmt->bindParam(":card", $cust->card, \PDO::PARAM_STR);
         $stmt->bindParam(":max_debt", $cust->max_debt, \PDO::PARAM_STR);
         $stmt->bindParam(":addr", $cust->addr1, \PDO::PARAM_STR);

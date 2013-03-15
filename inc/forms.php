@@ -110,6 +110,16 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
         case 'TaxCategory':
             $data = TaxesService::getAll();
             break;
+        case 'Tax':
+            $cats = TaxesService::getAll();
+            $data = array();
+            foreach ($cats as $cat) {
+                $data[] = $cat->getCurrentTax();
+            }
+            break;
+        case 'CustTaxCat':
+            $data = CustTaxCatsService::getAll();
+            break;
         case 'Role':
             $data = RolesService::getAll();
             break;

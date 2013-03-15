@@ -7,5 +7,10 @@
 "Keys": "Keys",
 "Debt": "Debt",
 "Miscellaneous": "Miscellaneous",
-"Personnal data": "Personnal data"
+"Personnal data": "Personnal data",
+
+"Customer taxes": "Customer taxes",
+"Customer's tax categories": "Customer's tax categories",
+"Add a tax category": "Add a tax category",
+"Edit a customer tax": "Edit a customer tax"
 }

@@ -59,6 +59,7 @@
 "Customer.curr_debt": "Dette actuelle",
 "Customer.debt_date": "Date",
 "Customer.note": "Note",
+"Customer.cust_tax_id": "Catégorie de taxe",
 "Customer.first_name": "Prénom",
 "Customer.last_name": "Nom",
 "Customer.email": "Email",
@@ -70,5 +71,8 @@
 "Customer.zip_code": "Code postal",
 "Customer.city": "Ville",
 "Customer.region": "Département",
-"Customer.country": "Pays"
+"Customer.country": "Pays",
+
+"CustTaxCat.label": "Désignation",
+"CustTaxCat.tax_cat_id": "TVA"
 }

@@ -58,6 +58,7 @@
 "Customer.curr_debt": "Current debt",
 "Customer.debt_date": "Debt date",
 "Customer.note": "Note",
+"Customer.cust_tax_id": "Tax category",
 "Customer.first_name": "First name",
 "Customer.last_name": "Last name",
 "Customer.email": "Email",
@@ -69,5 +70,8 @@
 "Customer.zip_code": "Zip code",
 "Customer.city": "City",
 "Customer.region": "Region",
-"Customer.country": "Country"
+"Customer.country": "Country",
+
+"CustTaxCat.label": "Name",
+"CustTaxCat.tax_cat_id": "Tax"
 }

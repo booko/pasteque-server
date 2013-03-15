@@ -7,5 +7,10 @@
 "Keys": "Clés",
 "Debt": "Dette",
 "Miscellaneous": "Divers",
-"Personnal data": "Informations personnelles"
+"Personnal data": "Informations personnelles",
+
+"Customer taxes": "Taxes client",
+"Customer's tax categories": "Catégories de taxes client",
+"Add a tax category": "Ajouter une catégorie",
+"Edit a customer tax": "Édition d'une catégorie de taxe client"
 }

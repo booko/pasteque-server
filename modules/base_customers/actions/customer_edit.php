@@ -26,8 +26,12 @@ $message = NULL;
 $error = NULL;
 if (isset($_POST['id']) && isset($_POST['disp_name'])) {
     $visible = isset($_POST['visible']) ? 1 : 0;
+    $tax_cat_id = NULL;
+    if (isset($_POST['cust_tax_id']) && $_POST['cust_tax_id'] != "") {
+        $tax_cat_id = $_POST['cust_tax_id'];
+    }
     $cust = \Pasteque\Customer::__build($_POST['id'], $_POST['number'], $_POST['key'],
-            $_POST['disp_name'], $_POST['card'], $_POST['cust_tax_id'],
+            $_POST['disp_name'], $_POST['card'], $tax_cat_id,
             $_POST['max_debt'], $_POST['curr_debt'], $_POST['debt_date'],
             $_POST['first_name'], $_POST['last_name'], $_POST['email'],
             $_POST['phone1'], $_POST['phone2'], $_POST['fax'], $_POST['addr1'],
@@ -40,8 +44,12 @@ if (isset($_POST['id']) && isset($_POST['disp_name'])) {
     }
 } else if (isset($_POST['disp_name'])) {
     $visible = isset($_POST['visible']) ? 1 : 0;
+    $tax_cat_id = NULL;
+    if (isset($_POST['cust_tax_id']) && $_POST['cust_tax_id'] != "") {
+        $tax_cat_id = $_POST['cust_tax_id'];
+    }
     $cust = new \Pasteque\Customer($_POST['number'], $_POST['key'],
-            $_POST['disp_name'], $_POST['card'], $_POST['cust_tax_id'],
+            $_POST['disp_name'], $_POST['card'], $tax_cat_id,
             $_POST['max_debt'], $_POST['curr_debt'], $_POST['debt_date'],
             $_POST['first_name'], $_POST['last_name'], $_POST['email'],
             $_POST['phone1'], $_POST['phone2'], $_POST['fax'], $_POST['addr1'],
@@ -77,7 +85,7 @@ if (isset($_GET['id'])) {
 		<label for="card"><?php \pi18n("Customer.card"); ?></label>
 		<div style="display:inline-block; max-width:65%;">
 			<img id="barcodeImg" src="" />
-			<input id="barcode" type="text" readonly="true" name="barcode" <?php if ($cust != NULL) echo 'value="' . $cust->card . '"'; ?> />
+			<input id="barcode" type="text" readonly="true" name="card" <?php if ($cust != NULL) echo 'value="' . $cust->card . '"'; ?> />
 			<a class="btn" href="" onClick="javascript:generateCard(); return false;"><?php \pi18n("Generate"); ?></a>
 		</div>
 	</div>
@@ -98,6 +106,7 @@ if (isset($_GET['id'])) {
 	<fieldset>
 	<legend><?php \pi18n("Miscellaneous", PLUGIN_NAME); ?></legend>
 	<?php \Pasteque\form_input("edit", "Customer", $cust, "note", "text"); ?>
+    <?php \Pasteque\form_input("edit", "Customer", $cust, "cust_tax_id", "pick", array("model" => "CustTaxCat", "nullable" => TRUE)); ?>
 	</fieldset>
 	<fieldset>
 	<legend><?php \pi18n("Personnal data", PLUGIN_NAME); ?></legend>
