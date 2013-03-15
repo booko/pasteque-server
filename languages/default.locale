@@ -18,6 +18,8 @@
 "Quantity": "Quantity",
 "Undefined": "Undefined",
 "Date": "Date",
+"Total": "Total",
+"Subtotal": "Subtotal",
 
 "Product.label": "Name",
 "Product.reference": "Reference",
