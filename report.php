@@ -34,7 +34,11 @@ function report_csv($module, $name) {
     $line = $report->headers;
     fputcsv($output, $line);
     while ($line = $report->fetch()) {
-        fputcsv($output, $line);
+        $data = array();
+        foreach ($report->fields as $field) {
+            $data[] = $line[$field];
+        }
+        fputcsv($output, $data);
     }
 }
 
