@@ -40,6 +40,9 @@ namespace {
     function i18nRevDate($date) {
         return \Pasteque\__rd($date);
     }
+    function i18nRevDatetime($datetime) {
+        return \Pasteque\__rdt($datetime);
+    }
 
     function pi18nDate($timestamp) {
         echo \Pasteque\__d($timestamp);

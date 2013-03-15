@@ -84,6 +84,9 @@ class I18N {
     public function revDate($date) {
         return timefstr($this->entries['date'], $date);
     }
+    public function revDatetime($datetime) {
+        return timefstr($this->entries['datetime'], $datetime);
+    }
 }
 $I18N = new I18N();
 
@@ -102,6 +105,10 @@ function __dt($timestamp) {
 function __rd($date) {
     global $I18N;
     return $I18N->revDate($date);
+}
+function __rdt($datetime) {
+    global $I18N;
+    return $I18N->revDatetime($datetime);
 }
 
 $i18n_modules = array();

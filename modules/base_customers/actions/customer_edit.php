@@ -30,9 +30,19 @@ if (isset($_POST['id']) && isset($_POST['disp_name'])) {
     if (isset($_POST['cust_tax_id']) && $_POST['cust_tax_id'] != "") {
         $tax_cat_id = $_POST['cust_tax_id'];
     }
+    $curr_debt = NULL;
+    if (isset($_POST['curr_debt']) && $_POST['curr_debt'] != "") {
+        $curr_debt = $_POST['curr_debt'];
+    }
+    $debt_date = NULL;
+    if (isset($_POST['debt_date']) && $_POST['debt_date'] != "") {
+        $debt_date = $_POST['debt_date'];
+        $debt_date = \i18nRevDateTime($debt_date);
+        $debt_date = \Pasteque\stdstrftime($debt_date);
+    }
     $cust = \Pasteque\Customer::__build($_POST['id'], $_POST['number'], $_POST['key'],
             $_POST['disp_name'], $_POST['card'], $tax_cat_id,
-            $_POST['max_debt'], $_POST['curr_debt'], $_POST['debt_date'],
+            $_POST['max_debt'], $curr_debt, $debt_date,
             $_POST['first_name'], $_POST['last_name'], $_POST['email'],
             $_POST['phone1'], $_POST['phone2'], $_POST['fax'], $_POST['addr1'],
             $_POST['addr2'], $_POST['zip_code'], $_POST['city'],
@@ -50,7 +60,7 @@ if (isset($_POST['id']) && isset($_POST['disp_name'])) {
     }
     $cust = new \Pasteque\Customer($_POST['number'], $_POST['key'],
             $_POST['disp_name'], $_POST['card'], $tax_cat_id,
-            $_POST['max_debt'], $_POST['curr_debt'], $_POST['debt_date'],
+            $_POST['max_debt'], NULL, NULL,
             $_POST['first_name'], $_POST['last_name'], $_POST['email'],
             $_POST['phone1'], $_POST['phone2'], $_POST['fax'], $_POST['addr1'],
             $_POST['addr2'], $_POST['zip_code'], $_POST['city'],
@@ -64,10 +74,15 @@ if (isset($_POST['id']) && isset($_POST['disp_name'])) {
 }
 
 $cust = NULL;
-$curr_debt = 0;
+$curr_debt = "";
+$str_debt_date = "";
 if (isset($_GET['id'])) {
     $cust = \Pasteque\CustomersService::get($_GET['id']);
     $curr_debt = $cust->curr_debt;
+    if ($cust->debt_date !== NULL) {
+        $str_debt_date = \Pasteque\stdtimefstr($cust->debt_date);
+        $str_debt_date = \i18nDatetime($str_debt_date);
+    }
 }
 ?>
 <h1><?php \pi18n("Edit a customer", PLUGIN_NAME); ?></h1>
@@ -104,7 +119,7 @@ if (isset($_GET['id'])) {
 	</div>
 	<div class="row">
 		<label for="date"><?php \pi18n("Customer.debt_date"); ?></label>
-		<input id="date" name="debt_date" type="date" readonly="true" />
+		<input id="date" name="debt_date" type="date" readonly="true" value="<?php echo $str_debt_date; ?>" />
 	</div>
 	</fieldset>
 	<fieldset>
