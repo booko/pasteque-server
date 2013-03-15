@@ -74,6 +74,14 @@ function api_content() {
 function report_content($module, $name) {
     redirect_report($module, $name);
 }
+function print_content($module, $name) {
+    if (!file_exists(ABSPATH . "/modules/" . $module . "/print/" . $name . ".php")) {
+        $ret = array("error" => "No such print");
+        echo json_encode($ret);
+        return;
+    }
+    require_once(ABSPATH . "/modules/" . $module . "/print/" . $name . ".php");
+}
 
 function get_url_action($action) {
     return "./?" . URL_ACTION_PARAM . "=" . $action;

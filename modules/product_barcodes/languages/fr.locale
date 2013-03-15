@@ -1,0 +1,30 @@
+{
+"Catalog": "Catalogue",
+
+"Products": "Produits",
+"Add a product": "Ajouter un produit",
+"%d products": "%d produits",
+"No product found": "Aucun produit trouvé",
+"Edit a product": "Édition d'un produit",
+"Archived": "Archives",
+
+"Display": "Affichage",
+"Price": "Prix",
+"Referencing": "Referencement",
+"Sell price + taxes": "Prix de vente TTC",
+"Margin": "Marge",
+"Product saved. <a href=\"%s\">Go to the product page</a>.": "Produit enregistré. <a href=\"%s\">Aller à la page du produit</a>.",
+
+"Categories": "Categories",
+"Edit a category": "Édition d'une categorie",
+"Add a category": "Ajouter une catégorie",
+"%d categories": "%d categories",
+"No category found": "Pas de categorie trouvée",
+"Category saved. <a href=\"%s\">Go to the category page</a>.": "Catégorie enregistrée. <a href=\"%s\">Aller à la page de la catégorie</a>.",
+
+"Taxes": "Taxes",
+"Add a tax": "Ajouter une taxe",
+"Edit tax": "Édition de la taxe",
+"Rates": "Taux",
+"New tax rate": "Nouveau taux"
+}

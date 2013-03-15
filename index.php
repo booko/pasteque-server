@@ -45,6 +45,9 @@ if (!is_user_logged_in()) {
         case "report":
             require_once(ABSPATH . "/report.php");
             break;
+        case "print":
+            require_once(ABSPATH . "/print.php");
+            break;
         default:
             index_run();
             break;
