@@ -24,7 +24,13 @@ $message = NULL;
 $error = NULL;
 
 $categories = \Pasteque\CategoriesService::getAll();
-$products = \Pasteque\ProductsService::getAll(TRUE);
+$allProducts = \Pasteque\ProductsService::getAll(TRUE);
+$products = array();
+foreach ($allProducts as $product) {
+    if ($product->barcode !== NULL && $product->barcode != "") {
+        $products[] = $product;
+    }
+}
 
 function catalog_category($category, $js) {
     echo "<a id=\"category-" . $category->id . "\" class=\"catalog-category\" onClick=\"javascript:" . $js . "return false;\">";
@@ -45,7 +51,12 @@ function catalog_category($category, $js) {
 
 	<div class="catalog-categories-container">
 <?php foreach ($categories as $category) {
-	catalog_category($category, "changeCategory('" . $category->id . "');");
+    foreach ($products as $product) {
+        if ($product->category->id == $category->id) {
+            catalog_category($category, "changeCategory('" . $category->id . "');");
+            break;
+        }
+    }
 } ?>
 	</div>
 
