@@ -29,13 +29,11 @@ if (isset($_POST['install'])) {
     // Load generic sql data
     $file = ABSPATH . "/install/database/create.sql";
     $pdo->query(\file_get_contents($file));
-    var_dump($pdo->errorInfo());
     // Load country data
     $country = $_POST['install'];
     $country = str_replace("..", "", $country);
     $cfile = ABSPATH . "/install/database/data_" . $country . ".sql";
     $pdo->query(\file_get_contents($cfile));
-    var_dump($pdo->errorInfo());
 }
 
 function show_install() {
