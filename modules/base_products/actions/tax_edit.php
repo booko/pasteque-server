@@ -54,7 +54,7 @@ if (isset($_GET['id'])) {
 <!-- Tax category edit -->
 <form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
     <?php \Pasteque\form_hidden("edit", $tax_cat, "id"); ?>
-	<?php \Pasteque\form_input("edit", "TaxCat", $tax_cat, "name", "string", array("required" => true)); ?>
+	<?php \Pasteque\form_input("edit", "TaxCat", $tax_cat, "label", "string", array("required" => true)); ?>
 	<div class="row actions">
 		<?php \Pasteque\form_save(); ?>
 	</div>
