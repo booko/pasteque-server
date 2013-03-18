@@ -74,7 +74,7 @@ if (isset($_GET['id'])) {
     <?php \Pasteque\form_hidden("rate$tax->id", $tax, "tax_cat_id"); ?>
     <?php \Pasteque\form_input("rate$tax->id", "Tax", $tax, "rate", "float", array("required" => true, "step" => 0.001)); ?>
     <?php \Pasteque\form_input("rate$tax->id", "Tax", $tax, "start_date", "date", array("required" => true)); ?>
-	<div class="row action">
+	<div class="row actions">
 		<?php \Pasteque\form_save(); ?>
 	</div>
 </form>
