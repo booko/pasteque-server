@@ -39,7 +39,7 @@ if (isset($_POST['id'])) {
     if ($_FILES['file']['tmp_name'] !== "") {
         $content = file_get_contents($_FILES['file']['tmp_name']);
     } else if ($_POST['type'] == \Pasteque\Resource::TYPE_TEXT) {
-        $content = $_GET['text'];
+        $content = $_POST['content'];
     }
     $res = new \Pasteque\Resource($_POST['name'],
             $_POST['type'], $content);
