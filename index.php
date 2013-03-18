@@ -37,6 +37,8 @@ if (!is_user_logged_in()) {
     show_login_page();
 } else {
     require_once(ABSPATH . "/inc/load_logged.php");
+    // Check install
+    require_once(ABSPATH . "/install.php");
     if (isset($_GET[URL_ACTION_PARAM])) {
         switch($_GET[URL_ACTION_PARAM]) {
         case "img":
