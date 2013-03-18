@@ -21,15 +21,15 @@
 namespace ProductBarcodes;
 
 const V_MARGIN = 10;
-const H_MARGIN = 15;
-const COL_SIZE = 50;
-const ROW_SIZE = 30;
-const COL_NUM = 3;
-const ROW_NUM = 7;
-const V_PADDING = 3;
-const H_PADDING = 5;
-const BARCODE_WIDTH = 50;
-const BARCODE_HEIGHT = 15;
+const H_MARGIN = 4;
+const COL_SIZE = 38.1;
+const ROW_SIZE = 21.2;
+const COL_NUM = 5;
+const ROW_NUM = 13;
+const V_PADDING = 0;
+const H_PADDING = 2.8;
+const BARCODE_WIDTH = 30;
+const BARCODE_HEIGHT = 10;
 
 require_once(\Pasteque\ABSPATH . "/lib/barcode-master/php-barcode.php");
 $font = "./lib/barcode-master/NOTTB___.TTF";
