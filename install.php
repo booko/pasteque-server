@@ -42,7 +42,9 @@ function show_install() {
 <form action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
 	<label for="install"><?php \pi18n("Pays"); ?>
 	<select id="install" name="install">
+		<option value="belgique">Belgique</option>
 		<option value="france">France</option>
+		<option value="luxembourg">Luxembourg</option>
 	</select>
 	<?php \Pasteque\form_send(); ?>
 </form>
