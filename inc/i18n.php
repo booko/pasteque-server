@@ -66,6 +66,10 @@ class I18N {
         }
     }
 
+    public function currency($amount) {
+        return sprintf($this->entries['currency'], $amount);
+    }
+
     public function date($timestamp) {
         if ($timestamp) {
             return strftime($this->entries['date'], $timestamp);
@@ -109,6 +113,10 @@ function __rd($date) {
 function __rdt($datetime) {
     global $I18N;
     return $I18N->revDatetime($datetime);
+}
+function __cur($amount) {
+    global $I18N;
+    return $I18N->currency($amount);
 }
 
 $i18n_modules = array();

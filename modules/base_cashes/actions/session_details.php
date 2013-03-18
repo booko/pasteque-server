@@ -112,7 +112,7 @@ while ($row = $taxStmt->fetch()) {
 ?>
 <h1><?php \pi18n("Active sessions", PLUGIN_NAME); ?></h1>
 
-<p><?php \pi18n("Consolidated sales", PLUGIN_NAME); ?> <?php echo $cs; ?></p>
+<p><?php \pi18n("Consolidated sales", PLUGIN_NAME); ?> <?php \pi18nCurr($cs); ?></p>
 
 <table cellpadding="0" cellspacing="0">
 	<thead>
@@ -122,7 +122,7 @@ while ($row = $taxStmt->fetch()) {
 <?php foreach ($payments as $payment) { ?>
 		<tr>
 			<td><?php \pi18n($payment['TYPE'], PLUGIN_NAME); ?></td>
-			<td class="numeric"><?php echo $payment['TOTAL']; ?></td>
+			<td class="numeric"><?php \pi18nCurr($payment['TOTAL']); ?></td>
 		</tr>
 <?php } ?>
 </table>
@@ -135,7 +135,7 @@ while ($row = $taxStmt->fetch()) {
 <?php foreach ($taxes as $tax) { ?>
 		<tr>
 			<td><?php echo $tax['TAX']; ?></td>
-			<td class="numeric"><?php echo $tax['SUM']; ?></td>
+			<td class="numeric"><?php \pi18nCurr($tax['SUM']); ?></td>
 		</tr>
 <?php } ?>
 </table>
@@ -148,7 +148,7 @@ while ($row = $taxStmt->fetch()) {
 <?php foreach ($catSales as $cat) { ?>
 		<tr>
 			<td><?php \pi18n($cat['CAT'], PLUGIN_NAME); ?></td>
-			<td class="numeric"><?php echo $cat['SUM']; ?></td>
+			<td class="numeric"><?php \pi18nCurr($cat['SUM']); ?></td>
 		</tr>
 <?php } ?>
 </table>

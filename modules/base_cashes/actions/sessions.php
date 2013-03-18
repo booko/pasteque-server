@@ -45,7 +45,7 @@ $sessions = \Pasteque\CashesService::getAll();
 			<td><?php echo $session->host; ?></td>
 			<td><?php \pi18nDatetime($session->openDate); ?></td>
 			<td class="numeric"><?php echo $session->tickets; ?></td>
-			<td class="numeric"><?php echo $session->total; ?></td>
+			<td class="numeric"><?php \pi18nCurr($session->total); ?></td>
 			<td class="edition">
 				<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'session_details', array('id' => $session->id)); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
 			</td>
@@ -75,7 +75,7 @@ $sessions = \Pasteque\CashesService::getAll();
 			<td><?php \pi18nDatetime($session->openDate); ?></td>
 			<td><?php \pi18nDatetime($session->closeDate); ?></td>
 			<td class="numeric"><?php echo $session->tickets; ?></td>
-			<td class="numeric"><?php echo $session->total; ?></td>
+			<td class="numeric"><?php \pi18nCurr($session->total); ?></td>
 			<td class="edition">
 				<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'session_details', array('id' => $session->id)); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
 			</td>

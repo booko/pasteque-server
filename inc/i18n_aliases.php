@@ -31,6 +31,13 @@ namespace {
         echo \Pasteque\__($label, $module, $args);
     }
 
+    function pi18nCurr($amount) {
+        echo \Pasteque\__cur($amount);
+    }
+    function i18nCurr($amount) {
+        return \Pasteque\__cur($amount);
+    }
+
     function i18nDate($timestamp) {
         return \Pasteque\__d($timestamp);
     }

@@ -65,6 +65,7 @@ $report->addFilter("DATESTART", "\Pasteque\stdtimefstr");
 $report->addFilter("DATESTART", "\i18nDatetime");
 $report->addFilter("DATEEND", "\Pasteque\stdtimefstr");
 $report->addFilter("DATEEND", "\i18nDatetime");
+$report->addFilter("SELL", "\i18nCurr");
 
 \Pasteque\register_report(PLUGIN_NAME, "sales_report", $report);
 ?>

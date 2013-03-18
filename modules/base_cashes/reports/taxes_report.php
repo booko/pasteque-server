@@ -60,6 +60,7 @@ $report->addFilter("DATESTART", "\Pasteque\stdtimefstr");
 $report->addFilter("DATESTART", "\i18nDatetime");
 $report->addFilter("DATEEND", "\Pasteque\stdtimefstr");
 $report->addFilter("DATEEND", "\i18nDatetime");
+$report->addFilter("AMOUNT", "\i18nCurr");
 
 \Pasteque\register_report(PLUGIN_NAME, "taxes_report", $report);
 ?>
