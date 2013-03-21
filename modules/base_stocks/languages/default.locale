@@ -9,6 +9,7 @@
 "Output (return to supplyer)": "Output (return to supplyer)",
 "Stock is below security level!": "Stock is below security level!",
 "Stock is negative!": "Stock is negative",
+"Overstock!": "Overstock",
 
 "Inventory": "Inventory",
 "Security threshold": "Security threshold",

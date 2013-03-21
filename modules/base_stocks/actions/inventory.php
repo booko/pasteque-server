@@ -34,6 +34,7 @@ $levels = \Pasteque\StocksService::getLevels();
 			<th><?php \pi18n("Product.label"); ?></th>
 			<th><?php \pi18n("Quantity"); ?></th>
 			<th><?php \pi18n("Security threshold", PLUGIN_NAME); ?></th>
+			<th><?php \pi18n("Maximum", PLUGIN_NAME); ?></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -50,9 +51,12 @@ if ($security !== NULL && $qty < $security) {
     $class=" warn-level";
     $help = ' title="' . \i18n("Stock is below security level!", PLUGIN_NAME) . '"';
 }
-if ($qty < 0 || ($max !== NULL && $qty > $max)) {
+if ($qty < 0) {
     $class=" alert-level";
     $help = ' title="' . \i18n("Stock is negative!", PLUGIN_NAME) . '"';
+} else if ($max !== NULL && $qty > $max) {
+    $class=" alert-level";
+    $help = ' title="' . \i18n("Overstock!", PLUGIN_NAME) . '"';
 }
 ?>
 	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
@@ -61,6 +65,7 @@ if ($qty < 0 || ($max !== NULL && $qty > $max)) {
 		<td><?php echo $product->label; ?></td>
 		<td class="numeric<?php echo $class; ?>"<?php echo $help; ?>><?php echo $qty; ?></td>
 		<td class="numeric"><?php echo $security === NULL ? \i18n("Undefined") : $security; ?></td>
+		<td class="numeric"><?php echo $max === NULL ? \i18n("Undefined") : $max; ?></td>
 	</tr>
 <?php
 }

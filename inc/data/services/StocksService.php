@@ -39,7 +39,7 @@ class StocksService {
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             while ($row = $stmt->fetch()) {
-                $qties[$row[0]] = $row[1];
+                $qties[$row[0]] = floatval($row[1]);
             }
             return $qties;
         } else {
@@ -56,14 +56,17 @@ class StocksService {
             $stmt->bindParam(":id", $productId);
             $stmt->execute();
             $res = $stmt->fetchAll();
-            return $res[0];
+            return floatval($res[0]);
         } else {
             $stmt = $pdo->prepare("SELECT UNITS FROM STOCKCURRENT WHERE "
                     . "PRODUCT = :id AND LOCATION = :loc");
             $stmt->bindParam(":id", $productId);
             $stmt->bindParam(":loc", $warehouseId);
             $stmt->execute();
-            return $stmt->fetchAll();
+            $ret = $stmt->fetchAll();
+            foreach ($ret as $key => $val) {
+                $ret[$key] = floatval($ret[$key]);
+            }
         }
     }
 

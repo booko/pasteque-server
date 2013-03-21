@@ -30,10 +30,10 @@ function tpl_open() {
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title><?php \pi18n("Pastèque"); ?></title>
-	<link rel="stylesheet" type="text/css" href="templates/pasteque/style.css" />
-	<link rel="stylesheet" type="text/css" href="templates/pasteque/catalog.css" />
-	<link rel="stylesheet" type="text/css" href="templates/pasteque/stock.css" />	
-	<script type="text/javascript" src="templates/pasteque/js/jquery-1.9.1.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="templates/pos-tech/style.css" />
+	<link rel="stylesheet" type="text/css" href="templates/pos-tech/catalog.css" />
+	<link rel="stylesheet" type="text/css" href="templates/pos-tech/stock.css" />	
+	<script type="text/javascript" src="templates/pos-tech/js/jquery-1.9.1.min.js"></script>
 </head>
 <body>
 <?php tpl_menu(); ?>

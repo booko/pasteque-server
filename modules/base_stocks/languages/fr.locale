@@ -9,6 +9,7 @@
 "Output (return to supplyer": "Sortie (retour au fournisseur)",
 "Stock is below security level!": "Le stock est sous le seuil de sécurité !",
 "Stock is negative!": "Le stock est négatif !",
+"Overstock!": "Trop de stock !",
 
 "Inventory": "Inventaire",
 "Security threshold": "Seuil de sécurité",
