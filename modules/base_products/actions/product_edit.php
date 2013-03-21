@@ -40,8 +40,14 @@ function saveStock($newId = NULL) {
     } else {
         $level->product = $newId;
     }
-    $level->security = $_POST['security'];
-    $level->max = $_POST['max'];
+    $level->security = NULL;
+    if (isset($_POST['security']) && $_POST['security'] != "") {
+        $level->security = $_POST['security'];
+    }
+    $level->max = NULL;
+    if (isset($_POST['max']) && $_POST['max'] != "") {
+        $level->max = $_POST['max'];
+    }
     if (isset($_POST['stockId'])) {
         \Pasteque\StocksService::updateLevel($level);
     } else {
@@ -180,11 +186,11 @@ if ($stocks === TRUE && $product != NULL) {
 		<?php if ($level != NULL) { ?><input type="hidden" name="stockId" value="<?php echo $level->id; ?>" /><?php } ?>
 		<div class="row">
 			<label for="security"><?php \pi18n("Security threshold", "base_stocks"); ?></label>
-			<input id="security" type="numeric" name="security" <?php if ($level != NULL) echo 'value="' . $level->security . '"'; ?> />
+			<input id="security" type="numeric" name="security" <?php if ($level !== NULL && $level->security !== NULL) echo 'value="' . $level->security . '"'; ?> />
 		</div>
 		<div class="row">
 			<label for="max-stock"><?php \pi18n("Maximum", "base_stocks"); ?></label>
-			<input id="max-stock" type="numeric" name="max" <?php if ($level != NULL) echo 'value="' . $level->max . '"'; ?> />
+			<input id="max-stock" type="numeric" name="max" <?php if ($level !== NULL && $level->max !== NULL) echo 'value="' . $level->max . '"'; ?> />
 		</div>
 	</fieldset>
 <?php } ?>

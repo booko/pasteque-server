@@ -63,7 +63,15 @@ class StockLevel {
     public function __construct($product_id, $location, $security, $max) {
         $this->product_id = $product_id;
         $this->location = $location;
-        $this->security = intval($security);
-        $this->max = intval($max);
+        if ($security !== NULL) {
+            $this->security = intval($security);
+        } else {
+            $this->security = NULL;
+        }
+        if ($max !== NULL) {
+            $this->max = intval($max);
+        } else {
+            $this->max = NULL;
+        }
     }
 }
