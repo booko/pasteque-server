@@ -107,8 +107,10 @@ function tpl_report($report) {
     echo "\t\t</tr>\n";
     echo "\t<thead>\n";
     echo "\t<tbody>\n";
+    $par = FALSE;
     while ($row = $report->fetch()) {
-        echo "\t\t<tr>\n";
+        $par = !$par;
+        echo "\t\t<tr class=\"row-" . ($par ? 'par' : 'odd') . "\">\n";
         foreach ($report->fields as $field) {
             echo "\t\t\t<td>" . $row[$field] . "</td>\n";
         }
