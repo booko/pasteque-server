@@ -4,30 +4,30 @@ body {
 }
 #header {
 	width: 100%;
-	min-height: 136px;
 	color: #FFF;
 }
 #logo {
 	border-bottom-right-radius: 30px;
 	background-color: #FFF;
-	float: left;
-	width: 281px;
-	height: 134px;
+	width: 200px;
+	height: 95px;
 }
 #version {
 	text-align: right;
 }
 #menu-container {
-	width: 200px;
+	width: 230px;
 	float: left;
 	clear: left;
 }
 
 .content {
-	margin-left: 200px;
+	margin-left: 230px;
 	padding-left: 20px;
-	background-color: #EDF7FF;
+	padding-bottom: 10px;
+	background-color: #FFF;
 	height: 100%;
+	border-top-left-radius: 10px;
 }
 
 .menu-section {
@@ -86,6 +86,8 @@ body {
 	background-color: #AAA;
 	background-image: linear-gradient(to bottom, #CCC, #777);
 	background-repeat: repeat-x;
+	border-width: 1px;
+	border-style: solid;
 	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 	border-radius: 10px;
 	color: #FFFFFF;
@@ -191,12 +193,11 @@ form.edit fieldset legend {
 }
 
 h1, h2, h3, h4 {
-	color: #C27353;
+	color: #A3351E;
 }
 h1 {
 	padding: 8px 20px 8px 20px;
 	margin: 0px;
-	text-shadow: 2px 2px 0 #A8412B;
 }
 
 table {
@@ -229,10 +230,10 @@ th {
 	padding: 20px;
 }
 tr {
-	background-color: #D1E1F0;
+	background-color: #DDD;
 }
 tr.row-odd {
-	background-color: #D1E9FF;
+	background-color: #EEE;
 }
 .thumbnail {
 	max-width: 32px;

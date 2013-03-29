@@ -36,11 +36,11 @@ function tpl_open() {
 	<script type="text/javascript" src="templates/pasteque/js/jquery-1.9.1.min.js"></script>
 </head>
 <body>
-	<div id="header">
-		<div id="logo"><img src="<?php echo get_template_url(); ?>img/logo.png" /></div>
+<?php tpl_menu(); ?>	<div id="header">
+		
     	<div id="version"><?php echo \Pasteque\VERSION; ?></div>
 	</div>
-<?php tpl_menu(); ?>
+
 <div class="content">
 <?php
 }
@@ -70,6 +70,7 @@ function tpl_msg_box($info, $error) {
 function tpl_menu() {
     global $MENU;
     echo "<div id=\"menu-container\">\n";
+    echo "<div id=\"logo\"><img src=\"" . get_template_url() . "img/logo.png\" /></div>\n";
     foreach ($MENU->getSections() as $section) {
         echo "\t<div class=\"menu-section\">\n";
         echo "\t\t<div class=\"menu-section-title\">";
