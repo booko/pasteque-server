@@ -26,5 +26,6 @@
 "Add a tax": "Ajouter une taxe",
 "Edit tax": "Édition de la taxe",
 "Rates": "Taux",
-"New tax rate": "Nouveau taux"
+"New tax rate": "Nouveau taux",
+"Unable to delete tax. Tax cannot be deleted when in use.": "Impossible de supprimer la taxe. Une taxe ne peut pas être supprimée lorsqu'elle est utilisée."
 }

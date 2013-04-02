@@ -75,14 +75,33 @@ class TaxesService {
         $pdo = PDOBuilder::getPDO();
         $id = md5(time() . rand());
         $stmt = $pdo->prepare('INSERT INTO TAXCATEGORIES (ID, NAME) VALUES '
-                              . '(:id, :name)');
-        return $stmt->execute(array(':id' => $id, ':name' => $cat->label));
+                . '(:id, :name)');
+        $stmt->bindParam(':id', $id);
+        $stmt->bindParam(':name', $cat->label);
+        if (!$stmt->execute()) {
+            return FALSE;
+        } else {
+            return $id;
+        }
     }
 
     static function deleteCat($id) {
         $pdo = PDOBuilder::getPDO();
+        $pdo->beginTransaction();
+        $stmtTax = $pdo->prepare("DELETE FROM TAXES WHERE CATEGORY = :id");
+        $stmtTax->bindParam(':id', $id);
+        if ($stmtTax->execute() === FALSE) {
+            $pdo->rollback();
+            return FALSE;
+        }
         $stmt = $pdo->prepare('DELETE FROM TAXCATEGORIES WHERE ID = :id');
-        return $stmt->execute(array(':id' => $id));
+        $stmt->bindParam(':id', $id);
+        if ($stmt->execute() === FALSE) {
+            $pdo->rollback();
+            return FALSE;
+        }
+        $pdo->commit();
+        return TRUE;
     }
 
     static function getTax($id) {
@@ -119,11 +138,17 @@ class TaxesService {
                               . 'CATEGORY, RATE) VALUES '
                               . '(:id, :name, :valid, :cat, :rate)');
         $date = strftime("%Y-%m-%d %H:%M:%S", $tax->start_date);
-        return $stmt->execute(array(':name' => $tax->label,
-                                    ':valid' => $date,
-                                    ':cat' => $tax->tax_cat_id,
-                                    ':rate' => $tax->rate,
-                                    ':id' => $id));
+        $stmt->bindParam(':name', $id);
+        $stmt->bindParam(':valid', $date);
+        $stmt->bindParam(':cat', $tax->tax_cat_id);
+        $stmt->bindParam(':rate', $tax->rate);
+        $stmt->bindParam(':id', $id);
+        if (!$stmt->execute()) {
+        var_dump($stmt->errorInfo());
+            return FALSE;
+        } else {
+            return $id;
+        }
     }
 
     static function deleteTax($id) {

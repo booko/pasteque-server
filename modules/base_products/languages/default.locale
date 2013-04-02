@@ -26,5 +26,6 @@
 "Add a tax": "Add a tax",
 "Edit tax": "Edit tax",
 "Rates": "Rates",
-"New tax rate": "New rate"
+"New tax rate": "New rate",
+"Unable to delete tax. Tax cannot be deleted when in use.": "Unable to delete tax. Tax cannot be deleted when in use."
 }
