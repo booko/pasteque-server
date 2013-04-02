@@ -21,6 +21,6 @@
 namespace Pasteque;
 
 ?>
-<h1>POS-Tech – Interface de gestion</h1>
+<h1><?php \pi18n("Main title"); ?></h1>
 
-<p>Cliquez sur le menu de gauche pour gérer votre point de vente.</p>
+<p><?php \pi18n("Introduction"); ?></p>
