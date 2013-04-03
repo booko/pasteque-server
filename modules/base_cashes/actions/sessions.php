@@ -81,3 +81,5 @@ $sessions = \Pasteque\CashesService::getAll();
 			</td>
 		</tr>
 <?php } } ?>
+	</tbody>
+</table>
