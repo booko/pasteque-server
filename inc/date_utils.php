@@ -29,7 +29,7 @@ function timefstr($format, $date) {
     $format = str_replace("%m", "m", $format);
     $format = str_replace("%Y", "Y", $format);
     $format = str_replace("%y", "y", $format);
-    $format = str_replace("%H", "h", $format);
+    $format = str_replace("%H", "H", $format);
     $format = str_replace("%M", "i", $format);
     $dateTime = \DateTime::createFromFormat($format, $date);
     return $dateTime->getTimestamp();
