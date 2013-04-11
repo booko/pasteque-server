@@ -33,6 +33,7 @@ case 'save':
     foreach ($json as $jsonTkt) {
         $label = $jsonTkt->ticket->label;
         $cashierId = $jsonTkt->cashier->id;
+        $customerId = $jsonTkt->ticket->customer;
         $date = $jsonTkt->date;
         $lines = array();
         foreach ($jsonTkt->ticket->lines as $jsline) {
@@ -54,7 +55,7 @@ case 'save':
             $payments[] = $payment;
         }
         $tktLght = new TicketLight($label, $cashierId, $date, $lines,
-                                   $payments, $cashId);
+                                   $payments, $cashId, $customerId);
         $ticket = TicketsService::buildLight($tktLght);
         $ret = TicketsService::save($ticket) && $ret;
     }

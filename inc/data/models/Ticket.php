@@ -29,14 +29,17 @@ class TicketLight {
     public $date;
     public $linesLight;
     public $payments;
+    public $customerId;
 
-    function __construct($label, $cashierId, $date, $lines, $payments, $cashId) {
+    function __construct($label, $cashierId, $date, $lines, $payments, $cashId,
+            $customerId = NULL) {
         $this->label = $label;
         $this->cashierId = $cashierId;
         $this->date = $date;
         $this->linesLight = $lines;
         $this->payments = $payments;
         $this->cashId = $cashId;
+        $this->customerId = $customerId;
     }
 
     function getTaxAmounts() {
@@ -66,21 +69,25 @@ class Ticket {
     public $date;
     public $lines;
     public $payments;
+    public $customer;
 
     static function __build($id, $label, $cashier, $date, $lines, $payments,
-                            $cash) {
-        $ticket = new Ticket();
+                            $cash, $customer = NULL) {
+        $ticket = new Ticket($label, $cashier, $date, $lines, $payments,
+                $cash, $customer);
         $ticket->id = $id;
         return $ticket;
     }
 
-    function __construct($label, $cashier, $date, $lines, $payments, $cash) {
+    function __construct($label, $cashier, $date, $lines, $payments, $cash,
+            $customer = NULL) {
         $this->label = $label;
         $this->cashier = $cashier;
         $this->date = $date;
         $this->lines = $lines;
         $this->payments = $payments;
         $this->cash = $cash;
+        $this->customer = $customer;
     }
 
     function getTaxAmounts() {

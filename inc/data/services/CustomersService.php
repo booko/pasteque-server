@@ -42,7 +42,7 @@ class CustomersService {
         if ($include_hidden) {
             $sql = "SELECT * FROM CUSTOMERS";
         } else {
-            $sql = "SELECT * FORM CUSTOMERS WHERE VISIBLE = 1";
+            $sql = "SELECT * FROM CUSTOMERS WHERE VISIBLE = 1";
         }
         foreach ($pdo->query($sql) as $db_cust) {
             $cust = CustomersService::buildDBCustomer($db_cust);
@@ -52,6 +52,9 @@ class CustomersService {
     }
 
     static function get($id) {
+        if ($id === NULL) {
+            return NULL;
+        }
         $pdo = PDOBuilder::getPDO();
         $stmt = $pdo->prepare("SELECT * FROM CUSTOMERS WHERE ID = :id");
         if ($stmt->execute(array(':id' => $id))) {

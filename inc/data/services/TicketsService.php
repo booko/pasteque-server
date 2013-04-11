@@ -26,17 +26,17 @@ class TicketsService {
     static function buildLight($ticketLight) {
         $cashier = UsersService::get($ticketLight->cashierId);
         $cash = CashesService::get($ticketLight->cashId);
+        $customer = CustomersService::get($ticketLight->customerId);
         $lines = array();
         foreach ($ticketLight->linesLight as $lineLight) {
             $product = ProductsService::get($lineLight->productId);
             $tax = TaxesService::getTax($lineLight->taxId);
             $line = new TicketLine($lineLight->line, $product,
-                                   $lineLight->quantity, $lineLight->price,
-                                   $tax);
+                    $lineLight->quantity, $lineLight->price, $tax);
             $lines[] = $line;
         }
         $ticket = new Ticket($ticketLight->label, $cashier, $ticketLight->date,
-                             $lines, $ticketLight->payments, $cash);
+                $lines, $ticketLight->payments, $cash, $customer);
         return $ticket;
     }
 
@@ -83,11 +83,14 @@ class TicketsService {
         }
         $nextNum = $stmtNum->fetchColumn(0);
         //  Insert ticket
-        $stmtTkt = $pdo->prepare("INSERT INTO TICKETS (ID, TICKETID, PERSON) "
-                                 . "VALUES (:id, :tktId, :person)");
-        $ok = $stmtTkt->execute(array(':id' => $id,
-                                      ':tktId' => $nextNum,
-                                      ':person' => $ticket->cashier->id));
+        $stmtTkt = $pdo->prepare("INSERT INTO TICKETS (ID, TICKETID, PERSON, "
+                . "CUSTOMER) VALUES (:id, :tktId, :person, :cust)");
+        $cust = $ticket->customer === NULL ? NULL : $ticket->customer->id;
+        $stmtTkt->bindParam(':id', $id, \PDO::PARAM_STR);
+        $stmtTkt->bindParam(':tktId', $nextNum, \PDO::PARAM_INT);
+        $stmtTkt->bindParam(':person', $ticket->cashier->id, \PDO::PARAM_STR);
+        $stmtTkt->bindParam(':cust', $cust, \PDO::PARAM_STR);
+        $ok = $stmtTkt->execute();
         if ($ok === false) {
             $pdo->rollback();
             return false;
