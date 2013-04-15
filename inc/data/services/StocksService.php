@@ -29,6 +29,18 @@ class StocksService {
         return $lvl;
     }
 
+    static function getLocationId($locationName) {
+        $pdo = PDOBuilder::getPDO();
+        $sql = "SELECT * FROM LOCATIONS WHERE NAME LIKE :loc";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(":loc", $locationName);
+        $stmt->execute();
+        if ($row = $stmt->fetch()) {
+            return $row['ID'];
+        } else {
+            return NULL;
+        }
+    }
 
     static function getQties($warehouseId = NULL) {
         $qties = array();
@@ -37,15 +49,17 @@ class StocksService {
             $sql = "SELECT PRODUCT, SUM(UNITS) FROM STOCKCURRENT "
                     . "GROUP BY PRODUCT";
             $stmt = $pdo->prepare($sql);
-            $stmt->execute();
-            while ($row = $stmt->fetch()) {
-                $qties[$row[0]] = floatval($row[1]);
-            }
-            return $qties;
         } else {
-            // TODO: multiple warehouses
-            return NULL;
+            $sql = "SELECT PRODUCT, SUM(UNITS) FROM STOCKCURRENT "
+                    . "WHERE LOCATION = :loc GROUP BY PRODUCT";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':loc', $warehouseId);
         }
+        $stmt->execute();
+        while ($row = $stmt->fetch()) {
+            $qties[$row[0]] = floatval($row[1]);
+        }
+        return $qties;
     }
 
     static function getQty($productId, $warehouseId = NULL) {
@@ -76,14 +90,17 @@ class StocksService {
         if ($warehouseId === NULL) {
             $sql = "SELECT * FROM STOCKLEVEL";
             $stmt = $pdo->prepare($sql);
-            $stmt->execute();
-            while ($row = $stmt->fetch()) {
-                $lvl = StocksService::buildDBLevel($row);
-                $lvls[$row['PRODUCT']] = $lvl;
-            }
-            return $lvls;
+        } else {
+            $sql = "SELECT * FROM STOCKLEVEL WHERE LOCATION = :loc";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':loc', $warehouseId);
         }
-        // TODO: multiple warehouses
+        $stmt->execute();
+        while ($row = $stmt->fetch()) {
+            $lvl = StocksService::buildDBLevel($row);
+            $lvls[$row['PRODUCT']] = $lvl;
+        }
+        return $lvls;
     }
 
     static function getLevel($productId, $warehouseId = NULL) {
@@ -93,14 +110,19 @@ class StocksService {
             $sql = "SELECT * FROM STOCKLEVEL WHERE PRODUCT = :id";
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(":id", $productId);
-            $stmt->execute();
-            if ($row = $stmt->fetch()) {
-                $lvl = StocksService::buildDBLevel($row);
-                return $lvl;
-            }
-            return NULL;
+        } else {
+            $sql = "SELECT * FROM STOCKLEVEL WHERE PRODUCT = :id "
+                    . "AND LOCATION = :loc";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(":id", $productId);
+            $stmt->bindParam(":loc", $warehouseId);
         }
-        // TODO: multiple warehouses
+        $stmt->execute();
+        if ($row = $stmt->fetch()) {
+            $lvl = StocksService::buildDBLevel($row);
+            return $lvl;
+        }
+        return NULL;
     }
 
     static function createLevel($level) {
