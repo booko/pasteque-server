@@ -1,6 +1,7 @@
 -- France default data
 
 INSERT INTO CATEGORIES(ID, NAME) VALUES ('000', 'Categorie standard');
+INSERT INTO CATEGORIES(ID, NAME) VALUES ('0', 'Formules');
 INSERT INTO LOCATIONS(ID, NAME,ADDRESS) VALUES('0', 'Principal', NULL);
 
 -- Taxes
