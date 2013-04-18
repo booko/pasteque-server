@@ -30,8 +30,8 @@ case 'getAll':
         $location = $_GET['location'];
         $location = StocksService::getLocationId($location);
         if ($location === NULL) {
-            $ret = "ERROR: unknown location";
-            break;
+            echo "ERROR: unknown location";
+            return;
         }
     }
     $stocks = StocksService::getQties($location);
