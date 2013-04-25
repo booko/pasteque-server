@@ -60,6 +60,7 @@
 "Customer.disp_name": "Name",
 "Customer.card": "Card",
 "Customer.visible": "Active",
+"Customer.prepaid": "Prepayment",
 "Customer.max_debt": "Max debt",
 "Customer.curr_debt": "Current debt",
 "Customer.debt_date": "Debt date",

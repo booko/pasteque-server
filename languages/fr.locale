@@ -61,6 +61,7 @@
 "Customer.disp_name": "Nom",
 "Customer.card": "Carte",
 "Customer.visible": "Actif",
+"Customer.prepaid": "Solde pré-payé",
 "Customer.max_debt": "Dette max",
 "Customer.curr_debt": "Dette actuelle",
 "Customer.debt_date": "Date",

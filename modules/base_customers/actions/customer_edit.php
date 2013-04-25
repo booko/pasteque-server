@@ -42,7 +42,7 @@ if (isset($_POST['id']) && isset($_POST['disp_name'])) {
     }
     $cust = \Pasteque\Customer::__build($_POST['id'], $_POST['number'], $_POST['key'],
             $_POST['disp_name'], $_POST['card'], $tax_cat_id,
-            $_POST['max_debt'], $curr_debt, $debt_date,
+            $_POST['prepaid'], $_POST['max_debt'], $curr_debt, $debt_date,
             $_POST['first_name'], $_POST['last_name'], $_POST['email'],
             $_POST['phone1'], $_POST['phone2'], $_POST['fax'], $_POST['addr1'],
             $_POST['addr2'], $_POST['zip_code'], $_POST['city'],
@@ -60,7 +60,7 @@ if (isset($_POST['id']) && isset($_POST['disp_name'])) {
     }
     $cust = new \Pasteque\Customer($_POST['number'], $_POST['key'],
             $_POST['disp_name'], $_POST['card'], $tax_cat_id,
-            $_POST['max_debt'], NULL, NULL,
+            $_POST['prepaid'], $_POST['max_debt'], NULL, NULL,
             $_POST['first_name'], $_POST['last_name'], $_POST['email'],
             $_POST['phone1'], $_POST['phone2'], $_POST['fax'], $_POST['addr1'],
             $_POST['addr2'], $_POST['zip_code'], $_POST['city'],
@@ -112,6 +112,7 @@ if (isset($_GET['id'])) {
 	</fieldset>
 	<fieldset>
 	<legend><?php \pi18n("Debt", PLUGIN_NAME); ?></legend>
+	<?php \Pasteque\form_input("edit", "Customer", $cust, "prepaid", "numeric"); ?>
 	<?php \Pasteque\form_input("edit", "Customer", $cust, "max_debt", "numeric"); ?>
 	<div class="row">
 		<label for="currDebt"><?php \pi18n("Customer.curr_debt"); ?></label>
