@@ -62,7 +62,10 @@ class TicketsService {
 
     static function save($ticket) {
         $pdo = PDOBuilder::getPDO();
-        $pdo->beginTransaction();
+        $newTransaction = !$pdo->inTransaction();
+        if ($newTransaction) {
+            $pdo->beginTransaction();
+        }
         $id = md5(time() . rand());
         $stmtRcpt = $pdo->prepare("INSERT INTO RECEIPTS	(ID, MONEY, DATENEW) "
                                   . "VALUES (:id, :money, :date)");
@@ -71,14 +74,18 @@ class TicketsService {
                                        ':money' => $ticket->cash->id,
                                        ':date' => $strdate));
         if ($ok === false) {
-            $pdo->rollback();
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
             return false;
         }
         // Get next ticket number
         $stmtNum = $pdo->prepare("SELECT ID FROM TICKETSNUM");
         $ok = $stmtNum->execute();
         if ($ok === false) {
-            $pdo->rollback();
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
             return false;
         }
         $nextNum = $stmtNum->fetchColumn(0);
@@ -92,14 +99,18 @@ class TicketsService {
         $stmtTkt->bindParam(':cust', $cust, \PDO::PARAM_STR);
         $ok = $stmtTkt->execute();
         if ($ok === false) {
-            $pdo->rollback();
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
             return false;
         }
         // Increment next ticket number
         $stmtNumInc = $pdo->prepare("UPDATE TICKETSNUM SET ID = :id");
         $ok = $stmtNumInc->execute(array(':id' => $nextNum + 1));
         if ($ok === false) {
-            $pdo->rollback();
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
             return false;
         }
         // Insert ticket lines
@@ -119,14 +130,18 @@ class TicketsService {
                                             ':tax' => $line->tax->id,
                                             ':attrs' => $line->attributes));
             if ($ok === false) {
-                $pdo->rollback();
+                if ($newTransaction) {
+                    $pdo->rollback();
+                }
                 return false;
             }
             // Update stock
             $move = new StockMove($strdate, StockMove::REASON_OUT_SELL,
                     "0", $line->product->id, $line->quantity);
             if (!StocksService::addMove($move)) {
-                $pdo->rollback();
+                if ($newTransaction) {
+                    $pdo->rollback();
+                }
                 return false;
             }
             // Check prepayment
@@ -134,7 +149,9 @@ class TicketsService {
                 $ok = CustomersService::addPrepaid($cust,
                         $line->price * $line->quantity);
                 if ($ok === FALSE) {
-                    $pdo->rollback();
+                    if ($newTransaction) {
+                        $pdo->rollback();
+                    }
                     return FALSE;
                 }
             }
@@ -151,13 +168,17 @@ class TicketsService {
                                           ':type' => $payment->type,
                                           ':amount' => $payment->amount));
             if ($ok === false) {
-                $pdo->rollback();
+                if ($newTransaction) {
+                    $pdo->rollback();
+                }
                 return false;
             }
             if ($payment->type == 'prepaid') {
-                $ok = CustomersService::addPrepaid($payment->amount * -1);
+                $ok = CustomersService::addPrepaid($cust, $payment->amount * -1);
                 if ($ok === FALSE) {
-                    $pdo->rollback();
+                    if ($newTransaction) {
+                        $pdo->rollback();
+                    }
                     return FALSE;
                 }
             }
@@ -174,11 +195,15 @@ class TicketsService {
                                           ':base' => $ta->base,
                                           ':amount' => $ta->getAmount()));
             if ($ok === false) {
-                $pdo->rollback();
+                if ($newTransaction) {
+                    $pdo->rollback();
+                }
                 return false;
             }
         }
-        $pdo->commit();
+        if ($newTransaction) {
+            $pdo->commit();
+        }
         return true;
     }
 }

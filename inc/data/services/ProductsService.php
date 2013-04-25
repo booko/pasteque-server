@@ -74,8 +74,10 @@ class ProductsService {
     static function getPrepaidIds() {
         $ids = array();
         $pdo = PDOBuilder::getPDO();
-        $sql = "SELECT ID FROM PRODUCTS WHERE PRODUCT_CAT = '-1'";
+        $sql = "SELECT ID FROM PRODUCTS WHERE CATEGORY = :cat";
         $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(":cat", '-1');
+        $stmt->execute();
         while ($row = $stmt->fetch()) {
             $ids[] = $row['ID'];
         }

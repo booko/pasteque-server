@@ -87,20 +87,29 @@ class TaxesService {
 
     static function deleteCat($id) {
         $pdo = PDOBuilder::getPDO();
-        $pdo->beginTransaction();
+        $newTransaction = !$pdo->inTransaction();
+        if ($newTransaction) {
+            $pdo->beginTransaction();
+        }
         $stmtTax = $pdo->prepare("DELETE FROM TAXES WHERE CATEGORY = :id");
         $stmtTax->bindParam(':id', $id);
         if ($stmtTax->execute() === FALSE) {
-            $pdo->rollback();
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
             return FALSE;
         }
         $stmt = $pdo->prepare('DELETE FROM TAXCATEGORIES WHERE ID = :id');
         $stmt->bindParam(':id', $id);
         if ($stmt->execute() === FALSE) {
-            $pdo->rollback();
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
             return FALSE;
         }
-        $pdo->commit();
+        if ($newTransaction) {
+            $pdo->commit();
+        }
         return TRUE;
     }
 

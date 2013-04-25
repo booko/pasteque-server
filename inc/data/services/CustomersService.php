@@ -70,7 +70,8 @@ class CustomersService {
         $cust = CustomersService::get($custId);
         if ($cust !== NULL) {
             $cust->prepaid += $amount;
-            return CusotmersService::update($cust);
+            $ret = CustomersService::update($cust);
+            return $ret;
         }
         return FALSE;
     }

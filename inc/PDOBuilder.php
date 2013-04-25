@@ -22,16 +22,22 @@ namespace Pasteque;
 
 class PDOBuilder {
 
+    private static $pdo = NULL;
+
     /** Get PDO from the loaded database core module */
     public static function getPDO() {
+        if (PDOBuilder::$pdo !== NULL) {
+            return PDOBuilder::$pdo;
+        }
         $uid = get_user_id();
         switch (get_db_type($uid)) {
         case 'mysql':
             $dsn = "mysql:dbname=" . get_db_name($uid) . ";host="
                    . get_db_host($uid) . ";port=" . get_db_port($uid);
             try {
-                return new \PDO($dsn, get_db_user($uid), get_db_password($uid),
-                               array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
+                PDOBuilder::$pdo = new \PDO($dsn, get_db_user($uid), get_db_password($uid),
+                        array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
+                return PDOBuilder::$pdo;
             } catch (\PDOException $e) {
                 die("Connexion error " . $e);
             }

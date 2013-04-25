@@ -158,7 +158,10 @@ class StocksService {
 
     static function addMove($move) {
         $pdo = PDOBuilder::getPDO();
-        $pdo->beginTransaction();
+        $newTransaction = !$pdo->inTransaction();
+        if ($newTransaction) {
+            $pdo->beginTransaction();
+        }
         $qty = StockMove::isIn($move->reason)
                 ? $move->quantity : $move->quantity * -1;
         // Update STOCKCURRENT
@@ -182,7 +185,9 @@ class StocksService {
             $stockStmt->execute();
         }
         if ($stockStmt->rowcount() == 0) {
-            $pdo->rollback();
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
             return FALSE;
         }
         // Update STOCKDIARY
@@ -199,10 +204,14 @@ class StocksService {
         $diaryStmt->bindParam(":qty", $qty);
         $diaryStmt->bindValue(":price", 0.0);
         if ($diaryStmt->execute()) {
-            $pdo->commit();
+            if ($newTransaction) {
+                $pdo->commit();
+            }
             return TRUE;
         } else {
-            $pdo->rollback();
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
             return FALSE;
         }
     }
