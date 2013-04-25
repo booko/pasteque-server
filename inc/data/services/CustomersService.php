@@ -25,6 +25,7 @@ class CustomersService {
     private static function buildDBCustomer($db_cust) {
         $cust = Customer::__build($db_cust['ID'], $db_cust['TAXID'], $db_cust['SEARCHKEY'],
                 $db_cust['NAME'], $db_cust['CARD'], $db_cust['TAXCATEGORY'],
+                $db_cust['PREPAID'],
                 $db_cust['MAXDEBT'], $db_cust['CURDEBT'], $db_cust['CURDATE'],
                 $db_cust['FIRSTNAME'], $db_cust['LASTNAME'], $db_cust['EMAIL'],
                 $db_cust['PHONE'], $db_cust['PHONE2'], $db_cust['FAX'],
@@ -65,6 +66,15 @@ class CustomersService {
         return NULL;
     }
 
+    static function addPrepaid($custId, $amount) {
+        $cust = CustomersService::get($custId);
+        if ($cust !== NULL) {
+            $cust->prepaid += $amount;
+            return CusotmersService::update($cust);
+        }
+        return FALSE;
+    }
+
     static function update($cust) {
         if ($cust->id == null) {
             return false;
@@ -72,6 +82,7 @@ class CustomersService {
         $pdo = PDOBuilder::getPDO();
         $sql = "UPDATE CUSTOMERS SET SEARCHKEY = :key, TAXID = :num, "
                 . "NAME = :name, TAXCATEGORY = :tax_id, CARD = :card, "
+                . "PREPAID = :prepaid, "
                 . "MAXDEBT = :max_debt, ADDRESS = :addr, ADDRESS2 = :addr2, "
                 . "POSTAL = :zip, CITY = :city, REGION = :region, "
                 . "COUNTRY = :country, FIRSTNAME = :first_name, "
@@ -85,6 +96,7 @@ class CustomersService {
         $stmt->bindParam(":name", $cust->disp_name, \PDO::PARAM_STR);
         $stmt->bindParam(":tax_id", $cust->cust_tax_id, \PDO::PARAM_STR);
         $stmt->bindParam(":card", $cust->card, \PDO::PARAM_STR);
+        $stmt->bindParam(":prepaid", $cust->prepaid, \PDO::PARAM_STR);
         $stmt->bindParam(":max_debt", $cust->max_debt, \PDO::PARAM_STR);
         $stmt->bindParam(":addr", $cust->addr1, \PDO::PARAM_STR);
         $stmt->bindParam(":addr2", $cust->addr2, \PDO::PARAM_STR);
@@ -110,10 +122,10 @@ class CustomersService {
         $pdo = PDOBuilder::getPDO();
         $id = md5(time() . rand());
         $sql = "INSERT INTO CUSTOMERS (ID, SEARCHKEY, TAXID, NAME, TAXCATEGORY, "
-                . "CARD, MAXDEBT, ADDRESS, ADDRESS2, POSTAL, CITY, REGION, "
+                . "CARD, PREPAID, MAXDEBT, ADDRESS, ADDRESS2, POSTAL, CITY, REGION, "
                 . "COUNTRY, FIRSTNAME, LASTNAME, EMAIL, PHONE, PHONE2, FAX, "
                 . "NOTES, VISIBLE, CURDATE, CURDEBT) VALUES ("
-                . ":id, :key, :num, :name, :tax_id, :card, :max_debt, :addr, "
+                . ":id, :key, :num, :name, :tax_id, :card, :prepaid, :max_debt, :addr, "
                 . ":addr2, :zip, :city, :region, :country, :first_name, "
                 . ":last_name, :email, :phone, :phone2, :fax, :note, :visible, "
                 . ":date, :debt)";
@@ -124,6 +136,7 @@ class CustomersService {
         $stmt->bindParam(":name", $cust->disp_name, \PDO::PARAM_STR);
         $stmt->bindParam(":tax_id", $cust->cust_tax_id, \PDO::PARAM_STR);
         $stmt->bindParam(":card", $cust->card, \PDO::PARAM_STR);
+        $stmt->bindParam(":prepaid", $cust->prepaid, \PDO::PARAM_STR);
         $stmt->bindParam(":max_debt", $cust->max_debt, \PDO::PARAM_STR);
         $stmt->bindParam(":addr", $cust->addr1, \PDO::PARAM_STR);
         $stmt->bindParam(":addr2", $cust->addr2, \PDO::PARAM_STR);

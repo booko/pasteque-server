@@ -71,7 +71,17 @@ class ProductsService {
         return $prds;
     }
 
-    
+    static function getPrepaidIds() {
+        $ids = array();
+        $pdo = PDOBuilder::getPDO();
+        $sql = "SELECT ID FROM PRODUCTS WHERE PRODUCT_CAT = '-1'";
+        $stmt = $pdo->prepare($sql);
+        while ($row = $stmt->fetch()) {
+            $ids[] = $row['ID'];
+        }
+        return $ids;
+    }
+
     static function search($where = '', $groupby = '',$orderby='',$limit='',$having='',$full = false) {
         $prds = array();
         $pdo = PDOBuilder::getPDO();

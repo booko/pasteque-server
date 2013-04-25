@@ -103,11 +103,13 @@ class TicketsService {
             return false;
         }
         // Insert ticket lines
+        // Also check for prepayments refill
         $stmtLines = $pdo->prepare("INSERT INTO TICKETLINES (TICKET, LINE, "
                                    . "PRODUCT, UNITS, "
                                    . "PRICE, TAXID, ATTRIBUTES) VALUES "
                                    . "(:id, :line, :product, :qty, :price, "
                                    . ":tax, :attrs)");
+        $prepaidIds = ProductsService::getPrepaidIds();
         foreach ($ticket->lines as $line) {
             $ok = $stmtLines->execute(array(':id' => $id,
                                             ':line' => $line->line,
@@ -127,8 +129,18 @@ class TicketsService {
                 $pdo->rollback();
                 return false;
             }
+            // Check prepayment
+            if ($cust !== NULL && in_array($line->product->id, $prepaidIds)) {
+                $ok = CustomersService::addPrepaid($cust,
+                        $line->price * $line->quantity);
+                if ($ok === FALSE) {
+                    $pdo->rollback();
+                    return FALSE;
+                }
+            }
         }
         // Insert payments
+        // Also check for prepayment debit
         $stmtPay = $pdo->prepare("INSERT INTO PAYMENTS (ID, RECEIPT, PAYMENT, "
                                  . "TOTAL) VALUES (:id, :rcptId, "
                                  . ":type, :amount)");
@@ -141,6 +153,13 @@ class TicketsService {
             if ($ok === false) {
                 $pdo->rollback();
                 return false;
+            }
+            if ($payment->type == 'prepaid') {
+                $ok = CustomersService::addPrepaid($payment->amount * -1);
+                if ($ok === FALSE) {
+                    $pdo->rollback();
+                    return FALSE;
+                }
             }
         }
         // Insert taxlines

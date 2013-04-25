@@ -28,6 +28,7 @@ class Customer {
     public $disp_name;
     public $card;
     public $cust_tax_id;
+    public $prepaid;
     public $max_debt;
     public $curr_debt;
     public $debt_date;
@@ -47,18 +48,18 @@ class Customer {
     public $visible;
 
     static function __build($id, $number, $key, $disp_name, $card, $cust_tax_id,
-            $max_debt, $curr_debt, $debt_date, $first_name, $last_name, $email,
+            $prepaid, $max_debt, $curr_debt, $debt_date, $first_name, $last_name, $email,
             $phone1, $phone2, $fax, $addr1, $addr2, $zip_code, $city, $region,
             $country, $note, $visible) {
         $cust = new Customer($number, $key, $disp_name, $card, $cust_tax_id,
-            $max_debt, $curr_debt, $debt_date, $first_name, $last_name, $email,
+            $prepaid, $max_debt, $curr_debt, $debt_date, $first_name, $last_name, $email,
             $phone1, $phone2, $fax, $addr1, $addr2, $zip_code, $city, $region,
             $country, $note, $visible);
         $cust->id = $id;
         return $cust;
     }
 
-    function __construct($number, $key, $disp_name, $card, $cust_tax_id,
+    function __construct($number, $key, $disp_name, $card, $cust_tax_id, $prepaid,
             $max_debt, $curr_debt, $debt_date, $first_name, $last_name, $email,
             $phone1, $phone2, $fax, $addr1, $addr2, $zip_code, $city, $region,
             $country, $note, $visible) {
@@ -67,6 +68,7 @@ class Customer {
         $this->disp_name = $disp_name;
         $this->card = $card;
         $this->cust_tax_id = $cust_tax_id;
+        $this->prepaid = $prepaid;
         $this->max_debt = $max_debt;
         $this->curr_debt = $curr_debt;
         $this->debt_date = $debt_date;
