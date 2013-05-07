@@ -20,8 +20,8 @@
 
 namespace Pasteque;
 
-const DB_VERSION = "3";
-const VERSION = "0.1";
+const DB_VERSION = "4";
+const VERSION = "0.2";
 
 const URL_ACTION_PARAM = "p";
 
