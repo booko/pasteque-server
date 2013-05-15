@@ -3,6 +3,7 @@
 "datetime": "%d/%m/%Y %H:%M",
 "currency": "%01.2f€",
 
+"Version.Codename": "Datte",
 "Main title": "Pastèque, interface de gestion",
 "Introduction": "Cliquez sur le menu de gauche pour gérer votre point de vente.",
 

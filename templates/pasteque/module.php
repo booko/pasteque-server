@@ -38,7 +38,7 @@ function tpl_open() {
 <body>
 <?php tpl_menu(); ?>	<div id="header">
 		
-    	<div id="version"><?php echo \Pasteque\VERSION; ?></div>
+    	<div id="version"><?php echo \pi18n("Version.Codename") . " " . \Pasteque\VERSION; ?></div>
 	</div>
 
 <div class="content">

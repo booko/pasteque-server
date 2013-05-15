@@ -3,6 +3,7 @@
 "datetime": "%Y-%m-%d %h:%M",
 "currency": "%01.2f€",
 
+"Version.Codename": "Date",
 "Main title": "Pastèque, back-office",
 "Introduction": "Clic on the left menu to manage your point of sales",
 
