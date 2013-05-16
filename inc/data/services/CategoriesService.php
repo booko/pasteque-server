@@ -30,7 +30,7 @@ class CategoriesService {
     static function getAll() {
         $cats = array();
         $pdo = PDOBuilder::getPDO();
-        $sql = "SELECT * FROM CATEGORIES";
+        $sql = "SELECT * FROM CATEGORIES ORDER BY DISPORDER ASC, NAME ASC";
         foreach ($pdo->query($sql) as $db_cat) {
             $cat = CategoriesService::buildDBCat($db_cat);
             $cats[] = $cat;

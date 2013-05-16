@@ -30,7 +30,7 @@ class CompositionsService {
     private static function buildDBGrp($db_grp, $pdo) {
         $grp = CompositionGroup::__build($db_grp['ID'], $db_grp['NAME']);
         $stmt = $pdo->prepare("SELECT * FROM SUBGROUPS_PROD WHERE "
-                . "SUBGROUP = :id");
+                . "SUBGROUP = :id ORDER BY DISPORDER ASC, NAME ASC");
         $stmt->execute(array(':id' => $db_grp['ID']));
         while ($db_component = $stmt->fetch()) {
             $grp->addProduct($db_component['PRODUCT']);
