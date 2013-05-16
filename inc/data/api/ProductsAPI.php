@@ -36,6 +36,11 @@ case 'getAll':
     break;
 case 'getAllFull':
     $ret = ProductsService::getAll(true);
+    foreach ($ret as $r) {
+        if ($r->image !== NULL) {
+            $r->image = base64_encode($r->image);
+        }
+    }
     break;
 case 'create':
     if (!isset($_GET['ref']) || !isset($_GET['label'])
