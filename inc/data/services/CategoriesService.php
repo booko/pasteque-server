@@ -24,7 +24,7 @@ class CategoriesService {
 
     private static function buildDBCat($db_cat) {
         return Category::__build($db_cat['ID'], $db_cat['PARENTID'],
-                                 $db_cat['NAME'], $db_cat['IMAGE']);
+                $db_cat['NAME'], $db_cat['IMAGE'], $db_cat['DISPORDER']);
     }
 
     static function getAll() {
@@ -55,7 +55,8 @@ class CategoriesService {
             return false;
         }
         $pdo = PDOBuilder::getPDO();
-        $sql = "UPDATE CATEGORIES SET NAME = :name, PARENTID = :pid";
+        $sql = "UPDATE CATEGORIES SET NAME = :name, PARENTID = :pid, "
+                . "DISPORDER = :order";
         if ($cat->image !== "") {
             $sql .= ", IMAGE = :img";
         }
@@ -64,6 +65,7 @@ class CategoriesService {
         $stmt->bindParam(":name", $cat->label, \PDO::PARAM_STR);
         $stmt->bindParam(":pid", $cat->parent_id, \PDO::PARAM_INT);
         $stmt->bindParam(":id", $cat->id, \PDO::PARAM_INT);
+        $stmt->bindParam(":order", $cat->disp_order, \PDO::PARAM_INT);
         if ($cat->image !== "") {
             $stmt->bindParam(":img", $cat->image, \PDO::PARAM_LOB);
         }
@@ -73,11 +75,11 @@ class CategoriesService {
     static function createCat($cat) {
         $pdo = PDOBuilder::getPDO();
         $id = md5(time() . rand());
-        $sql = "INSERT INTO CATEGORIES (ID, NAME, PARENTID";
+        $sql = "INSERT INTO CATEGORIES (ID, NAME, PARENTID, DISPORDER";
         if ($cat->image !== "") {
             $sql .= ", IMAGE";
         }
-        $sql .= ") VALUES (:id, :name, :pid";
+        $sql .= ") VALUES (:id, :name, :pid, :order";
         if ($cat->image !== "") {
             $sql .= ", :img";
         }
@@ -86,6 +88,7 @@ class CategoriesService {
         $stmt->bindParam(":name", $cat->label, \PDO::PARAM_STR);
         $stmt->bindParam(":pid", $cat->parent_id, \PDO::PARAM_INT);
         $stmt->bindParam(":id", $id, \PDO::PARAM_INT);
+        $stmt->bindParam(":order", $cat->disp_order, \PDO::PARAM_INT);
         if ($cat->image !== "") {
             $stmt->bindParam(":img", $cat->image, \PDO::PARAM_LOB);
         }

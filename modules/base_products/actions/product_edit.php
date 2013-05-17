@@ -59,7 +59,8 @@ if (isset($_POST['id'])) {
     if (isset($_POST['reference']) && isset($_POST['label'])
             && isset($_POST['realsell']) && isset($_POST['category'])
             && isset($_POST['tax_cat'])) {
-        $cat = \Pasteque\Category::__build($_POST['category'], NULL, "dummy", NULL);
+        $cat = \Pasteque\Category::__build($_POST['category'], NULL, "dummy",
+                NULL, NULL);
         $taxCat = \Pasteque\TaxesService::get($_POST['tax_cat']);
         $taxRate = $taxCat->getCurrentTax()->rate;
         if ($_FILES['image']['tmp_name'] !== "") {
@@ -84,7 +85,8 @@ if (isset($_POST['id'])) {
     if (isset($_POST['reference']) && isset($_POST['label'])
             && isset($_POST['realsell']) && isset($_POST['category'])
             && isset($_POST['tax_cat'])) {
-        $cat = \Pasteque\Category::__build($_POST['category'], NULL, "dummy", NULL);
+        $cat = \Pasteque\Category::__build($_POST['category'], NULL, "dummy",
+                NULL, NULL);
         $taxCat = \Pasteque\TaxesService::get($_POST['tax_cat']);
         $taxRate = $taxCat->getCurrentTax()->rate;
         if ($_FILES['image']['tmp_name'] !== "") {

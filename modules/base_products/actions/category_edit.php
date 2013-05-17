@@ -37,7 +37,7 @@ if (isset($_POST['id']) && isset($_POST['label'])) {
         $parent_id = $_POST['parent_id'];
     }
     $cat = \Pasteque\Category::__build($_POST['id'], $parent_id,
-            $_POST['label'], $img);
+            $_POST['label'], $img, $_POST['disp_order']);
     if (\Pasteque\CategoriesService::updateCat($cat)) {
         $message = \i18n("Changes saved");
     } else {
@@ -53,7 +53,8 @@ if (isset($_POST['id']) && isset($_POST['label'])) {
     if ($_POST['parent_id'] !== "") {
         $parent_id = $_POST['parent_id'];
     }
-    $cat = new \Pasteque\Category($parent_id, $_POST['label'], $img);
+    $cat = new \Pasteque\Category($parent_id, $_POST['label'], $img,
+            $_POST['disp_order']);
     $id = \Pasteque\CategoriesService::createCat($cat);
     if ($id !== FALSE) {
         $message = \i18n("Category saved. <a href=\"%s\">Go to the category page</a>.", PLUGIN_NAME, \Pasteque\get_module_url_action(PLUGIN_NAME, 'category_edit', array('id' => $id)));
@@ -75,6 +76,7 @@ if (isset($_GET['id'])) {
     <?php \Pasteque\form_hidden("edit", $category, "id"); ?>
 	<?php \Pasteque\form_input("edit", "Category", $category, "label", "string", array("required" => true)); ?>
 	<?php \Pasteque\form_input("edit", "Category", $category, "parent_id", "pick", array("model" => "Category", "nullable" => TRUE)); ?>
+	<?php \Pasteque\form_input("edit", "Category", $category, "disp_order", "numeric"); ?>
 	<div class="row">
 		<label for="image"><?php \pi18n("Image", PLUGIN_NAME); ?></label>
 		<div style="display:inline-block">
