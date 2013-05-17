@@ -53,7 +53,7 @@ class ProductsService {
         $pdo = PDOBuilder::getPDO();
         $sql = NULL;
         if ($include_hidden) {
-            $sql = "SELECT * FROM PRODUCTS ORDER BY NAME";
+            $sql = "SELECT * FROM PRODUCTS WHERE DELETED = 0 ORDER BY NAME";
         } else {
             $sql = "SELECT * FROM PRODUCTS, PRODUCTS_CAT WHERE "
                     . "PRODUCTS.ID = PRODUCTS_CAT.PRODUCT ORDER BY NAME";
@@ -74,7 +74,7 @@ class ProductsService {
     static function getPrepaidIds() {
         $ids = array();
         $pdo = PDOBuilder::getPDO();
-        $sql = "SELECT ID FROM PRODUCTS WHERE CATEGORY = :cat";
+        $sql = "SELECT ID FROM PRODUCTS WHERE CATEGORY = :cat AND DELETED = 0";
         $stmt = $pdo->prepare($sql);
         $stmt->bindValue(":cat", '-1');
         $stmt->execute();
@@ -257,8 +257,13 @@ class ProductsService {
         $stmtcat->execute(array(":id" => $id));
         $stmtstk = $pdo->prepare("DELETE FROM STOCKLEVEL WHERE PRODUCT = :id");
         $stmtstk->execute(array(":id" => $id));
-        $stmt = $pdo->prepare("DELETE FROM PRODUCTS WHERE ID = :id");
-        return $stmt->execute(array(':id' => $id));
+        // Update reference with garbage to break unicity constraint
+        $garbage = "_deleted_" . \md5(\time());
+        $stmt = $pdo->prepare("UPDATE PRODUCTS SET DELETED = 1, "
+               . "REFERENCE = concat(REFERENCE, :garbage) WHERE ID = :id");
+        $stmt->bindParam(':id', $id);
+        $stmt->bindParam(':garbage', $garbage);
+        return $stmt->execute();
     }
 }
 
