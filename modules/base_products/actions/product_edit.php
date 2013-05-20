@@ -61,6 +61,7 @@ if (isset($_POST['id'])) {
             && isset($_POST['tax_cat'])) {
         $cat = \Pasteque\Category::__build($_POST['category'], NULL, "dummy",
                 NULL, NULL);
+        $disp_order = $_POST['disp_order'] == "" ? NULL : $_POST['disp_order'];
         $taxCat = \Pasteque\TaxesService::get($_POST['tax_cat']);
         $taxRate = $taxCat->getCurrentTax()->rate;
         if ($_FILES['image']['tmp_name'] !== "") {
@@ -72,8 +73,10 @@ if (isset($_POST['id'])) {
         }
         $scaled = isset($_POST['scaled']) ? 1 : 0;
         $visible = isset($_POST['visible']) ? 1 : 0;
-        $prd = \Pasteque\Product::__build($_POST['id'], $_POST['reference'], $_POST['label'], $_POST['realsell'], $cat, $taxCat,
-                $visible, $scaled, $_POST['price_buy'], NULL, $_POST['barcode'], $img);
+        $prd = \Pasteque\Product::__build($_POST['id'], $_POST['reference'],
+                $_POST['label'], $_POST['realsell'], $cat, $disp_order,
+                $taxCat, $visible, $scaled, $_POST['price_buy'], NULL,
+                $_POST['barcode'], $img);
         if ($stocks) { saveStock(); }
         if (\Pasteque\ProductsService::update($prd)) {
             $message = \i18n("Changes saved");
@@ -87,6 +90,7 @@ if (isset($_POST['id'])) {
             && isset($_POST['tax_cat'])) {
         $cat = \Pasteque\Category::__build($_POST['category'], NULL, "dummy",
                 NULL, NULL);
+        $disp_order = $_POST['disp_order'] == "" ? NULL : $_POST['disp_order'];
         $taxCat = \Pasteque\TaxesService::get($_POST['tax_cat']);
         $taxRate = $taxCat->getCurrentTax()->rate;
         if ($_FILES['image']['tmp_name'] !== "") {
@@ -96,7 +100,8 @@ if (isset($_POST['id'])) {
         }
         $scaled = isset($_POST['scaled']) ? 1 : 0;
         $visible = isset($_POST['visible']) ? 1 : 0;
-        $prd = new \Pasteque\Product($_POST['reference'], $_POST['label'], $_POST['realsell'], $cat, $taxCat,
+        $prd = new \Pasteque\Product($_POST['reference'], $_POST['label'],
+                $_POST['realsell'], $cat, $disp_order, $taxCat,
                 $visible, $scaled, $_POST['price_buy'], NULL, $_POST['barcode'], $img);
         $id = \Pasteque\ProductsService::create($prd);
         if ($id !== FALSE) {
@@ -149,6 +154,7 @@ if ($stocks === TRUE && $product != NULL) {
 		</div>
 	</div>
 	<?php \Pasteque\form_input("edit", "Product", $product, "visible", "boolean"); ?>
+    <?php \Pasteque\form_input("edit", "Product", $product, "disp_order", "numeric"); ?>
 	</fieldset>
 	<fieldset>
 	<legend><?php \pi18n("Price", PLUGIN_NAME); ?></legend>

@@ -29,6 +29,7 @@
 "Product.label": "Désignation",
 "Product.reference": "Référence",
 "Product.category": "Categorie",
+"Product.disp_order": "Ordre",
 "Product.barcode": "Code barre",
 "Product.tax_cat": "TVA",
 "Product.price_sell": "Prix de vente",

@@ -63,6 +63,7 @@ class Product {
     public $visible;
     public $scaled;
     public $category;
+    public $disp_order;
     public $tax_cat;
     public $attributes_set;
     /** Contains the binary of the image. NULL if not any.
@@ -70,17 +71,17 @@ class Product {
      */
     public $image;
 
-    static function __build($id, $ref, $label, $price_sell, $category,
+    static function __build($id, $ref, $label, $price_sell, $category, $disp_order,
                             $tax_cat, $visible, $scaled, $price_buy = null,
                             $attributes_set = null, $barcode = null, $image) {
-        $prd = new Product($ref, $label, $price_sell, $category,
+        $prd = new Product($ref, $label, $price_sell, $category, $disp_order,
                             $tax_cat, $visible, $scaled, $price_buy,
                             $attributes_set, $barcode, $image);
         $prd->id = $id;
         return $prd;
     }
 
-    function __construct($ref, $label, $price_sell, $category,
+    function __construct($ref, $label, $price_sell, $category, $disp_order,
                          $tax_cat, $visible, $scaled, $price_buy = null,
                          $attributes_set = null, $barcode = null, $image = null) {
         $this->reference = $ref;
@@ -91,6 +92,7 @@ class Product {
         $this->barcode = $barcode;
         $this->price_buy = $price_buy;
         $this->category = $category;
+        $this->disp_order = $disp_order;
         $this->tax_cat = $tax_cat;
         $this->attributes_set = $attributes_set;
         $this->image = $image;

@@ -39,10 +39,15 @@ class ProductsService {
         $attr = AttributesService::get($db_prd['ATTRIBUTES']);
         $stmt = $pdo->prepare("SELECT * FROM PRODUCTS_CAT WHERE PRODUCT = :id");
         $stmt->execute(array(':id' => $db_prd['ID']));
-        $visible = ($stmt->fetch() !== false);
+        $prd_cat = $stmt->fetch();
+        $visible = ($prd_cat !== false);
+        $disp_order = NULL;
+        if ($visible) {
+            $disp_order = $prd_cat['CATORDER'];
+        }
         return Product::__build($db_prd['ID'], $db_prd['REFERENCE'],
                                 $db_prd['NAME'], $db_prd['PRICESELL'],
-                                $cat, $tax_cat, $visible,
+                                $cat, $disp_order, $tax_cat, $visible,
                                 ord($db_prd['ISSCALE']) == 1,
                                 $db_prd['PRICEBUY'], $attr, $db_prd['CODE'],
                                 $db_prd['IMAGE']);
@@ -188,16 +193,16 @@ class ProductsService {
         if ($prd->image !== "") {
             $stmt->bindParam(":img", $prd->image, \PDO::PARAM_LOB);
         }
+        $vsql = "DELETE FROM PRODUCTS_CAT WHERE PRODUCT = :id";
+        $vstmt = $pdo->prepare($vsql);
+        $vstmt->bindParam(":id", $prd->id, \PDO::PARAM_STR);
+        $vstmt->execute();
         if ($prd->visible == 1 || $prd->visible == TRUE) {
             $vsql = "INSERT INTO PRODUCTS_CAT (PRODUCT, CATORDER) VALUES "
-                    . "(:id, NULL)";
+                    . "(:id, :disp_order)";
             $vstmt = $pdo->prepare($vsql);
             $vstmt->bindParam(":id", $prd->id, \PDO::PARAM_STR);
-            $vstmt->execute();
-        } else {
-            $vsql = "DELETE FROM PRODUCTS_CAT WHERE PRODUCT = :id";
-            $vstmt = $pdo->prepare($vsql);
-            $vstmt->bindParam(":id", $prd->id, \PDO::PARAM_STR);
+            $vstmt->bindParam(":disp_order", $prd->disp_order, \PDO::PARAM_INT);
             $vstmt->execute();
         }
         return $stmt->execute();
@@ -245,8 +250,10 @@ class ProductsService {
         }
         if ($prd->visible == 1 || $prd->visible == TRUE) {
             $catstmt = $pdo->prepare("INSERT INTO PRODUCTS_CAT (PRODUCT, CATORDER) "
-                    . "VALUES (:id, NULL)");
-            $catstmt->execute(array(":id" => $id));
+                    . "VALUES (:id, :disp_order)");
+            $catstmt->bindParam(":id", $id);
+            $catstmt->bindParam(":disp_order", $prd->disp_order);
+            $catstmt->execute();
         }
         return $id;
     }

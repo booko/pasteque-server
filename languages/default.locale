@@ -29,6 +29,7 @@
 "Product.label": "Name",
 "Product.reference": "Reference",
 "Product.category": "Category",
+"Product.disp_order": "Order",
 "Product.barcode": "Barcode",
 "Product.tax_cat": "VAT",
 "Product.price_sell": "Sell price",
