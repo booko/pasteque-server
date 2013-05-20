@@ -31,17 +31,21 @@ class ProductLight {
     public $price_sell;
     public $visible;
     public $scaled;
+    public $discount_enabled;
+    public $discount_rate;
 
     static function __build($id, $ref, $label, $price_sell, $visible, $scaled,
-                         $barcode = null, $price_buy = null) {
+            $barcode = null, $price_buy = null, $discount_enabled = FALSE,
+            $discount_rate = 0.0) {
         $prd = new ProductLight($ref, $label, $price_sell, $visible, $scaled,
-                                $barcode, $price_buy);
+                $barcode, $price_buy, $discount_enabled, $discount_rate);
         $prd->id = $id;
         return $prd;
     }
 
     function __construct($ref, $label, $price_sell, $visible, $scaled,
-                         $barcode = null, $price_buy = null) {
+            $barcode = null, $price_buy = null, $discount_enabled = FALSE,
+            $discount_rate = 0.0) {
         $this->reference = $ref;
         $this->label = $label;
         $this->price_sell = $price_sell;
@@ -49,6 +53,8 @@ class ProductLight {
         $this->scaled = $scaled;
         $this->barcode = $barcode;
         $this->price_buy = $price_buy;
+        $this->discount_enabled = $discount_enabled;
+        $this->discount_rate = $discount_rate;
     }
 }
 
@@ -70,20 +76,25 @@ class Product {
      * For the services set this value to "" keep data unchanged.
      */
     public $image;
+    public $discount_enabled;
+    public $discount_rate;
 
     static function __build($id, $ref, $label, $price_sell, $category, $disp_order,
-                            $tax_cat, $visible, $scaled, $price_buy = null,
-                            $attributes_set = null, $barcode = null, $image) {
+            $tax_cat, $visible, $scaled, $price_buy = null,
+            $attributes_set = null, $barcode = null, $image = NULL,
+            $discount_enabled = FALSE, $discount_rate = 0.0) {
         $prd = new Product($ref, $label, $price_sell, $category, $disp_order,
-                            $tax_cat, $visible, $scaled, $price_buy,
-                            $attributes_set, $barcode, $image);
+                $tax_cat, $visible, $scaled, $price_buy,
+                $attributes_set, $barcode, $image,
+                $discount_enabled, $discount_rate);
         $prd->id = $id;
         return $prd;
     }
 
     function __construct($ref, $label, $price_sell, $category, $disp_order,
-                         $tax_cat, $visible, $scaled, $price_buy = null,
-                         $attributes_set = null, $barcode = null, $image = null) {
+            $tax_cat, $visible, $scaled, $price_buy = null,
+            $attributes_set = null, $barcode = null, $image = null,
+            $discount_enabled = FALSE, $discount_rate = 0.0) {
         $this->reference = $ref;
         $this->label = $label;
         $this->price_sell = $price_sell;
@@ -96,6 +107,8 @@ class Product {
         $this->tax_cat = $tax_cat;
         $this->attributes_set = $attributes_set;
         $this->image = $image;
+        $this->discount_enabled = $discount_enabled;
+        $this->discount_rate = $discount_rate;
     }
 
     function getTotalPrice() {

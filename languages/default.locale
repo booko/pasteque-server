@@ -36,6 +36,8 @@
 "Product.price_buy": "Buy price",
 "Product.scaled": "Sell per kilo",
 "Product.visible": "Active",
+"Product.discount_enabled": "Auto discount",
+"Product.discount_rate": "Discount rate",
 
 "Category.label": "Name",
 "Category.parent_id": "Parent",

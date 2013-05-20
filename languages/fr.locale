@@ -36,6 +36,8 @@
 "Product.price_buy": "Prix d'achat",
 "Product.scaled": "Vente au poids",
 "Product.visible": "En vente",
+"Product.discount_enabled": "Remise auto",
+"Product.discount_rate": "Taux de remise",
 
 "Category.label": "Désignation",
 "Category.parent_id": "Parent",

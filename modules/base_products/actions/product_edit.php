@@ -23,9 +23,13 @@
 namespace BaseProducts;
 
 $stocks = FALSE;
+$discounts = FALSE;
 $modules = \Pasteque\get_loaded_modules(\Pasteque\get_user_id());
 if (in_array("base_stocks", $modules)) {
     $stocks = TRUE;
+}
+if (in_array("product_discounts", $modules)) {
+    $discounts = TRUE;
 }
 
 $message = NULL;
@@ -73,10 +77,16 @@ if (isset($_POST['id'])) {
         }
         $scaled = isset($_POST['scaled']) ? 1 : 0;
         $visible = isset($_POST['visible']) ? 1 : 0;
+        $discount_enabled = FALSE;
+        $discount_rate = 0.0;
+        if (isset($_POST['discount_rate'])) {
+            $discount_enabled = isset($_POST['discount_enabled']) ? 1 : 0;
+            $discount_rate = $_POST['discount_rate'];
+        }
         $prd = \Pasteque\Product::__build($_POST['id'], $_POST['reference'],
                 $_POST['label'], $_POST['realsell'], $cat, $disp_order,
                 $taxCat, $visible, $scaled, $_POST['price_buy'], NULL,
-                $_POST['barcode'], $img);
+                $_POST['barcode'], $img, $discount_enabled, $discount_rate);
         if ($stocks) { saveStock(); }
         if (\Pasteque\ProductsService::update($prd)) {
             $message = \i18n("Changes saved");
@@ -100,9 +110,16 @@ if (isset($_POST['id'])) {
         }
         $scaled = isset($_POST['scaled']) ? 1 : 0;
         $visible = isset($_POST['visible']) ? 1 : 0;
+        $discount_enabled = FALSE;
+        $discount_rate = 0.0;
+        if (isset($_POST['discount_rate'])) {
+            $discount_enabled = isset($_POST['discount_enabled']) ? 1 : 0;
+            $discount_rate = $_POST['discount_rate'];
+        }
         $prd = new \Pasteque\Product($_POST['reference'], $_POST['label'],
                 $_POST['realsell'], $cat, $disp_order, $taxCat,
-                $visible, $scaled, $_POST['price_buy'], NULL, $_POST['barcode'], $img);
+                $visible, $scaled, $_POST['price_buy'], NULL, $_POST['barcode'],
+                $img, $discount_enabled, $discount_rate);
         $id = \Pasteque\ProductsService::create($prd);
         if ($id !== FALSE) {
             if ($stocks) { saveStock($id); }
@@ -174,6 +191,10 @@ if ($stocks === TRUE && $product != NULL) {
 		<label for="margin"><?php \pi18n("Margin", PLUGIN_NAME); ?></label>
 		<input id="margin" type="numeric" disabled="true" />
 	</div>
+    <?php if ($discounts) { ?>
+    <?php \Pasteque\form_input("edit", "Product", $product, "discount_enabled", "boolean", array("default" => FALSE)); ?>
+    <?php \Pasteque\form_input("edit", "Product", $product, "discount_rate", "numeric"); ?>
+    <?php } ?>
 	</fieldset>
 	<fieldset>
 	<legend><?php \pi18n("Referencing", PLUGIN_NAME); ?></legend>
@@ -258,6 +279,11 @@ if ($stocks === TRUE && $product != NULL) {
 		updateSellVatPrice()
 	});
 	jQuery("#edit-price_buy").change(function() {
+		var val = jQuery(this).val().replace(",", ".");
+		jQuery(this).val(val);
+		updateMargin()
+	});
+	jQuery("#edit-discount_rate").change(function() {
 		var val = jQuery(this).val().replace(",", ".");
 		jQuery(this).val(val);
 		updateMargin()
