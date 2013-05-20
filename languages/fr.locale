@@ -38,6 +38,7 @@
 
 "Category.label": "Désignation",
 "Category.parent_id": "Parent",
+"Category.disp_order": "Ordre",
 
 "TaxCat.label": "Désignation",
 "Tax.rate": "Taux",

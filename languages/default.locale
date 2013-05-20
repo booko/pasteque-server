@@ -38,6 +38,7 @@
 
 "Category.label": "Name",
 "Category.parent_id": "Parent",
+"Category.disp_order": "Order",
 
 "TaxCat.label": "Name",
 "Tax.rate": "Rate",
