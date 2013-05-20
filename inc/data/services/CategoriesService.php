@@ -31,9 +31,12 @@ class CategoriesService {
         $cats = array();
         $pdo = PDOBuilder::getPDO();
         $sql = "SELECT * FROM CATEGORIES ORDER BY DISPORDER ASC, NAME ASC";
-        foreach ($pdo->query($sql) as $db_cat) {
-            $cat = CategoriesService::buildDBCat($db_cat);
-            $cats[] = $cat;
+        $data = $pdo->query($sql);
+        if ($data !== FALSE) {
+            foreach ($pdo->query($sql) as $db_cat) {
+                $cat = CategoriesService::buildDBCat($db_cat);
+                $cats[] = $cat;
+            }
         }
         return $cats;
     }
