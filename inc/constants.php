@@ -21,7 +21,7 @@
 namespace Pasteque;
 
 const DB_VERSION = "4";
-const VERSION = "0.2";
+const VERSION = "0.3";
 
 const URL_ACTION_PARAM = "p";
 
