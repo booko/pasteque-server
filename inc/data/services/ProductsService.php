@@ -57,10 +57,13 @@ class ProductsService {
         $pdo = PDOBuilder::getPDO();
         $sql = NULL;
         if ($include_hidden) {
-            $sql = "SELECT * FROM PRODUCTS WHERE DELETED = 0 ORDER BY NAME";
+            $sql = "SELECT * FROM PRODUCTS LEFT JOIN PRODUCTS_CAT ON "
+                    . "PRODUCTS_CAT.PRODUCT = PRODUCTS.ID "
+                    . "WHERE DELETED = 0 ORDER BY CATORDER";
         } else {
             $sql = "SELECT * FROM PRODUCTS, PRODUCTS_CAT WHERE "
-                    . "PRODUCTS.ID = PRODUCTS_CAT.PRODUCT ORDER BY NAME";
+                    . "PRODUCTS.ID = PRODUCTS_CAT.PRODUCT AND DELETED = 0 "
+                    . "ORDER BY CATORDER";
         }
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
@@ -90,7 +93,8 @@ class ProductsService {
 
     static function get($id) {
         $pdo = PDOBuilder::getPDO();
-        $stmt = $pdo->prepare("SELECT * FROM PRODUCTS WHERE ID = :id");
+        $stmt = $pdo->prepare("SELECT * FROM PRODUCTS LEFT JOIN PRODUCTS_CAT "
+                . "ON PRODUCTS_CAT.PRODUCT = PRODUCTS.ID WHERE ID = :id");
         if ($stmt->execute(array(':id' => $id))) {
             if ($row = $stmt->fetch()) {
                 $prd = ProductsService::buildDBPrd($row, $pdo);
