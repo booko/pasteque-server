@@ -159,8 +159,8 @@ class TicketsService {
         // Insert payments
         // Also check for prepayment debit
         $stmtPay = $pdo->prepare("INSERT INTO PAYMENTS (ID, RECEIPT, PAYMENT, "
-                                 . "TOTAL) VALUES (:id, :rcptId, "
-                                 . ":type, :amount)");
+                . "TOTAL, CURRENCY, TOTALCURRENCY) VALUES (:id, :rcptId, "
+                . ":type, :amount, 1, :amount)");
         foreach ($ticket->payments as $payment) {
             $paymentId = md5(time() . rand());
             $ok = $stmtPay->execute(array(':id' => $paymentId,
