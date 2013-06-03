@@ -89,6 +89,17 @@ $headers = array(\i18n("Session.host"), \i18n("Session.openDate"),
 $report = new \Pasteque\Report($sql, $headers, $fields);
 $report->setParam(":start", $start);
 $report->setParam(":stop", $stop);
+$report->setGrouping("HOST");
+$report->addSubtotal("AVERAGE", \Pasteque\Report::TOTAL_AVG);
+$report->addSubtotal("REALCS", \Pasteque\Report::TOTAL_SUM);
+$report->addSubtotal("THEOCS", \Pasteque\Report::TOTAL_SUM);
+$report->addSubtotal("THEOSCS", \Pasteque\Report::TOTAL_SUM);
+$report->addSubtotal("TICKETS", \Pasteque\Report::TOTAL_SUM);
+$report->addTotal("AVERAGE", \Pasteque\Report::TOTAL_AVG);
+$report->addTotal("REALCS", \Pasteque\Report::TOTAL_SUM);
+$report->addTotal("THEOCS", \Pasteque\Report::TOTAL_SUM);
+$report->addTotal("THEOSCS", \Pasteque\Report::TOTAL_SUM);
+$report->addTotal("TICKETS", \Pasteque\Report::TOTAL_SUM);
 $report->addFilter("DATESTART", "\Pasteque\stdtimefstr");
 $report->addFilter("DATESTART", "\i18nDatetime");
 $report->addFilter("DATEEND", "\Pasteque\stdtimefstr");

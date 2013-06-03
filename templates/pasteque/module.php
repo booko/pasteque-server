@@ -93,11 +93,7 @@ function tpl_menu() {
     echo "</div>";
 }
 
-/** Display a report.
- * @param $report Report data, as given by get_report
- */
-function tpl_report($report) {
-    $report->run();
+function __tpl_report_header($report) {
     echo "<table cellspacing=\"0\" cellpadding=\"0\">\n";
     echo "\t<thead>\n";
     echo "\t\t<tr>\n";
@@ -107,17 +103,85 @@ function tpl_report($report) {
     echo "\t\t</tr>\n";
     echo "\t<thead>\n";
     echo "\t<tbody>\n";
-    $par = FALSE;
-    while ($row = $report->fetch()) {
-        $par = !$par;
-        echo "\t\t<tr class=\"row-" . ($par ? 'par' : 'odd') . "\">\n";
-        foreach ($report->fields as $field) {
-            echo "\t\t\t<td>" . $row[$field] . "</td>\n";
-        }
-        echo "\t\t</tr>\n";
-    }
+}
+function __tpl_report_footer($report) {
     echo "\t</tbody>\n";
     echo "</table>\n";
+}
+function __tpl_report_line($report, $line, $par) {
+    echo "\t\t<tr class=\"row-" . ($par ? 'par' : 'odd') . "\">\n";
+    foreach ($report->fields as $field) {
+        echo "\t\t\t<td>" . $line[$field] . "</td>\n";
+    }
+    echo "\t\t</tr>\n";
+}
+function __tpl_group_header($report, $run) {
+    echo "<h2>" . $run->getCurrentGroup() . "</h2>\n";
+}
+function __tpl_group_footer($report, $run) {
+    echo "\t\t<tr>\n";
+    echo "\t\t\t<td colspan=\"" . count($report->headers) . "\">" . \i18n("Subtotal") . "</td>\n";
+    echo "\t\t</tr>\n";
+    echo "\t\t<tr class=\"row-par\">\n";
+    foreach ($report->fields as $field) {
+        if (isset($run->subtotals[$field])) {
+            echo "\t\t\t<td>" . $run->subtotals[$field] . "</td>\n";
+        } else {
+            echo "\t\t\t<td></td>\n";
+        }
+    }
+    echo "\t\t</tr>\n";
+}
+function __tpl_report_totals($report, $run) {
+    echo "<h2>" . \i18n("Total") . "</h2>\n";
+    __tpl_report_header($report);
+    echo "\t\t<tr class=\"row-par\">\n";
+    foreach ($report->fields as $field) {
+        if (isset($run->totals[$field])) {
+            echo "\t\t\t<td>" . $run->totals[$field] . "</td>\n";
+        } else {
+            echo "\t\t\t<td></td>\n";
+        }
+    }
+    echo "\t\t</tr>\n";
+    __tpl_report_footer($report);
+}
+/** Display a report.
+ * @param $report Report data, as given by get_report
+ */
+function tpl_report($report) {
+    $run = $report->run();
+    $par = FALSE;
+    if (!$report->isGrouping()) {
+        __tpl_report_header($report);
+        while ($row = $run->fetch()) {
+            $par = !$par;
+            __tpl_report_line($report, $row, $par);
+        }
+        __tpl_report_footer($report);
+    } else {
+        while ($row = $run->fetch()) {
+            $par = !$par;
+            if ($run->isGroupEnd()) {
+                if ($report->hasSubtotals()) {
+                    __tpl_group_footer($report, $run);
+                }
+                __tpl_report_footer($report);
+            }
+            if ($run->isGroupStart()) {
+                __tpl_group_header($report, $run);
+                __tpl_report_header($report);
+            }
+            __tpl_report_line($report, $row, $par);
+        }
+        if ($report->hasSubtotals()) {
+            __tpl_group_footer($report, $run);
+        }
+        __tpl_report_footer($report);
+        if ($report->hasTotals()) {
+            __tpl_report_totals($report, $run);
+        }
+    }
 }
 
 ?>
