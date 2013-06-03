@@ -160,7 +160,11 @@ class ReportRun {
                 $dest[$field] = $tmp[$field];
                 break;
             case Report::TOTAL_AVG:
-                $dest[$field] = $tmp[$field] / $count;
+                if ($count != 0) {
+                    $dest[$field] = $tmp[$field] / $count;
+                } else {
+                    $dest[$field] = 0;
+                }
                 break;
             }
         }
