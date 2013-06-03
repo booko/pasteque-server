@@ -28,11 +28,11 @@ class Report {
     private $sql;
     public $headers;
     public $fields;
-    private $params;
-    private $filters;
-    private $grouping;
-    private $subtotals;
-    private $totals;
+    protected $params;
+    protected $filters;
+    protected $grouping;
+    protected $subtotals;
+    protected $totals;
 
     public function __construct($sql, $headers, $fields) {
         $this->sql = $sql;
@@ -114,16 +114,16 @@ class Report {
 
 class ReportRun {
 
-    private $report;
+    protected $report;
     public $subtotals;
     public $totals;
-    private $tmpSubtotals;
-    private $tmpTotals;
-    private $groupRowCount;
-    private $totalRowCount;
-    private $currentGroup;
-    private $groupStart;
-    private $groupStop;
+    protected $tmpSubtotals;
+    protected $tmpTotals;
+    protected $groupRowCount;
+    protected $totalRowCount;
+    protected $currentGroup;
+    protected $groupStart;
+    protected $groupStop;
 
     public function __construct($report) {
         $this->report = $report;
@@ -145,14 +145,14 @@ class ReportRun {
         $this->stmt->execute();
     }
 
-    private function resetTmpSubtotals() {
+    protected function resetTmpSubtotals() {
         $this->tmpSubtotals = array();
         foreach ($this->report->getSubtotals() as $field => $type) {
             $this->tmpSubtotals[$field] = 0;
         }
     }
 
-    private function computeTotals($source, $tmp, $count) {
+    protected function computeTotals($source, $tmp, $count) {
         $dest = array();
         foreach ($source as $field => $type) {
             switch ($type) {
@@ -167,7 +167,7 @@ class ReportRun {
         return $dest;
     }
 
-    private function applyFilters($values) {
+    protected function applyFilters($values) {
         if (!is_array($values)) {
             return $values;
         }
@@ -186,8 +186,10 @@ class ReportRun {
         return $ret;
     }
 
-    public function fetch() {
-        $values = $this->stmt->fetch(\PDO::FETCH_ASSOC);
+    protected function fetchValues() {
+        return $this->stmt->fetch(\PDO::FETCH_ASSOC);
+    }
+    protected function parseValues($values) {
         // Check for group change
         if ($this->report->isGrouping() && $values !== FALSE) {
             $group = $this->report->getGrouping();
@@ -237,9 +239,13 @@ class ReportRun {
             $this->totals = $this->applyFilters($this->totals);
             $this->groupStop = TRUE;
         }
-        // Apply filters
-        $values = $this->applyFilters($values);
         return $values;
+    }
+
+    public function fetch() {
+        $values = $this->fetchValues();
+        $values = $this->parseValues($values);
+        return $this->applyFilters($values);
     }
 
     /** The group has changed. Check $subtotals for group total. */
@@ -252,6 +258,116 @@ class ReportRun {
     }
     public function getCurrentGroup() {
         return $this->currentGroup;
+    }
+}
+
+/** Cross-report. A merged report is made of a main report wich is completed by
+ * subreports. Subreports adds columns to the first based on merge fields.
+ * Subreports has (merge fields count + 2) fields, the field name and its value.
+ */
+class MergedReport extends Report {
+
+    private $sqls;
+    private $mergeFields;
+
+    public function __construct($sqls, $headers, $fields, $mergeFields) {
+        parent::__construct($sqls[0], $headers, $fields);
+        $this->sqls = array_slice($sqls, 1);
+        $this->mergeFields = $mergeFields;
+    }
+
+    public function run() {
+        return new MergedReportRun($this);
+    }
+
+    public function getSubsqls() {
+        return $this->sqls;
+    }
+
+    public function getMergeFields() {
+        return $this->mergeFields;
+    }
+    public function addMergedField($field) {
+        if (!in_array($field, $this->fields)) {
+            $this->fields[] = $field;
+            $this->headers[] = $field;
+        }
+    }
+}
+
+class MergedReportRun extends ReportRun {
+
+    private $runs;
+    private $substmts;
+    private $lastValues;
+
+    public function __construct($mergedReport) {
+        $this->report = $mergedReport;
+        $pdo = PDOBuilder::getPDO();
+        $this->stmt = $pdo->prepare($mergedReport->getSql());
+        foreach ($mergedReport->getParams() as $key => $param) {
+            $this->stmt->bindValue($key, $param['value'], $param['type']);
+        }
+        $this->substmts = array();
+        foreach ($mergedReport->getSubsqls() as $sql) {
+            $stmt = $pdo->prepare($sql);
+            $this->substmts[] = $stmt;
+            foreach ($mergedReport->getParams() as $key => $param) {
+                $stmt->bindValue($key, $param['value'], $param['type']);
+            }
+        }
+        $this->groupRowCount = 0;
+        $this->totalRowCount = 0;
+        $this->resetTmpSubtotals();
+        $this->tmpTotals = array();
+        $this->totals = array();
+        $this->subtotals = array();
+        $this->lastValues = array();
+        foreach ($this->report->getTotals() as $field => $type) {
+            $this->tmpTotals[$field] = 0;
+        }
+        $this->currentGroup = NULL;
+        $this->stmt->execute();
+        // Make a first run of substatements to get new fields
+        foreach ($this->substmts as $stmt) {
+            $stmt->execute();
+            while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                $this->report->addMergedField($row["__KEY__"]);
+            }
+            // Reopen
+            $stmt->closeCursor();
+            $stmt->execute();
+        }
+        
+    }
+
+    protected function checkMergeValues($refData, $currData) {
+        foreach ($refData as $key => $value) {
+            if (!isset($currData[$key]) || $currData[$key] != $value) {
+                return FALSE;
+            }
+        }
+        return TRUE;
+    }
+
+    protected function fetchValues() {
+        $allValues = parent::fetchValues();
+        $mergeData = array();
+        foreach ($this->report->getMergeFields() as $mergeField) {
+            $mergeData[$mergeField] = $allValues[$mergeField];
+        }
+        for ($i = 0; $i < count($this->substmts); $i++) {
+            $substmt = $this->substmts[$i];
+            if (! isset($this->lastValues[$i])) {
+                $this->lastValues[$i] = $substmt->fetch(\PDO::FETCH_ASSOC);
+            }
+            while ($this->checkMergeValues($mergeData, $this->lastValues[$i])) {
+                $currValues = $this->lastValues[$i];
+                $allValues[$currValues["__KEY__"]] = $currValues["__VALUE__"];
+                $this->lastValues[$i] = $substmt->fetch(\PDO::FETCH_ASSOC);
+            }
+        }
+        return $allValues;
     }
 }
 

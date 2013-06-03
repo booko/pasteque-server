@@ -39,7 +39,8 @@ $stopTime = \i18nRevDate($stopStr);
 $start = \Pasteque\stdstrftime($startTime);
 $stop = \Pasteque\stdstrftime($stopTime);
 
-$sql = "SELECT AVERAGE.HOST, AVERAGE.DATESTART, AVERAGE.DATEEND, "
+$sqls = array();
+$sqls[] = "SELECT AVERAGE.HOST, AVERAGE.DATESTART, AVERAGE.DATEEND, "
         . "AVERAGE.TICKETS, AVERAGE.AVERAGE, "
         . "REALCS.TICKETAMOUNT AS REALCS, THEOCS.AMOUNT AS THEOCS, THEOCS.SUBAMOUNT AS THEOSCS "
         . "FROM "
@@ -80,13 +81,27 @@ $sql = "SELECT AVERAGE.HOST, AVERAGE.DATESTART, AVERAGE.DATEEND, "
         . ""
         . "WHERE AVERAGE.DATESTART > :start AND AVERAGE.DATEEND < :stop "
         . "ORDER BY HOST ASC, DATESTART ASC";
+
+$sqls[] = "SELECT CLOSEDCASH.HOST, CLOSEDCASH.DATESTART, "
+        . "CLOSEDCASH.DATEEND,"
+        . "TAXES.NAME as __KEY__, SUM(TAXLINES.AMOUNT) AS __VALUE__ "
+        . "FROM CLOSEDCASH "
+        . "LEFT JOIN RECEIPTS ON RECEIPTS.MONEY = CLOSEDCASH.MONEY "
+        . "LEFT JOIN TICKETS ON TICKETS.ID = RECEIPTS.ID "
+        . "LEFT JOIN TAXLINES ON TAXLINES.RECEIPT = TICKETS.ID "
+        . "LEFT JOIN TAXES ON TAXLINES.TAXID = TAXES.ID "
+        . "WHERE CLOSEDCASH.DATESTART > :start AND CLOSEDCASH.DATEEND < :stop "
+        . "GROUP BY CLOSEDCASH.MONEY "
+        . "ORDER BY CLOSEDCASH.HOST ASC, CLOSEDCASH.DATESTART ASC";
+
 $fields = array("HOST", "DATESTART", "DATEEND", "TICKETS", "AVERAGE",
        "REALCS", "THEOCS", "THEOSCS");
+$mergeFields = array("HOST", "DATESTART", "DATEEND");
 $headers = array(\i18n("Session.host"), \i18n("Session.openDate"),
         \i18n("Session.closeDate"), \i18n("Tickets", PLUGIN_NAME),
         \i18n("Average", PLUGIN_NAME), \i18n("Real CS", PLUGIN_NAME),
         \i18n("Theo CS", PLUGIN_NAME), \i18n("Theo SCS", PLUGIN_NAME));
-$report = new \Pasteque\Report($sql, $headers, $fields);
+$report = new \Pasteque\MergedReport($sqls, $headers, $fields, $mergeFields);
 $report->setParam(":start", $start);
 $report->setParam(":stop", $stop);
 $report->setGrouping("HOST");
