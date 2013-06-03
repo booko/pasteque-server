@@ -271,6 +271,7 @@ class MergedReport extends Report {
     private $mergeFields;
     private $mergedTotals;
     private $mergedSubtotals;
+    private $mergedFilters;
 
     public function __construct($sqls, $headers, $fields, $mergeFields) {
         parent::__construct($sqls[0], $headers, $fields);
@@ -278,6 +279,7 @@ class MergedReport extends Report {
         $this->mergeFields = $mergeFields;
         $this->mergedTotals = array();
         $this->mergedSubtotals = array();
+        $this->mergedFilters = array();
     }
 
     public function run() {
@@ -302,6 +304,11 @@ class MergedReport extends Report {
         if (isset($this->mergedSubtotals[$sqlIndex])) {
             $this->addSubtotal($field, $this->mergedTotals[$sqlIndex]);
         }
+        if (isset($this->mergedFilters[$sqlIndex])) {
+            foreach ($this->mergedFilters[$sqlIndex] as $function) {
+                $this->addFilter($field, $function);
+            }
+        }
     }
 
     public function addMergedTotal($sqlIndex, $type) {
@@ -310,6 +317,13 @@ class MergedReport extends Report {
 
     public function addMergedSubtotal($sqlIndex, $type) {
         $this->mergedSubtotals[$sqlIndex] = $type;
+    }
+
+    public function addMergedFilter($sqlIndex, $function) {
+        if (!isset($this->mergedFilters[$sqlIndex])) {
+            $this->mergedFilters[$sqlIndex] = array();
+        }
+        $this->mergedFilters[$sqlIndex][] = $function;
     }
 }
 

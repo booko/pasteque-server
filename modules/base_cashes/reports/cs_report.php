@@ -125,6 +125,7 @@ $report->addFilter("AVERAGE", "\i18nCurr");
 $report->addFilter("REALCS", "\i18nCurr");
 $report->addFilter("THEOCS", "\i18nCurr");
 $report->addFilter("THEOSCS", "\i18nCurr");
+$report->addMergedFilter(0, "\i18nCurr");
 
 \Pasteque\register_report(PLUGIN_NAME, "cs_report", $report);
 ?>
