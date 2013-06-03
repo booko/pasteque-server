@@ -269,11 +269,15 @@ class MergedReport extends Report {
 
     private $sqls;
     private $mergeFields;
+    private $mergedTotals;
+    private $mergedSubtotals;
 
     public function __construct($sqls, $headers, $fields, $mergeFields) {
         parent::__construct($sqls[0], $headers, $fields);
         $this->sqls = array_slice($sqls, 1);
         $this->mergeFields = $mergeFields;
+        $this->mergedTotals = array();
+        $this->mergedSubtotals = array();
     }
 
     public function run() {
@@ -287,11 +291,25 @@ class MergedReport extends Report {
     public function getMergeFields() {
         return $this->mergeFields;
     }
-    public function addMergedField($field) {
+    public function addMergedField($sqlIndex, $field) {
         if (!in_array($field, $this->fields)) {
             $this->fields[] = $field;
             $this->headers[] = $field;
         }
+        if (isset($this->mergedTotals[$sqlIndex])) {
+            $this->addTotal($field, $this->mergedTotals[$sqlIndex]);
+        }
+        if (isset($this->mergedSubtotals[$sqlIndex])) {
+            $this->addSubtotal($field, $this->mergedTotals[$sqlIndex]);
+        }
+    }
+
+    public function addMergedTotal($sqlIndex, $type) {
+        $this->mergedTotals[$sqlIndex] = $type;
+    }
+
+    public function addMergedSubtotal($sqlIndex, $type) {
+        $this->mergedSubtotals[$sqlIndex] = $type;
     }
 }
 
@@ -318,27 +336,27 @@ class MergedReportRun extends ReportRun {
         }
         $this->groupRowCount = 0;
         $this->totalRowCount = 0;
-        $this->resetTmpSubtotals();
         $this->tmpTotals = array();
         $this->totals = array();
         $this->subtotals = array();
         $this->lastValues = array();
-        foreach ($this->report->getTotals() as $field => $type) {
-            $this->tmpTotals[$field] = 0;
-        }
         $this->currentGroup = NULL;
         $this->stmt->execute();
         // Make a first run of substatements to get new fields
-        foreach ($this->substmts as $stmt) {
+        for ($i = 0; $i < count($this->substmts); $i++) {
+            $stmt = $this->substmts[$i];
             $stmt->execute();
             while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-                $this->report->addMergedField($row["__KEY__"]);
+                $this->report->addMergedField($i, $row["__KEY__"]);
             }
             // Reopen
             $stmt->closeCursor();
             $stmt->execute();
         }
-        
+        $this->resetTmpSubtotals();
+        foreach ($this->report->getTotals() as $field => $type) {
+            $this->tmpTotals[$field] = 0;
+        }
     }
 
     protected function checkMergeValues($refData, $currData) {
