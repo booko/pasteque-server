@@ -124,6 +124,7 @@ class ReportRun {
     protected $currentGroup;
     protected $groupStart;
     protected $groupStop;
+    protected $empty;
 
     public function __construct($report) {
         $this->report = $report;
@@ -143,6 +144,16 @@ class ReportRun {
         }
         $this->currentGroup = NULL;
         $this->stmt->execute();
+        // Check for results
+        if (!$this->stmt->fetch()) {
+            $this->empty = TRUE;
+        }
+        $this->stmt->closeCursor();
+        $this->stmt->execute();
+    }
+
+    public function isEmpty() {
+        return $this->empty;
     }
 
     protected function resetTmpSubtotals() {
@@ -359,6 +370,12 @@ class MergedReportRun extends ReportRun {
         $this->subtotals = array();
         $this->lastValues = array();
         $this->currentGroup = NULL;
+        $this->stmt->execute();
+        // Check for results
+        if (!$this->stmt->fetch()) {
+            $this->empty = TRUE;
+        }
+        $this->stmt->closeCursor();
         $this->stmt->execute();
         // Make a first run of substatements to get new fields
         for ($i = 0; $i < count($this->substmts); $i++) {

@@ -152,6 +152,10 @@ function __tpl_report_totals($report, $run) {
 function tpl_report($report) {
     $run = $report->run();
     $par = FALSE;
+    if ($run->isEmpty()) {
+        echo "<p>" . \i18n("No result") . "</p>";
+        return;
+    }
     if (!$report->isGrouping()) {
         __tpl_report_header($report);
         while ($row = $run->fetch()) {
