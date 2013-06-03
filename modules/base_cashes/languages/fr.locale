@@ -21,5 +21,13 @@
 "Units": "Quantité",
 "Sell": "Prix HT",
 "Tax name": "TVA",
-"Tax amount": "TVA collectée"
+"Tax amount": "TVA collectée",
+
+"CS report": "Chiffre d'affaire",
+"Consolidated sales report": "Rapport de chiffre d'affaire",
+"Tickets": "Tickets",
+"Average": "Panier moyen",
+"Real CS": "Encaissement",
+"Theo CS": "CA TTC",
+"Theo SCS": "CA HT"
 }
