@@ -29,6 +29,14 @@ case 'save':
     $json = json_decode($_POST['tickets']);
     $jsonCash = json_decode($_POST['cash']);
     $cashId = $jsonCash->id;
+    $location = NULL;
+    if (isset($_POST['location'])) {
+        $location = StocksService::getLocationId($_POST['location']);
+        if ($location === NULL) {
+            $ret = FALSE;
+            break;
+        }
+    }
     $ret = true;
     foreach ($json as $jsonTkt) {
         $label = $jsonTkt->ticket->label;
@@ -57,7 +65,11 @@ case 'save':
         $tktLght = new TicketLight($label, $cashierId, $date, $lines,
                                    $payments, $cashId, $customerId);
         $ticket = TicketsService::buildLight($tktLght);
-        $ret = TicketsService::save($ticket) && $ret;
+        if ($location !== NULL) {
+            $ret = TicketsService::save($ticket, $location) && $ret;
+        } else {
+            $ret = TicketsService::save($ticket) && $ret;
+        }
     }
     break;
 }

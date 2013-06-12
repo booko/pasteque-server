@@ -60,7 +60,7 @@ class TicketsService {
         return $tkts;
     }
 
-    static function save($ticket) {
+    static function save($ticket, $location = "0") {
         $pdo = PDOBuilder::getPDO();
         $newTransaction = !$pdo->inTransaction();
         if ($newTransaction) {
@@ -137,7 +137,7 @@ class TicketsService {
             }
             // Update stock
             $move = new StockMove($strdate, StockMove::REASON_OUT_SELL,
-                    "0", $line->product->id, $line->quantity);
+                    $location, $line->product->id, $line->quantity);
             if (!StocksService::addMove($move)) {
                 if ($newTransaction) {
                     $pdo->rollback();
