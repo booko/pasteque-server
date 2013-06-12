@@ -37,7 +37,10 @@ case 'save':
             break;
         }
     }
-    $ret = true;
+    $ticketsCount = count($json);
+    $successes = 0;
+    $pdo = PDOBuilder::getPDO();
+    $pdo->beginTransaction();
     foreach ($json as $jsonTkt) {
         $label = $jsonTkt->ticket->label;
         $cashierId = $jsonTkt->cashier->id;
@@ -66,10 +69,20 @@ case 'save':
                                    $payments, $cashId, $customerId);
         $ticket = TicketsService::buildLight($tktLght);
         if ($location !== NULL) {
-            $ret = TicketsService::save($ticket, $location) && $ret;
+            if (TicketsService::save($ticket, $location)) {
+                $successes++;
+            }
         } else {
-            $ret = TicketsService::save($ticket) && $ret;
+            if (TicketsService::save($ticket)) {
+                $successes++;
+            }
         }
+    }
+    $ret = ($successes == $ticketsCount);
+    if ($ret === TRUE) {
+        $pdo->commit();
+    } else {
+        $pdo->rollback();
     }
     break;
 }
