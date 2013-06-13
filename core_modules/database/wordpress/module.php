@@ -26,7 +26,9 @@ namespace Pasteque {
 
 namespace WordPressDB {
     require_once(dirname(__FILE__) . "/config.php");
+    $timezone = date_default_timezone_get();
     require_once($config['wordpress_base_path'] . "/wp-load.php");
+    date_default_timezone_set($timezone);
     $data = NULL;
     function getInfo() {
         global $data;

@@ -27,7 +27,9 @@ namespace Pasteque {
 
 namespace WordPress {
     $api_user = NULL;
+    $timezone = date_default_timezone_get();
     require_once($config['wordpress_base_path'] . "/wp-load.php");
+    date_default_timezone_set($timezone);
     function logged_in() {
         return is_user_logged_in();
     }
