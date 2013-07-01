@@ -1,0 +1,12 @@
+{
+"Payments": "Paiements",
+"cash": "Espèces",
+"magcard": "Carte bleue",
+"cheque": "Chèque",
+"paper": "Coupon",
+"free": "Offert",
+
+"Closed pos report": "Caisse cloturée",
+"Sales report": "Rapport de vente",
+"Sales by product": "Ventes par produit"
+}

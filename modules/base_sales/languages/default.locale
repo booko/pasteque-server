@@ -1,0 +1,12 @@
+{
+"Payments": "Payments",
+"cash": "Cash",
+"magcard": "Magcard",
+"cheque": "Cheque",
+"paper": "Paper",
+"free":" Free",
+
+"Closed pos report": "Closed pos report",
+"Sales report":" Sales report",
+"Sales by product": "Sales by product"
+}
