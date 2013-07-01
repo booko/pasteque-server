@@ -39,20 +39,34 @@ $stopTime = \i18nRevDate($stopStr);
 $start = \Pasteque\stdstrftime($startTime);
 $stop = \Pasteque\stdstrftime($stopTime);
 
-$sql = "SELECT CLOSEDCASH.HOST, CLOSEDCASH.DATESTART, "
-        . "CLOSEDCASH.DATEEND, TICKETS.TICKETID, "
-        . "TAXES.NAME, TAXLINES.AMOUNT AS AMOUNT "
+$sql = "SELECT CLOSEDCASH.DATESTART, "
+        . "CLOSEDCASH.DATEEND, "
+        . "TAXES.NAME, SUM(TAXLINES.AMOUNT) AS AMOUNT "
         . "FROM CLOSEDCASH "
         . "LEFT JOIN RECEIPTS ON RECEIPTS.MONEY = CLOSEDCASH.MONEY "
         . "LEFT JOIN TICKETS ON TICKETS.ID = RECEIPTS.ID "
         . "LEFT JOIN TAXLINES ON TAXLINES.RECEIPT = TICKETS.ID "
         . "LEFT JOIN TAXES ON TAXLINES.TAXID = TAXES.ID "
         . "WHERE CLOSEDCASH.DATESTART > :start AND CLOSEDCASH.DATEEND < :stop "
+        . "GROUP BY TAXES.NAME "
         . "ORDER BY CLOSEDCASH.DATESTART DESC, TICKETS.TICKETID DESC";
-$fields = array("HOST", "DATESTART", "DATEEND", "TICKETID", "NAME", "AMOUNT");
-$headers = array(\i18n("Session.host"), \i18n("Session.openDate"),
-        \i18n("Session.closeDate"), \i18n("Ticket.number"),
-        \i18n("Tax name", PLUGIN_NAME), \i18n("Tax amount", PLUGIN_NAME));
+
+$fields = array("DATESTART", "DATEEND", "NAME", "AMOUNT");
+$headers = array(
+        \i18n("Session.openDate"),
+        \i18n("Session.closeDate"),
+        \i18n("Tax name", PLUGIN_NAME),
+        \i18n("Tax amount", PLUGIN_NAME)
+        );
+
+
+$fields = array( "DATESTART", "DATEEND", "NAME", "AMOUNT");
+$headers = array(
+        \i18n("Session.openDate"),
+        \i18n("Session.closeDate"),
+        \i18n("Tax name", PLUGIN_NAME),
+        \i18n("Tax amount", PLUGIN_NAME)
+        );
 $report = new \Pasteque\Report($sql, $headers, $fields);
 $report->setParam(":start", $start);
 $report->setParam(":stop", $stop);
