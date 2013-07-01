@@ -241,7 +241,9 @@ class ReportRun {
             }
             if ($this->report->isGrouping()) {
                 foreach ($this->report->getSubtotals() as $field => $type) {
-                    $this->tmpSubtotals[$field] += $values[$field];
+                    if(isset($values[$field])) {
+                        $this->tmpSubtotals[$field] += $values[$field];
+                    }
                 }
             }
         } else {
@@ -440,3 +442,4 @@ function get_report($module, $name) {
     }
 }
 ?>
+

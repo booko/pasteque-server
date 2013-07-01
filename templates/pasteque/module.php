@@ -111,7 +111,11 @@ function __tpl_report_footer($report) {
 function __tpl_report_line($report, $line, $par) {
     echo "\t\t<tr class=\"row-" . ($par ? 'par' : 'odd') . "\">\n";
     foreach ($report->fields as $field) {
-        echo "\t\t\t<td>" . $line[$field] . "</td>\n";
+        if(isset($line[$field])) {
+            echo "\t\t\t<td>" . $line[$field] . "</td>\n";
+        } else {
+            echo "\t\t\t<td></td>\n";
+        }
     }
     echo "\t\t</tr>\n";
 }
@@ -189,3 +193,4 @@ function tpl_report($report) {
 }
 
 ?>
+
