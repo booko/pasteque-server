@@ -34,6 +34,12 @@ if (isset($_POST['install'])) {
     $country = str_replace("..", "", $country);
     $cfile = ABSPATH . "/install/database/data_" . $country . ".sql";
     $pdo->query(\file_get_contents($cfile));
+} else if (isset($_POST['update'])) {
+    $pdo = PDOBuilder::getPDO();
+    // Load generic sql update for current version
+    $version = $_POST['update'];
+    $file = ABSPATH . "/install/database/upgrade-" . $version . ".sql";
+    $pdo->query(\file_get_contents($file));
 }
 
 function show_install() {
@@ -52,12 +58,41 @@ function show_install() {
     tpl_close();
 }
 
+function show_update($dbVer) {
+    tpl_open();
+?><h1><?php \pi18n("Update"); ?></h1>
+<p><?php \pi18n("Update notice"); ?></p>
+<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
+    <?php form_value_hidden("update", "update", $dbVer); ?>
+	<?php \Pasteque\form_send(); ?>
+</form>
+<?php
+    tpl_close();
+}
+
+function show_downgrade($dbVer) {
+    tpl_open();
+?><h1>Incompatible version</h1>
+<p>Please update your server.</p>
+<?php
+    tpl_close();
+}
+
 $pdo = PDOBuilder::getPDO();
 $sql = "SELECT VERSION FROM APPLICATIONS WHERE ID = \"postech\"";
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
-if ($stmt->fetch()) {
+$data = $stmt->fetch();
+if ($data !== FALSE) {
     // Check version
+    $dbVer = $data['VERSION'];
+    if (intval($dbVer) < intval(DB_VERSION)) {
+        // Need update
+        show_update($dbVer);
+    } else if (intval($dbVer) > intval(DB_VERSION)) {
+        // Need downgrade
+        show_dowgrade($dbVer);
+    }
 } else {
     // Install
     show_install();
