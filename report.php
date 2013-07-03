@@ -30,6 +30,7 @@ function report_csv($module, $name) {
         die();
     }
     $reportRun = $report->run();
+    ob_clean();
     $output = fopen("php://output", "rb+");
 
     if(!$report->isGrouping()) {
