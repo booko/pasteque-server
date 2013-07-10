@@ -59,11 +59,29 @@ function tpl_404() {
 }
 
 function tpl_msg_box($info, $error) {
-    if ($info !== NULL || $info != "") {
-        echo "<div class=\"message\">" . $info . "</div>\n";
+    if ($info !== NULL) {
+        if (is_array($info)) {
+            $mess_i = "";
+            foreach ($info as $m_info) {
+                $mess_i .= $m_info . "<br/>";
+            }
+            $info = $mess_i;
+        }
+        if ($info != "") {
+            echo "<div class=\"message\">" . $info . "</div>\n";
+        }
     }
-    if ($error !== NULL || $error != "") {
-        echo "<div class=\"error\">" . $error . "</div>\n";
+    if ($error !== NULL) {
+        if (is_array($error)) {
+            $mess_e = "";
+            foreach ($error as $m_err) {
+                $mess_e .= $m_err . "<br/>";
+            }
+            $error = $mess_e;
+        }
+        if($error != "") {
+            echo "<div class=\"error\">" . $error . "</div>\n";
+        }
     }
 }
 
@@ -192,5 +210,19 @@ function tpl_report($report) {
     }
 }
 
+
+function tpl_btn($class, $href, $label, $image_btn, $alt = NULL, $title = NULL) {
+    $btn = "<a class=" . $class . " href=\"" . $href . "\">"
+            . "<img src=\"" .\Pasteque\get_template_url() . "" . $image_btn . "\"";
+    if (isset($alt)) {
+         $btn .= " alt =\"" . $alt . "\"";
+    }
+    if (isset($title)) {
+        $btn .= " title =\"" . $title . "\"";
+    }
+    $btn .= "/>";
+    $btn .= $label . "</a>";
+    echo $btn;
+}
 ?>
 
