@@ -129,7 +129,7 @@ function __tpl_report_footer($report) {
 function __tpl_report_line($report, $line, $par) {
     echo "\t\t<tr class=\"row-" . ($par ? 'par' : 'odd') . "\">\n";
     foreach ($report->fields as $field) {
-        if(isset($line[$field])) {
+        if (isset($line[$field])) {
             echo "\t\t\t<td>" . $line[$field] . "</td>\n";
         } else {
             echo "\t\t\t<td></td>\n";
@@ -185,6 +185,9 @@ function tpl_report($report) {
             __tpl_report_line($report, $row, $par);
         }
         __tpl_report_footer($report);
+        if ($report->hasTotals()) {
+            __tpl_report_totals($report, $run);
+        }
     } else {
         while ($row = $run->fetch()) {
             $par = !$par;
@@ -224,5 +227,6 @@ function tpl_btn($class, $href, $label, $image_btn, $alt = NULL, $title = NULL) 
     $btn .= $label . "</a>";
     echo $btn;
 }
+
 ?>
 

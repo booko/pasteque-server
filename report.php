@@ -33,53 +33,52 @@ function report_csv($module, $name) {
     ob_clean();
     $output = fopen("php://output", "rb+");
 
-    if(!$report->isGrouping()) {
+    if (!$report->isGrouping()) {
         $line = $report->headers;
         fputcsv($output, $line);
         while ($line = $reportRun->fetch() ) {
             $data = array();
             foreach ($report->fields as $field) {
-                $data = init_data($data,$line,$field);
+                $data = init_data($data, $line, $field);
             }
             fputcsv($output, $data);
         }
     } else {
         while ($line = $reportRun->fetch()) {
         $data = array();
-            if( $reportRun->isGroupEnd()) {
-                if($report->hasSubtotals()) {
+            if ($reportRun->isGroupEnd()) {
+                if ($report->hasSubtotals()) {
                     write_subtotals($output, $report, $reportRun);
                 }
                 fputcsv($output, array());
             }
 
-            if( $reportRun->isGroupStart() ) {
+            if ($reportRun->isGroupStart()) {
                 fputcsv($output, array($reportRun->getCurrentGroup()));
                 fputcsv($output, $report->headers);
             }
 
-            foreach($report->fields as $field) {
+            foreach ($report->fields as $field) {
                 $data = init_data($data, $line, $field);
             }
-            fputcsv($output,$data);
+            fputcsv($output, $data);
             unset($data);
         }
-        if($report->hasSubtotals()) {
+        if ($report->hasSubtotals()) {
             write_subtotals($output, $report, $reportRun);
-            fputcsv($output,array());
+            fputcsv($output, array());
         }
-
-        if($report->hasTotals()) {
-            fputcsv($output, array(\i18n("Total")));
-            fputcsv($output, $report->headers);
-            fputcsv($output, totals($report,$reportRun));
-        }
+    }
+    if ($report->hasTotals()) {
+        fputcsv($output, array(\i18n("Total")));
+        fputcsv($output, $report->headers);
+        fputcsv($output, totals($report, $reportRun));
     }
 }
 
 
 function init_data($data, $line, $field) {
-     if( isset($line[$field])) {
+     if (isset($line[$field])) {
         $data[] = $line[$field];
      } else {
         $data[] = "";
@@ -87,20 +86,20 @@ function init_data($data, $line, $field) {
      return $data;
 }
 
-function write_subtotals($output,$report,$run){
-    $data= array();
-    foreach($report->fields as $field) {
-        $data = init_data($data,$run->subtotals, $field);
+function write_subtotals($output, $report, $run) {
+    $data = array();
+    foreach ($report->fields as $field) {
+        $data = init_data($data, $run->subtotals, $field);
     }
-    fputcsv($output,array(\i18n("Subtotal")));
+    fputcsv($output, array(\i18n("Subtotal")));
     fputcsv($output, $data);
 
 }
 
-function totals($report,$run){
+function totals($report, $run) {
     $data = array();
-    foreach($report->fields as $field){
-        $data = init_data($data,$run->totals, $field);
+    foreach ($report->fields as $field) {
+        $data = init_data($data, $run->totals, $field);
     }
     return $data;
 }
