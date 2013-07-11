@@ -111,7 +111,7 @@ if (isset($_FILES['csv'])) {
 }
 ?>
 
-<h1><?php \pi18n("Import category from csv", PLUGIN_NAME); ?></h1>
+<h1><?php \pi18n("Import category from csv file", PLUGIN_NAME); ?></h1>
 <form method="post" action="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'categoriesManagement');?>" enctype="multipart/form-data">
         <?php \pi18n("File", PLUGIN_NAME) ?>: <input type="file" name="csv">
         <input type="submit" name="envoyer" value=<?php \pi18n("send", PLUGIN_NAME)?>>

@@ -44,7 +44,7 @@
 
 
 "Import products": "Import products",
-"Import products from csv": "Import products from csv",
+"Import products from csv file": "Import products from csv file",
 "On line %d: Cannot create product: '%s'": "On line %d: Cannot create product: '%s'",
 "On line %d: Cannot update update: '%s'": "On line %d: Cannot update update: '%s'",
 "On line %d: Tax category: '%s' doesn't exist": "On line %d: Tax category: '%s' doesn't exist",

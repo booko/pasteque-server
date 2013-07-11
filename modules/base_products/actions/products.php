@@ -42,7 +42,7 @@ $products = \Pasteque\ProductsService::getAll(FALSE, TRUE);
 <?php \Pasteque\tpl_btn('btn', \Pasteque\get_module_url_action(PLUGIN_NAME, "product_edit"),
         \i18n('Add a product', PLUGIN_NAME), 'img/btn_add.png');?>
 <?php \Pasteque\tpl_btn('btn', \Pasteque\get_module_url_action(PLUGIN_NAME, "productsManagement"),
-        \i18n('Import product from csv', PLUGIN_NAME), 'img/btn_add.png');?>
+        \i18n('Import products', PLUGIN_NAME), 'img/btn_add.png');?>
 
 <p><?php \pi18n("%d products", PLUGIN_NAME, count($products)); ?></p>
 
