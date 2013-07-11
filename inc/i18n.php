@@ -69,7 +69,6 @@ class I18N {
     public function currency($amount) {
         return sprintf($this->entries['currency'], $amount);
     }
-
     public function date($timestamp) {
         if ($timestamp) {
             return strftime($this->entries['date'], $timestamp);
@@ -91,6 +90,16 @@ class I18N {
     public function revDatetime($datetime) {
         return timefstr($this->entries['datetime'], $datetime);
     }
+    /** Return a string number format whith correct format 
+     * parsed whith 2 decimals*/
+    public function formatFloat($float) {
+        return number_format($float, 2, \i18n("Dec point"), \i18n("Thousands sep"));
+    }
+    /** Convert a float number to integer */
+    public function formatInteger($float) {
+        return sprintf("%d", $float);
+    }
+
 }
 $I18N = new I18N();
 
@@ -117,6 +126,14 @@ function __rdt($datetime) {
 function __cur($amount) {
     global $I18N;
     return $I18N->currency($amount);
+}
+function __flt($float) {
+    global $I18N;
+    return $I18N->formatFloat($float);
+}
+function __int($float) {
+    global $I18N;
+    return $I18N->formatInteger($float);
 }
 
 $i18n_modules = array();

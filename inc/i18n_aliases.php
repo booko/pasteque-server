@@ -57,4 +57,13 @@ namespace {
     function pi18nDatetime($timestamp) {
         echo \Pasteque\__dt($timestamp);
     }
+
+    function i18nFlt($float) {
+        return \Pasteque\__flt($float);
+    }
+
+    function i18nInt($float) {
+        return \Pasteque\__int($float);
+    }
+
 }

@@ -3,6 +3,9 @@
 "datetime": "%d/%m/%Y %H:%M",
 "currency": "%01.2f€",
 
+"Thousands sep": ".",
+"Dec point": ",",
+
 "Version.Codename": "Datte",
 "Update": "Mise à jour",
 "Update notice": "Cliquez sur le bouton ci-dessous pour mettre à jour votre base de données",

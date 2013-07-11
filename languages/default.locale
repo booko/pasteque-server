@@ -3,6 +3,9 @@
 "datetime": "%Y-%m-%d %h:%M",
 "currency": "%01.2f€",
 
+"Thousands sep": ",",
+"Dec point": ".",
+
 "Version.Codename": "Date",
 "Update": "Update",
 "Update notice": "Click the button below to update your database",
