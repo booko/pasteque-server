@@ -89,5 +89,11 @@
 "Customer.country": "Country",
 
 "CustTaxCat.label": "Name",
-"CustTaxCat.tax_cat_id": "Tax"
+"CustTaxCat.tax_cat_id": "Tax",
+
+"File empty": "File empty",
+"Separator not defined": "Separator not defined",
+"Technical error: file not open": "Technical error: file not open",
+"Header doesn't contain : %s": "Header doesn't contain : %s",
+"Header default": "Header default"
 }
