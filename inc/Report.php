@@ -25,14 +25,16 @@ class Report {
     const TOTAL_SUM = "sum";
     const TOTAL_AVG = "average";
 
-    private $sql;
-    public $headers;
-    public $fields;
-    protected $params;
-    protected $filters;
-    protected $grouping;
-    protected $subtotals;
-    protected $totals;
+    /* array use for ponderate the average */
+    protected $ponderate;
+    private $sql; //string
+    public $headers; //array
+    public $fields; //array
+    protected $params;//array
+    protected $filters; //associatif array of array
+    protected $grouping; //string
+    protected $subtotals; //array
+    protected $totals; //array
 
     public function __construct($sql, $headers, $fields) {
         $this->sql = $sql;
@@ -67,6 +69,7 @@ class Report {
         }
         $this->filters[$field][] = $function;
     }
+
     public function getFilters() {
         return $this->filters;
     }
@@ -110,6 +113,24 @@ class Report {
     public function hasTotals() {
         return count($this->totals) > 0;
     }
+
+    /** add $ponderatedBy to the fields $field
+     * do nothing if $ponderatedBy or $fields doesn't exist in $fields */
+    public function addPonderate($field, $ponderatedBy) {
+        if (in_array($ponderatedBy, $this->fields) && in_array($field, $this->fields)) {
+                $this->ponderate[$field] = $ponderatedBy;
+        }
+    }
+    /** return true if the $field is pondered
+     * false else */
+    public function isPondered($field) {
+        return isset($this->ponderate[$field]);
+    }
+    /** return the field used for ponderate */
+    public function getPonderate($field) {
+        return $this->ponderate[$field];
+    }
+
 }
 
 class ReportRun {
@@ -171,7 +192,9 @@ class ReportRun {
                 $dest[$field] = $tmp[$field];
                 break;
             case Report::TOTAL_AVG:
-                if ($count != 0) {
+                if ($this->report->isPondered($field)) {
+                    $dest[$field] = $tmp[$field] / $tmp[$this->report->getPonderate($field)];
+                } else if ($count != 0) {
                     $dest[$field] = $tmp[$field] / $count;
                 } else {
                     $dest[$field] = 0;
