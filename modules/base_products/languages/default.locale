@@ -17,6 +17,7 @@
 
 "Categories": "Categories",
 "Edit categories": "Edit categories",
+"Import categories": "Importer des catégories",
 "Add a category": "Add a category",
 "%d categories": "%d categories",
 "No category found": "No category found",
@@ -27,5 +28,17 @@
 "Edit tax": "Edit tax",
 "Rates": "Rates",
 "New tax rate": "New rate",
-"Unable to delete tax. Tax cannot be deleted when in use.": "Unable to delete tax. Tax cannot be deleted when in use."
+"Unable to delete tax. Tax cannot be deleted when in use.": "Unable to delete tax. Tax cannot be deleted when in use.",
+
+"File": "Fichier",
+"send": "send",
+
+"Only empty category can be deleted": "Only empty category can be deleted",
+"Import category": "Import category",
+"Import category from csv": "Import category from csv",
+"On line %d: Cannot create category: '%s'": "On line %d: Cannot create category: '%s'",
+"On line %d: Cannot update category: '%s'": "On line %d: Cannot update category: '%s'",
+"On line %d: Category parent doesn't exist": "On line %d: Category parent doesn't exist",
+"%d line(s) inserted, %d line(s) modified, %d error(s)": "%d line(s) inserted, %d line(s) modified, %d error(s)",
+"Selected file empty or bad format": "Selected file empty or bad format"
 }

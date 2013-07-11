@@ -27,5 +27,19 @@
 "Edit tax": "Édition de la taxe",
 "Rates": "Taux",
 "New tax rate": "Nouveau taux",
-"Unable to delete tax. Tax cannot be deleted when in use.": "Impossible de supprimer la taxe. Une taxe ne peut pas être supprimée lorsqu'elle est utilisée."
+"Unable to delete tax. Tax cannot be deleted when in use.": "Impossible de supprimer la taxe. Une taxe ne peut pas être supprimée lorsqu'elle est utilisée.",
+
+"send": "envoyer",
+"File": "Fichier",
+
+"Only empty category can be deleted": "Une catégorie non vide ne peut être supprimée",
+"Import categories": "Importer des catégories",
+"Import category from csv": "Importer des categories à partir d'un csv",
+"On line %d: Cannot update category: '%s'": "À la ligne %d: Impossible de mettre à jour la category: '%s'",
+"On line %d: Cannot create product: '%s'": "À la ligne %d: Impossible de créer le produit: '%s'",
+"On line %d: Category parent doesn't exist": "À la ligne %d: La categorie parent n'existe pas",
+"Cannot open file": "Impossible d'ouvrir le fichier",
+"%d line(s) inserted, %d line(s) modified, %d error(s)": "%d ligne(s) inserée(s), %d ligne(s) modifiée(s), %d erreur(s)",
+
+"Selected file empty or bad format": "Aucun fichier sélectionné ou mauvais format"
 }

@@ -41,6 +41,19 @@ class CategoriesService {
         return $cats;
     }
 
+    static function getByName($name) {
+        $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("SELECT * FROM CATEGORIES WHERE NAME = :name");
+        $stmt->bindParam(":name", $name, \PDO::PARAM_STR);
+        if ($stmt->execute()) {
+            if ($row = $stmt->fetch()) {
+                $cat = CategoriesService::buildDBCat($row);
+                return $cat;
+            }
+        }
+        return null;
+    }
+
     static function get($id) {
         $pdo = PDOBuilder::getPDO();
         $stmt = $pdo->prepare("SELECT * FROM CATEGORIES WHERE ID = :id");

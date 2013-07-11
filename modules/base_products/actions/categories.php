@@ -28,7 +28,8 @@ if (isset($_POST['delete-cat'])) {
     if (\Pasteque\CategoriesService::deleteCat($_POST['delete-cat'])) {
         $message = \i18n("Changes saved");
     } else {
-        $error = \i18n("Unable to save changes"). ". Une catégorie non vide ne peut être supprimée";
+        $error = \i18n("Unable to save changes");
+        $error .= " " . \i18n("Only empty category can be deleted", PLUGIN_NAME);
     }
 }
 
@@ -38,7 +39,11 @@ $categories = \Pasteque\CategoriesService::getAll();
 
 <?php \Pasteque\tpl_msg_box($message, $error); ?>
 
-<p><a class="btn" href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'category_edit'); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/btn_add.png" /><?php \pi18n("Add a category", PLUGIN_NAME); ?></a></p>
+<?php \Pasteque\tpl_btn('btn', \Pasteque\get_module_url_action(PLUGIN_NAME, "category_edit"),
+        \i18n('Add a category', PLUGIN_NAME), 'img/btn_add.png');?>
+<?php \Pasteque\tpl_btn('btn', \Pasteque\get_module_url_action(PLUGIN_NAME, "categoriesManagement"),
+        \i18n('Import categories', PLUGIN_NAME), 'img/btn_add.png');?>
+
 
 <p><?php \pi18n("%d categories", PLUGIN_NAME, count($categories)); ?></p>
 
@@ -60,7 +65,10 @@ $par = !$par;
 		<td><img class="thumbnail" src="?<?php echo \Pasteque\URL_ACTION_PARAM; ?>=img&w=category&id=<?php echo $category->id; ?>" />
 		<td><?php echo $category->label; ?></td>
 		<td class="edition">
-			<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'category_edit', array('id' => $category->id)); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
+            <?php \Pasteque\tpl_btn("edition", \Pasteque\get_module_url_action(PLUGIN_NAME,
+                    'category_edit', array("id" => $category->id)), "",
+                    'img/edit.png', \i18n('Edit'), \i18n('Edit'));
+            ?>
 			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("cat", $category->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>
 		</td>
 	</tr>
