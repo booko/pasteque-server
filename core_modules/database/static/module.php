@@ -1,4 +1,4 @@
-<?
+<?php
 //    Pastèque Web back office, Static database module
 //
 //    Copyright (C) 2013 Scil (http://scil.coop)
@@ -58,3 +58,4 @@ namespace Pasteque {
         return \StaticDB\passwd();
     }
 }
+?>
