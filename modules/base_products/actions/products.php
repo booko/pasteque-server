@@ -38,7 +38,11 @@ $products = \Pasteque\ProductsService::getAll(FALSE, TRUE);
 
 <?php \Pasteque\tpl_msg_box($message, $error); ?>
 
-<p><a class="btn" href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'product_edit'); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/btn_add.png" /><?php \pi18n("Add a product", PLUGIN_NAME); ?></a></p>
+
+<?php \Pasteque\tpl_btn('btn', \Pasteque\get_module_url_action(PLUGIN_NAME, "product_edit"),
+        \i18n('Add a product', PLUGIN_NAME), 'img/btn_add.png');?>
+<?php \Pasteque\tpl_btn('btn', \Pasteque\get_module_url_action(PLUGIN_NAME, "productsManagement"),
+        \i18n('Import product from csv', PLUGIN_NAME), 'img/btn_add.png');?>
 
 <p><?php \pi18n("%d products", PLUGIN_NAME, count($products)); ?></p>
 
@@ -66,7 +70,10 @@ $par = !$par;
 		<td><?php echo $product->reference; ?></td>
 		<td><?php echo $product->label; ?></td>
 		<td class="edition">
-			<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'product_edit', array('id' => $product->id)); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
+            <?php \Pasteque\tpl_btn('edition', \Pasteque\get_module_url_action(
+                    PLUGIN_NAME, 'product_edit', array("id" => $product->id)), "",
+                    'img/edit.png', \i18n('Edit'), \i18n('Edit'));
+            ?>
 			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("product", $product->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>
 		</td>
 	</tr>
@@ -114,7 +121,7 @@ $par = !$par;
 <?php
 if (count($products) == 0) {
 ?>
-<div class="alert"><?php \pi18n("No product found", PLUGIN_NAME); ?></div>
+<div class="alert"><?php \pi18n("No product found", PLUGIN_NAME);?></div>
 <?php
 }
 ?>

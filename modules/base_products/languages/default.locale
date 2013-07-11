@@ -32,6 +32,8 @@
 
 "File": "Fichier",
 "send": "send",
+"Selected file empty or bad format": "Selected file empty or bad format",
+"%d line(s) inserted, %d line(s) modified, %d error(s)": "%d line(s) inserted, %d line(s) modified, %d error(s)",
 
 "Only empty category can be deleted": "Only empty category can be deleted",
 "Import category": "Import category",
@@ -39,6 +41,12 @@
 "On line %d: Cannot create category: '%s'": "On line %d: Cannot create category: '%s'",
 "On line %d: Cannot update category: '%s'": "On line %d: Cannot update category: '%s'",
 "On line %d: Category parent doesn't exist": "On line %d: Category parent doesn't exist",
-"%d line(s) inserted, %d line(s) modified, %d error(s)": "%d line(s) inserted, %d line(s) modified, %d error(s)",
-"Selected file empty or bad format": "Selected file empty or bad format"
+
+
+"Import products": "Import products",
+"Import products from csv": "Import products from csv",
+"On line %d: Cannot create product: '%s'": "On line %d: Cannot create product: '%s'",
+"On line %d: Cannot update update: '%s'": "On line %d: Cannot update update: '%s'",
+"On line %d: Tax category: '%s' doesn't exist": "On line %d: Tax category: '%s' doesn't exist",
+"On line %d category: '%s' doesn't exist": "On line %d category: '%s' doesn't exist"
 }

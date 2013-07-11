@@ -39,6 +39,19 @@ class TaxesService {
         return $tax;
     }
 
+    static function getByName($name) {
+        $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("SELECT * FROM TAXES WHERE NAME = :name");
+        $stmt->bindParam(":name", $name, \PDO::PARAM_STR);
+        if ($stmt->execute()) {
+            if ($row = $stmt->fetch()) {
+                $tax = TaxesService::buildDBTaxCat($row, $pdo);
+                return $tax;
+            }
+        }
+        return null;
+    }
+
     static function getAll() {
         $taxcats = array();
         $pdo = PDOBuilder::getPDO();

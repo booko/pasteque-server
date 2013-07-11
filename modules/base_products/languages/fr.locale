@@ -31,6 +31,8 @@
 
 "send": "envoyer",
 "File": "Fichier",
+"Selected file empty or bad format": "Aucun fichier sélectionné ou mauvais format",
+"%d line(s) inserted, %d line(s) modified, %d error(s)": "%d ligne(s) inserée(s), %d ligne(s) modifiée(s), %d erreur(s)",
 
 "Only empty category can be deleted": "Une catégorie non vide ne peut être supprimée",
 "Import categories": "Importer des catégories",
@@ -38,8 +40,9 @@
 "On line %d: Cannot update category: '%s'": "À la ligne %d: Impossible de mettre à jour la category: '%s'",
 "On line %d: Cannot create product: '%s'": "À la ligne %d: Impossible de créer le produit: '%s'",
 "On line %d: Category parent doesn't exist": "À la ligne %d: La categorie parent n'existe pas",
-"Cannot open file": "Impossible d'ouvrir le fichier",
-"%d line(s) inserted, %d line(s) modified, %d error(s)": "%d ligne(s) inserée(s), %d ligne(s) modifiée(s), %d erreur(s)",
 
-"Selected file empty or bad format": "Aucun fichier sélectionné ou mauvais format"
+"On line %d: Cannot create product: '%s'": "À la ligne %d: Impossible de créer le produit: '%s'",
+"On line %d: Cannot update update: '%s'": "À la ligne %d: Impossible de mettre a jour le produit: '%s'",
+"On line %d: Category parent doesn't exist": "À la ligne %d: La categorie parent n'existe pas",
+"On line %d: Tax category: '%s' doesn't exist": "À la ligne %d: La categorie de taxe: '%s' n'existe pas"
 }

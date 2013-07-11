@@ -91,6 +91,20 @@ class ProductsService {
         return $ids;
     }
 
+    static function getByRef($ref) {
+        $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("SELECT * FROM PRODUCTS "
+            . "WHERE PRODUCTS.REFERENCE = :ref");
+        $stmt->bindParam(":ref", $ref, \PDO::PARAM_STR);
+        if ($stmt->execute()) {
+            if ($row = $stmt->fetch()) {
+                $prd = ProductsService::buildDBPrd($row, $pdo);
+                return $prd;
+            }
+        }
+        return null;
+    }
+
     static function get($id) {
         $pdo = PDOBuilder::getPDO();
         $stmt = $pdo->prepare("SELECT * FROM PRODUCTS LEFT JOIN PRODUCTS_CAT "
