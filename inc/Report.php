@@ -31,6 +31,7 @@ class Report {
     public $headers; //array
     public $fields; //array
     protected $params;//array
+    //key fields contain in $this->field: values functions
     protected $filters; //associatif array of array
     protected $grouping; //string
     protected $subtotals; //array
@@ -114,20 +115,20 @@ class Report {
         return count($this->totals) > 0;
     }
 
-    /** add $ponderatedBy to the fields $field
+    /** add the field ponderated by the field
      * do nothing if $ponderatedBy or $fields doesn't exist in $fields */
-    public function addPonderate($field, $ponderatedBy) {
-        if (in_array($ponderatedBy, $this->fields) && in_array($field, $this->fields)) {
-                $this->ponderate[$field] = $ponderatedBy;
+    public function addPonderate($field, $ponderated) {
+        if (in_array($ponderated, $this->fields) && in_array($field, $this->fields)) {
+                $this->ponderate[$field] = $ponderated;
         }
     }
-    /** return true if the $field is pondered
+    /** return true if the $field  ponderate something
      * false else */
     public function isPondered($field) {
         return isset($this->ponderate[$field]);
     }
-    /** return the field used for ponderate */
-    public function getPonderate($field) {
+    /** return the field ponderate doesn't check if field exist */
+        public function getPonderate($field) {
         return $this->ponderate[$field];
     }
 
@@ -146,6 +147,7 @@ class ReportRun {
     protected $groupStart;
     protected $groupStop;
     protected $empty;
+    protected $pnd;
 
     public function __construct($report) {
         $this->report = $report;
@@ -171,6 +173,11 @@ class ReportRun {
         }
         $this->stmt->closeCursor();
         $this->stmt->execute();
+
+        $this->pnd = array();
+        foreach (array_keys($this->report->getTotals()) as $field) {
+            $this->pnd[$field] = 0;
+        }
     }
 
     public function isEmpty() {
@@ -193,7 +200,11 @@ class ReportRun {
                 break;
             case Report::TOTAL_AVG:
                 if ($this->report->isPondered($field)) {
-                    $dest[$field] = $tmp[$field] / $tmp[$this->report->getPonderate($field)];
+                    $num = $tmp[$this->report->getPonderate($field)];
+                    // if $num is set and not equal 0
+                    if ($num) {
+                        $dest[$field] = $this->pnd[$field] / $num;
+                    }
                 } else if ($count != 0) {
                     $dest[$field] = $tmp[$field] / $count;
                 } else {
@@ -260,6 +271,9 @@ class ReportRun {
             foreach ($this->report->getTotals() as $field => $type) {
                 if (isset($values[$field])) {
                     $this->tmpTotals[$field] += $values[$field];
+                    if ($this->report->isPondered($field)) {
+                        $this->pnd[$field] += $values[$field] * $values[$this->report->getPonderate($field)];
+                    }
                 }
             }
             if ($this->report->isGrouping()) {
@@ -465,4 +479,3 @@ function get_report($module, $name) {
     }
 }
 ?>
-
