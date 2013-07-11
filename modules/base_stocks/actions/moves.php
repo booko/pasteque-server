@@ -57,6 +57,9 @@ function catalog_category($category, $js) {
 
 <?php \Pasteque\tpl_msg_box($message, $error); ?>
 
+<?php \Pasteque\tpl_btn('btn', \Pasteque\get_module_url_action(PLUGIN_NAME, "stocksManagement"),
+        \i18n('Import stock\'s moves', PLUGIN_NAME), 'img/btn_add.png');?>
+
 <form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" id="move" method="post">
 	<div class="row">
 		<label for="reason"><?php \pi18n("Operation", PLUGIN_NAME); ?></label>
