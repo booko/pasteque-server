@@ -39,7 +39,7 @@ class PlacesService {
         return $floor;
     }
 
-    static function getAll() {
+    static function getAllFloors() {
         $floors = array();
         $pdo = PDOBuilder::getPDO();
         $sql = "SELECT * FROM FLOORS";
@@ -50,7 +50,7 @@ class PlacesService {
         return $floors;
     }
 
-    static function get($id) {
+    static function getFloor($id) {
         $pdo = PDOBuilder::getPDO();
         $stmt = $pdo->prepare("SELECT * FROM FLOORS WHERE ID = :id");
         if ($stmt->execute(array(':id' => $id))) {
@@ -59,6 +59,75 @@ class PlacesService {
             }
         }
         return null;
+    }
+
+    static function createFloor($floor) {
+        $pdo = PDOBuilder::getPDO();
+        $id = md5(time() . rand());
+
+        $sql = "INSERT INTO FLOORS (ID, NAME";
+        if ($floor->image !== "") {
+            $sql .= ", IMAGE";
+        }
+        $sql .= ") VALUES (:id, :name";
+        if ($floor->image !== "") {
+            $sql .= ", :img";
+        }
+        $sql .= ")";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(":id", $id, \PDO::PARAM_STR);
+        $stmt->bindParam(":name", $floor->name, \PDO::PARAM_STR);
+        if ($floor->image !== "") {
+            $stmt->bindParam(":img",$floor->image);
+        }
+        if (!$stmt->execute()) {
+            return NULL;
+        }
+        return $id;
+    }
+
+    static function deleteFloor($id) {
+        $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("DELETE FROM FLOORS WHERE ID = :id");
+        if ($stmt->execute(array(':id' => $id))) {
+            return true;
+        }
+        return false;
+    }
+
+
+    static function getAllPlaces() {
+        $place = array();
+        $pdo = PDOBuilder::getPDO();
+        $sql = "SELECT * FROM PLACES";
+        foreach ($pdo->query($sql) as $db_place) {
+            $place = PlacesService::buildDBPlace($db_place, $pdo);
+            $places[] = $place;
+        }
+        return $places;
+    }
+
+
+    static function getPlace($id) {
+        $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("SELECT * FROM PLACES WHERE ID = :id");
+        if ($stmt->execute(array(':id' => $id))) {
+            if ($row = $stmt->fetch()) {
+                return PlacesService::buildDBFloor($row, $pdo);
+            }
+        }
+        return null;
+    }
+
+
+    static function deletePlace($id) {
+        $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("DELETE FROM PLACES WHERE ID = :id");
+        if ($stmt->execute(array(':id' => $id))) {
+            return true;
+        }
+        return false;
     }
 
 }
