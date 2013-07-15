@@ -2,7 +2,6 @@
 
 namespace BaseProducts;
 
-
 // open csv return null if the file selected had not extension "csv"
 // or user not selected file
 function init_csv() {
@@ -25,11 +24,6 @@ function init_csv() {
         return $csv;
     }
 
-    //manage empty field:
-    $csv->addFilter("Parent", NULL);
-    $csv->addFilter("Order", NULL);
-    $csv->addFilter("Designation", NULL);
-
     return $csv;
 }
 function import_csv($csv) {
@@ -41,12 +35,16 @@ function import_csv($csv) {
 
     while ($tab = $csv->readLine()) {
         $parentOk = false;
-        $parent = \Pasteque\CategoriesService::getByName($tab['Parent']);
-
-        $image = NULL;
-        if ($parent) {
+        if ($tab['Parent'] !== NULL) {
+            $parent = \Pasteque\CategoriesService::getByName($tab['Parent']);
+            $image = NULL;
+            if ($parent) {
+                $parentOk = true;
+                $tab['Parent'] = $parent->id;
+            }
+        } else {
+            // Category isn't subCategory
             $parentOk = true;
-            $tab['Parent'] = $parent->id;
         }
 
         if ($parentOk) {

@@ -23,9 +23,8 @@ function init_csv() {
         return $csv;
     }
 
+    //manage empty string
     $csv->addFilter("Quantity", "0");
-    $csv->addFilter("Reference", NULL);
-    $csv->addFilter("Location", NULL);
 
     return $csv;
 }

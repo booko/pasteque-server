@@ -165,13 +165,17 @@ class Csv {
         return $array;
     }
 
-    /** modifie value of array by the value of filter associated
+    /** Edit value of array by the value of filter associated
      * if the value is an empty string
-     * if field is not set on filter: do nothing */
+     * if field is not set on filter: change empty string in NULL on array field */
     public function filter($tab) {
         foreach ($tab as $key => $value ) {
-            if ($tab[$key] === "" && isset($this->filter[$key])) {
-                $tab[$key] = $this->filter[$key];
+            if ($tab[$key] === "") {
+                if (!isset($this->filter[$key])) {
+                    $tab[$key] = NULL;
+                } else {
+                    $tab[$key] = $this->filter[$key];
+                }
             }
         }
         return $tab;

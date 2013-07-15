@@ -26,13 +26,7 @@ function init_csv() {
         return $csv;
     }
 
-    $csv->addFilter("reference", NULL);
-    $csv->addFilter("barcode", NULL);
-    $csv->addFilter("price_buy", NULL);
-    $csv->addFilter("price_sell", NULL);
-    $csv->addFilter("category", NULL);
-    $csv->addFilter("label", NULL);
-    $csv->addFilter("tax_cat", NULL);
+    //manage empty string
     $csv->addFilter("visible", true);
     $csv->addFilter("scaled", false);
     $csv->addFilter("disp_order", "0");
