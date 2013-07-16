@@ -99,5 +99,8 @@
 "Separator not defined": "Separateur de colone non défini",
 "Technical error: file not open": "Erreur technique: fichier non ouvert",
 "Header doesn't contain : %s": "L'entête ne contient pas : %s",
-"Header default": "Defaut d'entête"
+"Header default": "Defaut d'entête",
+
+"Floors.name": "Désignation",
+"Average": "Moyenne"
 }

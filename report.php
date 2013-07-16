@@ -71,7 +71,7 @@ function report_csv($module, $name) {
     }
     if ($report->hasTotals()) {
         fputcsv($output, array(\i18n("Total")));
-        fputcsv($output, $report->headers);
+        fputcsv($output, totalHeader($report, $reportRun));
         fputcsv($output, totals($report, $reportRun));
     }
 }
@@ -94,6 +94,24 @@ function write_subtotals($output, $report, $run) {
     fputcsv($output, array(\i18n("Subtotal")));
     fputcsv($output, $data);
 
+}
+
+function totalHeader($report, $run) {
+    $totals = $report->getTotals();
+    $cmp = 0;
+    $data = array();
+    foreach ($report->fields as $field) {
+        $txt = "";
+        if (isset($run->totals[$field])) {
+            if ($totals[$field] === \Pasteque\Report::TOTAL_AVG) {
+                 $txt = \i18n("Average");
+            }
+            $txt .= " " . $report->headers[$cmp];
+        }
+        $data[] = $txt;
+        $cmp++;
+    }
+    return $data;
 }
 
 function totals($report, $run) {
