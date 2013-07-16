@@ -38,8 +38,14 @@ if (isset($_POST['install'])) {
     $pdo = PDOBuilder::getPDO();
     // Load generic sql update for current version
     $version = $_POST['update'];
+    $country = $_POST['country'];
     $file = ABSPATH . "/install/database/upgrade-" . $version . ".sql";
     $pdo->query(\file_get_contents($file));
+    // Check for localized update data for current version
+    $file = ABSPATH . "/install/database/upgrade-" . $version . "_" . $country . ".sql";
+    if (\file_exists($file)) {
+        $pdo->query(\file_get_contents($file));
+    }
 }
 
 function show_install() {
@@ -51,6 +57,7 @@ function show_install() {
 		<option value="belgique">Belgique</option>
 		<option value="france">France</option>
 		<option value="luxembourg">Luxembourg</option>
+		<option value="united_kingdom">United Kingdom</option>
 	</select>
 	<?php \Pasteque\form_send(); ?>
 </form>
@@ -64,6 +71,13 @@ function show_update($dbVer) {
 <p><?php \pi18n("Update notice"); ?></p>
 <form action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
     <?php form_value_hidden("update", "update", $dbVer); ?>
+    <label for="country"><?php \pi18n("Pays"); ?>
+	<select id="country" name="country">
+		<option value="belgique">Belgique</option>
+		<option value="france">France</option>
+		<option value="luxembourg">Luxembourg</option>
+		<option value="united_kingdom">United Kingdom</option>
+	</select>
 	<?php \Pasteque\form_send(); ?>
 </form>
 <?php
