@@ -24,12 +24,10 @@ INSERT INTO TAXES(ID, NAME, CATEGORY, CUSTCATEGORY, PARENTID, RATE, RATECASCADE,
 UPDATE `ROLES` SET `NAME` = 'Rôle administrateur' WHERE `ID` = '0';
 UPDATE `ROLES` SET `NAME` = 'Rôle responsable' WHERE `ID` = '1';
 UPDATE `ROLES` SET `NAME` = 'Rôle employé' WHERE `ID` = '2';
-UPDATE `ROLES` SET `NAME` = 'Rôle invité' WHERE `ID` = '3';
 
 UPDATE `PEOPLE` SET `NAME` = 'Administrateur' WHERE `ID` = 0;
 UPDATE `PEOPLE` SET `NAME` = 'Responsable' WHERE `ID` = 1;
 UPDATE `PEOPLE` SET `NAME` = 'Employé' WHERE `ID` = 2;
-UPDATE `PEOPLE` SET `NAME` = 'Invité' WHERE `ID` = 3;
 
 -- Resources
 INSERT INTO `RESOURCES` (`ID`, `NAME`, `RESTYPE`, `CONTENT`) VALUES
