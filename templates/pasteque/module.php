@@ -229,4 +229,3 @@ function tpl_btn($class, $href, $label, $image_btn, $alt = NULL, $title = NULL) 
 }
 
 ?>
-
