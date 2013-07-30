@@ -215,6 +215,7 @@ thead tr {
 	background-image: -ms-linear-gradient(bottom, rgb(220,220,220) 18%, rgb(160,160,160) 59%);
 
 }
+
 thead tr:hover {
 	background-color: #409617;
 }
@@ -243,6 +244,18 @@ tr.row-odd {
 	max-width: 64px;
 	max-height: 64px;
 	vertical-align: middle;
+}
+
+.place {
+	background-color: white;
+	position: absolute;
+}
+.floor {
+	background-color: lightgray;
+	border: solid 1px black;
+	position: relative;
+	width: 750px;
+	height: 450px;
 }
 
 #popup-container {

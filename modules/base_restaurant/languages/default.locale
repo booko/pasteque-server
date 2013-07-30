@@ -3,5 +3,22 @@
 "Custcount": "CustCount",
 "Number": "Tables",
 "Tables": "Tables",
-"Average price": "Average price"
+"Average price": "Average price",
+
+"Floors configuration": "Floors configuration",
+"Delete floor": "Delete floor",
+"Add a place": "Add a place",
+"Image": "Image",
+"File": "File",
+"Add a floor": "Add a floor",
+"Save changes": "Save changes",
+"Rename floor": "Rename floor",
+
+"Impossible to delete floor: %s.": "Impossible to delete floor: %s.",
+"Impossible to update floor: %s.": "Impossible to update floor: %s.",
+"Impossible to create floor: %s.": "Impossible to create floor: %s.",
+"Impossible to delete place: %s.": "Impossible to delete place: %s.",
+"Impossible to update place: %s.": "Impossible to update place: %s.",
+"Impossible to create place: %s.": "Impossible to create place: %s."
+
 }

@@ -25,16 +25,19 @@ class Floor {
     public $id;
     public $name;
     public $places;
+    public $image;
 
-    static function __build($id, $name) {
-        $floor = new Floor($name);
+    static function __build($id, $name, $image = NULL) {
+        $floor = new Floor($name, $image);
         $floor->id = $id;
+        $floor->image = $image;
         return $floor;
     }
 
-    function __construct($name) {
+    function __construct($name, $image = NULL) {
         $this->name = $name;
         $this->places = array();
+        $this->image = $image;
     }
 
     function addPlace($place) {

@@ -24,7 +24,8 @@ class PlacesService {
 
     private static function buildDBPlace($db_place) {
         $place = Place::__build($db_place['ID'], $db_place['NAME'],
-                                $db_place['X'], $db_place['Y']);
+                                $db_place['X'], $db_place['Y'],
+                                $db_place['FLOOR']);
         return $place;
     }
 
@@ -84,6 +85,7 @@ class PlacesService {
         if (!$stmt->execute()) {
             return NULL;
         }
+
         return $id;
     }
 
@@ -96,6 +98,23 @@ class PlacesService {
         return false;
     }
 
+    static function updateFloor($floor) {
+        $pdo = PDOBuilder::getPDO();
+        $sql = "UPDATE FLOORS SET NAME = :name ";
+        if ($floor->image !== "") {
+            $sql .= ", IMAGE = :image ";
+        }
+        $sql .= "WHERE ID = :id";
+        $stmt = $pdo->prepare($sql);
+
+        $stmt->bindParam(":name", $floor->name, \PDO::PARAM_STR);
+        if ($floor->image !== "") {
+            $stmt->bindParam(":image", $floor->image);
+        }
+        $stmt->bindParam(":id", $floor->id, \PDO::PARAM_STR);
+
+        return $stmt->execute();
+    }
 
     static function getAllPlaces() {
         $place = array();
@@ -108,6 +127,19 @@ class PlacesService {
         return $places;
     }
 
+    static function getAllPlacesByFloorId($idFloor) {
+        $places = array();
+        $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("SELECT * FROM PLACES WHERE FLOOR = :floor");
+        $stmt->bindParam(":floor", $idFloor, \PDO::PARAM_STR);
+        if ($stmt->execute(array(':floor' => $idFloor))) {
+            while( $db_place = $stmt->fetch()) {
+                $place = PlacesService::buildDBPlace($db_place, $pdo);
+                $places[] = $place;
+            }
+        }
+        return $places;
+    }
 
     static function getPlace($id) {
         $pdo = PDOBuilder::getPDO();
@@ -120,7 +152,6 @@ class PlacesService {
         return null;
     }
 
-
     static function deletePlace($id) {
         $pdo = PDOBuilder::getPDO();
         $stmt = $pdo->prepare("DELETE FROM PLACES WHERE ID = :id");
@@ -130,6 +161,40 @@ class PlacesService {
         return false;
     }
 
+    static function updatePlace($place) {
+        $pdo = PDOBuilder::getPDO();
+        $sql = "UPDATE PLACES SET NAME = :name, X = :x, Y = :y, FLOOR = :floor"
+                . " WHERE ID = :id";
+        $stmt = $pdo->prepare($sql);
+
+        $stmt->bindParam(":name", $place->name, \PDO::PARAM_STR);
+        $stmt->bindParam(":x", $place->x, \PDO::PARAM_INT);
+        $stmt->bindParam(":y", $place->y, \PDO::PARAM_INT);
+        $stmt->bindParam(":floor", $place->floor, \PDO::PARAM_STR);
+        $stmt->bindParam(":id", $place->id, \PDO::PARAM_STR);
+
+        return $stmt->execute();
+    }
+
+    static function createPlace($place) {
+        $pdo = PDOBuilder::getPDO();
+        $id = md5(time() . rand());
+
+        $sql = "INSERT INTO PLACES (ID, NAME, X, Y, FLOOR) "
+                . "VALUES(:id, :name, :x, :y, :floor)";
+        $stmt = $pdo->prepare($sql);
+
+        $stmt->bindParam(":id", $id, \PDO::PARAM_STR);
+        $stmt->bindParam(":name", $place->name, \PDO::PARAM_STR);
+        $stmt->bindParam(":x", $place->x, \PDO::PARAM_INT);
+        $stmt->bindParam(":y", $place->y, \PDO::PARAM_INT);
+        $stmt->bindParam(":floor", $place->floor, \PDO::PARAM_STR);
+
+        if (!$stmt->execute()) {
+            return NULL;
+        }
+        return $id;
+    }
 }
 
 ?>

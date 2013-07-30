@@ -26,18 +26,21 @@ class Place {
     public $name;
     public $x;
     public $y;
+    public $floor;
 
-    static function __build($id, $name, $x, $y) {
-        $place = new Place($name, $x, $y);
+    static function __build($id, $name, $x, $y, $floor) {
+        $place = new Place($name, $x, $y, $floor);
         $place->id = $id;
         return $place;
     }
 
-    function __construct($name, $x, $y) {
+    function __construct($name, $x, $y, $floor) {
         $this->name = $name;
         $this->x = $x;
         $this->y = $y;
+        //???????
         $places = array();
+        $this->floor = $floor;
     }
 
 }
