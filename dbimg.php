@@ -87,5 +87,10 @@ case 'barcode':
 case 'custcard':
     generate_barcode("code128", $_GET['code']);
     break;
+case 'js':
+    $file = $_GET['id'];
+    $file = str_replace("..", ".", $file);
+    require_once(ABSPATH  . "/templates/" . $config['template'] . "/" . $file);
+    break;
 }
 ?>
