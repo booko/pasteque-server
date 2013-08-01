@@ -112,3 +112,27 @@ function getFloor(floorId) {
 function getAllFloor() {
     return floor;
 }
+
+/** return true if the string is a correct name for the place
+ * a correct name is a string not used for an other place of all floor*/
+function checkNamePlace(str) {
+    for (var idF in floor) {
+        for (idP in floor[idF].place) {
+                if (str == floor[idF].place[idP].name) {
+                    return false;
+            }
+        }
+    }
+    return true;
+}
+
+/** return true if the string is a correct name for a floor
+ * a correct name is a string not used for an other floor*/
+function checkNameFloor(str) {
+    for (var idF in floor) {
+        if (str == floor[idF].name) {
+            return false;
+        }
+    }
+    return true;
+}

@@ -20,5 +20,11 @@
 "Impossible to create floor: %s.": "Impossible créer l'étage %s.",
 "Impossible to delete place: %s.": "Impossible de supprimer la table %s.",
 "Impossible to update place: %s.": "Impossible de mette à jour la table %s.",
-"Impossible to create place: %s.": "Impossible de créer la table %s."
+"Impossible to create place: %s.": "Impossible de créer la table %s.",
+
+"A name place cannot be empty": "le nom de la table ne peut être vide.",
+"Name place already set": "le nom de la table est déjà utiliser.",
+"name floor already set": "le nom de l'étage est déjà utiliser.",
+"A name floor cannot be empty": "le nom de l'étage ne peut être vide.",
+"Exceptional error": "erreur exceptionnelle"
 }

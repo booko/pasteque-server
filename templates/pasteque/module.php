@@ -238,7 +238,6 @@ function tpl_report($report) {
     }
 }
 
-
 function tpl_btn($class, $href, $label, $image_btn, $alt = NULL, $title = NULL) {
     $btn = "<a class=" . $class . " href=\"" . $href . "\">"
             . "<img src=\"" .\Pasteque\get_template_url() . "" . $image_btn . "\"";
@@ -253,4 +252,24 @@ function tpl_btn($class, $href, $label, $image_btn, $alt = NULL, $title = NULL) 
     echo $btn;
 }
 
+function tpl_js_btn($class, $onclick, $label, $id = NULL, $image_btn = NULL, $alt = NULL, $title = NULL) {
+    $btn = "<a class=" . $class . " onclick=\"" . $onclick;
+    if (isset($id)) {
+        $btn .= "id='" . $id . "' ";
+    }
+    $btn .= "\">";
+    if (isset($image_btn)) {
+        $btn .= "<img src=\"" .\Pasteque\get_template_url() . "" . $image_btn . "\"";
+
+        if (isset($alt)) {
+            $btn .= " alt =\"" . $alt . "\"";
+        }
+        if (isset($title)) {
+            $btn .= " title =\"" . $title . "\"";
+        }
+        $btn .= "/>";
+    }
+    $btn .= $label . "</a>";
+    echo $btn;
+}
 ?>

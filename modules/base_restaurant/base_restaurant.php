@@ -1,5 +1,5 @@
 <?php
-//    Pastèque Web back office, Products module
+//    Pastèque Web back office, Restaurant module
 //
 //    Copyright (C) 2013 Scil (http://scil.coop)
 //

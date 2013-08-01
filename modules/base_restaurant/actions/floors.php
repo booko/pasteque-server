@@ -1,5 +1,5 @@
 <?php
-//    Pastèque Web back office, Products module
+//    Pastèque Web back office, Restaurant module
 //
 //    Copyright (C) 2013 Scil (http://scil.coop)
 //
@@ -22,28 +22,35 @@ namespace BaseRestaurant;
 
 require_once('maj.php');
 ?>
-
 <h1><?php \pi18n("Floors configuration", PLUGIN_NAME);?></h1>
+<div class="map">
+    <div class="row">
+        <input id="addFloorBtn" type="text"/>
+        <?php \Pasteque\tpl_js_btn("btn", "newFloor()", i18n("Add a floor", PLUGIN_NAME));?>
+    </div>
 
-<form id="formUp" action="javascript:editFloorName()">
-    <select id="listFloor" onchange="showFloor()">
-    </select>
-    <input type="text" placeholder="<?php pi18n("Rename floor", PLUGIN_NAME);?>"/>
-    <input type="button" onclick="deleteFloor()" value="<?php pi18n("Delete floor",PLUGIN_NAME); ?>">
-    <input type="button" id="btnPlace" value="<?php pi18n("Add a place", PLUGIN_NAME);?>" onclick="addPlaceInput()">
-</form>
+    <div class="row">
+        <form id="formUp" action="javascript:editFloorName()">
+            <select id="listFloor" onchange="showFloor()">
+            </select>
+            <input type="text" placeholder="<?php pi18n("Rename floor", PLUGIN_NAME);?>"/>
+            <?php \Pasteque\tpl_js_btn("btn-delete", "deleteFloor()", i18n("Delete floor",PLUGIN_NAME));?>
+        </form>
+    </div>
 
-<div id="floorDivContainer">
+    <div class="row">
+        <?php \Pasteque\tpl_js_btn("btn", "addPlaceInput()", i18n("Add a place", PLUGIN_NAME))?>
+    </div>
+
+    <div id="floorDivContainer" class="row"></div>
+
+    <div class="row actions">
+        <form id="input" method="post" onsubmit="save()" action="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'floors');?>">
+            <input id="inputData" name="inputData" type="text" style="display:none">
+            <?php \Pasteque\form_save();?>
+        </form>
+    </div>
 </div>
-
-
-<form id="input" method="post" action="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'floors');?>">
-    <input id="addFloorBtn" type="text"/>
-    <input type="button" id="btnFloor" value="<?php \pi18n("Add a floor", PLUGIN_NAME);?>" onclick="newFloor()"/>
-
-    <input id="inputData" name="inputData" type="text" style="display:none">
-    <input type="submit" onclick="save()" value="<?php pi18n("Save changes", PLUGIN_NAME)?>">
-</form>
 
 <script src="<?php echo \Pasteque\get_module_action(PLUGIN_NAME, "jquery-ui-1.10.3.custom.js")?>" type="text/javascript"></script>
 <script src="<?php echo \Pasteque\get_module_action(PLUGIN_NAME, "moteur.js")?>" type="text/javascript"></script>
@@ -53,8 +60,25 @@ require_once('maj.php');
 </script>
 
 <?php
-// insert all floors and all places:
 echo "<script type='text/javascript'>";
+    //load error message
+    echo "ERR_PLACE_NAME = '"
+            . i18n('Name place already set', PLUGIN_NAME)
+            . "';\n";
+    echo "ERR_PLACE_NAME_EMPTY ='"
+            . i18n('A name place cannot be empty', PLUGIN_NAME)
+            . "';\n";
+    echo "ERR_FLOOR_NAME =\""
+            . i18n('name floor already set', PLUGIN_NAME)
+            . "\";\n";
+    echo "ERR_FLOOR_NAME_EMPTY =\""
+            . i18n('A name floor cannot be empty', PLUGIN_NAME)
+            . "\";\n";
+    echo "ERR_EXCEPT = '"
+            . i18n('Exceptional error.', PLUGIN_NAME)
+            . "';\n";
+
+// insert all floors and all places:
 $floors = \Pasteque\PlacesService::getAllFloors();
 foreach ($floors as $floor) {
     echo "addFloorData('" . $floor->id . "', '" . $floor->name . "', '"

@@ -20,6 +20,11 @@
 "Impossible to create floor: %s.": "Unable to create floor %s.",
 "Impossible to delete place: %s.": "Unable to delete place %s.",
 "Impossible to update place: %s.": "Unable to update place %s.",
-"Impossible to create place: %s.": "Unable to create place %s."
+"Impossible to create place: %s.": "Unable to create place %s.",
 
+"A name place cannot be empty": "A name place cannot be empty.",
+"Name place already set": "Name place already set.",
+"Name floor already set": "Name's floor already set.",
+"A name floor cannot be empty": "A name place cannot be empty.",
+"Exceptional error.": "Exceptional error."
 }

@@ -3,18 +3,34 @@ var indexFloor = -1; //used for change listFloor when we add a floor
 var idTmp = -1;
 var currentFloorId;
 
+var ERR_PLACE_NAME = "";
+var ERR_PLACE_NAME_EMPTY = "";
+var ERR_FLOOR_NAME_EMPTY = "";
+var ERR_FLOOR_NAME = "";
+var ERR_EXCEPT = "";
+
 /** Add a new floor and show it */
 function newFloor() {
     var name = $("#addFloorBtn").val();
     var img = null;
 
-    var floorId = "" + idTmp--;
-
-    if (addFloorData(floorId, name, img)) {
-        //modify the list item selected by the new floor and show it
-        $("#listFloor option").eq(indexFloor).prop("selected", true);
-        showFloor(floorId);
+    if (name.length == 0) {
+        showPopup(ERR_FLOOR_NAME_EMPTY);
+    } else {
+        var floorId = "" + idTmp--;
+        if (!checkNameFloor(name)) {
+            showPopup(ERR_FLOOR_NAME);
+        } else {
+            if (!addFloorData(floorId, name, img)) {
+                showPopup(ERR_EXCEPT);
+            } else {
+                //modify the list item selected by the new floor and show it
+                $("#listFloor option").eq(indexFloor).prop("selected", true);
+                showFloor(floorId);
+            }
+        }
     }
+
 }
 
 /** Add to the floor data the floor if the name is not empty
@@ -92,13 +108,19 @@ function showFloor(idFloor) {
 
 function editFloorName() {
     var input = $("#formUp input").eq(0); // the first input
-    if (input.val().length > 0) {
-        // edit only name
-        editFloor(currentFloorId, input.val(), "");
-        // change value of list floor
-        $("#listFloor option[value=" + currentFloorId + "]").html(input.val());
-        // clean input
-        input.val('');
+    if (input.val().length == 0) {
+        showPopup(ERR_FLOOR_NAME_EMPTY);
+    } else {
+        if (!checkNameFloor(input.val())) {
+            showPopup(ERR_FLOOR_NAME);
+        } else {
+            // edit only name
+            editFloor(currentFloorId, input.val(), "");
+            // change value of list floor
+            $("#listFloor option[value=" + currentFloorId + "]").html(input.val());
+            // clean input
+            input.val('');
+        }
     }
 }
 
@@ -109,14 +131,21 @@ function newPlace() {
     var input = $("#addPlaceBtn");
     var name = input.val();
 
-    if (name.length != 0) {
-        var id = "" + idTmp--;
-        addPlaceData(id, name, 0, 0, currentFloorId);
-        showPlace(id, name,0, 0);
-        input.remove();
+    if (name.length == 0) {
+        showPopup(ERR_PLACE_NAME_EMPTY);
+    } else if (!checkNamePlace(name)) {
+        showPopup(ERR_PLACE_NAME);
     } else {
-        showFloor(currentFloorId);
+        var id = "" + idTmp--;
+        if (!addPlaceData(id, name, 0, 0, currentFloorId)) {
+            showPopup(ERR_EXCEPT);
+        } else {
+            showPlace(id, name,0, 0);
+            input.remove();
+        }
     }
+    showFloor(currentFloorId);
+
 }
 
 /** create an input text in currentFloor */
@@ -129,7 +158,8 @@ function addPlaceInput() {
            + "<input type='text' id='addPlaceBtn'/>";
 
     $("#floorDiv").append(res);
-    $("#floorDiv #addPlaceBtn").focus();
+    $("#floorDiv #addPlaceBtn").focus()
+            .css({'z-index': '6'});
 }
 
 /** Add data place to the floorId
@@ -149,34 +179,51 @@ function addPlaceData(id, name, x, y, floorId) {
 /** Write the html code of the place in the divFloor*/
 function showPlace(placeId, name, x, y) {
     var placeToAdd = "<div id='pl_" + placeId +"' class='place'>"
-            //+ ">"
             + "<p onDblClick='beEditablePlace(\"" + placeId + "\")'>"
             + name + "</p></div>";
 
     $("#floorDiv").append(placeToAdd);
+    var place = $("#pl_" + placeId);
+    var posX = x - place.width() / 2 - 1;
+    var posY =  y - place.height() / 2 - 1;
 
-    $("#pl_" + placeId).click(function() {
-        move(this.id);
-    });
-
-    $("#pl_" + placeId).draggable({ 'containment': 'parent' });
-
-    $("#pl_" + placeId).css({'left' : x + 'px', 'top': y + 'px'});
+    place.click(function() {move(this.id);})
+            .draggable({ 'containment': '#floorDiv' })
+            .css({'left' : posX + 'px', 'top': posY + 'px'});
 }
 
 function beEditablePlace(placeId) {
     var divToEdit = $("#pl_" + placeId);
     var namePlace = $("#pl_" + placeId + " p").html();
 
-    var form = "<form id='formEditPlace' action='javascript:editPlaceName(\"" + placeId + "\")'></form>";
-    divToEdit.html(form + "\n");
+    var form = "<div id='form_" + placeId + "'>"
+            + "<form id='formEditPlace' "
+            + "action='javascript:editPlaceName(\"" + placeId + "\")'>"
+            + "<input type='text'>"
+            + "</form></div>";
 
-    var res = "<input type='text'>";
-    var delButton = "<input type='button' onclick='deletePlace(\"" + placeId + "\")'/>";
-    $("#pl_" + placeId +" #formEditPlace").html(res + " " + delButton);
+    var delButton = "<div id='del_" + placeId + "'>"
+            + "<input type='button' class='btn-delete' value='X' "
+            +"onclick='deletePlace(\"" + placeId + "\")'/>"
+            + "</div>";
+
+    divToEdit.html(form + "\n" + delButton);
+    setPositionDeleteButton(placeId);
 
     // affect the oldname place in input text and focus on
     $("#pl_" + placeId +" #formEditPlace input").eq(0).focus().val(namePlace);
+}
+
+function setPositionDeleteButton(placeId) {
+    var deleteDiv = $("#del_" + placeId);
+    var inputDiv = $("#form_" + placeId);
+
+    deleteDiv.css({'position': 'absolute', 'left': 'px', 'top': '0px'});
+
+    deleteDiv.position({
+        my: 'center center',
+        at: 'right top',
+        of: inputDiv});
 }
 
 /** Get the content of the input text in div id : placeId
@@ -189,10 +236,18 @@ function editPlaceName(placeId) {
     var oldPlace = getPlace(placeId, currentFloorId);
 
     var res = "<p onDblClick='beEditablePlace(\"" + placeId + "\")'>";
-    // affect new name if the new name is not empty
-    if (newName.length != 0) {
-        editPlace(placeId, newName, oldPlace.x, oldPlace.y, currentFloorId);
-        res +=  newName ;
+    // affect new name if the new name is not empty and correct
+    if (newName.length == 0) {
+        showPopup(ERR_PLACE_NAME_EMPTY);
+        res += oldPlace.name;
+    } else if (oldPlace.name != newName) {
+        if (checkNamePlace(newName)) {
+            editPlace(placeId, newName, oldPlace.x, oldPlace.y, currentFloorId);
+            res +=  newName ;
+        } else {
+            showPopup(ERR_PLACE_NAME);
+            res += oldPlace.name;
+        }
     } else {
         res += oldPlace.name;
     }
@@ -218,11 +273,13 @@ function move(divId) {
     idPlace = divId.substr(3);
     offset = div.offset();
     osf = $("#floorDiv").offset();
+    var width = div.width() / 2 - 1;
+    var height = div.height() / 2 - 1;
 
     setEtatPlace(currentFloorId, idPlace, true);
     name = getPlace(idPlace, currentFloorId).name;
     // absolute position of placeDiv - absolute position of floorDiv
-    editPlace(idPlace, name, offset.left - osf.left, offset.top - osf.top,
+    editPlace(idPlace, name, offset.left - osf.left + width, offset.top - osf.top + height,
             currentFloorId);
 }
 
