@@ -1,10 +1,11 @@
 {
 "Place sales": "Place sales",
-"Custcount": "CustCount",
-"Number": "Tables",
+"Custcount": "Customers count",
+"Number": "Count",
 "Tables": "Tables",
 "Average price": "Average price",
 
+"Floors": "Map",
 "Floors configuration": "Floors configuration",
 "Delete floor": "Delete floor",
 "Add a place": "Add a place",
@@ -14,11 +15,11 @@
 "Save changes": "Save changes",
 "Rename floor": "Rename floor",
 
-"Impossible to delete floor: %s.": "Impossible to delete floor: %s.",
-"Impossible to update floor: %s.": "Impossible to update floor: %s.",
-"Impossible to create floor: %s.": "Impossible to create floor: %s.",
-"Impossible to delete place: %s.": "Impossible to delete place: %s.",
-"Impossible to update place: %s.": "Impossible to update place: %s.",
-"Impossible to create place: %s.": "Impossible to create place: %s."
+"Impossible to delete floor: %s.": "Unable to delete floor %s.",
+"Impossible to update floor: %s.": "Unable to update floor %s.",
+"Impossible to create floor: %s.": "Unable to create floor %s.",
+"Impossible to delete place: %s.": "Unable to delete place %s.",
+"Impossible to update place: %s.": "Unable to update place %s.",
+"Impossible to create place: %s.": "Unable to create place %s."
 
 }
