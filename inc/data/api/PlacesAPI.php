@@ -29,10 +29,10 @@ case 'get':
        $ret = false;
        break;
     }
-    $ret = PlacesService::get($_GET['id']);
+    $ret = PlacesService::getFloor($_GET['id']);
     break;
 case 'getAll':
-    $ret = PlacesService::getAll();
+    $ret = PlacesService::getAllFloors();
     break;
 }
 
