@@ -20,10 +20,8 @@
 
 namespace BaseRestaurant;
 
+require_once('maj.php');
 ?>
-<?php
-    include('maj.php');
- ?>
 
 <h1><?php \pi18n("Floors configuration", PLUGIN_NAME);?></h1>
 
@@ -55,7 +53,7 @@ namespace BaseRestaurant;
 </script>
 
 <?php
-//insert all floors and all places:
+// insert all floors and all places:
 echo "<script type='text/javascript'>";
 $floors = \Pasteque\PlacesService::getAllFloors();
 foreach ($floors as $floor) {
@@ -68,7 +66,7 @@ foreach ($floors as $floor) {
                 . "', '" . $floor->id . "');\n";
     }
 }
-//show the first floor
+// show the first floor
 echo " showFloor('" . $floors[0]->id ."');";
 echo "</script>";
 ?>

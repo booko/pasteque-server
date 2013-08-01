@@ -1,9 +1,9 @@
-//used when we add Place or add Floor
+// used when we add Place or add Floor
 var indexFloor = -1; //used for change listFloor when we add a floor
 var idTmp = -1;
 var currentFloorId;
 
-/* Add a new floor and show it */
+/** Add a new floor and show it */
 function newFloor() {
     var name = $("#addFloorBtn").val();
     var img = null;
@@ -17,8 +17,8 @@ function newFloor() {
     }
 }
 
-/** add to the floor data the floor if the name is not empty
- * if issue was occured return false*/
+/** Add to the floor data the floor if the name is not empty
+ * if issue was occured return false */
 function addFloorData(floorId, name, img) {
     if (name != null && name != "") {
         if (addFloor(floorId, name, img)) {
@@ -32,10 +32,10 @@ function addFloorData(floorId, name, img) {
     return false;
 }
 
-/** delete all place contain in current floor and delete it
+/** Delete all place contain in current floor and delete it
  * if the floor isn't the last floor*/
 function deleteFloor() {
-    //Delete all place contain in the floor
+    // Delete all place contain in the floor
     var places = getFloor(currentFloorId).place;
     for (var idPlace in places) {
         deletePlace(idPlace);
@@ -74,11 +74,11 @@ function showFloor(idFloor) {
     var floorHtml = "<div id='floorDiv' class='floor'></div>";
     floorHtmlContainer.append(floorHtml);
 
-    //get the floor data:
+    // get the floor data:
     var fl = getFloor(idFloor);
-    //SET PLACE
+    // SET PLACE
     if (fl.status != DEL) {
-        //get the place data and add them in div
+        // get the place data and add them in div
         var places = fl.place;
 
         for (var id in places) {
@@ -179,7 +179,7 @@ function beEditablePlace(placeId) {
     $("#pl_" + placeId +" #formEditPlace input").eq(0).focus().val(namePlace);
 }
 
-/** get the contenu of the input text in div id : placeId
+/** Get the content of the input text in div id : placeId
  * and edit the place corresponding
  * notice: to do check if the value of input text contain malicious code */
 function editPlaceName(placeId) {
@@ -200,13 +200,13 @@ function editPlaceName(placeId) {
 }
 
 /** Remove the place whith placeId in the current floor do nothing if
- * currentFloorId is not set*/
+ * currentFloorId is not set */
 function deletePlace(placeId) {
     if (placeId.charAt(0) != "-") {
         // the place will be delete by php at the next save change
         setEtatPlace(currentFloorId, placeId, false);
     } else {
-        //the place was created but not insert into BDD
+        // the place was created but not insert into BDD
         delPlace(currentFloorId, placeId);
     }
     showFloor(currentFloorId);
@@ -221,8 +221,9 @@ function move(divId) {
 
     setEtatPlace(currentFloorId, idPlace, true);
     name = getPlace(idPlace, currentFloorId).name;
-    //absolute position of placeDiv - absolute position of floorDiv
-    editPlace(idPlace, name, offset.left - osf.left, offset.top - osf.top, currentFloorId);
+    // absolute position of placeDiv - absolute position of floorDiv
+    editPlace(idPlace, name, offset.left - osf.left, offset.top - osf.top,
+            currentFloorId);
 }
 
 /** Move all data on the correct input at the format:
@@ -254,19 +255,19 @@ function save() {
                 res += placeSep;
             }
         }
-        if (placeAdd) {//remove the last placeSep
+        if (placeAdd) { //remove the last placeSep
             res = res.substr(0, res.length-1);
         }
         res += floorSep;
     }
-    //remove the last floorSep
+    // remove the last floorSep
     res = res.substr(0, res.length-1);
     $("#input").append(input);
     $("#inputData").val(res);
     return true;
 }
 
-/** return a string represent a place all value separate whith "," */
+/** Return a string represent a place all value separate whith "," */
 function placeToString(placeId, place) {
     var res = place[placeId].status + ","
             + placeId + ","
@@ -277,7 +278,7 @@ function placeToString(placeId, place) {
     return res;
 }
 
-/*return a string represent a floor all value separate whith ";" */
+/** Return a string represent a floor all value separate whith ";" */
 function floorToString(floorId, ff) {
     var res = ff[floorId].status + ";"
             + floorId + ";"

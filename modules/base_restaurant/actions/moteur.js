@@ -1,5 +1,5 @@
+/* Used to manage floor or place */
 var floor = new Array();
-/*used for manage floor or place */
 
 //test();
 var EDIT = "EDIT";
@@ -15,7 +15,7 @@ var DEL = "DELETE";
 /** Add a floor on the array of floors 
  * return the floor created */
 function addFloor(id, name, img) {
-    //check if the floor id set yet in the floor
+    // check if the floor id set yet in the floor
     if (getFloor(id) == null) {
         floor[id] = new Array();
         floor[id]["name"] = name;
@@ -27,7 +27,7 @@ function addFloor(id, name, img) {
     return false;
 }
 
-/** set etat of floor whith id if bool true set EDIT else set DEL*/
+/** Set etat of floor whith id if bool true set EDIT else set DEL */
 function setEtatFloor(id, bool) {
     if (bool) {
         floor[id].status = EDIT;
@@ -36,7 +36,7 @@ function setEtatFloor(id, bool) {
     }
 }
 
-/** set etat of floor whith id if bool true set EDIT else set DEL*/
+/** Set etat of floor whith id if bool true set EDIT else set DEL */
 function setEtatPlace(idFloor, idPlace, bool) {
     if (bool) {
         floor[idFloor].place[idPlace].status = EDIT;
@@ -45,7 +45,7 @@ function setEtatPlace(idFloor, idPlace, bool) {
     }
 }
 
-/** Remove element whith id in floor*/
+/** Remove element whith id in floor */
 function delFloor(id) {
     delete floor[id];
 }
@@ -59,7 +59,7 @@ function editFloor(id, name, img) {
     } 
 }
 
-/** remove element whith placeId in the floor whith floorId*/
+/** Remove element whith placeId in the floor whith floorId */
 function delPlace(floorId, placeId) {
     delete floor[floorId].place[placeId];
 }
