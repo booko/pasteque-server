@@ -87,6 +87,8 @@ require_once(ABSPATH . "/inc/data/models/User.php");
 require_once(ABSPATH . "/inc/data/models/Role.php");
 require_once(ABSPATH . "/inc/data/models/Stock.php");
 require_once(ABSPATH . "/inc/data/models/Resource.php");
+require_once(ABSPATH . "/inc/data/models/Currency.php");
+require_once(ABSPATH . "/inc/data/services/AbstractService.php");
 require_once(ABSPATH . "/inc/data/services/AttributesService.php");
 require_once(ABSPATH . "/inc/data/services/CashesService.php");
 require_once(ABSPATH . "/inc/data/services/CategoriesService.php");
@@ -102,6 +104,7 @@ require_once(ABSPATH . "/inc/data/services/UsersService.php");
 require_once(ABSPATH . "/inc/data/services/RolesService.php");
 require_once(ABSPATH . "/inc/data/services/StocksService.php");
 require_once(ABSPATH . "/inc/data/services/ResourcesService.php");
+require_once(ABSPATH . "/inc/data/services/CurrenciesService.php");
 require_once(ABSPATH . "/inc/Csv.php");
 
 load_base_i18n(detect_preferred_language());
