@@ -22,9 +22,9 @@
 "Impossible to update place: %s.": "Unable to update place %s.",
 "Impossible to create place: %s.": "Unable to create place %s.",
 
-"A name place cannot be empty": "A name place cannot be empty.",
-"Name place already set": "Name place already set.",
-"Name floor already set": "Name's floor already set.",
-"A name floor cannot be empty": "A name place cannot be empty.",
+"A name place cannot be empty": "The name of the place cannot be empty.",
+"Name place already set": "The name of the place is already used.",
+"Name floor already set": "The name of the floor is already used.",
+"A name floor cannot be empty": "The name of the name place cannot be empty.",
 "Exceptional error.": "Exceptional error."
 }

@@ -69,7 +69,7 @@ echo "<script type='text/javascript'>";
             . i18n('A name place cannot be empty', PLUGIN_NAME)
             . "';\n";
     echo "ERR_FLOOR_NAME =\""
-            . i18n('name floor already set', PLUGIN_NAME)
+            . i18n('Name floor already set', PLUGIN_NAME)
             . "\";\n";
     echo "ERR_FLOOR_NAME_EMPTY =\""
             . i18n('A name floor cannot be empty', PLUGIN_NAME)
