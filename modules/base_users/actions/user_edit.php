@@ -65,4 +65,3 @@ if (isset($_GET['id'])) {
 	<?php \Pasteque\form_delete("user", $user->id); ?>
 </form>
 <?php } ?>
-

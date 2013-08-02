@@ -165,4 +165,3 @@ if (isset($_GET['id'])) {
 	<?php \Pasteque\form_delete("role", $role->id); ?>
 </form>
 <?php } ?>
-

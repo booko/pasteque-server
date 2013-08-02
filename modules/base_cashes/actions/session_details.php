@@ -152,4 +152,3 @@ while ($row = $taxStmt->fetch()) {
 		</tr>
 <?php } ?>
 </table>
-

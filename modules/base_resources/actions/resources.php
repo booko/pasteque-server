@@ -56,4 +56,3 @@ foreach ($resources as $res) {
 ?>
 	</tbody>
 </table>
-

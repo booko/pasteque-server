@@ -114,4 +114,3 @@ if (isset($_GET['id'])) {
 		jQuery("#clearImage").val(0);
 	}	
 </script>
-
