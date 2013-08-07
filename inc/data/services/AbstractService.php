@@ -45,6 +45,10 @@ abstract class AbstractService {
         return $ret;
     }
 
+    protected function dbField($modelField) {
+        return array_search($modelField, static::$fieldMapping);
+    }
+
     /** Insert a new model in database. */
     public function create($model) {
         $dbData = static::unbuild($model);
@@ -138,6 +142,52 @@ abstract class AbstractService {
                 return static::build($row, $pdo);
             }
         } else {
+            return false;
+        }
+    }
+
+    /** Search objects with given condition and optional pagination
+     * @param $conditions an array of conditions. A condition is a array of
+     * 3 data: the model field name, the operator and the value.
+     * NOTE: non string value operators are not supported (like is not null, in)
+     * @param $count: optional max result count
+     * @param $offset: optional start offset. If offset is used,
+     * $count must be set.
+     * @return an array of objects
+     */
+    public function search($conditions, $count = null, $offset = null) {
+        $pdo = PDOBuilder::getPDO();
+        // Build query
+        $buildConds = array();
+        for ($i = 0; $i < count($conditions); $i++) {
+            $condition = $conditions[$i];
+            $buildConds[] = static::dbField($condition[0]) . " "
+                    . $condition[1] . " :" . $i;
+        }
+        $where = implode($buildConds, " AND ");
+        $limit = "";
+        if ($count != null && $offset != null) {
+            $limit = " LIMIT " . intval($offset) . ", " . intval($count);
+        } else if ($count != null) {
+            $limit = " LIMIT " . intval($count);
+        }
+        $stmt = $pdo->prepare("SELECT * FROM " . static::$dbTable . " WHERE "
+                . $where . $limit);
+        // Assign condition values
+        for ($i = 0; $i < count($conditions); $i++) {
+            $condition = $conditions[$i];
+            $stmt->bindValue(":" . $i, $condition[2]);
+        }
+        if ($stmt->execute()) {
+            $ret = array();
+            while ($row = $stmt->fetch()) {
+                $obj = static::build($row, $pdo);
+                $ret[] = $obj;
+            }
+            return $ret;
+        } else {
+            var_dump($stmt);
+            var_dump($stmt->errorInfo());
             return false;
         }
     }
