@@ -187,7 +187,7 @@ abstract class AbstractService {
     public function delete($id) {
         $pdo = PDOBuilder::getPDO();
         $stmt = $pdo->prepare("DELETE FROM " . static::$dbTable. " WHERE "
-                . static::idDbField . " = :_id_");
+                . static::$dbIdField . " = :_id_");
         $stmt->bindParam(":_id_", $id);
         if ($stmt->execute()) {
             return true;
