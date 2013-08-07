@@ -25,22 +25,15 @@ namespace Pasteque {
     require_once(dirname(__FILE__) . "/config.php");
 }
 
-namespace WordPress {
+namespace WordPressID {
+    require_once(COREPATH . "/tools/wp_preprocessing.php");
+    \WordPress\loadWP($config['wordpress_base_path']);
     $api_user = NULL;
-    $timezone = date_default_timezone_get();
-    require_once($config['wordpress_base_path'] . "/wp-load.php");
-    date_default_timezone_set($timezone);
+
     function logged_in() {
         return is_user_logged_in();
     }
     function log($user, $password) {
-        // Dirty hack to disable WordPress magic_quotes when using API
-        if ( !get_magic_quotes_gpc() ) {
-            $_POST = array_map('stripslashes_deep', $_POST);
-            $_GET = array_map('stripslashes_deep', $_GET);
-            $_COOKIE = array_map('stripslashes_deep', $_COOKIE);
-            $_REQUEST = array_map('stripslashes_deep', $_REQUEST);
-        }
         $creds = array();
         $creds['user_login'] = $user;
         $creds['user_password'] = $password;
@@ -69,17 +62,17 @@ namespace WordPress {
 
 namespace Pasteque {
     function is_user_logged_in() {
-    	return \WordPress\logged_in();
+    	return \WordPressID\logged_in();
     }
     function api_user_login() {
-        return \WordPress\log($_GET['login'], $_GET['password']);
+        return \WordPressID\log($_GET['login'], $_GET['password']);
     }
     function show_login_page() {
-        return \WordPress\show_login();
+        return \WordPressID\show_login();
     }
 
     function get_user_id() {
-        return \WordPress\get_user_id();
+        return \WordPressID\get_user_id();
     }
 }
 

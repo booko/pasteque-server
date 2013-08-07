@@ -24,6 +24,8 @@ if (@constant("\Pasteque\ABSPATH") === NULL) {
     die();
 }
 
+define('COREPATH', ABSPATH . "/core_modules");
+
 /** Check a core module readability. Returns the module file to import if
  * success. Die on error.
  */
@@ -51,10 +53,6 @@ if (!file_exists(CFG_FILE) || !is_readable(CFG_FILE)) {
     die();
 }
 require_once(ABSPATH . "/config.php");
-// Load core modules
-require_once(_check_core_module('ident'));
-require_once(_check_core_module('database'));
-require_once(_check_core_module('modules'));
 
 // Load static tools
 require_once(ABSPATH . "/inc/date_utils.php");
@@ -66,6 +64,12 @@ require_once(ABSPATH . "/inc/Report.php");
 require_once(ABSPATH . "/inc/hooks.php");
 require_once(ABSPATH . "/inc/forms.php");
 require_once(ABSPATH . "/inc/PDOBuilder.php");
+
+// Load core modules
+require_once(_check_core_module('ident'));
+require_once(_check_core_module('database'));
+require_once(_check_core_module('modules'));
+
 // Load data
 require_once(ABSPATH . "/inc/data/models/Attribute.php");
 require_once(ABSPATH . "/inc/data/models/Cash.php");
@@ -108,4 +112,6 @@ require_once(ABSPATH . "/inc/data/services/CurrenciesService.php");
 require_once(ABSPATH . "/inc/Csv.php");
 
 load_base_i18n(detect_preferred_language());
+
+call_hooks("core_ready");
 ?>
