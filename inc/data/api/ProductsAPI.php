@@ -35,7 +35,7 @@ case 'getAll':
     $ret = ProductsService::getAll();
     break;
 case 'getAllFull':
-    $ret = ProductsService::getAll(true);
+    $ret = ProductsService::getAll(true, true);
     foreach ($ret as $r) {
         if ($r->image !== NULL) {
             $r->image = base64_encode($r->image);
