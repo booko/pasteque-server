@@ -166,7 +166,6 @@ class TaxesService {
         $stmt->bindParam(':rate', $tax->rate);
         $stmt->bindParam(':id', $id);
         if (!$stmt->execute()) {
-        var_dump($stmt->errorInfo());
             return FALSE;
         } else {
             return $id;

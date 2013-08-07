@@ -79,7 +79,6 @@ class ResourcesService {
         if ($stmt->execute() !== FALSE) {
             return $id;
         } else {
-        var_dump($stmt->errorInfo());
             return FALSE;
         }
     }

@@ -72,13 +72,11 @@ abstract class AbstractService {
         $stmt = $pdo->prepare($sql);
         foreach ($dbFields as $field) {
             $stmt->bindValue(":" . $field, $dbData[$field]);
-            var_dump("bound " . $dbData[$field] . " to " . $field);
         }
         // RUN!
         if ($stmt->execute()) {
             return $pdo->lastInsertId();
         } else {
-            var_dump($stmt->errorInfo());
             return false;
         }
     }
@@ -86,7 +84,6 @@ abstract class AbstractService {
     /** Update a model. Returns true if success, false otherwise. */
     public function update($model) {
         $dbData = static::unbuild($model);
-        var_dump($dbData);
         $pdo = PDOBuilder::getPDO();
         // Get all fields except id field
         $dbFields = array_keys(static::$fieldMapping); // Copy
@@ -107,19 +104,16 @@ abstract class AbstractService {
             $stmt->bindValue(":" . $field, $dbData[$field]);
         }
         $stmt->bindValue(":_id_", $dbData[static::$dbIdField]);
-        var_dump("bound " . $dbData[static::$dbIdField] . " to : " . static::$dbIdField);
         // RUN!
         if ($stmt->execute()) {
             return true;
         } else {
-            var_dump($stmt->errorInfo());
             return false;
         }
     }
 
     public function getAll() {
         $pdo = PDOBuilder::getPDO();
-        var_dump(static::$dbTable);
         $stmt = $pdo->prepare("SELECT * FROM " . static::$dbTable);
         if ($stmt->execute()) {
             $ret = array();
@@ -186,8 +180,6 @@ abstract class AbstractService {
             }
             return $ret;
         } else {
-            var_dump($stmt);
-            var_dump($stmt->errorInfo());
             return false;
         }
     }
