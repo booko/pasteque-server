@@ -15,8 +15,9 @@ function init_csv() {
         return NULL;
     }
 
-    $key = array('reference', 'barcode', 'label', 'price_buy', 'price_sell',
+    $key = array('reference', 'barcode', 'label', 'price_buy', 'sellVat',
             'category', 'tax_cat');
+
     $optionKey = array('visible', 'scaled', 'disp_order', 'discount_rate',
             'discount_enabled');
     $optionKey = array();
@@ -59,11 +60,12 @@ function import_csv($csv) {
 
         //check
         $category = \Pasteque\CategoriesService::getByName($tab['category']);
-        $tax_cat = \Pasteque\Taxesservice::getByName($tab['tax_cat']);
+        $tax_cat = \Pasteque\TaxesService::getByName($tab['tax_cat']);
 
         if ($tax_cat && $category) {
+            $price_sell =  $tab['sellVat'] / ( 1 + $tax_cat->getCurrentTax()->rate);
             $prod = new \Pasteque\Product($tab['reference'], $tab['label'],
-                    $tab['price_sell'], $category, $tab['disp_order'],
+                    $price_sell, $category, $tab['disp_order'],
                     $tax_cat, $tab['visible'], $tab['scaled']);
 
             // manage optional value may be present in $tab
@@ -118,7 +120,6 @@ function import_csv($csv) {
             $create, $update, $error);
     \Pasteque\tpl_msg_box($message, $error_mess);
 }
-
 
 // add to product values not obligatory may be present in array
 function manage_header_option($product, $array) {
@@ -213,7 +214,17 @@ if (isset($_FILES['csv'])) {
 
 
 <h1><?php \pi18n("Import products from csv file", PLUGIN_NAME); ?></h1>
-<form method="post" action="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'productsManagement');?>" enctype="multipart/form-data">
-        <?php \pi18n("File", PLUGIN_NAME) ?>: <input type="file" name="csv">
-        <input type="submit" name="envoyer" value=<?php \pi18n("send", PLUGIN_NAME)?>>
+
+<form class="edit" method="post" action="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'productsManagement');?>" enctype="multipart/form-data">
+    <div class="row">
+        <label for='csv' >
+            <?php \pi18n("File", PLUGIN_NAME) ?>:
+        </label>
+            <input type="file" name="csv">
+    </div>
+    <div class="row actions">
+        <button class="btn-send" type="submit" id="envoyer" name="envoyer" >
+            <?php \pi18n("send", PLUGIN_NAME)?>
+        </button>
+    </div>
 </form>

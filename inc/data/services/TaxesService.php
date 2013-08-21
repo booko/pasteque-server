@@ -41,7 +41,7 @@ class TaxesService {
 
     static function getByName($name) {
         $pdo = PDOBuilder::getPDO();
-        $stmt = $pdo->prepare("SELECT * FROM TAXES WHERE NAME = :name");
+        $stmt = $pdo->prepare("SELECT * FROM TAXCATEGORIES WHERE NAME = :name");
         $stmt->bindParam(":name", $name, \PDO::PARAM_STR);
         if ($stmt->execute()) {
             if ($row = $stmt->fetch()) {
