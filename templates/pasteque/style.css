@@ -317,6 +317,12 @@ tr.row-odd {
 	margin-bottom: 5px;
 }
 
+.product-container {
+	height: 180px;
+	overflow: scroll;
+	border: 1px solid #000;
+}
+
 @media print {
 	#menu-container {
 		display: none;
@@ -327,5 +333,4 @@ tr.row-odd {
 	.content {
 		margin-left: 0px;
 	}
-	
 }

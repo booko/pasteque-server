@@ -1,0 +1,53 @@
+{
+"Composition": "Composition",
+"Changes saved": "Changes saved",
+"Unable to save changes": "Unable to save changes",
+
+"Composition edit": "Composition edit",
+"Delete this composition": "Delete this composition",
+"Display": "Display",
+
+"Price": "Price",
+"Buy price": "Buy price",
+"Sell price": "Sell price",
+"Sell price + taxes": "Sell price + taxes",
+"VAT": "VAT",
+"Auto discount": "Auto discount",
+"Discount rate": "Discount rate",
+"Margin": "Margin",
+
+"Referencing": "Referencing",
+"Reference": "Reference",
+"Order": "Order",
+
+"SubGroups": "Subgroups",
+"Name": "Name",
+"Image": "Image",
+"Rename subgroup": "Rename subgroup",
+"Product": "Product",
+
+"Add a composition": "Add a composition",
+
+
+"ERR_COMPOSITION_UNDEFINED": "Add composition first",
+"ERR_COMPOSITION_NAME_EMPTY": "The name of composition is empty",
+"ERR_COMPOSITION_NAME": "The name of composition is already defined",
+"ERR_COMPOSITION_REF_EMPTY": "Reference of the composition is empty",
+"ERR_COMPOSITION_REF": "Reference of the composition is already defined",
+
+"ERR_SUBGROUP_NAME_EMPTY": "The name of subgroup is empty",
+"ERR_SUBGROUP_NAME": "The name of subgroup is already defined",
+"ERR_SUBGROUP_UNDEFINED": "Add subgroup first",
+
+
+"ERR_UPDATE_COMPOSITION %s": "Unable to update composition %s",
+"ERR_CREATE_COMPOSITION %s": "Unable to create composition %s",
+"ERR_DELETE_COMPOSITION %s": "Unable to delete composition %s",
+
+"ERR_UPDATE_SUBGROUP %s": "Unable to update subgroup %s",
+"ERR_CREATE_SUBGROUP %s": "Unable to create subgroup %s",
+"ERR_DELETE_SUBGROUP %s": "Unable to delete subgroup %s",
+
+"ERR_CREATE_SUBGROUP_PROD %s": "Unable to add product %s",
+"ERR_DELETE_SUBGROUP_PROD %s": "Unable to delete product %s"
+}

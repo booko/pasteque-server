@@ -107,25 +107,20 @@ class CompositionsService {
     }
 
     private static function manageCompo($data) {
+        $image = NULL;
+        if ($data->image !== "null") {
+            $image = $data->image;
+        }
+
         $category = CategoriesService::getByName($data->category);
         $tax_cat = TaxesService::get($data->tax_category);
 
         $compo = Composition::__build($data->id, $data->reference, $data->label,
                 $data->price_sell, $category, $data->order,
                 $tax_cat, $data->visible, FALSE, $data->price_buy,
-                NULL, $data->barcode, $data->image, $data->discount_enabled,
+                NULL, $data->barcode, $image, $data->discount_enabled,
                 $data->discount_rate);
-
         switch($data->status) {
-            case 'DEL':
-                if (!manageAllSG($compo->id, $data->subGroups)) {
-                    return NULL;
-                }
-                if (!CompositionsService::delete($compo->id)) {
-                    self::$error[] = array("ERR_DELETE_COMPOSITION %s", $compo->label);
-                    return NULL;
-                }
-            break;
             case 'NEW':
                 $compo->id = \Pasteque\ProductsService::create($compo);
                 $data->id = $compo->id;
@@ -148,7 +143,7 @@ class CompositionsService {
         return $compo;
     }
 
-    /** 
+    /** do manageSubgroup of all Subgroup contain in array
      * @param idCompo an id of composition
      * @dataSubGroup an jsonObject representing Subgroup
      * @return NULL if any error occured else return an array contain 
@@ -169,12 +164,16 @@ class CompositionsService {
 
     /** Create/Update/Delet Subgroups into BDD
      * if any error occured return NULL and
-     * @subGroup an array data  representing the subgroup 
+     * @subGroup an array data  representing the subgroup
      * @idCompo l'id of the composition
      * @return an object SubGroups */
     private static function manageSubgroups($dataSG, $idCompo) {
+        $image = NULL;
+        if ($dataSG->image !== "null") {
+            $image = $dataSG->image;
+        }
         $subgroup = \Pasteque\SubGroups::__build($dataSG->id, $idCompo,
-                $dataSG->name, $dataSG->dispOrder, Array(), $dataSG->image);
+                $dataSG->name, $dataSG->dispOrder, Array(), $image);
         switch ($dataSG->status) {
             case 'DEL':
                 if (count($dataSG->product) > 0) {
@@ -227,8 +226,9 @@ class CompositionsService {
         return $groups;
     }
 
-    /**
-     * @prod an array representing subgroup product */
+    /** delete or add product to the subgroup
+     * @prod an array representing subgroup product
+     * @idSubgroup the id of subgroup who contain products*/
     private static function manageSubgroups_prod($prod, $idSubgroup) {
         $prd = SubGroupsProduct::__build(
                 $prod->id, $idSubgroup, $prod->name,
