@@ -20,54 +20,35 @@
 
 namespace Pasteque;
 
-class CompositionGroup {
+class Composition extends Product{
 
-    public $id;
-    public $label;
-    public $product_ids;
-
-    static function __build($id, $label, $product_ids = NULL) {
-        $grp = new CompositionGroup($label, $product_ids);
-        $grp->id = $id;
-        return $grp;
-    }
-
-    function __construct($label, $product_ids = NULL) {
-        $this->label = $label;
-        if ($product_ids !== NULL) {
-            $this->product_ids = $product_ids;
-        } else {
-            $this->product_ids = array();
-        }
-    }
-
-    function addProduct($product_id) {
-        $this->product_ids[] = $product_id;
-    }
-}
-
-class Composition {
-
-    public $product_id;
-    public $groups;
-
-    static function __build($product_id, $groups = NULL) {
-        $cmp = new Composition($groups);
-        $cmp->product_id = $product_id;
-        return $cmp;
-    }
-
-    function __construct($groups = NULL) {
-        if ($groups !== NULL) {
-            $this->groups = $groups;
-        } else {
-            $this->groups = array();
-        }
-    }
+    public $groups = Array();
 
     function addGroup($group) {
         $this->groups[] = $group;
     }
-}
 
+    static function __build($id, $reference, $label, $price_sell, $category, $disp_order,
+                $tax_cat, $visible, $scaled, $price_buy,
+                $attributes_set, $barcode, $image, $discount_enabled,
+                $discount_rate) {
+       $compo = new Composition($reference, $label, $price_sell, $category, $disp_order,
+                $tax_cat, $visible, $scaled, $price_buy,
+                $attributes_set, $barcode, $image, $discount_enabled,
+                $discount_rate);
+        $compo->id = $id;
+        return $compo;
+    }
+    
+    function __construct($reference, $label, $price_sell, $category, $disp_order,
+                $tax_cat, $visible, $scaled, $price_buy,
+                $attributes_set, $barcode, $image, $discount_enabled,
+                $discount_rate) {
+        parent::__construct($reference, $label, $price_sell, $category, $disp_order,
+                $tax_cat, $visible, $scaled, $price_buy,
+                $attributes_set, $barcode, $image, $discount_enabled,
+                $discount_rate);
+    }
+
+}
 ?>

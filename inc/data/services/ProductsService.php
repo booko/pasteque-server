@@ -229,7 +229,8 @@ class ProductsService {
         // Update reference with garbage to break unicity constraint
         $garbage = "_deleted_" . \md5(\time());
         $stmt = $pdo->prepare("UPDATE PRODUCTS SET DELETED = 1, "
-               . "REFERENCE = concat(REFERENCE, :garbage) WHERE ID = :id");
+               . "REFERENCE = concat(REFERENCE, :garbage), "
+               . "NAME = concat(NAME, :garbage) WHERE ID = :id");
         $stmt->bindParam(':id', $id);
         $stmt->bindParam(':garbage', $garbage);
         return $stmt->execute();

@@ -19,50 +19,341 @@
 //    along with POS-Tech.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Pasteque;
-
+/** composition doesn't exist in BDD */
 class CompositionsService {
 
+    private static $error = Array();
+
     private static function buildDBCompo($db_compo) {
-        $compo = Composition::__build($db_compo['COMPOSITION']);
+        $prd = ProductsService::get($db_compo['COMPOSITION']);
+        $compo = Composition::__build($prd->id, $prd->reference, $prd->label, 
+                $prd->price_sell, $prd->category, $prd->disp_order, 
+                $prd->tax_cat, $prd->visible, $prd->scaled, $prd->price_buy,
+                $prd->attributes_set, $prd->barcode, $prd->image,
+                $prd->discount_enabled, $prd->discount_rate);
+
+        $compo->groups = SubgroupsService::getAll($prd->id);
         return $compo;
     }
 
-    private static function buildDBGrp($db_grp, $pdo) {
-        $grp = CompositionGroup::__build($db_grp['ID'], $db_grp['NAME']);
-        $stmt = $pdo->prepare("SELECT * FROM SUBGROUPS_PROD WHERE "
-                . "SUBGROUP = :id ORDER BY DISPORDER ASC, PRODUCT ASC");
-        $stmt->execute(array(':id' => $db_grp['ID']));
-        while ($db_component = $stmt->fetch()) {
-            $grp->addProduct($db_component['PRODUCT']);
-        }
-        return $grp;
-    }
-
+    /** Return an array of composition */
     static function getAll() {
         $compos = array();
         $pdo = PDOBuilder::getPDO();
-        $sql = "SELECT * FROM SUBGROUPS ORDER BY COMPOSITION, DISPORDER";
-        $current_compo = NULL;
-        $compo = NULL;
+        $comp = null;
+        $current_compo = null;
+        $sql = "SELECT * FROM SUBGROUPS GROUP BY COMPOSITION";
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
+
         while ($db_grp = $stmt->fetch()) {
-            if ($db_grp['COMPOSITION'] !== $current_compo) {
-                if ($compo !== NULL) {
-                    $compos[] = $compo;
-                }
-                $compo = CompositionsService::buildDBCompo($db_grp);
-                $current_compo = $db_grp['COMPOSITION'];
-            }
-            $grp = CompositionsService::buildDBGrp($db_grp, $pdo);
-            $compo->addGroup($grp);
-        }
-        if ($compo !== NULL) {
-            $compos[] = $compo;
+            $comp = CompositionsService::buildDBCompo($db_grp);
+            $compos[] = $comp;
         }
         return $compos;
     }
 
+    static function get($id) {
+        $prd = \Pasteque\ProductsService::get($id);
+        if (!$prd) {
+            return NULL;
+        }
+        $compo = Composition::__build($prd->id, $prd->reference, $prd->label,
+                $prd->price_sell, $prd->category, $prd->disp_order,
+                $prd->tax_cat, $prd->visible, FALSE, $prd->price_buy,
+                NULL, $prd->barcode, $prd->image,
+                $prd->discount_enabled, $prd->discount_rate);
+        $compo->groups = \Pasteque\SubGroupsService::getAll($prd->id);
+        return $compo;
+    }
+
+    static function delete($id) {
+        $subgroups = SubgroupsService::getAll($id);
+        foreach($subgroups as $subgroup) {
+            if (!SubgroupsService::delete($subgroup->id)) {
+                return false;
+            }
+        }
+        return ProductsService::delete($id);
+    }
+
+    static function maj($array) {
+        $error = Array(); // clear error
+        $pdo = PDOBuilder::getPDO();
+        if (count($array) == 0) {
+            $error[] = Array("ERR_COMPOSITION_UNDEFINED", "");
+            return NULL;
+        }
+        $newTransaction = !$pdo->inTransaction();
+        if ($newTransaction) {
+            $pdo->beginTransaction();
+        }   
+        $compo = CompositionsService::manageCompo($array);
+        if ($compo) {
+            if ($newTransaction) {
+                $pdo->commit();
+            }
+            return $compo;
+        } else {
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
+            return NULL;
+        }
+    }
+
+    static function errorInfo() {
+        return self::$error;
+    }
+
+    private static function manageCompo($data) {
+        $category = CategoriesService::getByName($data->category);
+        $tax_cat = TaxesService::get($data->tax_category);
+
+        $compo = Composition::__build($data->id, $data->reference, $data->label,
+                $data->price_sell, $category, $data->order,
+                $tax_cat, $data->visible, FALSE, $data->price_buy,
+                NULL, $data->barcode, $data->image, $data->discount_enabled,
+                $data->discount_rate);
+
+        switch($data->status) {
+            case 'DEL':
+                if (!manageAllSG($compo->id, $data->subGroups)) {
+                    return NULL;
+                }
+                if (!CompositionsService::delete($compo->id)) {
+                    self::$error[] = array("ERR_DELETE_COMPOSITION %s", $compo->label);
+                    return NULL;
+                }
+            break;
+            case 'NEW':
+                $compo->id = \Pasteque\ProductsService::create($compo);
+                $data->id = $compo->id;
+                if (!$compo->id) {
+                    self::$error[] =  array("ERR_CREATE_COMPOSITION", $compo->label);
+                    return NULL;
+                }
+                break;
+            default:
+                if (!\Pasteque\ProductsService::update($compo)) {
+                    self::$error[] = Array("ERR_UPDATE_COMPOSITION", $compo->label);
+                    return NULL;
+                }
+        }
+
+        $compo->groups = CompositionsService::manageAllSG($compo->id, $data->subGroups);
+        if ($compo->groups === NULL) {
+            return NULL;
+        }
+        return $compo;
+    }
+
+    /** 
+     * @param idCompo an id of composition
+     * @dataSubGroup an jsonObject representing Subgroup
+     * @return NULL if any error occured else return an array contain 
+     * object Subgroups or empty if there are no subgroups */
+    private static function manageAllSG($idCompo, $dataSubGroups) {
+        $groups = Array();
+        for ($i = 0; $i < count($dataSubGroups); $i++) {
+            $subgroup = CompositionsService::manageSubgroups($dataSubGroups[$i], $idCompo);
+            if ($subgroup === NULL) {
+                return NULL;
+            }
+            if ($dataSubGroups[$i]->status != 'DEL') {
+                $groups[] = $subgroup;
+            }
+        }
+        return $groups;
+    }
+
+    /** Create/Update/Delet Subgroups into BDD
+     * if any error occured return NULL and
+     * @subGroup an array data  representing the subgroup 
+     * @idCompo l'id of the composition
+     * @return an object SubGroups */
+    private static function manageSubgroups($dataSG, $idCompo) {
+        $subgroup = \Pasteque\SubGroups::__build($dataSG->id, $idCompo,
+                $dataSG->name, $dataSG->dispOrder, Array(), $dataSG->image);
+        switch ($dataSG->status) {
+            case 'DEL':
+                if (count($dataSG->product) > 0) {
+                    if (CompositionsService::manageAllSGProducts(
+                            $subgroup->id, $dataSG->product) === NULL) {
+                        return NULL;
+                    }
+                }
+                if (!\Pasteque\SubgroupsService::delete($subgroup->id)) {
+                    self::$error[] = array("ERR_DELETE_SUBGROUP %s", $subgroup->label);
+                    return NULL;
+                }
+                break;
+            case 'NEW':
+                $subgroup->id = \Pasteque\SubGroupsService::create($subgroup);
+                if (!$dataSG->id) {
+                    self::$error[] = array("ERR_CREATE_SUBGROUP", $subgroup->name);
+                    return NULL;
+                }
+                break;
+            default:
+                if (!\Pasteque\SubGroupsService::update($subgroup)) {
+                    self::$error[] =  array("ERR_UPDATE_SUBGROUP", $subgroup->name);
+                    return false;
+                }
+        }
+        if (count($dataSG->product) > 0) {
+            $subgroup->groups = CompositionsService::manageAllSGProducts($subgroup->id, $dataSG->product);
+
+            if ($subgroup->groups === NULL) {
+                return NULL;
+            }
+        }
+        return $subgroup;
+    }
+
+
+    private static function manageAllSGProducts($idSubgroup, $products) {
+        $groups = Array();
+        foreach ($products as $product) {
+            $prd = CompositionsService::manageSubgroups_prod($product, $idSubgroup);
+            if ($prd === NULL) {
+                return NULL;
+            }
+            if ($product->status != 'DEL') {
+                $groups[] = $prd;
+            }
+
+        }
+        return $groups;
+    }
+
+    /**
+     * @prod an array representing subgroup product */
+    private static function manageSubgroups_prod($prod, $idSubgroup) {
+        $prd = SubGroupsProduct::__build(
+                $prod->id, $idSubgroup, $prod->name,
+                $prod->dispOrder);
+
+        switch ($prod->status) {
+            case 'DEL':
+                if(!\Pasteque\SubgroupsProdsService::delete($prd->product)) {
+                    self::$error[] =  array("ERR_DELETE_SUBGROUP_PROD", $prod->name);
+                    return NULL;
+                }
+                break;
+            case 'NEW':
+               if (!\Pasteque\SubgroupsProdsService::create($prd)) {
+                    self::$error[] =  array("ERR_CREATE_SUBGROUP_PROD", $prod->name);
+                    return NULL;
+                }
+        }
+        return $prd;
+    }
 }
 
+class SubgroupsService extends AbstractService {
+
+    protected static $dbTable = "SUBGROUPS";
+
+    protected static $dbIdField = "ID";
+
+    protected static $fieldMapping = array(
+            "ID" => "id",
+            "COMPOSITION" => "composition",
+            "NAME" => "label",
+            "IMAGE" => "image",
+            "DISPORDER" => "dispOrder"
+    );
+
+    /** Construct an object SubGroup whith groups set*/
+    protected function build($row, $pdo = null) {
+            $subgroup = SubGroups::__build($row["ID"], $row["COMPOSITION"], $row["NAME"],
+                    $row["DISPORDER"],NULL , $row["IMAGE"]);
+            $subgroup->groups = SubgroupsProdsService::getAll($row['ID']);
+            return $subgroup;
+    }
+
+    /** get all subgroups of a composition
+     * @id an id of composition
+     * @return an array of SubGroups*/
+    function getAll($id) {
+        $compo = Array();
+        $pdo = PDOBuilder::getPDO();
+        $sql = "SELECT * FROM SUBGROUPS WHERE COMPOSITION = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(":id", $id, \PDO::PARAM_STR);
+
+        $res = $stmt->execute();
+        if ($res) {
+            while ($db_component = $stmt->fetch()) {
+                $subgroup = SubgroupsService::get($db_component['ID']);
+                $compo[] = $subgroup;
+            }
+        }
+        return $compo;
+    }
+}
+
+class SubgroupsProdsService extends AbstractService {
+
+    protected static $dbTable = "SUBGROUPS_PROD";
+    protected static $dbIdField = "PRODUCT";
+    protected static $fieldMapping = array(
+        "SUBGROUP" => "subgroup",
+        "PRODUCT" => "product",
+        "DISPORDER" => "dispOrder"
+    );
+
+    protected function build($row, $pdo = null) {
+        $label = ProductsService::get($row['PRODUCT'])->label;
+        return SubGroupsProduct::__build($row["PRODUCT"],
+            $row["SUBGROUP"], $label, $row["DISPORDER"]);
+    }
+
+    function create($model) {
+        $dbData = static::unbuild($model);
+        $pdo = PDOBuilder::getPDO();
+
+        $dbFields = array_keys(static::$fieldMapping); // Copy
+        $idIndex = array_search(static::$dbIdField, $dbFields);
+
+        // Prepare sql query
+        $sql = "INSERT INTO " . static::$dbTable . " ("
+                . implode($dbFields, ", ") . ") VALUES (";
+        // Set :field for each field for values and bind values for PDO
+        foreach ($dbFields as $field) {
+            $sql .= ":" . $field . ", ";
+        }
+        $sql = substr($sql, 0, -2);
+        $sql .= ")";
+        // Assign values to sql
+        $stmt = $pdo->prepare($sql);
+        foreach ($dbFields as $field) {
+            $stmt->bindValue(":" . $field, $dbData[$field]);
+        }
+        // RUN!
+        if($stmt->execute()) { return true; } 
+        return false;
+    }
+
+    /** get all products containing in a subgroup
+     * @id an id of subgroup
+     * @return an array of SubGroupsProduct*/
+    function getAll($id) {
+        $grp = Array();
+        $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("SELECT * FROM SUBGROUPS_PROD WHERE "
+                . "SUBGROUP = :id ORDER BY DISPORDER ASC, PRODUCT ASC"
+        );
+        $stmt->bindParam(":id", $id, \PDO::PARAM_STR);
+
+        $stmt->execute();
+
+        while ($db_component = $stmt->fetch()) {
+            $product = SubgroupsProdsService::build($db_component);
+            $grp[] = $product;
+        }
+        return $grp;
+    }
+}
 ?>

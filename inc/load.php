@@ -110,6 +110,8 @@ require_once(ABSPATH . "/inc/data/services/StocksService.php");
 require_once(ABSPATH . "/inc/data/services/ResourcesService.php");
 require_once(ABSPATH . "/inc/data/services/CurrenciesService.php");
 require_once(ABSPATH . "/inc/Csv.php");
+require_once(ABSPATH . "/inc/data/models/Subgroups.php");
+
 
 load_base_i18n(detect_preferred_language());
 
