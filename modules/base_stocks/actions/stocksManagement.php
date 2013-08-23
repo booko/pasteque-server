@@ -119,7 +119,7 @@ if (isset($_FILES['csv'])) {
 
 <h1><?php \pi18n("Import stock moves from csv", PLUGIN_NAME); ?></h1>
 <?php     $dateStr = isset($_POST['date']) ? $_POST['date'] : \i18nDate(time()); ?>
-<form method="post" action="<?php echo \Pasteque\get_current_url();?>" enctype="multipart/form-data">
+<form method="post" class="edit" action="<?php echo \Pasteque\get_current_url();?>" enctype="multipart/form-data">
         <div class="row">
                 <?php \pi18n("Fichier", PLUGIN_NAME);?> : <input type="file" name="csv">
         </div>
@@ -135,5 +135,9 @@ if (isset($_FILES['csv'])) {
                 <label for="date"><?php \pi18n("Date", PLUGIN_NAME); ?></label>
                 <input type="date" name="date" id="date" value="<?php echo $dateStr; ?>" />
         </div>
-        <input type="submit" name="envoyer" value=<?php echo \i18n("Send", PLUGIN_NAME) ?> />
+        <div class="row actions">
+            <button type="submit" class="btn-send" name="envoyer">
+                <?php echo \i18n("Send", PLUGIN_NAME) ?>
+            </button>
+        </div>
 </form>
