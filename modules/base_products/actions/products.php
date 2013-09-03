@@ -33,6 +33,7 @@ if (isset($_POST['delete-product'])) {
 }
 
 $products = \Pasteque\ProductsService::getAll(FALSE, TRUE);
+$categories = \Pasteque\CategoriesService::getAll();
 ?>
 <h1><?php \pi18n("Products", PLUGIN_NAME); ?></h1>
 

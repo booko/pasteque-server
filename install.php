@@ -25,27 +25,13 @@ if (@constant("\Pasteque\ABSPATH") === NULL) {
 }
 
 if (isset($_POST['install'])) {
-    $pdo = PDOBuilder::getPDO();
-    // Load generic sql data
-    $file = ABSPATH . "/install/database/create.sql";
-    $pdo->query(\file_get_contents($file));
-    // Load country data
     $country = $_POST['install'];
     $country = str_replace("..", "", $country);
-    $cfile = ABSPATH . "/install/database/data_" . $country . ".sql";
-    $pdo->query(\file_get_contents($cfile));
+    Installer::install($country);
 } else if (isset($_POST['update'])) {
-    $pdo = PDOBuilder::getPDO();
-    // Load generic sql update for current version
-    $version = $_POST['update'];
     $country = $_POST['country'];
-    $file = ABSPATH . "/install/database/upgrade-" . $version . ".sql";
-    $pdo->query(\file_get_contents($file));
-    // Check for localized update data for current version
-    $file = ABSPATH . "/install/database/upgrade-" . $version . "_" . $country . ".sql";
-    if (\file_exists($file)) {
-        $pdo->query(\file_get_contents($file));
-    }
+    $country = str_replace("..", "", $country);
+    Installer::upgrade($country);
 }
 
 function show_install() {
@@ -92,23 +78,15 @@ function show_downgrade($dbVer) {
     tpl_close();
 }
 
-$pdo = PDOBuilder::getPDO();
-$sql = "SELECT VERSION FROM APPLICATIONS WHERE ID = \"postech\"";
-$stmt = $pdo->prepare($sql);
-$stmt->execute();
-$data = $stmt->fetch();
-if ($data !== FALSE) {
-    // Check version
-    $dbVer = $data['VERSION'];
-    if (intval($dbVer) < intval(DB_VERSION)) {
-        // Need update
-        show_update($dbVer);
-    } else if (intval($dbVer) > intval(DB_VERSION)) {
-        // Need downgrade
-        show_dowgrade($dbVer);
-    }
-} else {
-    // Install
+$dbVer = Installer::getVersion();
+switch (Installer::checkVersion($dbVer)) {
+case Installer::NEED_DB_UPGRADE:
+    show_update($dbVer);
+    die();
+case Installer::NEED_DB_DOWNGRADE:
+    show_dowgrade($dbVer);
+    die();
+case Installer::DB_NOT_INSTALLED:
     show_install();
     die();
 }

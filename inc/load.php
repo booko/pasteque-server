@@ -64,6 +64,7 @@ require_once(ABSPATH . "/inc/Report.php");
 require_once(ABSPATH . "/inc/hooks.php");
 require_once(ABSPATH . "/inc/forms.php");
 require_once(ABSPATH . "/inc/PDOBuilder.php");
+require_once(ABSPATH . "/inc/Installer.php");
 
 // Load core modules
 require_once(_check_core_module('ident'));
