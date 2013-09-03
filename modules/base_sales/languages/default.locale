@@ -6,7 +6,22 @@
 "paper": "Paper",
 "free":" Free",
 
-"Closed pos report": "Closed pos report",
-"Sales report":" Sales report",
-"Sales by product": "Sales by product"
+"Sales": "Sales",
+"Sales report": "Details",
+"Sales by product": "Sales by product",
+"Taxes report": "Taxes report",
+"Product name": "Product",
+"Category name": "Category",
+"Units": "Units",
+"Sell": "Sell price",
+"Tax name": "Tax",
+"Tax amount": "Tax amount",
+
+"CS report": "Summary",
+"Consolidated sales report": "Consolidated sales report",
+"Tickets": "Tickets",
+"Average": "Average",
+"Real CS": "Real CS",
+"Theo CS": "Theoric CS",
+"Theo SCS": "Theoric CS (no tax)"
 }

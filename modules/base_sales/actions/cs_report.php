@@ -18,19 +18,18 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace BaseCashes;
+namespace BaseSales;
 
 $message = NULL;
 $error = NULL;
 
-
 $startStr = isset($_POST['start']) ? $_POST['start'] : \i18nDate(time() - 86400);
 $stopStr = isset($_POST['stop']) ? $_POST['stop'] : \i18nDate(time());
-$report = \Pasteque\get_report(PLUGIN_NAME, "sales_report");
+$report = \Pasteque\get_report(PLUGIN_NAME, "cs_report");
 ?>
-<h1><?php \pi18n("Sales report", PLUGIN_NAME); ?></h1>
+<h1><?php \pi18n("Consolidated sales report", PLUGIN_NAME); ?></h1>
 
-<p><a class="btn" href="<?php echo \Pasteque\get_report_url(PLUGIN_NAME, 'sales_report'); ?>&start=<?php echo $startStr; ?>&stop=<?php echo $stopStr; ?>"><?php \pi18n("Export"); ?></a></p>
+<p><a class="btn" href="<?php echo \Pasteque\get_report_url(PLUGIN_NAME, 'cs_report'); ?>&start=<?php echo $startStr; ?>&stop=<?php echo $stopStr; ?>"><?php \pi18n("Export"); ?></a></p>
 
 <form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
 	<div class="row">

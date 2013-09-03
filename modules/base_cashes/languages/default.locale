@@ -16,21 +16,6 @@
 "Active session": "Active session",
 "Closed session": "Closed session",
 
-"Sales": "Sales",
-"Sales report": "Sales report",
-"Taxes report": "Taxes report",
-"Product name": "Product",
-"Category name": "Category",
-"Units": "Units",
-"Sell": "Sell price",
-"Tax name": "Tax",
-"Tax amount": "Tax amount",
-
-"CS report": "Consolidated sales",
-"Consolidated sales report": "Consolidated sales report",
-"Tickets": "Tickets",
-"Average": "Average",
-"Real CS": "Real CS",
-"Theo CS": "Theoric CS",
-"Theo SCS": "Theoric CS (no tax)"
+"Sessions": "Cashes",
+"Closed pos report": "Total"
 }
