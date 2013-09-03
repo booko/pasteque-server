@@ -61,6 +61,7 @@
 "User.name": "Name",
 "User.role": "Role",
 
+"Session": "Cash session",
 "Session.host": "Host",
 "Session.openDate": "Open date",
 "Session.closeDate": "Close date",

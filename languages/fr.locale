@@ -61,6 +61,7 @@
 "User.name": "Nom",
 "User.role": "Rôle",
 
+"Session": "Session de caisse",
 "Session.host": "Caisse",
 "Session.openDate": "Date d'ouverture",
 "Session.closeDate": "Date de clôture",

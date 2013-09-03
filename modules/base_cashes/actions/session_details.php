@@ -26,6 +26,7 @@ $error = NULL;
 $pdo = \Pasteque\PDOBuilder::getPDO();
 
 $sessId = $_GET['id'];
+$session = \Pasteque\CashesService::get($sessId);
 
 $cs = "";
 $csSql = "SELECT SUM(PAYMENTS.TOTAL) AS CS "
@@ -54,13 +55,14 @@ $sales = 0;
 $custs = 0;
 $glbSql = "SELECT COUNT(DISTINCT RECEIPTS.ID) AS TKTS, "
         . "SUM(TICKETLINES.UNITS * TICKETLINES.PRICE) AS SALES, "
-        . "SUM(TICKETS.CUSTCOUNT) AS CUSTCOUNT"
+        . "SUM(TICKETS.CUSTCOUNT) AS CUSTCOUNT "
         . "FROM RECEIPTS, TICKETS, TICKETLINES "
         . "WHERE RECEIPTS.ID = TICKETLINES.TICKET "
         . "AND RECEIPTS.ID = TICKETS.ID "
         . "AND RECEIPTS.MONEY = :id";
 $glbStmt = $pdo->prepare($glbSql);
 $glbStmt->bindParam(":id", $sessId);
+$glbStmt->execute();
 if ($row = $glbStmt->fetch()) {
     $ticketsCount = $row['TKTS'];
     $sales = $row['SALES'];
@@ -109,10 +111,45 @@ $taxStmt->execute();
 while ($row = $taxStmt->fetch()) {
     $taxes[] = $row;
 }
-?>
-<h1><?php \pi18n("Active sessions", PLUGIN_NAME); ?></h1>
 
-<p><?php \pi18n("Consolidated sales", PLUGIN_NAME); ?> <?php \pi18nCurr($cs); ?></p>
+if ($session->isClosed()) {
+    $title = \i18n("Closed session", PLUGIN_NAME);
+} else {
+    $title = \i18n("Active session", PLUGIN_NAME);
+}
+?>
+
+<h1><?php echo($title); ?></h1>
+
+<table cellpadding="0" cellspacing="0">
+	<thead>
+		<th colspan="2"><?php \pi18n("Session"); ?></th>
+	</thead>
+	<tbody>
+		<tr>
+			<td><?php \pi18n("Session.host"); ?></td>
+			<td><?php echo($session->host); ?></td>
+		</tr>
+		<tr>
+			<td><?php \pi18n("Session.openDate"); ?></td>
+			<td><?php \pi18nDateTime($session->openDate); ?></td>
+		</tr>
+<?php if ($session->isClosed()) { ?>
+		<tr>
+			<td><?php \pi18n("Session.closeDate"); ?></td>
+			<td><?php \pi18nDateTime($session->closeDate); ?></td>
+		</tr>
+<?php } ?>
+		<tr>
+			<td><?php \pi18n("Tickets", PLUGIN_NAME); ?></td>
+			<td><?php echo($ticketsCount); ?></td>
+		</tr>
+		<tr>
+			<td><?php \pi18n("Consolidated sales", PLUGIN_NAME); ?></td>
+			<td><?php \pi18nCurr($cs); ?></td>
+		</tr>
+	</tbody>
+</table>
 
 <table cellpadding="0" cellspacing="0">
 	<thead>
