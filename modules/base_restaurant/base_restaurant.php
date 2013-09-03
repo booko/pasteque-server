@@ -24,8 +24,8 @@ function init() {
     global $MENU;
     $MENU->addSection("restaurant", "Restaurant", PLUGIN_NAME);
     //TODO: changes image button
-    $MENU->registerModuleEntry("restaurant", PLUGIN_NAME, "menu_tax.png", "Place sales", "place_sales_report");
-    $MENU->registerModuleEntry("restaurant", PLUGIN_NAME, "menu_tax.png", "Floors", "floors");
+    $MENU->registerModuleEntry("restaurant", PLUGIN_NAME, "menu_customers.png", "Place sales", "place_sales_report");
+    $MENU->registerModuleEntry("restaurant", PLUGIN_NAME, "menu_map.png", "Floors", "floors");
     \Pasteque\register_i18n(PLUGIN_NAME);
 }
 \Pasteque\hook("module_load", __NAMESPACE__ . "\init");
