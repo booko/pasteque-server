@@ -13,7 +13,7 @@ if (isset($_POST['delete-comp'])) {
 
 $compositions = \Pasteque\CompositionsService::getAll();
 ?>
-<h1><?php \pi18n("Composition", PLUGIN_NAME); ?></h1>
+<h1><?php \pi18n("Compositions", PLUGIN_NAME); ?></h1>
 
 <?php \Pasteque\tpl_msg_box($message, $error); ?>
 
@@ -21,7 +21,7 @@ $compositions = \Pasteque\CompositionsService::getAll();
         \i18n('Add a composition', PLUGIN_NAME), 'img/btn_add.png');?>
 
 
-<p><?php \pi18n("%d composition", PLUGIN_NAME, count($compositions)); ?></p>
+<p><?php \pi18n("%d compositions", PLUGIN_NAME, count($compositions)); ?></p>
 
 <table cellpadding="0" cellspacing="0">
 	<thead>

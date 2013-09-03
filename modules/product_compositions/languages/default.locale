@@ -1,7 +1,9 @@
 {
-"Composition": "Composition",
+"Compositions": "Compositions",
 "Changes saved": "Changes saved",
 "Unable to save changes": "Unable to save changes",
+
+"%d compositions": "%d compositions",
 
 "Composition edit": "Composition edit",
 "Delete this composition": "Delete this composition",

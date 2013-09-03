@@ -1,7 +1,9 @@
 {
-"Composition": "Composition",
+"Compositions": "Compositions",
 "Changes saved": "Changements sauvegardé",
 "Unable to save changes": "Impossible de sauvegardé les changements",
+
+"%d compositions": "%d compositions",
 
 "Composition edit": "Edition d'une composition",
 "Delete this composition": "Supprimer cette composition",

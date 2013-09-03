@@ -4,7 +4,7 @@ namespace ProductCompositions;
 function init() {
     global $MENU;
 
-    $MENU->registerModuleEntry("catalog", PLUGIN_NAME, "menu_compositions.png", "composition", "composition");
+    $MENU->registerModuleEntry("catalog", PLUGIN_NAME, "menu_compositions.png", "Compositions", "composition");
     \Pasteque\register_i18n(PLUGIN_NAME);
 
 }

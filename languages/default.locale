@@ -52,6 +52,8 @@
 "Category.parent_id": "Parent",
 "Category.disp_order": "Order",
 
+"Composition.label": "Name",
+
 "TaxCat.label": "Name",
 "Tax.rate": "Rate",
 "Tax.start_date": "Valid from",
