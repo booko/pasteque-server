@@ -1,5 +1,5 @@
 <?php
-namespace BaseComposition;
+namespace ProductCompositions;
 
 $message = NULL;
 $error = NULL;
