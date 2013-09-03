@@ -316,3 +316,16 @@ tr.row-odd {
 .map .row {
 	margin-bottom: 5px;
 }
+
+@media print {
+	#menu-container {
+		display: none;
+	}
+	#header {
+		display: none;
+	}
+	.content {
+		margin-left: 0px;
+	}
+	
+}
