@@ -21,7 +21,7 @@
 // Index is the entry point for everything.
 namespace Pasteque;
 
-const ABSPATH = __DIR__; // Base path. Also to check if a call
+define("ABSPATH", __DIR__); // Base path. Also to check if a call
                          // originates from index.php
 // Load
 require_once(ABSPATH . "/inc/load.php");

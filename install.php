@@ -20,10 +20,6 @@
 
 namespace Pasteque;
 
-if (@constant("\Pasteque\ABSPATH") === NULL) {
-    die();
-}
-
 if (isset($_POST['install'])) {
     $country = $_POST['install'];
     $country = str_replace("..", "", $country);

@@ -22,10 +22,6 @@
 
 namespace Pasteque;
 
-if (@constant("\Pasteque\ABSPATH") === NULL) {
-    die();
-}
-
 function is_user_logged_in() {
   	return TRUE;
 }

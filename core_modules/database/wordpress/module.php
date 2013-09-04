@@ -18,12 +18,6 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace Pasteque {
-    if (@constant("\Pasteque\ABSPATH") === NULL) {
-        die();
-    }
-}
-
 namespace WordPressDB {
     require_once(COREPATH . "/tools/wp_preprocessing.php");
     require_once(dirname(__FILE__) . "/config.php");

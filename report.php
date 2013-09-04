@@ -20,10 +20,6 @@
 
 namespace Pasteque;
 
-if (@constant("\Pasteque\ABSPATH") === NULL) {
-    die();
-}
-
 function report_csv($module, $name) {
     $report = get_report($module, $name);
     if ($report === NULL) {

@@ -20,10 +20,6 @@
 
 namespace Pasteque;
 
-if (@constant("\Pasteque\ABSPATH") === NULL) {
-    die();
-}
-
 function redirect($path) {
     if (!file_exists(ABSPATH . "/" . $path . ".php")) {
         tpl_404();

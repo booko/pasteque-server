@@ -19,11 +19,6 @@
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Pasteque;
-
-if (@constant("\Pasteque\ABSPATH") === NULL) {
-    die();
-}
-
 define('COREPATH', ABSPATH . "/core_modules");
 
 /** Check a core module readability. Returns the module file to import if
@@ -47,12 +42,16 @@ function _check_core_module($type) {
 // Load constants
 require_once(ABSPATH . "/inc/constants.php");
 // Load configuration file
-define ("CFG_FILE", ABSPATH . "/config.php");
+if (isset($altConfigFile)) {
+    define("CFG_FILE", ABSPATH . "/" . $altConfigFile);
+} else {
+    define ("CFG_FILE", ABSPATH . "/config.php");
+}
 if (!file_exists(CFG_FILE) || !is_readable(CFG_FILE)) {
     echo("No config file");
     die();
 }
-require_once(ABSPATH . "/config.php");
+require_once(CFG_FILE);
 
 // Load static tools
 require_once(ABSPATH . "/inc/date_utils.php");

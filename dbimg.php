@@ -20,10 +20,6 @@
 
 namespace Pasteque;
 
-if (@constant("\Pasteque\ABSPATH") === NULL) {
-    die();
-}
-
 function generate_barcode($type, $data) {
     require_once(ABSPATH . "/lib/barcode-master/php-barcode.php");
     $font = "./lib/barcode-master/NOTTB___.TTF";
