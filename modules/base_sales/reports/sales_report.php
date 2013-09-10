@@ -40,8 +40,8 @@ $start = \Pasteque\stdstrftime($startTime);
 $stop = \Pasteque\stdstrftime($stopTime);
 
 $sql = "SELECT CLOSEDCASH.HOST, CLOSEDCASH.DATESTART, "
-        . "CLOSEDCASH.DATEEND, TICKETS.TICKETID, PRODUCTS.NAME AS PRD_NAME, "
-        . "CATEGORIES.NAME AS CAT_NAME, "
+        . "CLOSEDCASH.DATEEND, TICKETS.TICKETID, RECEIPTS.DATENEW, "
+        . "PRODUCTS.NAME AS PRD_NAME, CATEGORIES.NAME AS CAT_NAME, "
         . "TICKETLINES.UNITS, TICKETLINES.PRICE * TICKETLINES.UNITS AS SELL "
         . "FROM CLOSEDCASH "
         . "LEFT JOIN RECEIPTS ON RECEIPTS.MONEY = CLOSEDCASH.MONEY "
@@ -52,11 +52,12 @@ $sql = "SELECT CLOSEDCASH.HOST, CLOSEDCASH.DATESTART, "
         . "WHERE CLOSEDCASH.DATESTART > :start AND CLOSEDCASH.DATEEND < :stop "
         . "ORDER BY CLOSEDCASH.DATESTART DESC, TICKETS.TICKETID DESC, "
         . "TICKETLINES.LINE DESC";
-$fields = array("HOST", "DATESTART", "DATEEND", "TICKETID", "PRD_NAME",
-        "CAT_NAME", "UNITS", "SELL");
+$fields = array("HOST", "DATESTART", "DATEEND", "TICKETID", "DATENEW",
+        "PRD_NAME", "CAT_NAME", "UNITS", "SELL");
 $headers = array(\i18n("Session.host"), \i18n("Session.openDate"),
         \i18n("Session.closeDate"), \i18n("Ticket.number"),
-        \i18n("Product name", PLUGIN_NAME), \i18n("Category name", PLUGIN_NAME),
+        \i18n("Ticket.date"), \i18n("Product name", PLUGIN_NAME),
+        \i18n("Category name", PLUGIN_NAME),
         \i18n("Units", PLUGIN_NAME), \i18n("Sell", PLUGIN_NAME));
 $report = new \Pasteque\Report($sql, $headers, $fields);
 $report->setParam(":start", $start);
@@ -65,6 +66,8 @@ $report->addFilter("DATESTART", "\Pasteque\stdtimefstr");
 $report->addFilter("DATESTART", "\i18nDatetime");
 $report->addFilter("DATEEND", "\Pasteque\stdtimefstr");
 $report->addFilter("DATEEND", "\i18nDatetime");
+$report->addFilter("DATENEW", "\Pasteque\stdtimefstr");
+$report->addFilter("DATENEW", "\i18nDatetime");
 $report->addFilter("SELL", "\i18nCurr");
 
 \Pasteque\register_report(PLUGIN_NAME, "sales_report", $report);

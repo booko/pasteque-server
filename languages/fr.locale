@@ -68,8 +68,8 @@
 "Session.tickets": "Tickets",
 "Session.total": "Total",
 
-"Ticket number": "Ticket #",
-
+"Ticket.number": "Ticket n°",
+"Ticket.date": "Date",
 
 "Customer.number": "Numéro",
 "Customer.key": "Clé",
