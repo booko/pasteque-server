@@ -1,0 +1,6 @@
+How to test Pasteque
+====================
+
+You must have phpunit installed. Then copy config-sample.php to config.php and
+set it to point to an empty test database.
+
