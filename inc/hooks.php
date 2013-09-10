@@ -20,6 +20,7 @@
 
 namespace Pasteque;
 
+global $HOOKS;
 $HOOKS = array();
 
 function hook($hook_name, $function_name, $args = array()) {

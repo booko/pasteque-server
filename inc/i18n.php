@@ -97,6 +97,7 @@ class I18N {
     }
 
 }
+global $I18N;
 $I18N = new I18N();
 
 function __($label, $module = NULL, $args = array()) {
@@ -132,6 +133,7 @@ function __int($float) {
     return $I18N->formatInteger($float);
 }
 
+global $i18n_modules;
 $i18n_modules = array();
 
 /** Load generic i18n files */

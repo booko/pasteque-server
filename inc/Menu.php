@@ -98,5 +98,6 @@ class Menu {
     }
 }
 
+global $MENU;
 $MENU = new Menu();
 ?>

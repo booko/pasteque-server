@@ -463,6 +463,7 @@ class MergedReportRun extends ReportRun {
     }
 }
 
+global $REPORTS;
 $REPORTS = array();
 
 function register_report($module, $name, $report) {
