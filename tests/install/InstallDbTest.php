@@ -30,6 +30,21 @@ class InstallDbTest extends \PHPUnit_Framework_TestCase {
         dropDatabase();
     }
 
+    public function testInstallStruct() {
+        Installer::install(null);
+        $pdo = PDOBuilder::getPDO();
+        $this->assertEquals(Installer::getVersion(), DB_VERSION,
+                "Version doesn't match");
+        // Check data insert
+        $sql = "SELECT * FROM RESOURCES WHERE ID = 14";
+        $stmt = $pdo->prepare($sql);
+        $this->assertNotEquals($stmt->execute(), false, "Query failed");
+        $row = $stmt->fetch();
+        $this->assertEquals($row['NAME'], "Menu.Root",
+                "Database structure and generic data failed to be inserted");    
+    }
+
+    /** @depends testInstallStruct */
     public function testInstallFrance() {
         Installer::install("france");
         $pdo = PDOBuilder::getPDO();
@@ -44,6 +59,7 @@ class InstallDbTest extends \PHPUnit_Framework_TestCase {
                 "Country data failed to be inserted");
     }
 
+    /** @depends testInstallStruct */
     public function testInstallBelgique() {
         Installer::install("belgique");
         $pdo = PDOBuilder::getPDO();
@@ -58,6 +74,7 @@ class InstallDbTest extends \PHPUnit_Framework_TestCase {
                 "Country data failed to be inserted");
     }
 
+    /** @depends testInstallStruct */
     public function testInstallUnitedKingdom() {
         Installer::install("united_kingdom");
         $pdo = PDOBuilder::getPDO();

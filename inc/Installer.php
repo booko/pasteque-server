@@ -31,8 +31,10 @@ class Installer {
         $file = ABSPATH . "/install/database/create.sql";
         $pdo->query(\file_get_contents($file));
         // Load country data
-        $cfile = ABSPATH . "/install/database/data_" . $country . ".sql";
-        $pdo->query(\file_get_contents($cfile));
+        if ($country !== null) {
+            $cfile = ABSPATH . "/install/database/data_" . $country . ".sql";
+            $pdo->query(\file_get_contents($cfile));
+        }
     }
 
     /** Upgrade database from given version to the latest. */
