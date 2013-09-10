@@ -21,7 +21,7 @@ namespace Pasteque;
 
 require_once(dirname(dirname(__FILE__)) . "/common_load.php");
 
-class InstallFrTest extends \PHPUnit_Framework_TestCase {
+class InstallDbTest extends \PHPUnit_Framework_TestCase {
 
     protected function setUp() {}
 
@@ -30,8 +30,36 @@ class InstallFrTest extends \PHPUnit_Framework_TestCase {
         dropDatabase();
     }
 
-    public function testInstall() {
+    public function testInstallFrance() {
         Installer::install("france");
+        $pdo = PDOBuilder::getPDO();
+        $this->assertEquals(Installer::getVersion(), DB_VERSION,
+                "Version doesn't match");
+        // Check data insert
+        $sql = "SELECT * FROM PLACES WHERE ID = 10";
+        $stmt = $pdo->prepare($sql);
+        $this->assertNotEquals($stmt->execute(), false, "Query failed");
+        $row = $stmt->fetch();
+        $this->assertEquals($row['NAME'], "Table 10",
+                "Country data failed to be inserted");
+    }
+
+    public function testInstallBelgique() {
+        Installer::install("belgique");
+        $pdo = PDOBuilder::getPDO();
+        $this->assertEquals(Installer::getVersion(), DB_VERSION,
+                "Version doesn't match");
+        // Check data insert
+        $sql = "SELECT * FROM PLACES WHERE ID = 10";
+        $stmt = $pdo->prepare($sql);
+        $this->assertNotEquals($stmt->execute(), false, "Query failed");
+        $row = $stmt->fetch();
+        $this->assertEquals($row['NAME'], "Table 10",
+                "Country data failed to be inserted");
+    }
+
+    public function testInstallUnitedKingdom() {
+        Installer::install("united_kingdom");
         $pdo = PDOBuilder::getPDO();
         $this->assertEquals(Installer::getVersion(), DB_VERSION,
                 "Version doesn't match");
