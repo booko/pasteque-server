@@ -3,5 +3,8 @@
 		<testsuite name="database">
 			<file>install/InstallDbTest.php</file>
 		</testsuite>
+		<testsuite name="services">
+		    <file>services/CategoriesServiceTest.php</file>
+		</testsuite>
 	</testsuites>
 </phpunit>
