@@ -19,6 +19,7 @@
 //    along with POS-Tech.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Pasteque;
+
 /** composition doesn't exist in BDD */
 class CompositionsService {
 
@@ -31,8 +32,8 @@ class CompositionsService {
                 $prd->tax_cat, $prd->visible, $prd->scaled, $prd->price_buy,
                 $prd->attributes_set, $prd->barcode, $prd->image,
                 $prd->discount_enabled, $prd->discount_rate);
-
-        $compo->groups = SubgroupsService::getAll($prd->id);
+        $subgrpSrv = new SubgroupsService($compo->id);
+        $compo->groups = $subgrpSrv->getAll();
         return $compo;
     }
 
@@ -63,14 +64,16 @@ class CompositionsService {
                 $prd->tax_cat, $prd->visible, FALSE, $prd->price_buy,
                 NULL, $prd->barcode, $prd->image,
                 $prd->discount_enabled, $prd->discount_rate);
-        $compo->groups = \Pasteque\SubGroupsService::getAll($prd->id);
+        $subgrpSrv = new SubGroupsService($compo->id);
+        $compo->groups = $subgrpSrv->getAll();
         return $compo;
     }
 
     static function delete($id) {
-        $subgroups = SubgroupsService::getAll($id);
+        $subgrpSrv = new SubgroupsService($id);
+        $subgroups = $subgrpSrv->getAll();
         foreach($subgroups as $subgroup) {
-            if (!SubgroupsService::delete($subgroup->id)) {
+            if (!$subgrpSrv->delete($subgroup->id)) {
                 return false;
             }
         }
@@ -169,6 +172,7 @@ class CompositionsService {
      * @return an object SubGroups */
     private static function manageSubgroups($dataSG, $idCompo) {
         $image = NULL;
+        $subgrpSrv = new SubgroupsService($idCompo);
         if ($dataSG->image !== "null") {
             $image = $dataSG->image;
         }
@@ -182,20 +186,20 @@ class CompositionsService {
                         return NULL;
                     }
                 }
-                if (!\Pasteque\SubgroupsService::delete($subgroup->id)) {
+                if (!$subgrpSrv->delete($subgroup->id)) {
                     self::$error[] = array("ERR_DELETE_SUBGROUP %s", $subgroup->label);
                     return NULL;
                 }
                 break;
             case 'NEW':
-                $subgroup->id = \Pasteque\SubGroupsService::create($subgroup);
+                $subgroup->id = $subgrpSrv->create($subgroup);
                 if (!$dataSG->id) {
                     self::$error[] = array("ERR_CREATE_SUBGROUP", $subgroup->name);
                     return NULL;
                 }
                 break;
             default:
-                if (!\Pasteque\SubGroupsService::update($subgroup)) {
+                if (!$subgrpSrv->update($subgroup)) {
                     self::$error[] =  array("ERR_UPDATE_SUBGROUP", $subgroup->name);
                     return false;
                 }
@@ -230,19 +234,20 @@ class CompositionsService {
      * @prod an array representing subgroup product
      * @idSubgroup the id of subgroup who contain products*/
     private static function manageSubgroups_prod($prod, $idSubgroup) {
+        $subgrpPrdSrv = new SubgroupsProdsService($prod->id);
         $prd = SubGroupsProduct::__build(
                 $prod->id, $idSubgroup, $prod->name,
                 $prod->dispOrder);
 
         switch ($prod->status) {
             case 'DEL':
-                if(!\Pasteque\SubgroupsProdsService::delete($prd->product)) {
+                if(!$subgrpPrdSrv->delete($prd->product)) {
                     self::$error[] =  array("ERR_DELETE_SUBGROUP_PROD", $prod->name);
                     return NULL;
                 }
                 break;
             case 'NEW':
-               if (!\Pasteque\SubgroupsProdsService::create($prd)) {
+               if (!$subgrpPrdSrv->create($prd)) {
                     self::$error[] =  array("ERR_CREATE_SUBGROUP_PROD", $prod->name);
                     return NULL;
                 }
@@ -265,28 +270,35 @@ class SubgroupsService extends AbstractService {
             "DISPORDER" => "dispOrder"
     );
 
+    private $compositionId;
+
+    public function __construct($compositionId) {
+        $this->compositionId = $compositionId;
+    }
+
     /** Construct an object SubGroup whith groups set*/
     protected function build($row, $pdo = null) {
             $subgroup = SubGroups::__build($row["ID"], $row["COMPOSITION"], $row["NAME"],
                     $row["DISPORDER"],NULL , $row["IMAGE"]);
-            $subgroup->groups = SubgroupsProdsService::getAll($row['ID']);
+            $subgrpPrdSrv = new SubgroupsProdsService($row['ID']);
+            $subgroup->groups = $subgrpPrdSrv->getAll();
             return $subgroup;
     }
 
     /** get all subgroups of a composition
      * @id an id of composition
      * @return an array of SubGroups*/
-    function getAll($id) {
+    public function getAll() {
         $compo = Array();
         $pdo = PDOBuilder::getPDO();
         $sql = "SELECT * FROM SUBGROUPS WHERE COMPOSITION = :id";
         $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(":id", $id, \PDO::PARAM_STR);
+        $stmt->bindParam(":id", $this->compositionId, \PDO::PARAM_STR);
 
         $res = $stmt->execute();
         if ($res) {
             while ($db_component = $stmt->fetch()) {
-                $subgroup = SubgroupsService::get($db_component['ID']);
+                $subgroup = $this->get($db_component['ID']);
                 $compo[] = $subgroup;
             }
         }
@@ -304,13 +316,19 @@ class SubgroupsProdsService extends AbstractService {
         "DISPORDER" => "dispOrder"
     );
 
+    private $compositionId;
+
+    public function __construct($compositionId) {
+        $this->compositionId = $compositionId;
+    }
+
     protected function build($row, $pdo = null) {
         $label = ProductsService::get($row['PRODUCT'])->label;
         return SubGroupsProduct::__build($row["PRODUCT"],
             $row["SUBGROUP"], $label, $row["DISPORDER"]);
     }
 
-    function create($model) {
+    public function create($model) {
         $dbData = static::unbuild($model);
         $pdo = PDOBuilder::getPDO();
 
@@ -339,18 +357,18 @@ class SubgroupsProdsService extends AbstractService {
     /** get all products containing in a subgroup
      * @id an id of subgroup
      * @return an array of SubGroupsProduct*/
-    function getAll($id) {
+    public function getAll() {
         $grp = Array();
         $pdo = PDOBuilder::getPDO();
         $stmt = $pdo->prepare("SELECT * FROM SUBGROUPS_PROD WHERE "
                 . "SUBGROUP = :id ORDER BY DISPORDER ASC, PRODUCT ASC"
         );
-        $stmt->bindParam(":id", $id, \PDO::PARAM_STR);
+        $stmt->bindParam(":id", $this->compositionId, \PDO::PARAM_STR);
 
         $stmt->execute();
 
         while ($db_component = $stmt->fetch()) {
-            $product = SubgroupsProdsService::build($db_component);
+            $product = $this->build($db_component);
             $grp[] = $product;
         }
         return $grp;

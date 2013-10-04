@@ -29,9 +29,9 @@ class Composition extends Product{
     }
 
     static function __build($id, $reference, $label, $price_sell, $category, $disp_order,
-                $tax_cat, $visible, $scaled, $price_buy,
-                $attributes_set, $barcode, $image, $discount_enabled,
-                $discount_rate) {
+                $tax_cat, $visible, $scaled, $price_buy = null,
+                $attributes_set = null, $barcode = null, $image = null,
+                $discount_enabled = false, $discount_rate = 0.0) {
        $compo = new Composition($reference, $label, $price_sell, $category, $disp_order,
                 $tax_cat, $visible, $scaled, $price_buy,
                 $attributes_set, $barcode, $image, $discount_enabled,

@@ -4,28 +4,29 @@ namespace ProductCompositions;
 $error = NULL;
 $message = NULL;
 
-if (isset($_GET['product_id'])) {
-    $compo  = \Pasteque\CompositionsService::get($_GET['product_id']);
-    $product = \Pasteque\ProductsService::get($compo->id);
-    $vatprice = "";
-    $price = $product->price_sell;
-} else {
-    $vatprice = "";
-    $price = "";
-    $product = NULL;
-}
-
 if (isset($_POST['inputData'])) {
 
     $objJSON = json_decode($_POST['inputData']);
     $compo = \Pasteque\CompositionsService::maj($objJSON);
-    $product = $compo;
-    if (!$product) {
+    if (!$compo) {
         $err = \Pasteque\CompositionsService::errorInfo();
         foreach($err as $errmess) {
             $error[] = \i18n($errmess[0], PLUGIN_NAME, $errmess[1]);
         }
+    } else {
+        $message = \i18n("Changes saved");
     }
+}
+
+if (isset($_GET['product_id'])) {
+    $composition  = \Pasteque\CompositionsService::get($_GET['product_id']);
+    $tax = $composition->tax_cat->getCurrentTax();
+    $vatprice = $composition->price_sell * (1 + $tax->rate);
+    $price = sprintf("%.2f", $composition->price_sell);
+} else {
+    $vatprice = "";
+    $price = "";
+    $composition = NULL;
 }
 
 $categories = \Pasteque\CategoriesService::getAll();
@@ -53,60 +54,61 @@ function catalog_category($category, $js) {
     echo "</a>";
 }
 
-\Pasteque\tpl_msg_box($message, $error);
 ?>
 
 <h1><?php \pi18n('Composition edit',PLUGIN_NAME)?></h1>
 
-<?php if (isset($product)) { ?>
+<?php \Pasteque\tpl_msg_box($message, $error); ?>
+
+<?php if (isset($composition)) { ?>
     <form method='post' action="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'composition');?>">
-        <input type="hidden" value="<?php echo $product->id?>" name="delete-comp">
+        <input type="hidden" value="<?php echo $composition->id?>" name="delete-comp">
         <input type='submit' class='btn-delete' value='<?php \pi18n('Delete this composition',PLUGIN_NAME);?>'/>
     </form>
 <?php } ?>
 
-<form class='edit' id='data-compo' onsubmit='return false;'>
+<form class='edit' id='data-compo' method='post' onsubmit='return submitData();' action="<?php echo \Pasteque\get_current_url();?>">
 <div>
     <div id='composition' class='row'>
     <fieldset>
         <legend>Composition</legend>
-        <?php \Pasteque\form_hidden("edit", $product, "id"); ?>
+        <?php \Pasteque\form_hidden("edit", $composition, "id"); ?>
         <fieldset>
         <legend><?php \pi18n("Display", PLUGIN_NAME); ?></legend>
-        <?php \Pasteque\form_input("edit", "Product", $product, "label", "string", array("required" => true)); ?>
-        <?php \Pasteque\form_input("edit", "Product", $product, "visible", "boolean"); ?>
-        <?php \Pasteque\form_input("edit", "Product", $product, "disp_order", "numeric"); ?>
+        <?php \Pasteque\form_input("edit", "Product", $composition, "label", "string", array("required" => true)); ?>
+        <?php \Pasteque\form_input("edit", "Product", $composition, "visible", "boolean"); ?>
+        <?php \Pasteque\form_input("edit", "Product", $composition, "disp_order", "numeric"); ?>
         </fieldset>
         <fieldset>
         <legend><?php \pi18n("Price", PLUGIN_NAME); ?></legend>
-        <?php \Pasteque\form_input("edit", "Product", $product, "tax_cat", "pick", array("model" => "TaxCategory")); ?>
+        <?php \Pasteque\form_input("edit", "Product", $composition, "tax_cat", "pick", array("model" => "TaxCategory")); ?>
         <div class="row">
             <label for="sellvat"><?php \pi18n("Sell price + taxes", PLUGIN_NAME); ?></label>
             <input id="sellvat" type="numeric" name="selltax" value="<?php echo $vatprice; ?>" />
         </div>
         <div class="row">
             <label for="sell"><?php \pi18n("Product.price_sell"); ?></label>
-            <input type="hidden" id="realsell" name="realsell" <?php if ($product != NULL) echo 'value="' . $product->price_sell. '"'; ?> />
+            <input type="hidden" id="realsell" name="realsell" <?php if ($composition != NULL) echo 'value="' . $composition->price_sell. '"'; ?> />
             <input id="sell" type="numeric" name="sell" value="<?php echo $price; ?>" />
         </div>
-        <?php \Pasteque\form_input("edit", "Product", $product, "price_buy", "numeric"); ?>
+        <?php \Pasteque\form_input("edit", "Product", $composition, "price_buy", "numeric"); ?>
         <div class="row">
             <label for="margin"><?php \pi18n("Margin", PLUGIN_NAME); ?></label>
             <input id="margin" type="numeric" disabled="true" />
         </div>
         <?php if ($discounts) {
-            \Pasteque\form_input("edit", "Product", $product, "discount_enabled", "boolean", array("default" => FALSE));
-            \Pasteque\form_input("edit", "Product", $product, "discount_rate", "numeric");
+            \Pasteque\form_input("edit", "Product", $composition, "discount_enabled", "boolean", array("default" => FALSE));
+            \Pasteque\form_input("edit", "Product", $composition, "discount_rate", "numeric");
             } ?>
         </fieldset>
         <fieldset>
             <legend><?php \pi18n("Referencing", PLUGIN_NAME); ?></legend>
-            <?php \Pasteque\form_input("edit", "Product", $product, "reference", "string", array("required" => true)); ?>
+            <?php \Pasteque\form_input("edit", "Product", $composition, "reference", "string", array("required" => true)); ?>
             <div class="row">
                 <label for="barcode"><?php \pi18n("Product.barcode"); ?></label>
                 <div style="display:inline-block; max-width:65%;">
                     <img id="barcodeImg" src="" />
-                    <input id="barcode" type="text" name="barcode" <?php if ($product != NULL) echo 'value="' . $product->barcode . '"'; ?> />
+                    <input id="barcode" type="text" name="barcode" <?php if ($composition != NULL) echo 'value="' . $product->barcode . '"'; ?> />
                     <a class="btn" href="" onClick="javascript:generateBarcode(); return false;"><?php \pi18n("Generate"); ?></a>
                 </div>
             </div>
@@ -160,9 +162,7 @@ function catalog_category($category, $js) {
         </fieldSet>
     </div>
 </div>
-</form>
 
-<form method='post' onsubmit='return submitData();' action="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'composition_edit');?>">
         <input id="inputData" name="inputData" type="text" style="display:none">
         <?php \Pasteque\form_save();?>
 </form>
@@ -338,26 +338,29 @@ updateMargin = function() {
 </script>
 
 <?php
+    function esc_quote($data) {
+        return str_replace("'", "\\'", $data);
+    }
     echo "<script type='text/javascript'>";
-if (isset($compo)) {
+if (isset($composition)) {
     echo "addDataCmp(";
-    echo "'" . $compo->id . "', '" . $compo->reference
-            . "', '" . $compo->label . "', '" . $compo->disp_order
-            . "', '" . $compo->visible . "', '" . $compo->price_sell 
-            . "', '" . $compo->price_buy . "', null, '" . $compo->tax_cat->label
-            . "', '" . $compo->barcode . "', '" . $compo->discount_enabled
-            . "', '" . $compo->discount_rate . "', '" . $compo->image 
+    echo "'" . esc_quote($composition->id) . "', '" . esc_quote($composition->reference)
+            . "', '" . esc_quote($composition->label) . "', '" . esc_quote($composition->disp_order)
+            . "', '" . esc_quote($composition->visible) . "', '" . esc_quote($composition->price_sell)
+            . "', '" . esc_quote($composition->price_buy) . "', null, '" . esc_quote($composition->tax_cat->label)
+            . "', '" . esc_quote($composition->barcode) . "', '" . esc_quote($composition->discount_enabled)
+            . "', '" . esc_quote($composition->discount_rate) . "', '" . esc_quote($composition->image )
             . "');\n";
-    if ($compo->groups !== NULL) {
-        foreach ($compo->groups as $subG) {
-            echo "addDataSg('"  . $subG->id . "', '" . $subG->label
-                    . "', '" . $subG->image . "','"  . $subG->dispOrder
+    if ($composition->groups !== NULL) {
+        foreach ($composition->groups as $subG) {
+            echo "addDataSg('"  . esc_quote($subG->id) . "', '" . esc_quote($subG->label)
+                    . "', '" . esc_quote($subG->image) . "','"  . esc_quote($subG->dispOrder)
                     . "', 'status');\n";
             if ($subG->groups !== NULL) {
                 foreach ($subG->groups as $prodG) {
-                    echo "addDataSgPrd('" . $prodG->subgroup 
-                            . "', '" . $prodG->product . "', '" . $prodG->label
-                            . "', '" . $prodG->dispOrder . "' , 'status');\n";
+                    echo "addDataSgPrd('" . esc_quote($prodG->subgroup)
+                            . "', '" . esc_quote($prodG->product) . "', '" . esc_quote($prodG->label)
+                            . "', '" . esc_quote($prodG->dispOrder) . "' , 'status');\n";
                 }
             }
         }
