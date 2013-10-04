@@ -25,10 +25,13 @@
 "SubGroups": "Sous-groupes",
 "Name": "Nom",
 "Image": "Image",
-"Rename subgroup": "Renomer le sous-groupe",
+"Rename subgroup": "Renommer le sous-groupe",
 "Product": "Produit",
 
-"Add a composition": "Créer une composition",
+"Add composition": "Créer une composition",
+"Add all products of the category": "Ajouter tous les produits de la catégorie",
+"Delete subgroup": "Supprimer le sous-groupe",
+"Add subgroup": "Créer un sous-groupe",
 
 "ERR_COMPOSITION_UNDEFINED": "Ajouté d'abord une composiition",
 "ERR_COMPOSITION_NAME_EMPTY": "Le nom de la composition est vide",

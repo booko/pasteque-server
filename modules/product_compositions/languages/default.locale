@@ -28,8 +28,10 @@
 "Rename subgroup": "Rename subgroup",
 "Product": "Product",
 
-"Add a composition": "Add a composition",
-
+"Add composition": "Add a composition",
+"Add all products of the category": "Add all products of the category",
+"Delete subgroup": "Delete subgroup",
+"Add subgroup": "Add a subgroup",
 
 "ERR_COMPOSITION_UNDEFINED": "Add composition first",
 "ERR_COMPOSITION_NAME_EMPTY": "The name of composition is empty",

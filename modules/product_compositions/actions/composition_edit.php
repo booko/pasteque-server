@@ -113,7 +113,7 @@ function catalog_category($category, $js) {
                 </div>
             </div>
         </fieldset>
-        <?php \Pasteque\tpl_js_btn("btn", "addCmp()", "add_cmp");?>
+        <?php \Pasteque\tpl_js_btn("btn", "addCmp()", \i18n("Add composition", PLUGIN_NAME));?>
     </fieldset>
 
 
@@ -130,14 +130,14 @@ function catalog_category($category, $js) {
             <input id="edit-sgOrder" type="numeric" name="disp_order" value='0'>
         </div>
         <div class="row">
-            <?php \Pasteque\tpl_js_btn("btn", "addSubGroup()", "add_sg");?>
+            <?php \Pasteque\tpl_js_btn("btn", "addSubGroup()", \i18n("Add subgroup", PLUGIN_NAME));?>
         </div>
 
          <select id="listSubGr" onchange="showSubgroup()">
         </select>
 
-        <input type='text' id='edit-sgNewName' placeholder='<?php pi18n('Rename subgroup', PLUGIN_NAME); ?>'/>
-        <?php \Pasteque\tpl_js_btn("btn-delete", "delSubgroup()", "del_sg");?>
+        <input type='text' id='edit-sgNewName' placeholder='<?php \pi18n('Rename subgroup', PLUGIN_NAME); ?>'/>
+        <?php \Pasteque\tpl_js_btn("btn-delete", "delSubgroup()", \i18n("Delete subgroup", PLUGIN_NAME));?>
 
         <div>
             <div id='product-sub-container' class="product-container"></div>
@@ -157,7 +157,7 @@ function catalog_category($category, $js) {
             </div>
             <div id="products" class="catalog-products-container"></div>
             <div class='row' id='btnAddAllPrd'>
-                <input type='button' onclick='javascript:addAllPrd()' value='<?php pi18n('Add all product of the category:',PLUGIN_NAME)?>'>
+                <input type='button' onclick='javascript:addAllPrd()' value='<?php pi18n('Add all products of the category',PLUGIN_NAME)?>'>
             </div>
         </fieldSet>
     </div>
@@ -223,11 +223,6 @@ function catalog_category($category, $js) {
 		}
     currentCategory = category;
 
-    // modify label of button add all product:
-    var btn= $("#btnAddAllPrd input").val();
-    var res = btn.substr(0, btn.indexOf(':') + 1)
-            + " " + $("#category-" + category + " p").html();
-    $("#btnAddAllPrd input").val(res);
 	}
 
 

@@ -18,7 +18,7 @@ $compositions = \Pasteque\CompositionsService::getAll();
 <?php \Pasteque\tpl_msg_box($message, $error); ?>
 
 <?php \Pasteque\tpl_btn('btn', \Pasteque\get_module_url_action(PLUGIN_NAME, "composition_edit"),
-        \i18n('Add a composition', PLUGIN_NAME), 'img/btn_add.png');?>
+        \i18n('Add composition', PLUGIN_NAME), 'img/btn_add.png');?>
 
 
 <p><?php \pi18n("%d compositions", PLUGIN_NAME, count($compositions)); ?></p>
