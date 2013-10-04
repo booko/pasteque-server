@@ -105,5 +105,14 @@
 "Header default": "Defaut d'entête",
 
 "Floors.name": "Désignation",
-"Average": "Moyenne"
+"Average": "Moyenne",
+
+"Currency.label": "Devise",
+"Currency.rate": "Taux de change",
+"Currency.main": "Principale",
+"Currency.symbol": "Symbole",
+"Currency.decimalSeparator": "Séparateur de décimale",
+"Currency.thousandsSeparator": "Séparateur de milliers",
+"Currency.format": "Format",
+"Currency.active": "Active"
 }

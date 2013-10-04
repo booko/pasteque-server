@@ -105,5 +105,14 @@
 "Header default": "Header default",
 
 "Floors.name": "Name",
-"Average": "Average"
+"Average": "Average",
+
+"Currency.name": "Currency",
+"Currency.rate": "Change rate",
+"Currency.main": "Main",
+"Currency.symbol": "Symbol",
+"Currency.decimalSeparator": "Decimal separator",
+"Currency.thousandsSeparator": "Thousands separator",
+"Currency.format": "Format",
+"Currency.active": "Active"
 }
