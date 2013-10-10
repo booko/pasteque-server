@@ -58,8 +58,9 @@ class Installer {
 
     static function getVersion() {
         $pdo = PDOBuilder::getPDO();
-        $sql = "SELECT VERSION FROM APPLICATIONS WHERE ID = \"postech\"";
+        $sql = "SELECT VERSION FROM APPLICATIONS WHERE ID = :id";
         $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(":id", "pasteque");
         $stmt->execute();
         $data = $stmt->fetch();
         if ($data !== false) {
