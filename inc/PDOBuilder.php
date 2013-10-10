@@ -46,6 +46,7 @@ class PDOBuilder {
         try {
             PDOBuilder::$pdo = new \PDO($dsn, get_db_user($uid), get_db_password($uid),
                     array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
+            PDOBuilder::$pdo->setAttribute(\PDO::ATTR_CASE, \PDO::CASE_UPPER);
             return PDOBuilder::$pdo;
         } catch (\PDOException $e) {
             die("Connexion error " . $e);

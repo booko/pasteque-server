@@ -141,7 +141,11 @@ class ProductsService {
         $stmt->bindParam(":ref", $prd->reference, \PDO::PARAM_STR);
         $stmt->bindParam(":code", $code, \PDO::PARAM_STR);
         $stmt->bindParam(":name", $prd->label, \PDO::PARAM_STR);
-        $stmt->bindParam(":buy", $prd->price_buy, \PDO::PARAM_STR);
+        if ($prd->price_buy === null || $prd->price_buy === "") {
+            $stmt->bindParam(":buy", $prd->price_buy, \PDO::PARAM_NULL);
+        } else {
+            $stmt->bindParam(":buy", $prd->price_buy, \PDO::PARAM_STR);
+        }
         $stmt->bindParam(":sell", $prd->price_sell, \PDO::PARAM_STR);
         $stmt->bindParam(":cat", $prd->category->id, \PDO::PARAM_INT);
         $stmt->bindParam(":tax", $prd->tax_cat->id, \PDO::PARAM_INT);
@@ -149,7 +153,11 @@ class ProductsService {
         $stmt->bindParam(":scale", $prd->scaled, \PDO::PARAM_INT);
         $stmt->bindParam(":id", $prd->id, \PDO::PARAM_INT);
         $stmt->bindParam(":discount_enabled", $prd->discount_enabled, \PDO::PARAM_INT);
-        $stmt->bindParam(":discount_rate", $prd->discount_rate);
+        if ($prd->discount_rate === null || $prd->discount_rate === "") {
+            $stmt->bindValue(":disc_rate", 0.0);
+        } else {
+            $stmt->bindParam(":disc_rate", $prd->discount_rate);
+        }
         if ($prd->image !== "") {
             $stmt->bindParam(":img", $prd->image, \PDO::PARAM_LOB);
         }
@@ -195,19 +203,28 @@ class ProductsService {
         $stmt->bindParam(":ref", $prd->reference, \PDO::PARAM_STR);
         $stmt->bindParam(":code", $code, \PDO::PARAM_STR);
         $stmt->bindParam(":name", $prd->label, \PDO::PARAM_STR);
-        $stmt->bindParam(":buy", $prd->price_buy, \PDO::PARAM_STR);
+        if ($prd->price_buy === null || $prd->price_buy === "") {
+            $stmt->bindParam(":buy", $prd->price_buy, \PDO::PARAM_NULL);
+        } else {
+            $stmt->bindParam(":buy", $prd->price_buy, \PDO::PARAM_STR);
+        }
         $stmt->bindParam(":sell", $prd->price_sell, \PDO::PARAM_STR);
         $stmt->bindParam(":cat", $prd->category->id, \PDO::PARAM_INT);
         $stmt->bindParam(":tax", $prd->tax_cat->id, \PDO::PARAM_INT);
         $stmt->bindParam(":attr", $attr_id, \PDO::PARAM_INT);
         $stmt->bindParam(":scale", $prd->scaled, \PDO::PARAM_INT);
         $stmt->bindParam(":disc_enabled", $prd->discount_enabled, \PDO::PARAM_INT);
-        $stmt->bindParam(":disc_rate", $prd->discount_rate);
+        if ($prd->discount_rate === null || $prd->discount_rate === "") {
+            $stmt->bindValue(":disc_rate", 0.0);
+        } else {
+            $stmt->bindParam(":disc_rate", $prd->discount_rate);
+        }
         $stmt->bindParam(":id", $id, \PDO::PARAM_INT);
         if ($prd->image !== "") {
             $stmt->bindParam(":img", $prd->image, \PDO::PARAM_LOB);
         }
         if (!$stmt->execute()) {
+        var_dump($stmt->errorInfo());
             return FALSE;
         }
         if ($prd->visible == 1 || $prd->visible == TRUE) {

@@ -71,7 +71,11 @@ abstract class AbstractService {
         // Assign values to sql
         $stmt = $pdo->prepare($sql);
         foreach ($dbFields as $field) {
-            $stmt->bindValue(":" . $field, $dbData[$field]);
+            if ($dbData[$field] === null) {
+                $stmt->bindValue(":" . $field, null, \PDO::PARAM_NULL);
+            } else {
+                $stmt->bindValue(":" . $field, $dbData[$field]);
+            }
         }
         // RUN!
         if ($stmt->execute()) {
@@ -101,7 +105,11 @@ abstract class AbstractService {
         // Assign values to sql
         $stmt = $pdo->prepare($sql);
         foreach ($dbFields as $field) {
-            $stmt->bindValue(":" . $field, $dbData[$field]);
+            if ($dbData[$field] === null) {
+                $stmt->bindValue(":" . $field, null, \PDO::PARAM_NULL);
+            } else {
+                $stmt->bindValue(":" . $field, $dbData[$field]);
+            }
         }
         $stmt->bindValue(":_id_", $dbData[static::$dbIdField]);
         // RUN!

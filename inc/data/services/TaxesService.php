@@ -24,8 +24,11 @@ class TaxesService {
 
     private static function buildDBTaxCat($db_taxcat, $pdo) {
         $taxcat = TaxCat::__build($db_taxcat['ID'], $db_taxcat['NAME']);
-        $sqltax = 'SELECT * FROM TAXES WHERE CATEGORY = "' . $db_taxcat['ID'] . '"';
-        foreach ($pdo->query($sqltax) as $db_tax) {
+        $sql = "SELECT * FROM TAXES WHERE CATEGORY = :cat";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(":cat", $db_taxcat['ID']);
+        $stmt->execute();
+        foreach ($stmt->fetch() as $db_tax) {
             $tax = TaxesService::buildDBTax($db_tax);
             $taxcat->addTax($tax);
         }
