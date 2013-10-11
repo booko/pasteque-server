@@ -27,18 +27,18 @@ class Resource {
 	const TYPE_BIN = 2;
 
     public $id;
-    public $name;
+    public $label;
     public $type;
     public $content;
 
-    static function __build($id, $name, $type, $content) {
-        $res = new Resource($name, $type, $content);
+    static function __build($id, $label, $type, $content) {
+        $res = new Resource($label, $type, $content);
         $res->id = $id;
         return $res;
     }
 
-    function __construct($name, $type, $content) {
-        $this->name = $name;
+    function __construct($label, $type, $content) {
+        $this->label = $label;
         $this->type = $type;
         $this->content = $content;
     }

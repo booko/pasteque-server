@@ -20,11 +20,12 @@
 
 namespace BaseResources;
 
+$resSrv = new \Pasteque\ResourcesService();
 if (isset($_POST['delete-res'])) {
-    \Pasteque\ResourcesService::delete($_POST['delete-res']);
+    $resSrv->delete($_POST['delete-res']);
 }
 
-$resources = \Pasteque\ResourcesService::getAll();
+$resources = $resSrv->getAll();
 ?>
 
 <h1><?php \pi18n("Resources", PLUGIN_NAME); ?></h1>
@@ -34,7 +35,7 @@ $resources = \Pasteque\ResourcesService::getAll();
 <table cellpadding="0" cellspacing="0">
 	<thead>
 		<tr>
-			<th><?php \pi18n("Resource.name"); ?></th>
+			<th><?php \pi18n("Resource.label"); ?></th>
 			<th></th>
 		</tr>
 	</thead>
@@ -45,7 +46,7 @@ $par = FALSE;
 foreach ($resources as $res) {
     $par = !$par; ?>
 	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
-		<td><?php echo $res->name; ?></td>
+		<td><?php echo $res->label; ?></td>
 		<td class="edition">
 			<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'resource_edit', array('id' => $res->id)); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
 			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("res", $res->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>

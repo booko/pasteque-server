@@ -116,5 +116,7 @@
 "Currency.decimalSeparator": "Decimal separator",
 "Currency.thousandsSeparator": "Thousands separator",
 "Currency.format": "Format",
-"Currency.active": "Active"
+"Currency.active": "Active",
+
+"Resource.label": "Label"
 }

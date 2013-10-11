@@ -20,41 +20,42 @@
 
 namespace BaseResources;
 
-$message = NULL;
-$error = NULL;
+$message = null;
+$error = null;
+$resSrv = new \Pasteque\ResourcesService();
 if (isset($_POST['id'])) {
     if ($_FILES['file']['tmp_name'] !== "") {
         $content = file_get_contents($_FILES['file']['tmp_name']);
     } else if ($_POST['type'] == \Pasteque\Resource::TYPE_TEXT) {
         $content = $_POST['content'];
     }
-    $res = \Pasteque\Resource::__build($_POST['id'], $_POST['name'],
+    $res = \Pasteque\Resource::__build($_POST['id'], $_POST['label'],
             $_POST['type'], $content);
-    if (\Pasteque\ResourcesService::update($res)) {
+    if ($resSrv->update($res)) {
         $message = \i18n("Changes saved");
     } else {
         $error = \i18n("Unable to save changes");
     }
-} else if (isset($_POST['name'])) {
+} else if (isset($_POST['label'])) {
     if ($_FILES['file']['tmp_name'] !== "") {
         $content = file_get_contents($_FILES['file']['tmp_name']);
     } else if ($_POST['type'] == \Pasteque\Resource::TYPE_TEXT) {
         $content = $_POST['content'];
     }
-    $res = new \Pasteque\Resource($_POST['name'],
-            $_POST['type'], $content);
-    if (\Pasteque\ResourcesService::create($res)) {
+    $res = new \Pasteque\Resource($_POST['label'],
+            $_POST['type'], $content);;
+    if ($resSrv->create($res)) {
         $message = \i18n("Changes saved");
     } else {
         $error = \i18n("Unable to save changes");
     }
 }
 
-$resource = NULL;
+$resource = null;
 $txtContent = "";
 $imgContent = "";
 if (isset($_GET['id'])) {
-    $resource = \Pasteque\ResourcesService::get($_GET['id']);
+    $resource = $resSrv->get($_GET['id']);
 
     switch ($resource->type) {
     case \Pasteque\Resource::TYPE_TEXT:
@@ -74,7 +75,7 @@ if (isset($_GET['id'])) {
 <form id="form" class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post" enctype="multipart/form-data">
 	<?php \Pasteque\form_hidden("edit", $resource, "id"); ?>
 	<div class="row">
-		<?php \Pasteque\form_input("edit", "Resource", $resource, "name", "string", array("required" => true)); ?>
+		<?php \Pasteque\form_input("edit", "Resource", $resource, "label", "string", array("required" => true)); ?>
 	</div>
 	<div id="selector">
 		<div class="row">
