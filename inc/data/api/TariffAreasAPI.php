@@ -20,15 +20,22 @@
 
 namespace Pasteque;
 
-$action = $_GET['action'];
-$ret = null;
+class TariffAreasAPI extends APIService {
 
-switch ($action) {
-case 'getAll':
-    $ret = TariffAreasService::getAll();
-    break;
+    protected function check() {
+        switch ($this->action) {
+        case 'getAll':
+            return true;
+        }
+        return false;
+    }
+
+    protected function proceed() {
+        switch ($this->action) {
+        case 'getAll':
+            $this->succeed(TariffAreasService::getAll());
+        }
+    }
 }
-
-echo(json_encode($ret));
 
 ?>

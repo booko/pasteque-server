@@ -18,26 +18,10 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
-// API is the entry point for all API calls.
 namespace Pasteque;
 
-const ABSPATH = __DIR__; // Base path. Also to check if a call
-                         // originates from api.php
-
-// Load
-require_once(ABSPATH . "/inc/load.php");
-require_once(ABSPATH . "/inc/load_api.php");
-
-if (isset($_GET[URL_ACTION_PARAM])) {
-    $api = $_GET[URL_ACTION_PARAM];
-} else {
-    $api = null;
-}
-(isset($_GET['action'])) ? $action = $_GET['action'] : $action = null;
-$params = $_GET;
-$broker = new APIBroker($api);
-$result = $broker->run($action, $params);
-
-echo json_encode($result);
+require_once(ABSPATH . "/inc/api/APIResult.php");
+require_once(ABSPATH . "/inc/api/APIService.php");
+require_once(ABSPATH . "/inc/api/APIBroker.php");
 
 ?>

@@ -20,22 +20,28 @@
 
 namespace Pasteque;
 
-$action = $_GET['action'];
-$ret = null;
+class PlacesAPI extends APIService {
 
-switch ($action) {
-case 'get':
-    if (!isset($_GET['id'])) {
-       $ret = false;
-       break;
+    protected function check() {
+        switch ($this->action) {
+        case 'get':
+            return isset($this->params['id']);
+        case 'getAll':
+            return true;
+        }
+        return false;
     }
-    $ret = PlacesService::getFloor($_GET['id']);
-    break;
-case 'getAll':
-    $ret = PlacesService::getAllFloors();
-    break;
-}
 
-echo(json_encode($ret));
+    protected function proceed() {
+        switch ($this->action) {
+        case 'get':
+            $this->succeed(PlacesService::getFloor($_GET['id']));
+            break;
+        case 'getAll':
+            $this->succeed(PlacesService::getAllFloors());
+            break;
+        }
+    }
+}
 
 ?>

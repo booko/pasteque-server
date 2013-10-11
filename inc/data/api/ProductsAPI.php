@@ -20,89 +20,38 @@
 
 namespace Pasteque;
 
-$action = $_GET['action'];
-$ret = null;
+class ProductsAPI extends APIService {
 
-switch ($action) {
-case 'get':
-    if (!isset($_GET['id'])) {
-       $ret = false;
-       break;
-    }
-    $ret = ProductsService::get($_GET['id']);
-    break;
-case 'getAll':
-    $ret = ProductsService::getAll();
-    break;
-case 'getAllFull':
-    $ret = ProductsService::getAll(true, true);
-    foreach ($ret as $r) {
-        if ($r->image !== NULL) {
-            $r->image = base64_encode($r->image);
+    protected function check() {
+        switch ($this->action) {
+        case 'get':
+            return isset($this->params['id']);
+        case 'getAll':
+            return true;
+        case 'getAllFull':
+            return true;
         }
     }
-    break;
-case 'create':
-    if (!isset($_GET['ref']) || !isset($_GET['label'])
-        || !isset($_GET['sell']) || !isset($_GET['cat']) || !isset($_GET['tax'])
-        || !isset($_GET['visible']) || !isset($_GET['scaled'])) {
-        $ret = false;
-        break;
-    }
-    $code = "";
-    if (isset($_GET['code'])) {
-        $code = $_GET['code'];
-    }
-    $buy = null;
-    if (isset($_GET['buy'])) {
-        $buy = $_GET['buy'];
-    }
-    $attr = null;
-    if (isset($_GET['attr'])) {
-        $attr = Attribute::__build($_GET['attr'], "dummy");
-    }
-    $cat = Category::__build($_GET['cat'], null, "dummy");
-    $tax = TaxCat::__build($_GET['tax'], "dummy");
-    $prd = new Product($_GET['ref'], $_GET['label'], $_GET['sell'], $cat, $tax,
-                       $_GET['visible'], $_GET['scaled'], $buy, $attr, $code);
-    $ret = ProductsService::create($prd);
-    break;
-case 'delete':
-    if (!isset($_GET['id'])) {
-        $ret = false;
-        break;
-    }
-    $ret = ProductsService::delete($_GET['id']);
-    break;
-case 'update':
-    if (!isset($_GET['id']) || !isset($_GET['ref']) || !isset($_GET['label'])
-        || !isset($_GET['sell']) || !isset($_GET['cat']) || !isset($_GET['tax'])
-        || !isset($_GET['visible']) || !isset($_GET['scaled'])) {
-        $ret = false;
-        break;
-    }
-    $code = "";
-    if (isset($_GET['code'])) {
-        $code = $_GET['code'];
-    }
-    $buy = null;
-    if (isset($_GET['buy'])) {
-        $buy = $_GET['buy'];
-    }
-    $attr = null;
-    if (isset($_GET['attr'])) {
-        $attr = Attribute::__build($_GET['attr'], "dummy");
-    }
-    $cat = Category::__build($_GET['cat'], null, "dummy");
-    $tax = TaxCat::__build($_GET['tax'], "dummy");
-    $prd = Product::__build($_GET['id'], $_GET['ref'], $_GET['label'],
-                            $_GET['sell'], $cat, $tax,
-                            $_GET['visible'], $_GET['scaled'],
-                            $buy, $attr, $code);
-    $ret = ProductsService::update($prd);
-    break;
-}
 
-echo(json_encode($ret));
+    protected function proceed() {
+        switch ($this->action) {
+        case 'get':
+            $this->succeed(ProductsService::get($this->params['id']));
+            break;
+        case 'getAll':
+            $this->succeed(ProductsService::getAll());
+            break;
+        case 'getAllFull':
+            $ret = ProductsService::getAll(true, true);
+            foreach ($ret as $r) {
+                if ($r->image !== NULL) {
+                    $r->image = base64_encode($r->image);
+                }
+            }
+            $this->succeed($ret);
+            break;
+        }
+    }
+}
 
 ?>

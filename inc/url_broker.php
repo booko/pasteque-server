@@ -27,14 +27,6 @@ function redirect($path) {
     }
     require_once(ABSPATH . "/" . $path . ".php");
 }
-function redirect_api($path) {
-    if (!file_exists(ABSPATH . "/inc/data/api/" . $path . ".php")) {
-        $ret = array("error" => "No such API");
-        echo json_encode($ret);
-        return;
-    }
-    require_once(ABSPATH . "/inc/data/api/" . $path . ".php");
-}
 function redirect_report($module, $name) {
     if (!file_exists(ABSPATH . "/modules/" . $module . "/reports/" . $name . ".php")) {
         $ret = array("error" => "No such seport");
@@ -53,18 +45,6 @@ function url_content() {
     }
     $action = str_replace("..", "", $action);
     redirect($action);
-}
-/** Redirect to the given API service */
-function api_content() {
-    if (!isset($_GET[URL_ACTION_PARAM])) {
-        $ret = array("error" => "No such API");
-        echo json_encode($ret);
-        return;
-    } else {
-        $action = $_GET[URL_ACTION_PARAM];
-    }
-    $action = str_replace("..", "", $action);
-    redirect_api($action);
 }
 /** Redirect to the given report data */
 function report_content($module, $name) {

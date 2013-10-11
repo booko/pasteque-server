@@ -20,11 +20,17 @@
 
 namespace Pasteque;
 
-$ret = new \StdClass();
+class VersionAPI extends APIService {
 
-$ret->version = VERSION;
-$ret->level = DB_VERSION;
-
-echo(json_encode($ret));
+    protected function check() {
+        return true;
+    }
+    protected function proceed() {
+        $ret = new \StdClass();
+        $ret->version = VERSION;
+        $ret->level = DB_VERSION;
+        $this->succeed($ret);
+    }
+}
 
 ?>

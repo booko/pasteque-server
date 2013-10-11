@@ -20,50 +20,29 @@
 
 namespace Pasteque;
 
-$action = $_GET['action'];
-$ret = null;
+class CategoriesAPI extends APIService {
 
-switch ($action) {
-case 'get':
-    if (!isset($_GET['id'])) {
-       $ret = false;
-       break;
+    protected function check() {
+        switch ($this->action) {
+        case 'get':
+            return isset($this->params['id']);
+        case 'getAll':
+            return true;
+        }
+        return false;
     }
-    $ret = CategoriesService::get($_GET['id']);
-    break;
-case 'getAll':
-    $ret = CategoriesService::getAll();
-    break;
-case 'create':
-    if (!isset($_GET['label'])) {
-        $ret = false;
-        break;
+
+    protected function proceed() {
+        switch ($this->action) {
+        case 'get':
+            $this->succeed(CategoriesService::get($_GET['id']));
+            break;
+        case 'getAll':
+            $this->succeed(CategoriesService::getAll());
+            break;
+        }
     }
-    $parent = null;
-    if (isset($_GET['parent_id'])) {
-        $parent = $_GET['parent_id'];
-    }
-    $cat = new Category($parent, $_GET['label']);
-    $ret = CategoriesService::createCat($cat);
-    break;
-case 'delete':
-    if (!isset($_GET['id'])) {
-        $ret = false;
-        break;
-    }
-    $ret = CategoriesService::deleteCat($_GET['id']);
-    break;
-case 'update':
-    if (!isset($_GET['id']) || !isset($_GET['label'])
-        || !isset($_GET['parent_id'])) {
-        $ret = false;
-        break;
-    }
-    $cat = Category::__build($_GET['id'], $_GET['parent_id'], $_GET['label']);
-    $ret = CategoriesService::updateCat($cat);
-    break;
+
 }
-
-echo(json_encode($ret));
 
 ?>

@@ -23,70 +23,84 @@ namespace Pasteque;
 $action = $_GET['action'];
 $ret = null;
 
-switch ($action) {
-case 'save':
-    // Receive ticket data as json
-    $json = json_decode($_POST['tickets']);
-    $jsonCash = json_decode($_POST['cash']);
-    $cashId = $jsonCash->id;
-    $location = NULL;
-    if (isset($_POST['location'])) {
-        $location = StocksService::getLocationId($_POST['location']);
-        if ($location === NULL) {
-            $ret = FALSE;
+class TicketsAPI extends APIService {
+
+    protected function check() {
+        switch ($this->action) {
+        case 'save':
+            return isset($this->params['tickets'])
+                    && isset($this->params['cash'];
+        }
+        return false;
+    }
+
+    protected function proceed() {
+        switch ($this->action) {
+        case 'save':
+            // Receive ticket data as json
+            $json = json_decode($this->params['tickets']);
+            $jsonCash = json_decode($this->params['cash']);
+            $cashId = $jsonCash->id;
+            $location = NULL;
+            if (isset($this->params['location'])) {
+                $location = StocksService::getLocationId($this->params['location']);
+                if ($location === NULL) {
+                    $ret = FALSE;
+                    break;
+                }
+            }
+            $ticketsCount = count($json);
+            $successes = 0;
+            $pdo = PDOBuilder::getPDO();
+            $pdo->beginTransaction();
+            foreach ($json as $jsonTkt) {
+                $label = $jsonTkt->ticket->label;
+                $cashierId = $jsonTkt->cashier->id;
+                $customerId = $jsonTkt->ticket->customer;
+                $date = $jsonTkt->date;
+                $lines = array();
+                foreach ($jsonTkt->ticket->lines as $jsline) {
+                    // Get line info
+                    $line = count($lines) + 1;
+                    $productId = $jsline->product->id;
+                    $quantity = $jsline->quantity;
+                    $price = $jsline->product->price;
+                    $taxId = $jsline->product->taxId;
+                    $newLine = new TicketLineLight($line, $productId, $quantity, 
+                                                   $price, $taxId);
+                    $lines[] = $newLine;
+                }
+                $payments = array();
+                foreach ($jsonTkt->payments as $jspay) {
+                    $type = $jspay->mode->code;
+                    $amount = $jspay->amount;
+                    $payment = new Payment($type, $amount);
+                    $payments[] = $payment;
+                }
+                $tktLght = new TicketLight($label, $cashierId, $date, $lines,
+                                           $payments, $cashId, $customerId);
+                $ticket = TicketsService::buildLight($tktLght);
+                if ($location !== NULL) {
+                    if (TicketsService::save($ticket, $location)) {
+                        $successes++;
+                    }
+                } else {
+                    if (TicketsService::save($ticket)) {
+                        $successes++;
+                    }
+                }
+            }
+            $ret = ($successes == $ticketsCount);
+            if ($ret === TRUE) {
+                $pdo->commit();
+                $this->succeed($ret);
+            } else {
+                $pdo->rollback();
+                $this->fail(APIError::ERR_GENERIC);
+            }
             break;
         }
     }
-    $ticketsCount = count($json);
-    $successes = 0;
-    $pdo = PDOBuilder::getPDO();
-    $pdo->beginTransaction();
-    foreach ($json as $jsonTkt) {
-        $label = $jsonTkt->ticket->label;
-        $cashierId = $jsonTkt->cashier->id;
-        $customerId = $jsonTkt->ticket->customer;
-        $date = $jsonTkt->date;
-        $lines = array();
-        foreach ($jsonTkt->ticket->lines as $jsline) {
-            // Get line info
-            $line = count($lines) + 1;
-            $productId = $jsline->product->id;
-            $quantity = $jsline->quantity;
-            $price = $jsline->product->price;
-            $taxId = $jsline->product->taxId;
-            $newLine = new TicketLineLight($line, $productId, $quantity, 
-                                           $price, $taxId);
-            $lines[] = $newLine;
-        }
-        $payments = array();
-        foreach ($jsonTkt->payments as $jspay) {
-            $type = $jspay->mode->code;
-            $amount = $jspay->amount;
-            $payment = new Payment($type, $amount);
-            $payments[] = $payment;
-        }
-        $tktLght = new TicketLight($label, $cashierId, $date, $lines,
-                                   $payments, $cashId, $customerId);
-        $ticket = TicketsService::buildLight($tktLght);
-        if ($location !== NULL) {
-            if (TicketsService::save($ticket, $location)) {
-                $successes++;
-            }
-        } else {
-            if (TicketsService::save($ticket)) {
-                $successes++;
-            }
-        }
-    }
-    $ret = ($successes == $ticketsCount);
-    if ($ret === TRUE) {
-        $pdo->commit();
-    } else {
-        $pdo->rollback();
-    }
-    break;
 }
-
-echo(json_encode($ret));
 
 ?>

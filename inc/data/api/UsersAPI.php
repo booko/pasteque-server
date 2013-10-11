@@ -20,22 +20,28 @@
 
 namespace Pasteque;
 
-$action = $_GET['action'];
-$ret = null;
+class UsersAPI extends APIService {
 
-switch ($action) {
-case 'get':
-    if (!isset($_GET['id'])) {
-       $ret = false;
-       break;
+    protected function check() {
+        switch ($this->action) {
+        case 'get':
+            return isset($this->params['id']);
+        case 'getAll':
+            return true;
+        }
+        return false;
     }
-    $ret = UsersService::get($_GET['id']);
-    break;
-case 'getAll':
-    $ret = UsersService::getAll();
-    break;
-}
 
-echo(json_encode($ret));
+    protected function proceed() {
+        switch ($this->action) {
+        case 'get':
+            $this->succeed(UsersService::get($this->params['id']));
+            break;
+        case 'getAll':
+            $this->succeed(UsersService::getAll());
+            break;
+        }
+    }
+}
 
 ?>

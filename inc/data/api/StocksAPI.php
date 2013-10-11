@@ -20,45 +20,54 @@
 
 namespace Pasteque;
 
-$action = $_GET['action'];
-$ret = NULL;
+class StocksAPI extends APIService {
 
-switch ($action) {
-case 'getAll':
-    $location = NULL;
-    if (isset($_GET['location'])) {
-        $location = $_GET['location'];
-        $location = StocksService::getLocationId($location);
-        if ($location === NULL) {
-            echo "ERROR: unknown location";
-            return;
+    protected function check() {
+        switch ($this->action) {
+        case 'getAll':
+            return true;
         }
+        return false;
     }
-    $stocks = StocksService::getQties($location);
-    $levels = StocksService::getLevels($location);
-    $ret = array();
-    foreach ($stocks as $prd => $qty) {
-        $stock = new \StdClass();
-        $stock->product_id = $prd;
-        $stock->qty = $qty;
-        $found = FALSE;
-        foreach ($levels as $level) {
-            if ($level->product_id == $prd) {
-                $stock->security = $level->security;
-                $stock->max = $level->max;
-                $found = TRUE;
-                break;
+
+    protected function proceed() {
+        switch ($this->action) {
+        case 'getAll':
+            $location = NULL;
+            if (isset($this->params['location'])) {
+                $location = $this->params['location'];
+                $location = StocksService::getLocationId($location);
+                if ($location === NULL) {
+                    echo "ERROR: unknown location";
+                    return;
+                }
             }
+            $stocks = StocksService::getQties($location);
+            $levels = StocksService::getLevels($location);
+            $ret = array();
+            foreach ($stocks as $prd => $qty) {
+                $stock = new \StdClass();
+                $stock->product_id = $prd;
+                $stock->qty = $qty;
+                $found = FALSE;
+                foreach ($levels as $level) {
+                    if ($level->product_id == $prd) {
+                        $stock->security = $level->security;
+                        $stock->max = $level->max;
+                        $found = TRUE;
+                        break;
+                    }
+                }
+                if (!$found) {
+                    $stock->security = NULL;
+                    $stock->max = NULL;
+                }
+                $ret[] = $stock;
+            }
+            $this->succeed($ret);
+            break;
         }
-        if (!$found) {
-            $stock->security = NULL;
-            $stock->max = NULL;
-        }
-        $ret[] = $stock;
     }
-    break;
 }
-
-echo(json_encode($ret));
 
 ?>

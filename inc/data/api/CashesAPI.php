@@ -20,51 +20,83 @@
 
 namespace Pasteque;
 
-$action = $_GET['action'];
-$ret = null;
+/* Cash API specification
 
-switch ($action) {
-case 'get':
-    if (!isset($_GET['host'])) {
-        $ret = false;
-        break;
+GET(host)
+When client request a new cash, the server check for an active cash for
+requested host. If found return it. Otherwise return NULL.
+
+UPDATE(cash)
+When client sends a cash, it may have an id or not. If the id is present the
+cash is updated. If not a new cash is created for the host and it's id is
+returned.
+
+*/
+
+class CashesAPI extends APIService {
+
+    protected function check() {
+        switch ($this->action) {
+        case 'get':
+            return isset($this->params['host']);
+        case 'update':
+            return isset($this->params['cash']);
+        }
+        return false;
     }
-    $ret = CashesService::getHost($_GET['host']);
-    if ($ret == null || $ret->isClosed()) {
-        // Create a new one
-        if (CashesService::add($_GET['host'])) {
+
+    /** Run the service and set result. */
+    protected function proceed() {
+        switch ($this->action) {
+        case 'get':
             $ret = CashesService::getHost($_GET['host']);
+            if ($ret === null || $ret->isClosed()) {
+                $ret = null;
+            }
+            $this->succeed($ret);
+            break;
+        case 'update':
+            $json = json_decode($params['cash']);
+            $open = null;
+            if (property_exists($json, 'openDate')) {
+                $open = $json->openDate;
+            }
+            $close = null;
+            if (property_exists($json, 'closeDate')) {
+                $close = $json->closeDate;
+            }
+            $host = $json->host;
+            if ($json->id !== null) {
+                // Update an existing cash
+                $cash = Cash::__build($json->id, $host, -1, $open, $close);
+                if (CachesService::update($cash)) {
+                    $ret = $cash;
+                } else {
+                    $ret = array("error" => "Server error");
+                }
+            } else {
+                $cash = CashesService::add($host);
+                $cash->openDate = $open;
+                $cash->closeDate = $close;
+                CashesService::update($cash);
+                $ret = $cash;
+            }
+            $ret = array();
+            $ret['result'] = CashesService::update($cash);
+            $lastCash = CashesService::getHost($host);
+            if ($lastCash != null && $lastCash->isClosed()) {
+                if (CashesService::add($host)) {
+                    $newCash = CashesService::getHost($host);
+                } else {
+                    $newCash = null;
+                }
+                $ret['cash'] = $newCash;
+            } else {
+                $ret['cash'] = $lastCash;
+            }
+            break;
         }
     }
-    break;
-case 'update':
-    $json = json_decode($_POST['cash']);
-    $open = null;
-    if (property_exists($json, 'openDate')) {
-        $open = $json->openDate;
-    }
-    $close = null;
-    if (property_exists($json, 'closeDate')) {
-        $close = $json->closeDate;
-    }
-    $host = $json->host;
-    $cash = Cash::__build($json->id, $host, -1, $open, $close);
-    $ret = array();
-    $ret['result'] = CashesService::update($cash);
-    $lastCash = CashesService::getHost($host);
-    if ($lastCash != null && $lastCash->isClosed()) {
-        if (CashesService::add($host)) {
-            $newCash = CashesService::getHost($host);
-        } else {
-            $newCash = null;
-        }
-        $ret['cash'] = $newCash;
-    } else {
-        $ret['cash'] = $lastCash;
-    }
-    break;
 }
-
-echo(json_encode($ret));
 
 ?>

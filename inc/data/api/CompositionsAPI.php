@@ -20,15 +20,23 @@
 
 namespace Pasteque;
 
-$action = $_GET['action'];
-$ret = null;
+class CompositionsAPI extends APIService {
 
-switch ($action) {
-case 'getAll':
-    $ret = CompositionsService::getAll();
-    break;
+    protected function check() {
+        switch ($this->action) {
+        case 'getAll':
+            return true;
+        }
+        return false;
+    }
+
+    protected function proceed() {
+        switch ($this->action) {
+        case 'getAll':
+            $this->succeed(CompositionsService::getAll());
+            break;
+        }
+    }
 }
-
-echo(json_encode($ret));
 
 ?>
