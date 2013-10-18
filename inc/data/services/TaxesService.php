@@ -28,7 +28,7 @@ class TaxesService {
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(":cat", $db_taxcat['ID']);
         $stmt->execute();
-        foreach ($stmt->fetch() as $db_tax) {
+        while ($db_tax = $stmt->fetch()) {
             $tax = TaxesService::buildDBTax($db_tax);
             $taxcat->addTax($tax);
         }

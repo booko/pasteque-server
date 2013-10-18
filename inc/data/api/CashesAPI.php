@@ -28,8 +28,7 @@ requested host. If found return it. Otherwise return NULL.
 
 UPDATE(cash)
 When client sends a cash, it may have an id or not. If the id is present the
-cash is updated. If not a new cash is created for the host and it's id is
-returned.
+cash is updated. If not a new cash is created. In all cases return the cash.
 
 */
 
@@ -49,15 +48,19 @@ class CashesAPI extends APIService {
     protected function proceed() {
         switch ($this->action) {
         case 'get':
-            $ret = CashesService::getHost($_GET['host']);
+            $ret = CashesService::getHost($this->params['host']);
             if ($ret === null || $ret->isClosed()) {
                 $ret = null;
             }
             $this->succeed($ret);
             break;
         case 'update':
-            $json = json_decode($params['cash']);
+            $json = json_decode($this->params['cash']);
             $open = null;
+            $id = null;
+            if (property_exists($json, 'id')) {
+                $id = $json->id;
+            }
             if (property_exists($json, 'openDate')) {
                 $open = $json->openDate;
             }
@@ -66,33 +69,29 @@ class CashesAPI extends APIService {
                 $close = $json->closeDate;
             }
             $host = $json->host;
-            if ($json->id !== null) {
+
+            if ($id !== null) {
                 // Update an existing cash
-                $cash = Cash::__build($json->id, $host, -1, $open, $close);
-                if (CachesService::update($cash)) {
-                    $ret = $cash;
+                $cash = Cash::__build($id, $host, -1, $open, $close);
+                if (CashesService::update($cash)) {
+                    $this->succeed($cash);
                 } else {
-                    $ret = array("error" => "Server error");
+                    $this->fail(APIError::$ERR_GENERIC);
                 }
             } else {
-                $cash = CashesService::add($host);
-                $cash->openDate = $open;
-                $cash->closeDate = $close;
-                CashesService::update($cash);
-                $ret = $cash;
-            }
-            $ret = array();
-            $ret['result'] = CashesService::update($cash);
-            $lastCash = CashesService::getHost($host);
-            if ($lastCash != null && $lastCash->isClosed()) {
+                // Create a cash and update with given data
                 if (CashesService::add($host)) {
-                    $newCash = CashesService::getHost($host);
+                    $cash = CashesService::getHost($host);
+                    $cash->openDate = $open;
+                    $cash->closeDate = $close;
+                    if (CashesService::update($cash)) {
+                        $this->succeed($cash);
+                    } else {
+                        $this->fail(APIError::$ERR_GENERIC);
+                    }
                 } else {
-                    $newCash = null;
+                    $this->fail(APIError::$ERR_GENERIC);
                 }
-                $ret['cash'] = $newCash;
-            } else {
-                $ret['cash'] = $lastCash;
             }
             break;
         }

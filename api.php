@@ -30,14 +30,30 @@ require_once(ABSPATH . "/inc/load_api.php");
 
 if (isset($_GET[URL_ACTION_PARAM])) {
     $api = $_GET[URL_ACTION_PARAM];
+    $params = $_GET;
+    if (isset($_GET['action'])) {
+        $action = $_GET['action'];
+    } else {
+        $action = null;
+    }
 } else {
-    $api = null;
+    if (isset($_POST[URL_ACTION_PARAM])) {
+        $api = $_POST[URL_ACTION_PARAM];
+        $params = $_POST;
+        if (isset($_POST['action'])) {
+            $action = $_POST['action'];
+        } else {
+            $action = null;
+        }
+    } else {
+        $api = null;
+    }
 }
-(isset($_GET['action'])) ? $action = $_GET['action'] : $action = null;
-$params = $_GET;
+
 $broker = new APIBroker($api);
 $result = $broker->run($action, $params);
 
+header("Content type: application/json");
 echo json_encode($result);
 
 ?>

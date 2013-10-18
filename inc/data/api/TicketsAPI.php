@@ -20,16 +20,13 @@
 
 namespace Pasteque;
 
-$action = $_GET['action'];
-$ret = null;
-
 class TicketsAPI extends APIService {
 
     protected function check() {
         switch ($this->action) {
         case 'save':
             return isset($this->params['tickets'])
-                    && isset($this->params['cash'];
+                    && isset($this->params['cash_id']);
         }
         return false;
     }
@@ -39,8 +36,7 @@ class TicketsAPI extends APIService {
         case 'save':
             // Receive ticket data as json
             $json = json_decode($this->params['tickets']);
-            $jsonCash = json_decode($this->params['cash']);
-            $cashId = $jsonCash->id;
+            $cashId = $this->params['cash_id'];
             $location = NULL;
             if (isset($this->params['location'])) {
                 $location = StocksService::getLocationId($this->params['location']);
@@ -96,7 +92,7 @@ class TicketsAPI extends APIService {
                 $this->succeed($ret);
             } else {
                 $pdo->rollback();
-                $this->fail(APIError::ERR_GENERIC);
+                $this->fail(APIError::$ERR_GENERIC);
             }
             break;
         }

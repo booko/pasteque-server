@@ -224,7 +224,6 @@ class ProductsService {
             $stmt->bindParam(":img", $prd->image, \PDO::PARAM_LOB);
         }
         if (!$stmt->execute()) {
-        var_dump($stmt->errorInfo());
             return FALSE;
         }
         if ($prd->visible == 1 || $prd->visible == TRUE) {

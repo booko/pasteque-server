@@ -37,7 +37,7 @@ abstract class APIService {
     }
     /** Set the result to a failure (should be called in run()). */
     protected function fail($reason) {
-        $this->result = APIResult::error($reason);
+        $this->result = APIResult::fail($reason);
     }
     /** Set the result to a succes (should be called in run())). */
     protected function succeed($result) {

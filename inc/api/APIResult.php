@@ -46,7 +46,7 @@ class APIResult {
         return new APIResult(APIResult::STATUS_CALL_REJECTED, $reason);
     }
     public static function fail($err_code) {
-        return new APIResult(APIResult::STATUS_CALL_ERROR, $result);
+        return new APIResult(APIResult::STATUS_CALL_ERROR, $err_code);
     }
 
 }
