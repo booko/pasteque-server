@@ -20,11 +20,12 @@
 
 namespace BaseUsers;
 
+$srv = new \Pasteque\RolesService();
 if (isset($_POST['delete-role'])) {
-    \Pasteque\RolesService::delete($_POST['delete-role']);
+    $srv->delete($_POST['delete-role']);
 }
 
-$roles = \Pasteque\RolesService::getAll();
+$roles = $srv->getAll();
 ?>
 <h1><?php \pi18n("Users", PLUGIN_NAME); ?></h1>
 

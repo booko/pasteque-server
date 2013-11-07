@@ -99,8 +99,9 @@ $ALL_PERMS = array(
 "button.openmoney",
 );
 
-$message = NULL;
-$error = NULL;
+$message = null;
+$error = null;
+$srv = new \Pasteque\RolesService();
 if (isset($_POST['id'])) {
     if (isset($_POST['name'])) {
         $permissions = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<permissions>\n";
@@ -111,7 +112,7 @@ if (isset($_POST['id'])) {
         }
         $permissions .= "</permissions>";
         $role = \Pasteque\Role::__build($_POST['id'], $_POST['name'], $permissions);
-        if (\Pasteque\RolesService::update($role)) {
+        if ($srv->update($role)) {
             $message = \i18n("Changes saved");
         } else {
             $error = \i18n("Unable to save changes");
@@ -127,7 +128,7 @@ if (isset($_POST['id'])) {
         }
         $permissions .= "</permissions>";
         $role = new \Pasteque\Role($_POST['name'], $permissions);
-        $id = \Pasteque\RolesService::create($role);
+        $id = $srv->create($role);
         if ($id !== FALSE) {
             $message = \i18n("Role saved. <a href=\"%s\">Go to the role page</a>.", PLUGIN_NAME, \Pasteque\get_module_url_action(PLUGIN_NAME, 'role_edit', array('id' => $id)));
         } else {
@@ -136,9 +137,9 @@ if (isset($_POST['id'])) {
     }
 }
 
-$role = NULL;
+$role = null;
 if (isset($_GET['id'])) {
-    $role = \Pasteque\RolesService::get($_GET['id']);
+    $role = $srv->get($_GET['id']);
 }
 ?>
 <h1><?php \pi18n("Edit a role", PLUGIN_NAME); ?></h1>

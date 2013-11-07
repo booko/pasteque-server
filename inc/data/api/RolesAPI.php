@@ -20,7 +20,7 @@
 
 namespace Pasteque;
 
-class UsersAPI extends APIService {
+class RolesAPI extends APIService {
 
     protected function check() {
         switch ($this->action) {
@@ -33,7 +33,7 @@ class UsersAPI extends APIService {
     }
 
     protected function proceed() {
-        $srv = new UsersService();
+        $srv = new RolesService();
         switch ($this->action) {
         case 'get':
             $this->succeed($srv->get($this->params['id']));
