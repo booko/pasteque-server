@@ -24,7 +24,8 @@ if (isset($_POST['delete-user'])) {
     \Pasteque\UsersService::delete($_POST['delete-user']);
 }
 
-$users = \Pasteque\UsersService::getAll();
+$srv = new \Pasteque\UsersService();
+$users = $srv->getAll();
 ?>
 <h1><?php \pi18n("Users", PLUGIN_NAME); ?></h1>
 

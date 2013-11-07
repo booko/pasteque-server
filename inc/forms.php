@@ -34,7 +34,11 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
     echo "<div class=\"row\">\n";
     if ($type != "pick_multiple") {
         echo '<label for="' . $form_id . '-' . $field . '">';
-        echo \i18n($class . "." . $field);
+        $fieldLabel = $field;
+        if (substr($field, -2) == "Id") {
+            $fieldLabel = substr($field, 0, -2);
+        }
+        echo \i18n($class . "." . $fieldLabel);
         echo "</label>\n";
     }
     $required = "";

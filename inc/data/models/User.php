@@ -25,20 +25,26 @@ class User {
     public $id;
     public $name;
     public $password;
-    public $role;
-    public $permissions;
+    public $roleId;
+    public $visible;
+    public $hasImage;
+    public $card;
 
-    static function __build($id, $name, $password, $role) {
-        $user = new User($name, $password, $role);
+    static function __build($id, $name, $password, $card, $roleId, $visible,
+            $hasImage) {
+        $user = new User($name, $password, $card, $roleId, $visible, $hasImage);
         $user->id = $id;
         return $user;
     }
 
-    function __construct($name, $password, $role) {
+    function __construct($name, $password, $card, $roleId, $visible,
+            $hasImage) {
         $this->name = $name;
         $this->password = $password;
-        $this->role = $role;
-        $this->permissions = $role->permissions;
+        $this->card = $card;
+        $this->roleId = $roleId;
+        $this->visible = $visible;
+        $this->hasImage = $hasImage;
     }
 }
 

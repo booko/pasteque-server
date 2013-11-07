@@ -22,30 +22,31 @@
 
 namespace BaseUsers;
 
-$message = NULL;
-$error = NULL;
+$message = null;
+$error = null;
+$srv = new \Pasteque\UsersService();
 if (isset($_POST['id']) && isset($_POST['name'])) {
-    $role = \Pasteque\RolesService::get($_POST['role']);
-    $user = \Pasteque\User::__build($_POST['id'], $_POST['name'], "", $role);
-    if (\Pasteque\UsersService::update($user)) {
+    $user = \Pasteque\User::__build($_POST['id'], $_POST['name'], null, null,
+            $_POST['roleId'], true, false);
+    if ($srv->update($user)) {
         $message = \i18n("Changes saved");
     } else {
         $error = \i18n("Unable to save changes");
     }
 } else if (isset($_POST['name'])) {
-    $role = \Pasteque\RolesService::get($_POST['role']);
-    $user = new \Pasteque\User($_POST['name'], NULL, $role);
-    $id = \Pasteque\UsersService::create($user);
-    if ($id !== FALSE) {
+    $user = new \Pasteque\User($_POST['name'], null, null, $_POST['roleId'],
+            true, false);
+    $id = $srv->create($user);
+    if ($id !== false) {
         $message = \i18n("User saved. <a href=\"%s\">Go to the user page</a>.", PLUGIN_NAME, \Pasteque\get_module_url_action(PLUGIN_NAME, 'user_edit', array('id' => $id)));
     } else {
         $error = \i18n("Unable to save changes");
     }
 }
 
-$user = NULL;
+$user = null;
 if (isset($_GET['id'])) {
-    $user = \Pasteque\UsersService::get($_GET['id']);
+    $user = $srv->get($_GET['id']);
 }
 ?>
 <h1><?php \pi18n("Edit an user", PLUGIN_NAME); ?></h1>
@@ -55,12 +56,12 @@ if (isset($_GET['id'])) {
 <form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
     <?php \Pasteque\form_hidden("edit", $user, "id"); ?>
 	<?php \Pasteque\form_input("edit", "User", $user, "name", "string", array("required" => true)); ?>
-	<?php \Pasteque\form_input("edit", "User", $user, "role", "pick", array("model" => "Role")); ?>
+	<?php \Pasteque\form_input("edit", "User", $user, "roleId", "pick", array("model" => "Role")); ?>
 	<div class="row actions">
 		<?php \Pasteque\form_save(); ?>
 	</div>
 </form>
-<?php if ($user !== NULL) { ?>
+<?php if ($user !== null) { ?>
 <form action="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'users'); ?>" method="post">
 	<?php \Pasteque\form_delete("user", $user->id); ?>
 </form>

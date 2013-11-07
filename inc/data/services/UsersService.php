@@ -20,75 +20,26 @@
 
 namespace Pasteque;
 
-class UsersService {
+class UsersService extends AbstractService {
 
-    private static function buildDBUser($db_user) {
-        $role = RolesService::get($db_user['ROLE']);
+    protected static $dbTable = "PEOPLE";
+    protected static $dbIdField = "ID";
+    protected static $fieldMapping = array(
+            "ID" => "id",
+            "NAME" => "name",
+            "ROLE" => "roleId",
+            "APPPASSWORD" => "password",
+            "CARD" => "card",
+            "VISIBLE" => "visible",
+    );
+
+    protected function build($db_user, $pdo = null) {
         $user = User::__build($db_user['ID'], $db_user['NAME'],
-                              $db_user['APPPASSWORD'], $role);
+                $db_user['APPPASSWORD'], $db_user['CARD'], $db_user['ROLE'],
+                ord($db_user['VISIBLE']) == 1, $db_user['IMAGE'] != null);
         return $user;
     }
 
-
-    static function getAll() {
-        $users = array();
-        $pdo = PDOBuilder::getPDO();
-        $sql = "SELECT * FROM PEOPLE";
-        foreach ($pdo->query($sql) as $db_user) {
-            $user = UsersService::buildDBUser($db_user, $pdo);
-            $users[] = $user;
-        }
-        return $users;
-    }
-
-    static function get($id) {
-        $pdo = PDOBuilder::getPDO();
-        $stmt = $pdo->prepare("SELECT * FROM PEOPLE WHERE ID = :id");
-        if ($stmt->execute(array(':id' => $id))) {
-            if ($row = $stmt->fetch()) {
-                return UsersService::buildDBUser($row, $pdo);
-            }
-        }
-        return null;
-    }
-
-    static function update($user) {
-        if ($user->id == null) {
-            return false;
-        }
-        $pdo = PDOBuilder::getPDO();
-        $sql = "UPDATE PEOPLE SET NAME = :name, ROLE = :role";
-        $sql .= " WHERE ID = :id";
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(":name", $user->name, \PDO::PARAM_STR);
-        $stmt->bindParam(":role", $user->role->id, \PDO::PARAM_STR);
-        $stmt->bindParam(":id", $user->id, \PDO::PARAM_INT);
-        return $stmt->execute();
-    }
-
-    static function create($user) {
-        $pdo = PDOBuilder::getPDO();
-        $id = md5(time() . rand());
-        $sql = "INSERT INTO PEOPLE (ID, NAME, APPPASSWORD, CARD, ROLE, VISIBLE, IMAGE";
-        $sql .= ") VALUES (:id, :name, NULL, NULL, :role, 1, NULL)";
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(":name", $user->name, \PDO::PARAM_STR);
-        $stmt->bindParam(":role", $user->role->id, \PDO::PARAM_INT);
-        $stmt->bindParam(":id", $id, \PDO::PARAM_INT);
-        if ($stmt->execute() !== FALSE) {
-            return $id;
-        } else {
-            return FALSE;
-        }
-    }
-
-    static function delete($id) {
-        $pdo = PDOBuilder::getPDO();
-        $sql = "DELETE FROM PEOPLE WHERE ID = :id";
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(":id", $id, \PDO::PARAM_INT);
-        return $stmt->execute();
-    }
 }
 
 ?>
