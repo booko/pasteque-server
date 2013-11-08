@@ -39,7 +39,7 @@ class Resource {
 
     function __construct($label, $type, $content) {
         $this->label = $label;
-        $this->type = $type;
+        $this->type = \intval($type);
         $this->content = $content;
     }
 }
