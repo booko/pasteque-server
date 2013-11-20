@@ -27,34 +27,34 @@ class ProductLight {
     public $reference;
     public $barcode;
     public $label;
-    public $price_buy;
-    public $price_sell;
+    public $priceBuy;
+    public $priceSell;
     public $visible;
     public $scaled;
-    public $discount_enabled;
-    public $discount_rate;
+    public $discountEnabled;
+    public $discountRate;
 
-    static function __build($id, $ref, $label, $price_sell, $visible, $scaled,
-            $barcode = null, $price_buy = null, $discount_enabled = FALSE,
-            $discount_rate = 0.0) {
-        $prd = new ProductLight($ref, $label, $price_sell, $visible, $scaled,
-                $barcode, $price_buy, $discount_enabled, $discount_rate);
+    static function __build($id, $ref, $label, $priceSell, $visible, $scaled,
+            $barcode = null, $priceBuy = null, $discountEnabled = FALSE,
+            $discountRate = 0.0) {
+        $prd = new ProductLight($ref, $label, $priceSell, $visible, $scaled,
+                $barcode, $priceBuy, $discountEnabled, $discountRate);
         $prd->id = $id;
         return $prd;
     }
 
-    function __construct($ref, $label, $price_sell, $visible, $scaled,
-            $barcode = null, $price_buy = null, $discount_enabled = FALSE,
-            $discount_rate = 0.0) {
+    function __construct($ref, $label, $priceSell, $visible, $scaled,
+            $barcode = null, $priceBuy = null, $discountEnabled = FALSE,
+            $discountRate = 0.0) {
         $this->reference = $ref;
         $this->label = $label;
-        $this->price_sell = $price_sell;
+        $this->priceSell = $priceSell;
         $this->visible = $visible;
         $this->scaled = $scaled;
         $this->barcode = $barcode;
-        $this->price_buy = $price_buy;
-        $this->discount_enabled = $discount_enabled;
-        $this->discount_rate = $discount_rate;
+        $this->priceBuy = $priceBuy;
+        $this->discountEnabled = $discountEnabled;
+        $this->discountRate = $discountRate;
     }
 }
 
@@ -64,51 +64,51 @@ class Product {
     public $reference;
     public $barcode;
     public $label;
-    public $price_buy;
-    public $price_sell;
+    public $priceBuy;
+    public $priceSell;
     public $visible;
     public $scaled;
-    public $category;
-    public $disp_order;
-    public $tax_cat;
-    public $attributes_set;
+    public $categoryId;
+    public $dispOrder;
+    public $taxCatId;
+    public $attributesSet;
     /** Contains the binary of the image. NULL if not any.
      * For the services set this value to "" keep data unchanged.
      */
     public $image;
-    public $discount_enabled;
-    public $discount_rate;
+    public $discountEnabled;
+    public $discountRate;
 
-    static function __build($id, $ref, $label, $price_sell, $category, $disp_order,
-            $tax_cat, $visible, $scaled, $price_buy = null,
-            $attributes_set = null, $barcode = null, $image = NULL,
-            $discount_enabled = FALSE, $discount_rate = 0.0) {
-        $prd = new Product($ref, $label, $price_sell, $category, $disp_order,
-                $tax_cat, $visible, $scaled, $price_buy,
-                $attributes_set, $barcode, $image,
-                $discount_enabled, $discount_rate);
+    static function __build($id, $ref, $label, $priceSell, $category,
+            $dispOrder, $taxCatId, $visible, $scaled, $priceBuy = null,
+            $attributesSet = null, $barcode = null, $image = NULL,
+            $discountEnabled = false, $discountRate = 0.0) {
+        $prd = new Product($ref, $label, $priceSell, $category, $dispOrder,
+                $taxCatId, $visible, $scaled, $priceBuy,
+                $attributesSet, $barcode, $image,
+                $discountEnabled, $discountRate);
         $prd->id = $id;
         return $prd;
     }
 
-    function __construct($ref, $label, $price_sell, $category, $disp_order,
-            $tax_cat, $visible, $scaled, $price_buy = null,
-            $attributes_set = null, $barcode = null, $image = null,
-            $discount_enabled = FALSE, $discount_rate = 0.0) {
+    function __construct($ref, $label, $priceSell, $categoryId, $dispOrder,
+            $taxCatId, $visible, $scaled, $priceBuy = null,
+            $attributesSet = null, $barcode = null, $image = null,
+            $discountEnabled = false, $discountRate = 0.0) {
         $this->reference = $ref;
         $this->label = $label;
-        $this->price_sell = $price_sell;
+        $this->priceSell = $priceSell;
         $this->visible = $visible;
         $this->scaled = $scaled;
         $this->barcode = $barcode;
-        $this->price_buy = $price_buy;
-        $this->category = $category;
-        $this->disp_order = $disp_order;
-        $this->tax_cat = $tax_cat;
-        $this->attributes_set = $attributes_set;
+        $this->priceBuy = $priceBuy;
+        $this->categoryId = $categoryId;
+        $this->dispOrder = $dispOrder;
+        $this->taxCatId = $taxCatId;
+        $this->attributesSet = $attributesSet;
         $this->image = $image;
-        $this->discount_enabled = $discount_enabled;
-        $this->discount_rate = $discount_rate;
+        $this->discountEnabled = $discountEnabled;
+        $this->discountRate = $discountRate;
     }
 
     function getTotalPrice() {

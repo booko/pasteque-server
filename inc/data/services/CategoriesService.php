@@ -41,6 +41,21 @@ class CategoriesService {
         return $cats;
     }
 
+    static function getChildren($parentId) {
+        $cats = array();
+        $pdo = PDOBuilder::getPDO();
+        $sql = "SELECT * FROM CATEGORIES WHERE PARENT = :parent "
+                + "ORDER BY DISPORDER ASC, NAME ASC";
+        $data = $pdo->query($sql);
+        if ($data !== FALSE) {
+            foreach ($pdo->query($sql) as $db_cat) {
+                $cat = CategoriesService::buildDBCat($db_cat);
+                $cats[] = $cat;
+            }
+        }
+        return $cats;
+    }
+
     static function getByName($name) {
         $pdo = PDOBuilder::getPDO();
         $stmt = $pdo->prepare("SELECT * FROM CATEGORIES WHERE NAME = :name");

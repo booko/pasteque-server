@@ -135,9 +135,10 @@ $vatprice = "";
 $price = "";
 if (isset($_GET['id'])) {
     $product = \Pasteque\ProductsService::get($_GET['id']);
-    $tax = $product->tax_cat->getCurrentTax();
-    $vatprice = $product->price_sell * (1 + $tax->rate);
-    $price = sprintf("%.2f", $product->price_sell);
+    $taxCat = \Pasteque\TaxesService::get($product->taxCatId);
+    $tax = $taxCat->getCurrentTax();
+    $vatprice = $product->priceSell * (1 + $tax->rate);
+    $price = sprintf("%.2f", $product->priceSell);
 }
 $taxes = \Pasteque\TaxesService::getAll();
 $categories = \Pasteque\CategoriesService::getAll();
@@ -171,29 +172,29 @@ if ($stocks === TRUE && $product != NULL) {
 		</div>
 	</div>
 	<?php \Pasteque\form_input("edit", "Product", $product, "visible", "boolean"); ?>
-    <?php \Pasteque\form_input("edit", "Product", $product, "disp_order", "numeric"); ?>
+    <?php \Pasteque\form_input("edit", "Product", $product, "dispOrder", "numeric"); ?>
 	</fieldset>
 	<fieldset>
 	<legend><?php \pi18n("Price", PLUGIN_NAME); ?></legend>
 	<?php \Pasteque\form_input("edit", "Product", $product, "scaled", "boolean", array("default" => FALSE)); ?>
-	<?php \Pasteque\form_input("edit", "Product", $product, "tax_cat", "pick", array("model" => "TaxCategory")); ?>
+	<?php \Pasteque\form_input("edit", "Product", $product, "taxCatId", "pick", array("model" => "TaxCategory")); ?>
 	<div class="row">
 		<label for="sellvat"><?php \pi18n("Sell price + taxes", PLUGIN_NAME); ?></label>
 		<input id="sellvat" type="numeric" name="selltax" value="<?php echo $vatprice; ?>" />
 	</div>
 	<div class="row">
 		<label for="sell"><?php \pi18n("Product.price_sell"); ?></label>
-		<input type="hidden" id="realsell" name="realsell" <?php if ($product != NULL) echo 'value="' . $product->price_sell. '"'; ?> />
+		<input type="hidden" id="realsell" name="realsell" <?php if ($product != NULL) echo 'value="' . $product->priceSell. '"'; ?> />
 		<input id="sell" type="numeric" name="sell" value="<?php echo $price; ?>" />
 	</div>
-	<?php \Pasteque\form_input("edit", "Product", $product, "price_buy", "numeric"); ?>
+	<?php \Pasteque\form_input("edit", "Product", $product, "priceBuy", "numeric"); ?>
 	<div class="row">
 		<label for="margin"><?php \pi18n("Margin", PLUGIN_NAME); ?></label>
 		<input id="margin" type="numeric" disabled="true" />
 	</div>
     <?php if ($discounts) { ?>
-    <?php \Pasteque\form_input("edit", "Product", $product, "discount_enabled", "boolean", array("default" => FALSE)); ?>
-    <?php \Pasteque\form_input("edit", "Product", $product, "discount_rate", "numeric"); ?>
+    <?php \Pasteque\form_input("edit", "Product", $product, "discountEnabled", "boolean", array("default" => FALSE)); ?>
+    <?php \Pasteque\form_input("edit", "Product", $product, "discountRate", "numeric"); ?>
     <?php } ?>
 	</fieldset>
 	<fieldset>

@@ -26,6 +26,8 @@ class CategoriesAPI extends APIService {
         switch ($this->action) {
         case 'get':
             return isset($this->params['id']);
+        case 'getChildren':
+            return isset($this->params['parentId']);
         case 'getAll':
             return true;
         }
@@ -37,6 +39,8 @@ class CategoriesAPI extends APIService {
         case 'get':
             $this->succeed(CategoriesService::get($_GET['id']));
             break;
+        case 'getChildren':
+            $this->succeed(CategoriesService::get($_GET['parentId']));
         case 'getAll':
             $this->succeed(CategoriesService::getAll());
             break;

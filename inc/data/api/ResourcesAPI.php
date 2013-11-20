@@ -26,6 +26,8 @@ class ResourcesAPI extends APIService {
         switch ($this->action) {
         case 'get':
             return isset($this->params['label']);
+        case 'update':
+            return isset($this->params['label']) && isset($this->param['content']);
         }
         return false;
     }

@@ -25,9 +25,12 @@ class ProductsAPI extends APIService {
     protected function check() {
         switch ($this->action) {
         case 'get':
-            return isset($this->params['id']);
+            return isset($this->params['id']) || isset($this->params['code'])
+                    || isset($this->params['reference']);
         case 'getAll':
             return true;
+        case 'getCategory':
+            return isset($this->params['id']);
         case 'getAllFull':
             return true;
         }
@@ -36,7 +39,15 @@ class ProductsAPI extends APIService {
     protected function proceed() {
         switch ($this->action) {
         case 'get':
-            $this->succeed(ProductsService::get($this->params['id']));
+            if (isset($this->params['id'])) {
+                $this->succeed(ProductsService::get($this->params['id']));
+            } else if (isset($this->params['reference'])) {
+                $this->succeed(
+                        ProductsService::getByRef($this->params['reference']));
+            } else {
+                $this->succeed(
+                        ProductsService::getByCode($this->params['code']));
+            }
             break;
         case 'getAll':
             $this->succeed(ProductsService::getAll());
@@ -50,7 +61,10 @@ class ProductsAPI extends APIService {
             }
             $this->succeed($ret);
             break;
-        }
+        case 'getCategory':
+            $this->succeed(ProductsService::getByCategory($this->params['id']));
+            break;
+        }        
     }
 }
 

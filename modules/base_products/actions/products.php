@@ -22,8 +22,8 @@
 
 namespace BaseProducts;
 
-$message = NULL;
-$error = NULL;
+$message = null;
+$error = null;
 if (isset($_POST['delete-product'])) {
     if (\Pasteque\ProductsService::delete($_POST['delete-product'])) {
         $message = \i18n("Changes saved") ;
@@ -32,7 +32,7 @@ if (isset($_POST['delete-product'])) {
     }
 }
 
-$products = \Pasteque\ProductsService::getAll(FALSE, TRUE);
+$products = \Pasteque\ProductsService::getAll(false, true);
 $categories = \Pasteque\CategoriesService::getAll();
 ?>
 <h1><?php \pi18n("Products", PLUGIN_NAME); ?></h1>

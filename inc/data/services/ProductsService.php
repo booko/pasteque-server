@@ -41,15 +41,16 @@ class ProductsService {
         $stmt->execute(array(':id' => $db_prd['ID']));
         $prd_cat = $stmt->fetch();
         $visible = ($prd_cat !== false);
-        $disp_order = NULL;
+        $dispOrder = null;
         if ($visible) {
-            $disp_order = $prd_cat['CATORDER'];
+            $dispOrder = $prd_cat['CATORDER'];
         }
         return Product::__build($db_prd['ID'], $db_prd['REFERENCE'],
-                $db_prd['NAME'], $db_prd['PRICESELL'], $cat, $disp_order, 
-                $tax_cat, $visible, ord($db_prd['ISSCALE']) == 1,
+                $db_prd['NAME'], $db_prd['PRICESELL'], $db_prd['CATEGORY'],
+                $dispOrder, $db_prd['TAXCAT'],
+                $visible, ord($db_prd['ISSCALE']) == 1,
                 $db_prd['PRICEBUY'], $attr, $db_prd['CODE'], $db_prd['IMAGE'],
-                ord($db_prd['DISCOUNTENABLED']), $db_prd['DISCOUNTRATE']);
+                ord($db_prd['DISCOUNTENABLED']) == 1, $db_prd['DISCOUNTRATE']);
     }
 
     static function getAll($full = FALSE, $include_hidden = FALSE) {
@@ -101,6 +102,36 @@ class ProductsService {
                 $prd = ProductsService::buildDBPrd($row, $pdo);
                 return $prd;
             }
+        }
+        return null;
+    }
+
+    static function getByCode($code) {
+        $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("SELECT * FROM PRODUCTS "
+            . "WHERE PRODUCTS.CODE = :code");
+        $stmt->bindParam(":code", $code, \PDO::PARAM_STR);
+        if ($stmt->execute()) {
+            if ($row = $stmt->fetch()) {
+                $prd = ProductsService::buildDBPrd($row, $pdo);
+                return $prd;
+            }
+        }
+        return null;
+    }
+
+    static function getByCategory($categoryId) {
+        $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("SELECT * FROM PRODUCTS "
+            . "WHERE PRODUCTS.CATEGORY = :cat");
+        $stmt->bindParam(":cat", $categoryId, \PDO::PARAM_STR);
+        if ($stmt->execute()) {
+            $prds = array();
+            while ($row = $stmt->fetch()) {
+                $prd = ProductsService::buildDBPrd($row, $pdo);
+                $prds[] = $prd;
+            }
+            return $prds;
         }
         return null;
     }

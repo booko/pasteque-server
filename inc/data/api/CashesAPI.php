@@ -26,6 +26,9 @@ GET(host)
 When client request a new cash, the server check for an active cash for
 requested host. If found return it. Otherwise return NULL.
 
+GET(id)
+Get cash by id, no matter it's state.
+
 UPDATE(cash)
 When client sends a cash, it may have an id or not. If the id is present the
 cash is updated. If not a new cash is created. In all cases return the cash.
@@ -37,7 +40,7 @@ class CashesAPI extends APIService {
     protected function check() {
         switch ($this->action) {
         case 'get':
-            return isset($this->params['host']);
+            return isset($this->params['host']) || isset($this->params['id']);
         case 'update':
             return isset($this->params['cash']);
         }
@@ -48,9 +51,13 @@ class CashesAPI extends APIService {
     protected function proceed() {
         switch ($this->action) {
         case 'get':
-            $ret = CashesService::getHost($this->params['host']);
-            if ($ret === null || $ret->isClosed()) {
-                $ret = null;
+            if (isset($this->params['id'])) {
+                $ret = CashesService::get($this->params['id']);
+            } else {
+                $ret = CashesService::getHost($this->params['host']);
+                if ($ret === null || $ret->isClosed()) {
+                    $ret = null;
+                }
             }
             $this->succeed($ret);
             break;

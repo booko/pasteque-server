@@ -23,22 +23,22 @@ namespace Pasteque;
 class Category {
 
     public $id;
-    public $parent_id;
+    public $parentId;
     public $label;
     public $image;
-    public $disp_order;
+    public $dispOrder;
 
-    static function __build($id, $parent_id, $label, $image, $order) {
-        $cat = new Category($parent_id, $label, $image, $order);
+    static function __build($id, $parentId, $label, $image, $order) {
+        $cat = new Category($parentId, $label, $image, $order);
         $cat->id = $id;
         return $cat;
     }
 
-    function __construct($parent_id, $label, $image, $order) {
-        $this->parent_id = $parent_id;
+    function __construct($parentId, $label, $image, $order) {
+        $this->parentId = $parentId;
         $this->label = $label;
         $this->image = $image;
-        $this->disp_order = $order;
+        $this->dispOrder = $order;
     }
 
 }

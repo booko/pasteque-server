@@ -25,7 +25,7 @@ class StocksAPI extends APIService {
     protected function check() {
         switch ($this->action) {
         case 'getAll':
-            return true;
+            return isset($this->params['location']);
         }
         return false;
     }
@@ -38,7 +38,7 @@ class StocksAPI extends APIService {
                 $location = $this->params['location'];
                 $location = StocksService::getLocationId($location);
                 if ($location === NULL) {
-                    echo "ERROR: unknown location";
+                    $this->fail("unknown location");
                     return;
                 }
             }
