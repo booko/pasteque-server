@@ -39,6 +39,6 @@ class CurrenciesService extends AbstractService {
     protected function build($row, $pdo = null) {
         return Currency::__build($row["ID"], $row["NAME"], $row["SYMBOL"],
                 $row["DECIMALSEP"], $row["THOUSANDSSEP"], $row["FORMAT"],
-                $row["RATE"], ord($row["MAIN"]), ord($row["ACTIVE"]));
+                $row["RATE"], ord($row["MAIN"]) == 1, ord($row["ACTIVE"]) == 1);
     }
 }
