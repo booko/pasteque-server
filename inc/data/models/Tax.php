@@ -23,24 +23,24 @@ namespace Pasteque;
 class Tax {
 
     public $id;
-    public $tax_cat_id;
+    public $taxCatId;
     public $label;
-    public $start_date;
+    public $startDate;
     public $rate;
 
-    static function __build($id, $tax_cat_id, $label, $start_date, $rate) {
-        $tax = new Tax($tax_cat_id, $label, $start_date, $rate);
+    static function __build($id, $taxCatId, $label, $startDate, $rate) {
+        $tax = new Tax($taxCatId, $label, $startDate, $rate);
         $tax->id = $id;
         return $tax;
     }
 
-    function __construct($tax_cat_id, $label, $start_date, $rate) {
-        $this->tax_cat_id = $tax_cat_id;
+    function __construct($taxCatId, $label, $startDate, $rate) {
+        $this->taxCatId = $taxCatId;
         $this->label = $label;
-        if (!preg_match('%^\\d*$%', $start_date) && !is_int($start_date)) {
-            $start_date = strtotime($start_date);
+        if (!preg_match('%^\\d*$%', $startDate) && !is_int($startDate)) {
+            $startDate = strtotime($startDate);
         }
-        $this->start_date = $start_date;
+        $this->startDate = $startDate;
         $this->rate = $rate;
     }
     
@@ -51,6 +51,6 @@ class Tax {
         if ($date === null) {
             $date = time();
         }
-        return $this->start_date < $date;
+        return $this->startDate < $date;
     }
 }
