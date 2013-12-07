@@ -52,19 +52,14 @@ function tpl_404() {
 
 function tpl_menu() {
     global $MENU;
-    $sections = $MENU->getSections();
+    $entries = $MENU->get_entries();
     echo "<div id=\"menu-container\">\n";
     echo "\t<img src=\"" . get_template_url() . "img/logo.png" . "\" />\n";
-    foreach ($sections as $section) {
-        echo("\t<div class=\"section-title\">" . \i18n($section->getName(), $section->getNameDomain()) . "</div>\n");
-        echo "\t<ul class=\"menu\">\n";
-        $entries = $section->getEntries();
-        foreach ($entries as $entry) {
-            echo "\t\t<li><a href=\"" . get_url_action($entry->getAction()) . "\">" . \i18n($entry->getName(), $entry->getNameDomain()) . "</a></li>\n";
+    echo "\t<ul class=\"menu\">\n";
+    foreach ($entries as $entry) {
+        echo "\t\t<li><a href=\"" . get_url_action($entry->getAction()) . "\">" . __($entry->getName(), $entry->getNameDomain()) . "</a></li>\n";
     }
     echo "\t</ul>\n";
-        
-    }
     echo "</div>";
 }
 

@@ -20,6 +20,24 @@
 
 namespace Pasteque;
 
-const URL_ACTION_PARAM = "p";
+class Place {
 
-?>
+    public $id;
+    public $name;
+    public $x;
+    public $y;
+
+    static function __build($id, $name, $x, $y) {
+        $place = new Place($name, $x, $y);
+        $place->id = $id;
+        return $place;
+    }
+
+    function __construct($name, $x, $y) {
+        $this->name = $name;
+        $this->x = $x;
+        $this->y = $y;
+        $places = array();
+    }
+
+}

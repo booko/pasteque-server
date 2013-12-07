@@ -1,5 +1,5 @@
 <?php
-//    Pastèque Web back office
+//    Pastèque Web back office, Users module
 //
 //    Copyright (C) 2013 Scil (http://scil.coop)
 //
@@ -18,8 +18,9 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace Pasteque;
+namespace BaseUsers;
 
-const URL_ACTION_PARAM = "p";
+const PLUGIN_NAME = "base_users";
 
+require_once(dirname(__FILE__) . "/base_users.php");
 ?>

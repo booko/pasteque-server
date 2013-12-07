@@ -20,6 +20,21 @@
 
 namespace Pasteque;
 
-const URL_ACTION_PARAM = "p";
+class Payment {
+
+    public $id;
+    public $type;
+    public $amount;
+
+    static function __build($id, $type, $amount) {
+        $payment = new Payment($type, $amount);
+        $payment->id = $id;
+    }
+
+    function __construct($type, $amount) {
+        $this->type = $type;
+        $this->amount = $amount;
+    }
+}
 
 ?>

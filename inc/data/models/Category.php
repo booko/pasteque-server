@@ -20,22 +20,38 @@
 
 namespace Pasteque;
 
-/** Reverse function of strftime. Given a string date and a format,
- * creates the timestamp.
- */
-function timefstr($format, $date) {
-    $dateTime = DateTime::createFromFormat($format, $date);
-    return $dateTime->getTimestamp();
-}
+class Category {
 
-function stdtimefstr($date) {
-    if ($date != null) {
-        return timefstr("Y-m-d H:i:s", $date);
-    } else {
-        return null;
+    public $id;
+    public $parent_id;
+    public $name;
+
+    static function __build($id, $parent_id, $name) {
+        $cat = new Category($parent_id, $name);
+        $cat->id = $id;
+        return $cat;
+    }
+
+    function __construct($parent_id, $name) {
+        $this->parent_id = $parent_id;
+        $this->name = $name;
+    }
+
+    function __form($f) {
+        if (!isset($f['name'])) {
+            return NULL;
+        }
+        $parent = NULL;
+        if (isset($f['parent_id']) && $f['parent_id'] != "") {
+            $parent = $f['parent_id'];
+        }
+        if (isset($f['id'])) {
+            $cat = Category::__build($f['id'], $parent, $f['name']);
+        } else {
+            $cat = new Category($parent, $f['name']);
+        }
+        return $cat;
     }
 }
 
-function stdstrftime($time) {
-    return strftime("%Y-%m-%d %H:%M:%S", $time);
-}
+?>

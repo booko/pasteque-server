@@ -25,34 +25,30 @@ namespace BaseProducts;
 // Check saves
 if (isset($_POST['name'])) {
     // Tax cat
-    $def = \Pasteque\ModelFactory::get("taxcategory");
-    if ($def->checkForm($_POST)) {
-        if (isset($_POST['id'])) {
-            \Pasteque\ModelService::update("taxcategory", $_POST);
-        } else {
-            \Pasteque\ModelService::create("taxcategory", $_POST);
-        }
+    $cat = \Pasteque\TaxCat::__form($_POST);
+    if (isset($_POST['id'])) {
+        \Pasteque\TaxesService::updateCat($cat);
+    } else {
+        \Pasteque\TaxesService::createCat($cat);
     }
 } else if (isset($_POST['rate'])) {
     // Tax rate
-    $def = \Pasteque\ModelFactory::get("tax");
-    if ($def->checkForm($_POST)) {
-        if (isset($_POST['id'])) {
-            \Pasteque\ModelService::update("tax", $_POST);
-        } else {
-            \Pasteque\ModelService::create("tax", $_POST);
-        }
+    $rate = \Pasteque\Tax::__form($_POST);
+    if (isset($_POST['id'])) {
+        \Pasteque\TaxesService::updateTax($rate);
+    } else {
+        \Pasteque\TaxesService::createTax($rate);
     }
 } else if (isset($_POST['delete-tax'])) {
-    \Pasteque\ModelService::delete("tax", $_POST['delete-tax']);
+    \Pasteque\TaxesService::deleteTax($_POST['delete-tax']);
+} else if (isset($_POST['delete-taxcat'])) {
 }
 
 $tax_cat = NULL;
 $taxes = NULL;
 if (isset($_GET['id'])) {
-    $tax_cat = \Pasteque\ModelService::get("taxcategory", $_GET['id']);
-    $taxes = \Pasteque\ModelService::search("tax", NULL,
-            array("taxcategory_id", "=", $tax_cat['id']));
+    $tax_cat = \Pasteque\TaxesService::get($_GET['id']);
+    $taxes = \Pasteque\TaxesService::getTaxes($_GET['id']);
 }
 ?>
 <h1><?php \pi18n("Edit tax", PLUGIN_NAME); ?></h1>
@@ -65,23 +61,23 @@ if (isset($_GET['id'])) {
 </form>
 <?php if ($tax_cat !== NULL) { ?>
 <form action="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'taxes'); ?>" method="post">
-	<?php \Pasteque\form_delete("taxcat", $tax_cat['id']); ?>
+	<?php \Pasteque\form_delete("taxcat", $tax_cat->id); ?>
 </form>
 <?php } ?>
 
 <?php if ($taxes !== NULL) { ?>
 <!-- Tax rates -->
 <h2><?php \pi18n("Rates", PLUGIN_NAME); ?></h2>
-<?php while ($tax = $taxes->fetch()) { $id = $tax['id'];?>
+<?php foreach ($taxes as $tax) { ?>
 <form action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
-    <?php \Pasteque\form_hidden("rate$id", $tax, "id"); ?>
-    <?php \Pasteque\form_hidden("rate$id", $tax, "taxcategory_id"); ?>
-    <?php \Pasteque\form_input("rate$id", "Tax", $tax, "rate", "float", array("required" => true, "step" => 0.001)); ?>
-    <?php \Pasteque\form_input("rate$id", "Tax", $tax, "validfrom", "date", array("required" => true)); ?>
+    <?php \Pasteque\form_hidden("rate$tax->id", $tax, "id"); ?>
+    <?php \Pasteque\form_hidden("rate$tax->id", $tax, "tax_cat_id"); ?>
+    <?php \Pasteque\form_input("rate$tax->id", "Tax", $tax, "rate", "float", array("required" => true, "step" => 0.001)); ?>
+    <?php \Pasteque\form_input("rate$tax->id", "Tax", $tax, "start_date", "date", array("required" => true)); ?>
     <?php \Pasteque\form_send(); ?>
 </form>
 <form action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
-	<?php \Pasteque\form_delete("tax", $tax['id']); ?>
+	<?php \Pasteque\form_delete("tax", $tax->id); ?>
 </form>
 <?php } ?>
 <?php } ?>
@@ -90,9 +86,9 @@ if (isset($_GET['id'])) {
 <?php if ($tax_cat !== NULL) { ?>
 <h2><?php \pi18n("New tax rate", PLUGIN_NAME); ?></h2>
 <form action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
-    <?php \Pasteque\form_value_hidden("new_rate", "tax_cat_id", $tax_cat['id']); ?>
+    <?php \Pasteque\form_value_hidden("new_rate", "tax_cat_id", $tax_cat->id); ?>
 	<?php \Pasteque\form_input("new_rate", "Tax", NULL, "rate", "float", array("required" => true)); ?>
-	<?php \Pasteque\form_input("new_rate", "Tax", NULL, "validfrom", "date", array("required" => true)); ?>
+	<?php \Pasteque\form_input("new_rate", "Tax", NULL, "start_date", "date", array("required" => true)); ?>
 	<?php \Pasteque\form_send(); ?>
 </form>
 <?php } ?>

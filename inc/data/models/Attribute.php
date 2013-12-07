@@ -20,6 +20,40 @@
 
 namespace Pasteque;
 
-const URL_ACTION_PARAM = "p";
+class Attribute {
 
-?>
+    public $id;
+    public $label;
+    public $values;
+
+    static function __build($id, $label) {
+        $attr = new Attribute($label);
+        $attr->id = $id;
+        return $attr;
+    }
+
+    function __construct($label) {
+        $this->label = $label;
+        $this->values = array();
+    }
+
+    function addValue($value) {
+        $this->values[] = $value;
+    }
+}
+
+class AttributeValue {
+
+    public $id;
+    public $label;
+
+    static function __build($id, $label) {
+        $val = new AttributeValue($label);
+        $val->id = $id;
+        return $val;
+    }
+
+    function __construct($label) {
+        $this->label = $label;
+    }
+}

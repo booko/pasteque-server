@@ -22,20 +22,22 @@
 
 namespace BaseProducts;
 
-if (isset($_POST['name'])) {
-    $def = \Pasteque\ModelFactory::get("category");
-    if ($def->checkForm($_POST)) {
-        if (isset($_POST['id'])) {
-            \Pasteque\ModelService::update("category", $_POST);
-        } else {
-            \Pasteque\ModelService::create("category", $_POST);
-        }
+if (isset($_POST['id'])) {
+    $edit = \Pasteque\Category::__form($_POST);
+    if ($edit !== NULL) {
+    var_dump($edit);
+        \Pasteque\CategoriesService::updateCat($edit);
+    }
+} else if (isset($_POST['name'])) {
+    $new = \Pasteque\Category::__form($_POST);
+    if ($new !== NULL) {
+        \Pasteque\CategoriesService::createCat($new);
     }
 }
 
 $category = NULL;
 if (isset($_GET['id'])) {
-    $category = \Pasteque\ModelService::get("category", $_GET['id']);
+    $category = \Pasteque\CategoriesService::get($_GET['id']);
 }
 ?>
 <h1><?php \pi18n("Edit a category", PLUGIN_NAME); ?></h1>
@@ -43,11 +45,11 @@ if (isset($_GET['id'])) {
 <form action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
     <?php \Pasteque\form_hidden("edit", $category, "id"); ?>
 	<?php \Pasteque\form_input("edit", "Category", $category, "name", "string", array("required" => true)); ?>
-	<?php \Pasteque\form_input("edit", "Category", $category, "parent_id", "pick", array("model" => "category", "nullable" => true)); ?>
+	<?php \Pasteque\form_input("edit", "Category", $category, "parent_id", "pick", array("model" => "Category", "nullable" => true)); ?>
 	<?php \Pasteque\form_send(); ?>
 </form>
 <?php if ($category !== NULL) { ?>
 <form action="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'categories'); ?>" method="post">
-    <?php \Pasteque\form_delete("cat", $category['id']); ?>
+    <?php \Pasteque\form_delete("cat", $category->id); ?>
 </form>
 <?php } ?>

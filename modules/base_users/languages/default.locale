@@ -15,5 +15,10 @@
 "Add a tax": "Add a tax",
 "Edit tax": "Edit tax",
 "Rates": "Rates",
-"New tax rate": "New rate"
+"New tax rate": "New rate",
+
+"Users": "Users",
+"Add an user": "Add an user",
+"Edit an user": "Edit an user",
+"%d users": "%d users"
 }

@@ -31,14 +31,6 @@ function redirect($path) {
     }
     require_once(ABSPATH . "/" . $path . ".php");
 }
-function redirect_api($path) {
-    if (!file_exists(ABSPATH . "/inc/data/api/" . $path . ".php")) {
-        $ret = array("error" => "No such API");
-        echo json_encode($ret);
-        return;
-    }
-    require_once(ABSPATH . "/inc/data/api/" . $path . ".php");
-}
 
 /** Redirect page to the given one in url */
 function url_content() {
@@ -49,18 +41,6 @@ function url_content() {
     }
     $action = str_replace("..", "", $action);
     redirect($action);
-}
-/** Redirect to the given API service */
-function api_content() {
-    if (!isset($_GET[URL_ACTION_PARAM])) {
-        $ret = array("error" => "No such API");
-        echo json_encode($ret);
-        return;
-    } else {
-        $action = $_GET[URL_ACTION_PARAM];
-    }
-    $action = str_replace("..", "", $action);
-    redirect_api($action);
 }
 
 function get_url_action($action) {

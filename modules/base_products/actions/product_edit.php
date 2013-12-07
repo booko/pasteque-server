@@ -22,21 +22,24 @@
 
 namespace BaseProducts;
 
-if (isset($_POST['ref'])) {
-    $def = \Pasteque\ModelFactory::get("product");
-    if ($def->checkForm($_POST)) {
-        if (isset($_POST['id'])) {
-            \Pasteque\ModelService::update("product", $_POST);
-        } else {
-            \Pasteque\ModelService::create("product", $_POST);
-        }
+if (isset($_POST['id'])) {
+    $edit = \Pasteque\Product::__form($_POST);
+    if ($edit !== NULL) {
+        \Pasteque\ProductsService::update($edit);
+    }
+} else if (isset($_POST['ref'])) {
+    $new = \Pasteque\Product::__form($_POST);
+    if ($new !== NULL) {
+        \Pasteque\ProductsService::create($new);
     }
 }
 
 $product = NULL;
 if (isset($_GET['id'])) {
-    $product = \Pasteque\ModelService::get("product", $_GET['id']);
+    $product = \Pasteque\ProductsService::get($_GET['id']);
 }
+$taxes = \Pasteque\TaxesService::getAll();
+$categories = \Pasteque\CategoriesService::getAll();
 ?>
 <h1><?php \pi18n("Edit a product", PLUGIN_NAME); ?></h1>
 
@@ -44,11 +47,11 @@ if (isset($_GET['id'])) {
     <?php \Pasteque\form_hidden("edit", $product, "id"); ?>
 	<?php \Pasteque\form_input("edit", "Product", $product, "ref", "string", array("required" => true)); ?>
 	<?php \Pasteque\form_input("edit", "Product", $product, "name", "string", array("required" => true)); ?>
-	<?php \Pasteque\form_input("edit", "Product", $product, "taxcat_id", "pick", array("model" => "taxcategory")); ?>
-	<?php \Pasteque\form_input("edit", "Product", $product, "pricesell", "numeric", array("required" => true)); ?>
+	<?php \Pasteque\form_input("edit", "Product", $product, "tax_cat_id", "pick", array("model" => "TaxCategory")); ?>
+	<?php \Pasteque\form_input("edit", "Product", $product, "price_sell", "numeric", array("required" => true)); ?>
 	<label for="sell"><?php \pi18n("Sell price + taxes", PLUGIN_NAME); ?></label><input id="sell" type="numeric" name="selltax" />
 	<h2><?php \pi18n("Categories", PLUGIN_NAME); ?></h2>
-	<?php \Pasteque\form_input("edit", "Product", $product, "category_ids", "pick_multiple", array("model" => "category")); ?>
+	<?php \Pasteque\form_input("edit", "Product", $product, "category_ids", "pick_multiple", array("model" => "Category")); ?>
 	
 	<?php \Pasteque\form_send(); ?>
 </form>

@@ -23,70 +23,11 @@ namespace Pasteque;
 
 const ABSPATH = __DIR__; // Base path. Also to check if a call
                          // originates from api.php
+
 // Load
 require_once(ABSPATH . "/inc/load.php");
 
-// Check user authentication
-if (!is_user_logged_in()) {
-    $ret = array("error" => "Not logged");
-    return json_encode($ret);
-} else {
-    require_once(ABSPATH . "/inc/load_logged.php");
-    $ret = NULL;
-    if (!isset($_GET[URL_ACTION_PARAM]) || !isset($_GET[URL_API_PARAM])) {
-        $ret = array("error" => "No such API");
-        echo json_encode($ret);
-        return;
-    } else {
-        $action = $_GET[URL_ACTION_PARAM];
-        $modelName = $_GET[URL_API_PARAM];
-        $def = ModelFactory::get($modelName);
-        if ($def == NULL) {
-            $ret = array("error" => "No such API");
-            echo json_encode($ret);
-            return;
-        }
-        switch ($action) {
-        case 'search':
-            $data = ModelService::search($modelName);
-            $ret = $data->fetchAll();
-            break;
-        case 'get':
-            if (!isset($_GET['id'])) {
-                $ret = FALSE;
-                break;
-            }
-            $data = ModelService::get($modelName, $_GET['id']);
-            if (is_array($_GET['id'])) {
-                $ret = $data->fetchAll();
-            } else {
-                $ret = $data;
-            }
-            break;
-        case 'create':
-            if (!$def->checkForm($_GET)) {
-                $ret = FALSE;
-                break;
-            }
-            $ret = ModelService::create($modelName, $_GET);
-            break;
-        case 'update':
-            if (!$def->checkForm($_GET) || !isset($_GET['id'])) {
-                $ret = FALSE;
-                break;
-            }
-            $ret = ModelService::update($modelName, $_GET);
-            break;
-        case 'delete':
-            if (!isset($_GET['id'])) {
-                $ret = FALSE;
-                break;
-            }
-            $ret = ModelService::delete($modelName, $_GET['id']);
-            break;
-        default:
-            $ret = array("error" => "No such API");
-        }
-    }
-    echo json_encode($ret);
-}
+// Check credentials
+
+// Call API
+

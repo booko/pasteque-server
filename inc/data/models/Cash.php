@@ -20,6 +20,36 @@
 
 namespace Pasteque;
 
-const URL_ACTION_PARAM = "p";
+class Cash {
+
+    public $id;
+    public $host;
+    public $sequence;
+    /** Open date as timestamp */
+    public $openDate;
+    /** Close date as timestamp, may be null */
+    public $closeDate;
+
+    static function __build($id, $host, $sequence, $openDate, $closeDate) {
+        $cash = new Cash($host, $sequence, $openDate, $closeDate);
+        $cash->id = $id;
+        return $cash;
+    }
+
+    function __construct($host, $sequence, $openDate, $closeDate) {
+        $this->host = $host;
+        $this->sequence = $sequence;
+        $this->openDate = $openDate;
+        $this->closeDate = $closeDate;
+    }
+
+    function isClosed() {
+        return $this->closeDate != null;
+    }
+
+    function isOpened() {
+        return $this->openDate != null;
+    }
+}
 
 ?>

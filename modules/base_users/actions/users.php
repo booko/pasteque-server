@@ -1,5 +1,5 @@
 <?php
-//    Pastèque Web back office, Products module
+//    Pastèque Web back office, Users module
 //
 //    Copyright (C) 2013 Scil (http://scil.coop)
 //
@@ -18,13 +18,13 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace BaseProducts;
+namespace BaseUsers;
 
 if (isset($_POST['delete-user'])) {
-    \Pasteque\ModelService::delete("user", $_POST['delete-user']);
+    \Pasteque\UsersService::delete($_POST['delete-user']);
 }
 
-$users = \Pasteque\ModelService::search("user");
+$users = \Pasteque\UsersService::getAll();
 ?>
 <h1><?php \pi18n("Users", PLUGIN_NAME); ?></h1>
 
@@ -41,13 +41,13 @@ $users = \Pasteque\ModelService::search("user");
 	</thead>
 	<tbody>
 <?php
-while ($user = $users->fetch()) {
+foreach ($users as $user) {
 ?>
 	<tr>
-		<td><?php echo $user['name']; ?></td>
+		<td><?php echo $user->name; ?></td>
 		<td class="edition">
-			<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'user_edit', array('id' => $user['id'])); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
-			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("user", $user['id'], \Pasteque\get_template_url() . 'img/delete.png') ?></form>
+			<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'user_edit', array('id' => $user->id)); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
+			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("user", $user->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>
 		</td>
 	</tr>
 <?php

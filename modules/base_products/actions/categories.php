@@ -23,10 +23,10 @@
 namespace BaseProducts;
 
 if (isset($_POST['delete-cat'])) {
-    \Pasteque\ModelService::delete("category", $_POST['delete-cat']);
+    \Pasteque\CategoriesService::deleteCat($_POST['delete-cat']);
 }
 
-$categories = \Pasteque\ModelService::search("category");
+$categories = \Pasteque\CategoriesService::getAll();
 ?>
 <h1><?php \pi18n("Categories", PLUGIN_NAME); ?></h1>
 
@@ -43,13 +43,13 @@ $categories = \Pasteque\ModelService::search("category");
 	</thead>
 	<tbody>
 <?php
-while ($category = $categories->fetch()) {
+foreach ($categories as $category) {
 ?>
 	<tr>
-		<td><?php echo $category['name']; ?></td>
+		<td><?php echo $category->name; ?></td>
 		<td class="edition">
-			<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'category_edit', array('id' => $category['id'])); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
-			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("cat", $category['id'], \Pasteque\get_template_url() . 'img/delete.png') ?></form>
+			<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'category_edit', array('id' => $category->id)); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
+			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("cat", $category->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>
 		</td>
 	</tr>
 <?php
