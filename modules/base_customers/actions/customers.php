@@ -37,7 +37,7 @@ $customers = \Pasteque\CustomersService::getAll(TRUE);
 		<tr>
 			<th><?php \pi18n("Customer.number"); ?></th>
 			<th><?php \pi18n("Customer.key"); ?></th>
-			<th><?php \pi18n("Customer.disp_name"); ?></th>
+			<th><?php \pi18n("Customer.dispName"); ?></th>
 			<th></th>
 		</tr>
 	</thead>

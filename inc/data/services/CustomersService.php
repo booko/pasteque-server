@@ -31,7 +31,7 @@ class CustomersService {
                 $db_cust['PHONE'], $db_cust['PHONE2'], $db_cust['FAX'],
                 $db_cust['ADDRESS'], $db_cust['ADDRESS2'], $db_cust['POSTAL'],
                 $db_cust['CITY'], $db_cust['REGION'], $db_cust['COUNTRY'],
-                $db_cust['NOTES'], $db_cust['VISIBLE']);
+                $db_cust['NOTES'], ord($db_cust['VISIBLE']) == 1);
         return $cust;
     }
 
@@ -94,27 +94,27 @@ class CustomersService {
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(":key", $cust->key, \PDO::PARAM_STR);
         $stmt->bindParam(":num", $cust->number, \PDO::PARAM_STR);
-        $stmt->bindParam(":name", $cust->disp_name, \PDO::PARAM_STR);
-        $stmt->bindParam(":tax_id", $cust->cust_tax_id, \PDO::PARAM_STR);
+        $stmt->bindParam(":name", $cust->dispName, \PDO::PARAM_STR);
+        $stmt->bindParam(":tax_id", $cust->custTaxId, \PDO::PARAM_STR);
         $stmt->bindParam(":card", $cust->card, \PDO::PARAM_STR);
         $stmt->bindParam(":prepaid", $cust->prepaid, \PDO::PARAM_STR);
-        $stmt->bindParam(":max_debt", $cust->max_debt, \PDO::PARAM_STR);
+        $stmt->bindParam(":max_debt", $cust->maxDebt, \PDO::PARAM_STR);
         $stmt->bindParam(":addr", $cust->addr1, \PDO::PARAM_STR);
         $stmt->bindParam(":addr2", $cust->addr2, \PDO::PARAM_STR);
-        $stmt->bindParam(":zip", $cust->zip_code, \PDO::PARAM_STR);
+        $stmt->bindParam(":zip", $cust->zipCode, \PDO::PARAM_STR);
         $stmt->bindParam(":city", $cust->city, \PDO::PARAM_STR);
         $stmt->bindParam(":region", $cust->region, \PDO::PARAM_STR);
         $stmt->bindParam(":country", $cust->country, \PDO::PARAM_STR);
-        $stmt->bindParam(":first_name", $cust->first_name, \PDO::PARAM_STR);
-        $stmt->bindParam(":last_name", $cust->last_name, \PDO::PARAM_STR);
+        $stmt->bindParam(":first_name", $cust->firstName, \PDO::PARAM_STR);
+        $stmt->bindParam(":last_name", $cust->lastName, \PDO::PARAM_STR);
         $stmt->bindParam(":email", $cust->email, \PDO::PARAM_STR);
         $stmt->bindParam(":phone", $cust->phone1, \PDO::PARAM_STR);
         $stmt->bindParam(":phone2", $cust->phone2, \PDO::PARAM_STR);
         $stmt->bindParam(":fax", $cust->fax, \PDO::PARAM_STR);
         $stmt->bindParam(":note", $cust->note, \PDO::PARAM_STR);
         $stmt->bindParam(":visible", $cust->visible, \PDO::PARAM_INT);
-        $stmt->bindParam(":date", $cust->debt_date, \PDO::PARAM_STR);
-        $stmt->bindParam(":debt", $cust->curr_debt, \PDO::PARAM_STR);
+        $stmt->bindParam(":date", $cust->debtDate, \PDO::PARAM_STR);
+        $stmt->bindParam(":debt", $cust->currDebt, \PDO::PARAM_STR);
         $stmt->bindParam(":id", $cust->id, \PDO::PARAM_INT);
         return $stmt->execute();
     }
@@ -134,27 +134,27 @@ class CustomersService {
         $stmt->bindParam(":id", $id, \PDO::PARAM_STR);
         $stmt->bindParam(":key", $cust->key, \PDO::PARAM_STR);
         $stmt->bindParam(":num", $cust->number, \PDO::PARAM_STR);
-        $stmt->bindParam(":name", $cust->disp_name, \PDO::PARAM_STR);
-        $stmt->bindParam(":tax_id", $cust->cust_tax_id, \PDO::PARAM_STR);
+        $stmt->bindParam(":name", $cust->dispName, \PDO::PARAM_STR);
+        $stmt->bindParam(":tax_id", $cust->custTaxId, \PDO::PARAM_STR);
         $stmt->bindParam(":card", $cust->card, \PDO::PARAM_STR);
         $stmt->bindParam(":prepaid", $cust->prepaid, \PDO::PARAM_STR);
-        $stmt->bindParam(":max_debt", $cust->max_debt, \PDO::PARAM_STR);
+        $stmt->bindParam(":max_debt", $cust->maxDebt, \PDO::PARAM_STR);
         $stmt->bindParam(":addr", $cust->addr1, \PDO::PARAM_STR);
         $stmt->bindParam(":addr2", $cust->addr2, \PDO::PARAM_STR);
-        $stmt->bindParam(":zip", $cust->zip_code, \PDO::PARAM_STR);
+        $stmt->bindParam(":zip", $cust->zipCode, \PDO::PARAM_STR);
         $stmt->bindParam(":city", $cust->city, \PDO::PARAM_STR);
         $stmt->bindParam(":region", $cust->region, \PDO::PARAM_STR);
         $stmt->bindParam(":country", $cust->country, \PDO::PARAM_STR);
-        $stmt->bindParam(":first_name", $cust->first_name, \PDO::PARAM_STR);
-        $stmt->bindParam(":last_name", $cust->last_name, \PDO::PARAM_STR);
+        $stmt->bindParam(":first_name", $cust->firstName, \PDO::PARAM_STR);
+        $stmt->bindParam(":last_name", $cust->lastName, \PDO::PARAM_STR);
         $stmt->bindParam(":email", $cust->email, \PDO::PARAM_STR);
         $stmt->bindParam(":phone", $cust->phone1, \PDO::PARAM_STR);
         $stmt->bindParam(":phone2", $cust->phone2, \PDO::PARAM_STR);
         $stmt->bindParam(":fax", $cust->fax, \PDO::PARAM_STR);
         $stmt->bindParam(":note", $cust->note, \PDO::PARAM_STR);
         $stmt->bindParam(":visible", $cust->visible, \PDO::PARAM_INT);
-        $stmt->bindParam(":date", $cust->debt_date, \PDO::PARAM_STR);
-        $stmt->bindParam(":debt", $cust->curr_debt, \PDO::PARAM_STR);
+        $stmt->bindParam(":date", $cust->debtDate, \PDO::PARAM_STR);
+        $stmt->bindParam(":debt", $cust->currDebt, \PDO::PARAM_STR);
         if ($stmt->execute() !== FALSE) {
             return $id;
         } else {

@@ -25,62 +25,62 @@ class Customer {
     public $id;
     public $number;
     public $key;
-    public $disp_name;
+    public $dispName;
     public $card;
-    public $cust_tax_id;
+    public $custTaxId;
     public $prepaid;
-    public $max_debt;
-    public $curr_debt;
-    public $debt_date;
-    public $first_name;
-    public $last_name;
+    public $maxDebt;
+    public $currDebt;
+    public $debtDate;
+    public $firstName;
+    public $lastName;
     public $email;
     public $phone1;
     public $phone2;
     public $fax;
     public $addr1;
     public $addr2;
-    public $zip_code;
+    public $zipCode;
     public $city;
     public $region;
     public $country;
     public $note;
     public $visible;
 
-    static function __build($id, $number, $key, $disp_name, $card, $cust_tax_id,
-            $prepaid, $max_debt, $curr_debt, $debt_date, $first_name, $last_name, $email,
-            $phone1, $phone2, $fax, $addr1, $addr2, $zip_code, $city, $region,
-            $country, $note, $visible) {
-        $cust = new Customer($number, $key, $disp_name, $card, $cust_tax_id,
-            $prepaid, $max_debt, $curr_debt, $debt_date, $first_name, $last_name, $email,
-            $phone1, $phone2, $fax, $addr1, $addr2, $zip_code, $city, $region,
-            $country, $note, $visible);
+    static function __build($id, $number, $key, $dispName, $card, $custTaxId,
+            $prepaid, $maxDebt, $currDebt, $debtDate, $firstName, $lastName,
+            $email, $phone1, $phone2, $fax, $addr1, $addr2, $zipCode, $city,
+            $region, $country, $note, $visible) {
+        $cust = new Customer($number, $key, $dispName, $card, $custTaxId,
+                $prepaid, $maxDebt, $currDebt, $debtDate, $firstName, $lastName,
+                $email, $phone1, $phone2, $fax, $addr1, $addr2, $zipCode,
+                $city, $region, $country, $note, $visible);
         $cust->id = $id;
         return $cust;
     }
 
-    function __construct($number, $key, $disp_name, $card, $cust_tax_id, $prepaid,
-            $max_debt, $curr_debt, $debt_date, $first_name, $last_name, $email,
-            $phone1, $phone2, $fax, $addr1, $addr2, $zip_code, $city, $region,
+    function __construct($number, $key, $dispName, $card, $custTaxId, $prepaid,
+            $maxDebt, $currDebt, $debtDate, $firstName, $lastName, $email,
+            $phone1, $phone2, $fax, $addr1, $addr2, $zipCode, $city, $region,
             $country, $note, $visible) {
         $this->number = $number;
         $this->key = $key;
-        $this->disp_name = $disp_name;
+        $this->dispName = $dispName;
         $this->card = $card;
-        $this->cust_tax_id = $cust_tax_id;
+        $this->custTaxId = $custTaxId;
         $this->prepaid = $prepaid;
-        $this->max_debt = $max_debt;
-        $this->curr_debt = $curr_debt;
-        $this->debt_date = $debt_date;
-        $this->first_name = $first_name;
-        $this->last_name = $last_name;
+        $this->maxDebt = $maxDebt;
+        $this->currDebt = $currDebt;
+        $this->debtDate = $debtDate;
+        $this->firstName = $firstName;
+        $this->lastName = $lastName;
         $this->email = $email;
         $this->phone1 = $phone1;
         $this->phone2 = $phone2;
         $this->fax = $fax;
         $this->addr1 = $addr1;
         $this->addr2 = $addr2;
-        $this->zip_code = $zip_code;
+        $this->zipCode = $zipCode;
         $this->city = $city;
         $this->region = $region;
         $this->country = $country;
