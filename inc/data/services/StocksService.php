@@ -42,6 +42,19 @@ class StocksService {
         }
     }
 
+    static function locationExists($locationId) {
+        $pdo = PDOBuilder::getPDO();
+        $sql = "SELECT * FROM LOCATIONS WHERE ID = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(":id", $locationId);
+        $stmt->execute();
+        if ($row = $stmt->fetch()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     static function getQties($warehouseId = NULL) {
         $qties = array();
         $pdo = PDOBuilder::getPDO();

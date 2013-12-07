@@ -85,7 +85,7 @@ class TicketLine {
         $key = $attrs->createAttribute("key");
         $key->appendChild($attrs->createTextNode("product.taxcategoryid"));
         $entry->appendChild($key);
-        $entry->appendChild($attrs->createTextNode($this->tax->tax_cat_id));
+        $entry->appendChild($attrs->createTextNode($this->tax->taxCatId));
         $properties->appendChild($entry);
         $entry = $attrs->createElement("entry");
         $key = $attrs->createAttribute("key");
@@ -97,7 +97,7 @@ class TicketLine {
         $key = $attrs->createAttribute("key");
         $key->appendChild($attrs->createTextNode("product.categoryid"));
         $entry->appendChild($key);
-        $entry->appendChild($attrs->createTextNode($this->product->category->id));
+        $entry->appendChild($attrs->createTextNode($this->product->categoryId));
         $properties->appendChild($entry);
         $entry = $attrs->createElement("entry");
         $key = $attrs->createAttribute("key");

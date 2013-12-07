@@ -24,24 +24,39 @@ class TicketsAPI extends APIService {
 
     protected function check() {
         switch ($this->action) {
+        case 'share':
+            return isset($this->params['ticket']);
         case 'save':
-            return isset($this->params['tickets'])
-                    && isset($this->params['cash_id']);
+            return (isset($this->params['ticket'])
+                            || isset($this->params['tickets']))
+                    && isset($this->params['cashId']);
         }
         return false;
     }
 
     protected function proceed() {
         switch ($this->action) {
+        case 'share':
+            // id, name, content
         case 'save':
             // Receive ticket data as json
-            $json = json_decode($this->params['tickets']);
-            $cashId = $this->params['cash_id'];
+            if (isset($this->params['tickets'])) {
+                $json = json_decode($this->params['tickets']);
+            } else {
+                $json = array(json_decode($this->params['ticket']));
+            }
+            $cashId = $this->params['cashId'];
             $location = NULL;
             if (isset($this->params['location'])) {
                 $location = StocksService::getLocationId($this->params['location']);
                 if ($location === NULL) {
-                    $ret = FALSE;
+                    $this->fail(APIError::$ERR_GENERIC);
+                    break;
+                }
+            } else if (isset($this->params['locationId'])) {
+                $location = $this->params['locationId'];
+                if (!StocksService::locationExists($location)) {
+                    $this->fail(APIError::$ERR_GENERIC);
                     break;
                 }
             }
