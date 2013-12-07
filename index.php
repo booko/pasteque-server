@@ -21,19 +21,42 @@
 // Index is the entry point for everything.
 namespace Pasteque;
 
-const ABSPATH = __DIR__; // Base path. Also to check if a call
+define("ABSPATH", __DIR__); // Base path. Also to check if a call
                          // originates from index.php
 // Load
 require_once(ABSPATH . "/inc/load.php");
+
+function index_run() {
+    tpl_open();
+    url_content();
+    tpl_close();
+}
 
 // Check user authentication
 if (!is_user_logged_in()) {
     show_login_page();
 } else {
     require_once(ABSPATH . "/inc/load_logged.php");
-    tpl_open();
-    url_content();
-    tpl_close();
+    // Check install
+    require_once(ABSPATH . "/install.php");
+    if (isset($_GET[URL_ACTION_PARAM])) {
+        switch($_GET[URL_ACTION_PARAM]) {
+        case "img":
+            require_once(ABSPATH . "/dbimg.php");
+            break;
+        case "report":
+            require_once(ABSPATH . "/report.php");
+            break;
+        case "print":
+            require_once(ABSPATH . "/print.php");
+            break;
+        default:
+            index_run();
+            break;
+        }
+    } else {
+        index_run();
+    }    
 }
 
 ?>

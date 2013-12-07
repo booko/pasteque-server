@@ -22,7 +22,9 @@ namespace BaseUsers;
 
 function init() {
     global $MENU;
-    $MENU->register_module_entry(PLUGIN_NAME, "Users", "users");
+    $MENU->addSection("admin", "Administration", PLUGIN_NAME);
+    $MENU->registerModuleEntry("admin", PLUGIN_NAME, "menu_users.png", "Users", "users");
+    $MENU->registerModuleEntry("admin", PLUGIN_NAME, "menu_roles.png", "Roles", "roles");
     \Pasteque\register_i18n(PLUGIN_NAME);
 }
 \Pasteque\hook("module_load", __NAMESPACE__ . "\init");

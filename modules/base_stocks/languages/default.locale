@@ -1,0 +1,28 @@
+{
+"Stocks": "Stocks",
+
+"Moves": "Moves",
+"Stock move": "Stock move",
+"Operation": "Operation",
+"Input (buy)": "Input (buy)",
+"Output (sell)": "Output (sell)",
+"Output (return to supplyer)": "Output (return to supplyer)",
+"Stock is below security level!": "Stock is below security level!",
+"Stock is negative!": "Stock is negative",
+"Overstock!": "Overstock",
+
+"Inventory": "Inventory",
+"Security threshold": "Security threshold",
+"Maximum": "Maximum",
+
+"File": "File",
+"Send": "Send",
+
+"Import stock moves from csv": "Import stock moves from csv",
+"Import stock's moves": "Import stock's moves",
+"%d move(s), %d error(s)": "%d move(s), %d error(s)",
+"On line $d: exeptionnal error": "On line %d: exceptional error",
+"On line %d: Location not define or invalid": "On line %d: Location not define or invalid",
+"On line %d: Quantity not define or invalid": "On line %d: Quantity not define or invalid",
+"On line %d: Product not define or invalid": "On line %d: Product not define or invalid"
+}

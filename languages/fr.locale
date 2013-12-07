@@ -1,0 +1,122 @@
+{
+"date": "%d/%m/%Y",
+"datetime": "%d/%m/%Y %H:%M",
+"currency": "%01.2f€",
+
+"Thousands sep": ".",
+"Dec point": ",",
+
+"Version.Codename": "Datte",
+"Update": "Mise à jour",
+"Update notice": "Cliquez sur le bouton ci-dessous pour mettre à jour votre base de données",
+
+"Main title": "Pastèque, interface de gestion",
+"Introduction": "Cliquez sur le menu de gauche pour gérer votre point de vente.",
+
+"Home": "Accueil",
+
+"Edit": "Modifier",
+"Delete": "Supprimer",
+"Restore": "Restaurer",
+"Generate": "Génerer",
+"Save": "Enregistrer",
+"Send": "Envoyer",
+"Changes saved": "Modifications enregistrées",
+"Unable to save changes": "Impossible d'enregistrer les modifications",
+"Export": "Exporter",
+"No result": "Aucun résultat",
+"Close": "Fermer",
+"About": "À propos",
+
+"Image": "Image",
+"Quantity": "Quantité",
+"Undefined": "Non défini",
+"Date": "Date",
+"Total": "Total",
+"Subtotal": "Sous-total",
+
+"Product.label": "Désignation",
+"Product.reference": "Référence",
+"Product.category": "Categorie",
+"Product.disp_order": "Ordre",
+"Product.barcode": "Code barre",
+"Product.tax_cat": "TVA",
+"Product.price_sell": "Prix de vente",
+"Product.price_buy": "Prix d'achat",
+"Product.scaled": "Vente au poids",
+"Product.visible": "En vente",
+"Product.discount_enabled": "Remise auto",
+"Product.discount_rate": "Taux de remise",
+
+"Category.label": "Désignation",
+"Category.parent_id": "Parent",
+"Category.disp_order": "Ordre",
+
+"Composition.label": "Désignation",
+
+"TaxCat.label": "Désignation",
+"Tax.rate": "Taux",
+"Tax.start_date": "Effectif au",
+
+"Role.name": "Rôle",
+
+"User.name": "Nom",
+"User.role": "Rôle",
+
+"Session": "Session de caisse",
+"Session.host": "Caisse",
+"Session.openDate": "Date d'ouverture",
+"Session.closeDate": "Date de clôture",
+"Session.tickets": "Tickets",
+"Session.total": "Total",
+
+"Ticket.number": "Ticket n°",
+"Ticket.date": "Date",
+
+"Customer.number": "Numéro",
+"Customer.key": "Clé",
+"Customer.dispName": "Nom",
+"Customer.card": "Carte",
+"Customer.visible": "Actif",
+"Customer.prepaid": "Solde pré-payé",
+"Customer.maxDebt": "Dette max",
+"Customer.currDebt": "Dette actuelle",
+"Customer.debtDate": "Date",
+"Customer.note": "Note",
+"Customer.custTaxId": "Catégorie de taxe",
+"Customer.firstName": "Prénom",
+"Customer.lastName": "Nom",
+"Customer.email": "Email",
+"Customer.phone1": "Téléphone",
+"Customer.phone2": "Autre téléphone",
+"Customer.fax": "Fax",
+"Customer.addr1": "Addresse",
+"Customer.addr2": "Addresse",
+"Customer.zipCode": "Code postal",
+"Customer.city": "Ville",
+"Customer.region": "Département",
+"Customer.country": "Pays",
+
+"CustTaxCat.label": "Désignation",
+"CustTaxCat.taxCatId": "TVA",
+
+"File empty": "Fichier vide",
+"Separator not defined": "Separateur de colone non défini",
+"Technical error: file not open": "Erreur technique: fichier non ouvert",
+"Header doesn't contain : %s": "L'entête ne contient pas : %s",
+"Header default": "Defaut d'entête",
+
+"Floors.name": "Désignation",
+"Average": "Moyenne",
+
+"Currency.label": "Devise",
+"Currency.rate": "Taux de change",
+"Currency.main": "Principale",
+"Currency.symbol": "Symbole",
+"Currency.decimalSeparator": "Séparateur de décimale",
+"Currency.thousandsSeparator": "Séparateur de milliers",
+"Currency.format": "Format",
+"Currency.active": "Active",
+
+"Resource.label": "Désignation"
+}

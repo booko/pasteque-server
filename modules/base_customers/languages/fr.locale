@@ -1,0 +1,17 @@
+{
+"Customers": "Clients",
+
+"Add a customer": "Ajouter un client",
+"Edit a customer": "Modification d'un client",
+"%d customers": "%d clients",
+"Keys": "Clés",
+"Debt": "Dette",
+"Miscellaneous": "Divers",
+"Personnal data": "Informations personnelles",
+
+"Customer taxes": "Taxes client",
+"Customer's tax categories": "Catégories de taxes client",
+"Add a tax category": "Ajouter une catégorie",
+"Edit a customer tax": "Édition d'une catégorie de taxe client",
+"Customer's diary": "Historique client"
+}

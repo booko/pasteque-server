@@ -22,9 +22,10 @@ namespace BaseProducts;
 
 function init() {
     global $MENU;
-    $MENU->register_module_entry(PLUGIN_NAME, "Taxes", "taxes");
-    $MENU->register_module_entry(PLUGIN_NAME, "Categories", "categories");
-    $MENU->register_module_entry(PLUGIN_NAME, "Products", "products");
+    $MENU->addSection("catalog", "Catalog", PLUGIN_NAME);
+    $MENU->registerModuleEntry("catalog", PLUGIN_NAME, "menu_tax.png", "Taxes", "taxes");
+    $MENU->registerModuleEntry("catalog", PLUGIN_NAME, "menu_category.png", "Categories", "categories");
+    $MENU->registerModuleEntry("catalog", PLUGIN_NAME, "menu_product.png", "Products", "products");
     \Pasteque\register_i18n(PLUGIN_NAME);
 }
 \Pasteque\hook("module_load", __NAMESPACE__ . "\init");

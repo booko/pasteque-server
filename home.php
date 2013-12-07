@@ -20,6 +20,7 @@
 
 namespace Pasteque;
 
-echo("Welcome!!");
-
 ?>
+<h1><?php \pi18n("Main title"); ?></h1>
+
+<p><?php \pi18n("Introduction"); ?></p>

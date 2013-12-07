@@ -1,22 +1,22 @@
 <?php
-//    Pastèque Web back office
+//    POS-Tech API
 //
-//    Copyright (C) 2013 Scil (http://scil.coop)
+//    Copyright (C) 2012 Scil (http://scil.coop)
 //
-//    This file is part of Pastèque.
+//    This file is part of POS-Tech.
 //
-//    Pastèque is free software: you can redistribute it and/or modify
+//    POS-Tech is free software: you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
 //    the Free Software Foundation, either version 3 of the License, or
 //    (at your option) any later version.
 //
-//    Pastèque is distributed in the hope that it will be useful,
+//    POS-Tech is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //    GNU General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
-//    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
+//    along with POS-Tech.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Pasteque;
 
@@ -27,6 +27,12 @@ class CashesService {
                               $db_cash['HOSTSEQUENCE'],
                               stdtimefstr($db_cash['DATESTART']),
                               stdtimefstr($db_cash['DATEEND']));
+        if (isset($db_cash['TKTS'])) {
+            $cash->tickets = $db_cash['TKTS'];
+        }
+        if (isset($db_cash['TOTAL'])) {
+            $cash->total = $db_cash['TOTAL'];
+        }
         return $cash;
     }
 
@@ -44,7 +50,28 @@ class CashesService {
     static function getAll() {
         $cashes = array();
         $pdo = PDOBuilder::getPDO();
-        $sql = "SELECT * FROM CLOSEDCASH";
+        $sql = "SELECT CLOSEDCASH.MONEY, CLOSEDCASH.HOST, "
+                . "CLOSEDCASH.HOSTSEQUENCE, CLOSEDCASH.DATESTART, "
+                . "CLOSEDCASH.DATEEND, "
+                . "COUNT(DISTINCT(RECEIPTS.ID)) as TKTS, "
+                . "SUM(PAYMENTS.TOTAL) AS TOTAL "
+                . "FROM CLOSEDCASH "
+                . "LEFT JOIN RECEIPTS ON RECEIPTS.MONEY = CLOSEDCASH.MONEY "
+                . "LEFT JOIN PAYMENTS ON PAYMENTS.RECEIPT = RECEIPTS.ID "
+                . "GROUP BY CLOSEDCASH.MONEY "
+                . "ORDER BY DATESTART DESC";
+        foreach ($pdo->query($sql) as $db_cash) {
+            $cash = CashesService::buildDBCash($db_cash);
+            $cashes[] = $cash;
+        }
+        return $cashes;
+    }
+
+    static function getRunning() {
+        $cashes = array();
+        $pdo = PDOBuilder::getPDO();
+        $sql = "SELECT * FROM CLOSEDCASH WHERE DATESTART NOT NULL AND DATEEND "
+                . "IS NULL";
         foreach ($pdo->query($sql) as $db_cash) {
             $cash = CashesService::buildDBCash($db_cash);
             $cashes[] = $cash;
@@ -77,7 +104,7 @@ class CashesService {
 
     static function update($cash) {
         $pdo = PDOBuilder::getPDO();
-        $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+        $pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
         $startParam = ($cash->isOpened()) ? ':start' : 'NULL';
         $endParam = ($cash->isClosed()) ? ':end' : 'NULL';
         $stmt = $pdo->prepare("UPDATE CLOSEDCASH SET DATESTART = $startParam, "
@@ -85,11 +112,11 @@ class CashesService {
         $stmt->bindParam(':id', $cash->id);
         if ($cash->isOpened()) {
             $open = stdstrftime($cash->openDate);
-            $stmt->bindParam(':start', $open, PDO::PARAM_INT);
+            $stmt->bindParam(':start', $open, \PDO::PARAM_INT);
         }
         if ($cash->isClosed()) {
             $close = stdstrftime($cash->closeDate);
-            $stmt->bindParam(':end', $close, PDO::PARAM_INT);
+            $stmt->bindParam(':end', $close, \PDO::PARAM_INT);
         }
         return $stmt->execute();
     }

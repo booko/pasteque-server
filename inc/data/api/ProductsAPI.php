@@ -18,86 +18,54 @@
 //    You should have received a copy of the GNU General Public License
 //    along with POS-Tech.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once(dirname(dirname(__FILE__)) . "/services/ProductsService.php");
+namespace Pasteque;
 
-$action = $_GET['action'];
-$ret = null;
+class ProductsAPI extends APIService {
 
-switch ($action) {
-case 'get':
-    if (!isset($_GET['id'])) {
-       $ret = false;
-       break;
+    protected function check() {
+        switch ($this->action) {
+        case 'get':
+            return isset($this->params['id']) || isset($this->params['code'])
+                    || isset($this->params['reference']);
+        case 'getAll':
+            return true;
+        case 'getCategory':
+            return isset($this->params['id']);
+        case 'getAllFull':
+            return true;
+        }
     }
-    $ret = ProductsService::get($_GET['id']);
-    break;
-case 'getAll':
-    $ret = ProductsService::getAll();
-    break;
-case 'getAllFull':
-    $ret = ProductsService::getAll(true);
-    break;
-case 'create':
-    if (!isset($_GET['ref']) || !isset($_GET['label'])
-        || !isset($_GET['sell']) || !isset($_GET['cat']) || !isset($_GET['tax'])
-        || !isset($_GET['visible']) || !isset($_GET['scaled'])) {
-        $ret = false;
-        break;
+
+    protected function proceed() {
+        switch ($this->action) {
+        case 'get':
+            if (isset($this->params['id'])) {
+                $this->succeed(ProductsService::get($this->params['id']));
+            } else if (isset($this->params['reference'])) {
+                $this->succeed(
+                        ProductsService::getByRef($this->params['reference']));
+            } else {
+                $this->succeed(
+                        ProductsService::getByCode($this->params['code']));
+            }
+            break;
+        case 'getAll':
+            $this->succeed(ProductsService::getAll());
+            break;
+        case 'getAllFull':
+            $ret = ProductsService::getAll(true, true);
+            foreach ($ret as $r) {
+                if ($r->image !== NULL) {
+                    $r->image = base64_encode($r->image);
+                }
+            }
+            $this->succeed($ret);
+            break;
+        case 'getCategory':
+            $this->succeed(ProductsService::getByCategory($this->params['id']));
+            break;
+        }        
     }
-    $code = "";
-    if (isset($_GET['code'])) {
-        $code = $_GET['code'];
-    }
-    $buy = null;
-    if (isset($_GET['buy'])) {
-        $buy = $_GET['buy'];
-    }
-    $attr = null;
-    if (isset($_GET['attr'])) {
-        $attr = Attribute::__build($_GET['attr'], "dummy");
-    }
-    $cat = Category::__build($_GET['cat'], null, "dummy");
-    $tax = TaxCat::__build($_GET['tax'], "dummy");
-    $prd = new Product($_GET['ref'], $_GET['label'], $_GET['sell'], $cat, $tax,
-                       $_GET['visible'], $_GET['scaled'], $buy, $attr, $code);
-    $ret = ProductsService::create($prd);
-    break;
-case 'delete':
-    if (!isset($_GET['id'])) {
-        $ret = false;
-        break;
-    }
-    $ret = ProductsService::delete($_GET['id']);
-    break;
-case 'update':
-    if (!isset($_GET['id']) || !isset($_GET['ref']) || !isset($_GET['label'])
-        || !isset($_GET['sell']) || !isset($_GET['cat']) || !isset($_GET['tax'])
-        || !isset($_GET['visible']) || !isset($_GET['scaled'])) {
-        $ret = false;
-        break;
-    }
-    $code = "";
-    if (isset($_GET['code'])) {
-        $code = $_GET['code'];
-    }
-    $buy = null;
-    if (isset($_GET['buy'])) {
-        $buy = $_GET['buy'];
-    }
-    $attr = null;
-    if (isset($_GET['attr'])) {
-        $attr = Attribute::__build($_GET['attr'], "dummy");
-    }
-    $cat = Category::__build($_GET['cat'], null, "dummy");
-    $tax = TaxCat::__build($_GET['tax'], "dummy");
-    $prd = Product::__build($_GET['id'], $_GET['ref'], $_GET['label'],
-                            $_GET['sell'], $cat, $tax,
-                            $_GET['visible'], $_GET['scaled'],
-                            $buy, $attr, $code);
-    $ret = ProductsService::update($prd);
-    break;
 }
-
-echo(json_encode($ret));
 
 ?>

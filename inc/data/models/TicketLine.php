@@ -1,22 +1,22 @@
 <?php
-//    Pastèque Web back office
+//    POS-Tech API
 //
-//    Copyright (C) 2013 Scil (http://scil.coop)
+//    Copyright (C) 2012 Scil (http://scil.coop)
 //
-//    This file is part of Pastèque.
+//    This file is part of POS-Tech.
 //
-//    Pastèque is free software: you can redistribute it and/or modify
+//    POS-Tech is free software: you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
 //    the Free Software Foundation, either version 3 of the License, or
 //    (at your option) any later version.
 //
-//    Pastèque is distributed in the hope that it will be useful,
+//    POS-Tech is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //    GNU General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
-//    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
+//    along with POS-Tech.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Pasteque;
 
@@ -66,7 +66,7 @@ class TicketLine {
     /** Build xml attributes from line data. See TicketLineInfo constructors. */
     private function createAttributes() {
         // Set xml
-        $domimpl = new DOMImplementation();
+        $domimpl = new \DOMImplementation();
         $doctype = $domimpl->createDocumentType('properties', null,
                                                 "http://java.sun.com/dtd/properties.dtd");
         $attrs = $domimpl->createDocument(null, null, $doctype);
@@ -85,7 +85,7 @@ class TicketLine {
         $key = $attrs->createAttribute("key");
         $key->appendChild($attrs->createTextNode("product.taxcategoryid"));
         $entry->appendChild($key);
-        $entry->appendChild($attrs->createTextNode($this->tax->tax_cat_id));
+        $entry->appendChild($attrs->createTextNode($this->tax->taxCatId));
         $properties->appendChild($entry);
         $entry = $attrs->createElement("entry");
         $key = $attrs->createAttribute("key");
@@ -97,7 +97,7 @@ class TicketLine {
         $key = $attrs->createAttribute("key");
         $key->appendChild($attrs->createTextNode("product.categoryid"));
         $entry->appendChild($key);
-        $entry->appendChild($attrs->createTextNode($this->product->category->id));
+        $entry->appendChild($attrs->createTextNode($this->product->categoryId));
         $properties->appendChild($entry);
         $entry = $attrs->createElement("entry");
         $key = $attrs->createAttribute("key");

@@ -1,0 +1,50 @@
+{
+"Catalog": "Catalogue",
+
+"Products": "Produits",
+"Add a product": "Ajouter un produit",
+"%d products": "%d produits",
+"No product found": "Aucun produit trouvé",
+"Edit a product": "Édition d'un produit",
+"Archived": "Archives",
+
+"Display": "Affichage",
+"Price": "Prix",
+"Referencing": "Referencement",
+"Sell price + taxes": "Prix de vente TTC",
+"Margin": "Marge",
+"Product saved. <a href=\"%s\">Go to the product page</a>.": "Produit enregistré. <a href=\"%s\">Aller à la page du produit</a>.",
+
+"Categories": "Categories",
+"Edit a category": "Édition d'une categorie",
+"Add a category": "Ajouter une catégorie",
+"%d categories": "%d categories",
+"No category found": "Pas de categorie trouvée",
+"Category saved. <a href=\"%s\">Go to the category page</a>.": "Catégorie enregistrée. <a href=\"%s\">Aller à la page de la catégorie</a>.",
+
+"Taxes": "Taxes",
+"Add a tax": "Ajouter une taxe",
+"Edit tax": "Édition de la taxe",
+"Rates": "Taux",
+"New tax rate": "Nouveau taux",
+"Unable to delete tax. Tax cannot be deleted when in use.": "Impossible de supprimer la taxe. Une taxe ne peut pas être supprimée lorsqu'elle est utilisée.",
+
+"send": "envoyer",
+"File": "Fichier",
+"Selected file empty or bad format": "Aucun fichier sélectionné ou mauvais format",
+"%d line(s) inserted, %d line(s) modified, %d error(s)": "%d ligne(s) inserée(s), %d ligne(s) modifiée(s), %d erreur(s)",
+
+"Only empty category can be deleted": "Une catégorie non vide ne peut être supprimée",
+"Import categories": "Importer des catégories",
+"Import category from csv": "Importer des categories à partir d'un csv",
+"On line %d: Cannot update category: '%s'": "À la ligne %d: Impossible de mettre à jour la category: '%s'",
+"On line %d: Cannot create product: '%s'": "À la ligne %d: Impossible de créer le produit: '%s'",
+"On line %d: Category parent doesn't exist": "À la ligne %d: La categorie parent n'existe pas",
+
+"Import products": "Importer des produits",
+"Import products from csv file": "Importer des produits à partir d'un fichier csv",
+"On line %d: Cannot create product: '%s'": "À la ligne %d: Impossible de créer le produit: '%s'",
+"On line %d: Cannot update update: '%s'": "À la ligne %d: Impossible de mettre a jour le produit: '%s'",
+"On line %d: Category parent doesn't exist": "À la ligne %d: La categorie parent n'existe pas",
+"On line %d: Tax category: '%s' doesn't exist": "À la ligne %d: La categorie de taxe: '%s' n'existe pas"
+}

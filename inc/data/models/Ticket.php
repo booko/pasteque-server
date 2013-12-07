@@ -1,22 +1,22 @@
 <?php
-//    Pastèque Web back office
+//    POS-Tech API
 //
-//    Copyright (C) 2013 Scil (http://scil.coop)
+//    Copyright (C) 2012 Scil (http://scil.coop)
 //
-//    This file is part of Pastèque.
+//    This file is part of POS-Tech.
 //
-//    Pastèque is free software: you can redistribute it and/or modify
+//    POS-Tech is free software: you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
 //    the Free Software Foundation, either version 3 of the License, or
 //    (at your option) any later version.
 //
-//    Pastèque is distributed in the hope that it will be useful,
+//    POS-Tech is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //    GNU General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
-//    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
+//    along with POS-Tech.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Pasteque;
 
@@ -29,14 +29,17 @@ class TicketLight {
     public $date;
     public $linesLight;
     public $payments;
+    public $customerId;
 
-    function __construct($label, $cashierId, $date, $lines, $payments, $cashId) {
+    function __construct($label, $cashierId, $date, $lines, $payments, $cashId,
+            $customerId = NULL) {
         $this->label = $label;
         $this->cashierId = $cashierId;
         $this->date = $date;
         $this->linesLight = $lines;
         $this->payments = $payments;
         $this->cashId = $cashId;
+        $this->customerId = $customerId;
     }
 
     function getTaxAmounts() {
@@ -66,21 +69,25 @@ class Ticket {
     public $date;
     public $lines;
     public $payments;
+    public $customer;
 
     static function __build($id, $label, $cashier, $date, $lines, $payments,
-                            $cash) {
-        $ticket = new Ticket();
+                            $cash, $customer = NULL) {
+        $ticket = new Ticket($label, $cashier, $date, $lines, $payments,
+                $cash, $customer);
         $ticket->id = $id;
         return $ticket;
     }
 
-    function __construct($label, $cashier, $date, $lines, $payments, $cash) {
+    function __construct($label, $cashier, $date, $lines, $payments, $cash,
+            $customer = NULL) {
         $this->label = $label;
         $this->cashier = $cashier;
         $this->date = $date;
         $this->lines = $lines;
         $this->payments = $payments;
         $this->cash = $cash;
+        $this->customer = $customer;
     }
 
     function getTaxAmounts() {

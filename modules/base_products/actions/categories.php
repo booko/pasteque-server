@@ -22,33 +22,53 @@
 
 namespace BaseProducts;
 
+$message = NULL;
+$error = NULL;
 if (isset($_POST['delete-cat'])) {
-    \Pasteque\CategoriesService::deleteCat($_POST['delete-cat']);
+    if (\Pasteque\CategoriesService::deleteCat($_POST['delete-cat'])) {
+        $message = \i18n("Changes saved");
+    } else {
+        $error = \i18n("Unable to save changes");
+        $error .= " " . \i18n("Only empty category can be deleted", PLUGIN_NAME);
+    }
 }
 
 $categories = \Pasteque\CategoriesService::getAll();
 ?>
 <h1><?php \pi18n("Categories", PLUGIN_NAME); ?></h1>
 
-<p><a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'category_edit'); ?>" class="btn btn-primary"><?php \pi18n("Add a category", PLUGIN_NAME); ?></a></p>
+<?php \Pasteque\tpl_msg_box($message, $error); ?>
+
+<?php \Pasteque\tpl_btn('btn', \Pasteque\get_module_url_action(PLUGIN_NAME, "category_edit"),
+        \i18n('Add a category', PLUGIN_NAME), 'img/btn_add.png');?>
+<?php \Pasteque\tpl_btn('btn', \Pasteque\get_module_url_action(PLUGIN_NAME, "categoriesManagement"),
+        \i18n('Import categories', PLUGIN_NAME), 'img/btn_add.png');?>
+
 
 <p><?php \pi18n("%d categories", PLUGIN_NAME, count($categories)); ?></p>
 
-<table class="table table-bordered table-striped table-condensed table-hover">
+<table cellpadding="0" cellspacing="0">
 	<thead>
 		<tr>
-			<th><?php \pi18n("Category.name"); ?></th>
+			<th></th>
+			<th><?php \pi18n("Category.label"); ?></th>
 			<th></th>
 		</tr>
 	</thead>
 	<tbody>
 <?php
+$par = FALSE;
 foreach ($categories as $category) {
+$par = !$par;
 ?>
-	<tr>
-		<td><?php echo $category->name; ?></td>
+	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
+		<td><img class="thumbnail" src="?<?php echo \Pasteque\URL_ACTION_PARAM; ?>=img&w=category&id=<?php echo $category->id; ?>" />
+		<td><?php echo $category->label; ?></td>
 		<td class="edition">
-			<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'category_edit', array('id' => $category->id)); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
+            <?php \Pasteque\tpl_btn("edition", \Pasteque\get_module_url_action(PLUGIN_NAME,
+                    'category_edit', array("id" => $category->id)), "",
+                    'img/edit.png', \i18n('Edit'), \i18n('Edit'));
+            ?>
 			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("cat", $category->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>
 		</td>
 	</tr>

@@ -1,0 +1,30 @@
+{
+"Place sales": "Place sales",
+"Custcount": "Customers count",
+"Number": "Count",
+"Tables": "Tables",
+"Average price": "Average price",
+
+"Floors": "Restaurant map",
+"Floors configuration": "Floors configuration",
+"Delete floor": "Delete floor",
+"Add a place": "Add a place",
+"Image": "Image",
+"File": "File",
+"Add a floor": "Add a floor",
+"Save changes": "Save changes",
+"Rename floor": "Rename floor",
+
+"Impossible to delete floor: %s.": "Unable to delete floor %s.",
+"Impossible to update floor: %s.": "Unable to update floor %s.",
+"Impossible to create floor: %s.": "Unable to create floor %s.",
+"Impossible to delete place: %s.": "Unable to delete place %s.",
+"Impossible to update place: %s.": "Unable to update place %s.",
+"Impossible to create place: %s.": "Unable to create place %s.",
+
+"A name place cannot be empty": "The name of the place cannot be empty.",
+"Name place already set": "The name of the place is already used.",
+"Name floor already set": "The name of the floor is already used.",
+"A name floor cannot be empty": "The name of the name place cannot be empty.",
+"Exceptional error.": "Exceptional error."
+}

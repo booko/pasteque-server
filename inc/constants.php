@@ -20,6 +20,9 @@
 
 namespace Pasteque;
 
+const DB_VERSION = "5";
+const VERSION = "0.6.1";
+
 const URL_ACTION_PARAM = "p";
 
 ?>

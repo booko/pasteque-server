@@ -22,29 +22,41 @@
 
 namespace BaseProducts;
 
+$message = NULL;
+$error = NULL;
 if (isset($_POST['delete-taxcat'])) {
-    \Pasteque\TaxesService::deleteCat($_POST['delete-taxcat']);
+    if (\Pasteque\TaxesService::deleteCat($_POST['delete-taxcat'])) {
+        $message = \i18n("Changes saved");
+    } else {
+        $error = \i18n("Unable to delete tax. Tax cannot be deleted when in use.", PLUGIN_NAME);
+    }
 }
 
 $taxes = \Pasteque\TaxesService::getAll();
 ?>
 <h1><?php \pi18n("Taxes", PLUGIN_NAME); ?></h1>
 
-<p><a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'tax_edit'); ?>" class="btn btn-primary"><?php \pi18n("Add a tax", PLUGIN_NAME); ?></a></p>
+<?php \Pasteque\tpl_msg_box($message, $error); ?>
 
-<table class="table table-bordered table-striped table-condensed table-hover">
+<p><a class="btn" href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'tax_edit'); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/btn_add.png" /><?php \pi18n("Add a tax", PLUGIN_NAME); ?></a></p>
+
+<table cellpadding="0" cellspacing="0">
 	<thead>
 		<tr>
-			<th><?php \pi18n("TaxCat.name"); ?></th>
+			<th><?php \pi18n("TaxCat.label"); ?></th>
+			<th><?php \pi18n("Tax.rate"); ?></th>
 			<th></th>
 		</tr>
 	</thead>
 	<tbody>
 <?php
+$par = FALSE;
 foreach ($taxes as $tax) {
+$par = !$par;
 ?>
-	<tr>
-		<td><?php echo $tax->name; ?></td>
+	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
+		<td><?php echo $tax->label; ?></td>
+		<td><?php echo $tax->getCurrentTax()->rate; ?>
 		<td class="edition">
 			<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'tax_edit', array('id' => $tax->id)); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
 			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("taxcat", $tax->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>

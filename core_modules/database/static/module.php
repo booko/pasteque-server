@@ -1,4 +1,4 @@
-<?
+<?php
 //    Pastèque Web back office, Static database module
 //
 //    Copyright (C) 2013 Scil (http://scil.coop)
@@ -17,12 +17,6 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
-
-namespace Pasteque {
-    if (@constant("\Pasteque\ABSPATH") === NULL) {
-        die();
-    }
-}
 
 namespace StaticDB {
     require_once(dirname(__FILE__) . "/config.php");
@@ -58,3 +52,4 @@ namespace Pasteque {
         return \StaticDB\passwd();
     }
 }
+?>

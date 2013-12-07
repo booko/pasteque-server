@@ -22,16 +22,44 @@
 
 namespace BaseProducts;
 
-if (isset($_POST['id'])) {
-    $edit = \Pasteque\Category::__form($_POST);
-    if ($edit !== NULL) {
-    var_dump($edit);
-        \Pasteque\CategoriesService::updateCat($edit);
+$message = NULL;
+$error = NULL;
+if (isset($_POST['id']) && isset($_POST['label'])) {
+    if ($_FILES['image']['tmp_name'] !== "") {
+        $img = file_get_contents($_FILES['image']['tmp_name']);
+    } else if ($_POST['clearImage']) {
+        $img = NULL;
+    } else {
+        $img = "";
     }
-} else if (isset($_POST['name'])) {
-    $new = \Pasteque\Category::__form($_POST);
-    if ($new !== NULL) {
-        \Pasteque\CategoriesService::createCat($new);
+    $parent_id = NULL;
+    if ($_POST['parent_id'] !== "") {
+        $parent_id = $_POST['parent_id'];
+    }
+    $cat = \Pasteque\Category::__build($_POST['id'], $parent_id,
+            $_POST['label'], $img, $_POST['disp_order']);
+    if (\Pasteque\CategoriesService::updateCat($cat)) {
+        $message = \i18n("Changes saved");
+    } else {
+        $error = \i18n("Unable to save changes");
+    }
+} else if (isset($_POST['label'])) {
+    if ($_FILES['image']['tmp_name'] !== "") {
+        $img = file_get_contents($_FILES['image']['tmp_name']);
+    } else {
+        $img = NULL;
+    }
+    $parent_id = NULL;
+    if ($_POST['parent_id'] !== "") {
+        $parent_id = $_POST['parent_id'];
+    }
+    $cat = new \Pasteque\Category($parent_id, $_POST['label'], $img,
+            $_POST['disp_order']);
+    $id = \Pasteque\CategoriesService::createCat($cat);
+    if ($id !== FALSE) {
+        $message = \i18n("Category saved. <a href=\"%s\">Go to the category page</a>.", PLUGIN_NAME, \Pasteque\get_module_url_action(PLUGIN_NAME, 'category_edit', array('id' => $id)));
+    } else {
+        $error = \i18n("Unable to save changes");
     }
 }
 
@@ -42,14 +70,47 @@ if (isset($_GET['id'])) {
 ?>
 <h1><?php \pi18n("Edit a category", PLUGIN_NAME); ?></h1>
 
-<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
+<?php \Pasteque\tpl_msg_box($message, $error); ?>
+
+<form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post" enctype="multipart/form-data">
     <?php \Pasteque\form_hidden("edit", $category, "id"); ?>
-	<?php \Pasteque\form_input("edit", "Category", $category, "name", "string", array("required" => true)); ?>
-	<?php \Pasteque\form_input("edit", "Category", $category, "parent_id", "pick", array("model" => "Category", "nullable" => true)); ?>
-	<?php \Pasteque\form_send(); ?>
+	<?php \Pasteque\form_input("edit", "Category", $category, "label", "string", array("required" => true)); ?>
+	<?php \Pasteque\form_input("edit", "Category", $category, "parent_id", "pick", array("model" => "Category", "nullable" => TRUE)); ?>
+	<?php \Pasteque\form_input("edit", "Category", $category, "disp_order", "numeric"); ?>
+	<div class="row">
+		<label for="image"><?php \pi18n("Image", PLUGIN_NAME); ?></label>
+		<div style="display:inline-block">
+			<input type="hidden" id="clearImage" name="clearImage" value="0" />
+		<?php if ($category !== NULL && $category->image !== NULL) { ?>
+			<img id="img" class="image-preview" src="?<?php echo \Pasteque\URL_ACTION_PARAM; ?>=img&w=category&id=<?php echo $category->id; ?>" />
+			<a class="btn" id="clear" href="" onClick="javascript:clearImage(); return false;"><?php \pi18n("Delete"); ?></a>
+			<a class="btn" style="display:none" id="restore" href="" onClick="javascript:restoreImage(); return false;"><?php \pi18n("Restore"); ?></a><br />
+		<?php } ?>
+			<input type="file" name="image" />
+		</div>
+	</div>
+
+	<div class="row actions">
+		<?php \Pasteque\form_save(); ?>
+	</div>
 </form>
 <?php if ($category !== NULL) { ?>
 <form action="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'categories'); ?>" method="post">
     <?php \Pasteque\form_delete("cat", $category->id); ?>
 </form>
 <?php } ?>
+
+<script type="text/javascript">
+	clearImage = function() {
+		jQuery("#img").hide();
+		jQuery("#clear").hide();
+		jQuery("#restore").show();
+		jQuery("#clearImage").val(1);
+	}
+	restoreImage = function() {
+		jQuery("#img").show();
+		jQuery("#clear").show();
+		jQuery("#restore").hide();
+		jQuery("#clearImage").val(0);
+	}	
+</script>

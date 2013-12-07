@@ -22,40 +22,47 @@
 
 namespace BaseUsers;
 
-if (isset($_POST['id'])) {
-    $edit = \Pasteque\User::__form($_POST);
-    if ($edit !== NULL) {
-        \Pasteque\UsersService::update($edit);
+$message = null;
+$error = null;
+$srv = new \Pasteque\UsersService();
+if (isset($_POST['id']) && isset($_POST['name'])) {
+    $user = \Pasteque\User::__build($_POST['id'], $_POST['name'], null, null,
+            $_POST['roleId'], true, false);
+    if ($srv->update($user)) {
+        $message = \i18n("Changes saved");
+    } else {
+        $error = \i18n("Unable to save changes");
     }
 } else if (isset($_POST['name'])) {
-    $new = \Pasteque\User::__form($_POST);
-    if ($new !== NULL) {
-        \Pasteque\UsersService::create($new);
+    $user = new \Pasteque\User($_POST['name'], null, null, $_POST['roleId'],
+            true, false);
+    $id = $srv->create($user);
+    if ($id !== false) {
+        $message = \i18n("User saved. <a href=\"%s\">Go to the user page</a>.", PLUGIN_NAME, \Pasteque\get_module_url_action(PLUGIN_NAME, 'user_edit', array('id' => $id)));
+    } else {
+        $error = \i18n("Unable to save changes");
     }
 }
 
-$user = NULL;
+$user = null;
 if (isset($_GET['id'])) {
-    $user = \Pasteque\UsersService::get($_GET['id']);
+    $user = $srv->get($_GET['id']);
 }
-$permissions = \Pasteque\UsersService::getPermissions();
 ?>
 <h1><?php \pi18n("Edit an user", PLUGIN_NAME); ?></h1>
 
-<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
+<?php \Pasteque\tpl_msg_box($message, $error); ?>
+
+<form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
     <?php \Pasteque\form_hidden("edit", $user, "id"); ?>
 	<?php \Pasteque\form_input("edit", "User", $user, "name", "string", array("required" => true)); ?>
-	<?php \Pasteque\form_send(); ?>
-    <h2><?php \pi18n("Permissions", PLUGIN_NAME); ?></h2>
-    <?php foreach ($permissions as $perm) { ?>
-    <?php $checked = (isset($user) && $user->hasPermission($perm)) ? ' checked="true"' : ""; ?>
-    <label for="perm-<?php echo $perm; ?>"><?php echo $perm; ?></label>
-    <input id="perm-<?php echo $perm; ?>" type="checkbox" <?php echo $checked; ?> name="permissions[]" value="<?php echo $perm; ?>">
-    <?php } ?>
+	<?php \Pasteque\form_input("edit", "User", $user, "roleId", "pick", array("model" => "Role")); ?>
+	<div class="row actions">
+		<?php \Pasteque\form_save(); ?>
+	</div>
 </form>
-<?php if ($user !== NULL) { ?>
+<?php if ($user !== null) { ?>
 <form action="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'users'); ?>" method="post">
 	<?php \Pasteque\form_delete("user", $user->id); ?>
 </form>
 <?php } ?>
-

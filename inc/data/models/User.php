@@ -1,22 +1,22 @@
 <?php
-//    Pastèque Web back office
+//    POS-Tech API
 //
-//    Copyright (C) 2013 Scil (http://scil.coop)
+//    Copyright (C) 2012 Scil (http://scil.coop)
 //
-//    This file is part of Pastèque.
+//    This file is part of POS-Tech.
 //
-//    Pastèque is free software: you can redistribute it and/or modify
+//    POS-Tech is free software: you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
 //    the Free Software Foundation, either version 3 of the License, or
 //    (at your option) any later version.
 //
-//    Pastèque is distributed in the hope that it will be useful,
+//    POS-Tech is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //    GNU General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
-//    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
+//    along with POS-Tech.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Pasteque;
 
@@ -24,40 +24,28 @@ class User {
 
     public $id;
     public $name;
-    public $permissions;
+    public $password;
+    public $roleId;
+    public $visible;
+    public $hasImage;
+    public $card;
 
-    static function __build($id, $name, $permissions) {
-        $user = new User($name, $permissions);
+    static function __build($id, $name, $password, $card, $roleId, $visible,
+            $hasImage) {
+        $user = new User($name, $password, $card, $roleId, $visible, $hasImage);
         $user->id = $id;
         return $user;
     }
 
-    function __construct($name, $permissions) {
+    function __construct($name, $password, $card, $roleId, $visible,
+            $hasImage) {
         $this->name = $name;
-        $this->permissions = $permissions;
+        $this->password = $password;
+        $this->card = $card;
+        $this->roleId = $roleId;
+        $this->visible = $visible;
+        $this->hasImage = $hasImage;
     }
-
-    static function __form($f) {
-        if (!isset($f['name'])) {
-            return NULL;
-        }
-        $permissions = array();
-        if (isset($f['permissions'])) {
-            foreach ($f['permissions'] as $perm) {
-                $permissions[] = $perm;
-            }
-        }
-        if (isset($f['id'])) {
-            return User::__build($f['id'], $f['name'], $permissions);
-        } else {
-            return new User($f['name'], $permissions);
-        }
-    }
-
-    function hasPermission($permission) {
-        return (array_search($permission, $this->permissions) !== FALSE);
-    }
-
 }
 
 ?>

@@ -20,16 +20,20 @@
 
 namespace Pasteque;
 
-if (@constant("\Pasteque\ABSPATH") === NULL) {
-    die();
-}
-
 function redirect($path) {
     if (!file_exists(ABSPATH . "/" . $path . ".php")) {
         tpl_404();
         return;
     }
     require_once(ABSPATH . "/" . $path . ".php");
+}
+function redirect_report($module, $name) {
+    if (!file_exists(ABSPATH . "/modules/" . $module . "/reports/" . $name . ".php")) {
+        $ret = array("error" => "No such seport");
+        echo json_encode($ret);
+        return;
+    }
+    require_once(ABSPATH . "/modules/" . $module . "/reports/" . $name . ".php");
 }
 
 /** Redirect page to the given one in url */
@@ -41,6 +45,18 @@ function url_content() {
     }
     $action = str_replace("..", "", $action);
     redirect($action);
+}
+/** Redirect to the given report data */
+function report_content($module, $name) {
+    redirect_report($module, $name);
+}
+function print_content($module, $name) {
+    if (!file_exists(ABSPATH . "/modules/" . $module . "/print/" . $name . ".php")) {
+        $ret = array("error" => "No such print");
+        echo json_encode($ret);
+        return;
+    }
+    require_once(ABSPATH . "/modules/" . $module . "/print/" . $name . ".php");
 }
 
 function get_url_action($action) {
@@ -67,6 +83,11 @@ function get_current_url() {
 function get_module_action($module, $action) {
     return "modules/" . $module . "/actions/" . $action;
 }
+
+function get_report_url($module, $report_name, $type = "csv") {
+    return "./?" . URL_ACTION_PARAM . "=report&w=" . $type . "&m=" . $module
+            . "&n=" . $report_name;
+} 
 
 function get_template_url() {
     global $config;

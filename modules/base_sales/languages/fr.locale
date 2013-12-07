@@ -1,0 +1,27 @@
+{
+"Payments": "Paiements",
+"cash": "Espèces",
+"magcard": "Carte bleue",
+"cheque": "Chèque",
+"paper": "Coupon",
+"free": "Offert",
+
+"Sales": "Ventes",
+"Sales report": "Détail",
+"Sales by product": "Ventes par produit",
+"Taxes report": "TVA collectée",
+"Product name": "Produit",
+"Category name": "Categorie",
+"Units": "Quantité",
+"Sell": "Prix HT",
+"Tax name": "TVA",
+"Tax amount": "TVA collectée",
+
+"CS report": "Synthèse",
+"Consolidated sales report": "Rapport de chiffre d'affaire",
+"Tickets": "Tickets",
+"Average": "Panier moyen",
+"Real CS": "Encaissement",
+"Theo CS": "CA TTC",
+"Theo SCS": "CA HT"
+}

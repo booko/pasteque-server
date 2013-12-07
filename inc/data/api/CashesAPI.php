@@ -18,53 +18,91 @@
 //    You should have received a copy of the GNU General Public License
 //    along with POS-Tech.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once(dirname(dirname(__FILE__)) . "/services/CashesService.php");
+namespace Pasteque;
 
-$action = $_GET['action'];
-$ret = null;
+/* Cash API specification
 
-switch ($action) {
-case 'get':
-    if (!isset($_GET['host'])) {
-        $ret = false;
-        break;
+GET(host)
+When client request a new cash, the server check for an active cash for
+requested host. If found return it. Otherwise return NULL.
+
+GET(id)
+Get cash by id, no matter it's state.
+
+UPDATE(cash)
+When client sends a cash, it may have an id or not. If the id is present the
+cash is updated. If not a new cash is created. In all cases return the cash.
+
+*/
+
+class CashesAPI extends APIService {
+
+    protected function check() {
+        switch ($this->action) {
+        case 'get':
+            return isset($this->params['host']) || isset($this->params['id']);
+        case 'update':
+            return isset($this->params['cash']);
+        }
+        return false;
     }
-    $ret = CashesService::getHost($_GET['host']);
-    if ($ret == null || $ret->isClosed()) {
-        // Create a new one
-        if (CashesService::add($_GET['host'])) {
-            $ret = CashesService::getHost($_GET['host']);
+
+    /** Run the service and set result. */
+    protected function proceed() {
+        switch ($this->action) {
+        case 'get':
+            if (isset($this->params['id'])) {
+                $ret = CashesService::get($this->params['id']);
+            } else {
+                $ret = CashesService::getHost($this->params['host']);
+                if ($ret === null || $ret->isClosed()) {
+                    $ret = null;
+                }
+            }
+            $this->succeed($ret);
+            break;
+        case 'update':
+            $json = json_decode($this->params['cash']);
+            $open = null;
+            $id = null;
+            if (property_exists($json, 'id')) {
+                $id = $json->id;
+            }
+            if (property_exists($json, 'openDate')) {
+                $open = $json->openDate;
+            }
+            $close = null;
+            if (property_exists($json, 'closeDate')) {
+                $close = $json->closeDate;
+            }
+            $host = $json->host;
+
+            if ($id !== null) {
+                // Update an existing cash
+                $cash = Cash::__build($id, $host, -1, $open, $close);
+                if (CashesService::update($cash)) {
+                    $this->succeed($cash);
+                } else {
+                    $this->fail(APIError::$ERR_GENERIC);
+                }
+            } else {
+                // Create a cash and update with given data
+                if (CashesService::add($host)) {
+                    $cash = CashesService::getHost($host);
+                    $cash->openDate = $open;
+                    $cash->closeDate = $close;
+                    if (CashesService::update($cash)) {
+                        $this->succeed($cash);
+                    } else {
+                        $this->fail(APIError::$ERR_GENERIC);
+                    }
+                } else {
+                    $this->fail(APIError::$ERR_GENERIC);
+                }
+            }
+            break;
         }
     }
-    break;
-case 'update':
-    $json = json_decode($_POST['cash']);
-    $open = null;
-    if (property_exists($json, 'openDate')) {
-        $open = $json->openDate;
-    }
-    $close = null;
-    if (property_exists($json, 'closeDate')) {
-        $close = $json->closeDate;
-    }
-    $host = $json->host;
-    $cash = Cash::__build($json->id, $host, -1, $open, $close);
-    $ret = array();
-    $ret['result'] = CashesService::update($cash);
-    $lastCash = CashesService::getHost($host);
-    if ($lastCash != null && $lastCash->isClosed()) {
-        if (CashesService::add($host)) {
-            $newCash = CashesService::getHost($host);
-        } else {
-            $newCash = null;
-        }
-        $ret['cash'] = $newCash;
-    } else {
-        $ret['cash'] = $lastCash;
-    }
-    break;
 }
-
-echo(json_encode($ret));
 
 ?>

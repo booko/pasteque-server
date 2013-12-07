@@ -22,73 +22,56 @@
 
 namespace BaseProducts;
 
+$message = NULL;
+$error = NULL;
 // Check saves
-if (isset($_POST['name'])) {
-    // Tax cat
-    $cat = \Pasteque\TaxCat::__form($_POST);
-    if (isset($_POST['id'])) {
-        \Pasteque\TaxesService::updateCat($cat);
-    } else {
-        \Pasteque\TaxesService::createCat($cat);
+if (isset($_POST['label'])) {
+    if (isset($_POST['label']) && isset($_POST['rate'])) {
+        $rate = $_POST['rate'];
+        if (isset($_POST['id'])) {
+            $cat = \Pasteque\TaxCat::__build($_POST['id'], $_POST['label']);
+            \Pasteque\TaxesService::updateCat($cat);
+            $tax = new \Pasteque\Tax($cat->id, $cat->label, time(), $rate);
+            if (\Pasteque\TaxesService::createTax($tax)) {
+                $message = \i18n("Changes saved");
+            } else {
+                $error = \i18n("Unable to save changes");
+            }
+        } else {
+            $cat = new \Pasteque\TaxCat($_POST['label']);
+            $id = \Pasteque\TaxesService::createCat($cat);
+            $tax = new \Pasteque\Tax($id, $cat->label, time(), $rate);
+            if (\Pasteque\TaxesService::createTax($tax)) {
+                $message = \i18n("Changes saved");
+            } else {
+                $error = \i18n("Unable to save changes");
+            }
+        }
     }
-} else if (isset($_POST['rate'])) {
-    // Tax rate
-    $rate = \Pasteque\Tax::__form($_POST);
-    if (isset($_POST['id'])) {
-        \Pasteque\TaxesService::updateTax($rate);
-    } else {
-        \Pasteque\TaxesService::createTax($rate);
-    }
-} else if (isset($_POST['delete-tax'])) {
-    \Pasteque\TaxesService::deleteTax($_POST['delete-tax']);
-} else if (isset($_POST['delete-taxcat'])) {
 }
 
 $tax_cat = NULL;
-$taxes = NULL;
+$tax = NULL;
 if (isset($_GET['id'])) {
     $tax_cat = \Pasteque\TaxesService::get($_GET['id']);
-    $taxes = \Pasteque\TaxesService::getTaxes($_GET['id']);
+    $tax = $tax_cat->getCurrentTax();
 }
 ?>
 <h1><?php \pi18n("Edit tax", PLUGIN_NAME); ?></h1>
 
+<?php \Pasteque\tpl_msg_box($message, $error); ?>
+
 <!-- Tax category edit -->
-<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
+<form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
     <?php \Pasteque\form_hidden("edit", $tax_cat, "id"); ?>
-	<?php \Pasteque\form_input("edit", "TaxCat", $tax_cat, "name", "string", array("required" => true)); ?>
-	<?php \Pasteque\form_send(); ?>
+	<?php \Pasteque\form_input("edit", "TaxCat", $tax_cat, "label", "string", array("required" => true)); ?>
+	<?php \Pasteque\form_input("edit", "Tax", $tax, "rate", "float", array("required" => true)); ?>
+	<div class="row actions">
+		<?php \Pasteque\form_save(); ?>
+	</div>
 </form>
 <?php if ($tax_cat !== NULL) { ?>
 <form action="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'taxes'); ?>" method="post">
 	<?php \Pasteque\form_delete("taxcat", $tax_cat->id); ?>
-</form>
-<?php } ?>
-
-<?php if ($taxes !== NULL) { ?>
-<!-- Tax rates -->
-<h2><?php \pi18n("Rates", PLUGIN_NAME); ?></h2>
-<?php foreach ($taxes as $tax) { ?>
-<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
-    <?php \Pasteque\form_hidden("rate$tax->id", $tax, "id"); ?>
-    <?php \Pasteque\form_hidden("rate$tax->id", $tax, "tax_cat_id"); ?>
-    <?php \Pasteque\form_input("rate$tax->id", "Tax", $tax, "rate", "float", array("required" => true, "step" => 0.001)); ?>
-    <?php \Pasteque\form_input("rate$tax->id", "Tax", $tax, "start_date", "date", array("required" => true)); ?>
-    <?php \Pasteque\form_send(); ?>
-</form>
-<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
-	<?php \Pasteque\form_delete("tax", $tax->id); ?>
-</form>
-<?php } ?>
-<?php } ?>
-
-<!-- New rate -->
-<?php if ($tax_cat !== NULL) { ?>
-<h2><?php \pi18n("New tax rate", PLUGIN_NAME); ?></h2>
-<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
-    <?php \Pasteque\form_value_hidden("new_rate", "tax_cat_id", $tax_cat->id); ?>
-	<?php \Pasteque\form_input("new_rate", "Tax", NULL, "rate", "float", array("required" => true)); ?>
-	<?php \Pasteque\form_input("new_rate", "Tax", NULL, "start_date", "date", array("required" => true)); ?>
-	<?php \Pasteque\form_send(); ?>
 </form>
 <?php } ?>

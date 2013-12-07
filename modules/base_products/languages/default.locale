@@ -1,19 +1,52 @@
 {
+"Catalog": "Catalog",
+
 "Products": "Products",
 "Add a product": "Add a product",
+"%d products": "%d products",
 "No product found": "No product found",
+"Archived": "Archived",
+
 "Edit a product": "Edit a product",
+"Display": "Display",
+"Price": "Price",
+"Referencing": "Referencing",
 "Sell price + taxes": "Sell price + taxes",
+"Margin": "Margin",
+"Product saved. <a href=\"%s\">Go to the product page</a>.": "Product saved. <a href=\"%s\">Go to the product page</a>.",
 
 "Categories": "Categories",
 "Edit categories": "Edit categories",
+"Import categories": "Importer des catégories",
 "Add a category": "Add a category",
 "%d categories": "%d categories",
 "No category found": "No category found",
+"Category saved. <a href=\"%s\">Go to the category page</a>.": "Category saved. <a href=\"%s\">Go to the category page</a>.",
 
 "Taxes": "Taxes",
 "Add a tax": "Add a tax",
 "Edit tax": "Edit tax",
 "Rates": "Rates",
-"New tax rate": "New rate"
+"New tax rate": "New rate",
+"Unable to delete tax. Tax cannot be deleted when in use.": "Unable to delete tax. Tax cannot be deleted when in use.",
+
+"File": "Fichier",
+"send": "send",
+"Selected file empty or bad format": "Selected file empty or bad format",
+"%d line(s) inserted, %d line(s) modified, %d error(s)": "%d line(s) inserted, %d line(s) modified, %d error(s)",
+
+"Only empty category can be deleted": "Only empty category can be deleted",
+"Import category": "Import category",
+"Import category from csv": "Import category from csv",
+"On line %d: Cannot create category: '%s'": "On line %d: Cannot create category: '%s'",
+"On line %d: Cannot update category: '%s'": "On line %d: Cannot update category: '%s'",
+"On line %d: Category parent doesn't exist": "On line %d: Category parent doesn't exist",
+
+
+"Import products": "Import products",
+"Import products from csv file": "Import products from csv file",
+"On line %d: Cannot create product: '%s'": "On line %d: Cannot create product: '%s'",
+"On line %d: Cannot update update: '%s'": "On line %d: Cannot update update: '%s'",
+"On line %d: Tax category: '%s' doesn't exist": "On line %d: Tax category: '%s' doesn't exist",
+"On line %d category: '%s' doesn't exist": "On line %d category: '%s' doesn't exist"
 }

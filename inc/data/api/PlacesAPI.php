@@ -18,24 +18,30 @@
 //    You should have received a copy of the GNU General Public License
 //    along with POS-Tech.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once(dirname(dirname(__FILE__)) . "/services/PlacesService.php");
+namespace Pasteque;
 
-$action = $_GET['action'];
-$ret = null;
+class PlacesAPI extends APIService {
 
-switch ($action) {
-case 'get':
-    if (!isset($_GET['id'])) {
-       $ret = false;
-       break;
+    protected function check() {
+        switch ($this->action) {
+        case 'get':
+            return isset($this->params['id']);
+        case 'getAll':
+            return true;
+        }
+        return false;
     }
-    $ret = PlacesService::get($_GET['id']);
-    break;
-case 'getAll':
-    $ret = PlacesService::getAll();
-    break;
-}
 
-echo(json_encode($ret));
+    protected function proceed() {
+        switch ($this->action) {
+        case 'get':
+            $this->succeed(PlacesService::getFloor($_GET['id']));
+            break;
+        case 'getAll':
+            $this->succeed(PlacesService::getAllFloors());
+            break;
+        }
+    }
+}
 
 ?>

@@ -1,0 +1,28 @@
+{
+"Stocks": "Stocks",
+
+"Moves": "Mouvement",
+"Stock move": "Mouvement de stock",
+"Operation": "Operation",
+"Input (buy)": "Entrée (achat)",
+"Output (sell)": "Sortie (vente)",
+"Output (return to supplyer": "Sortie (retour au fournisseur)",
+"Stock is below security level!": "Le stock est sous le seuil de sécurité !",
+"Stock is negative!": "Le stock est négatif !",
+"Overstock!": "Trop de stock !",
+
+"Inventory": "Inventaire",
+"Security threshold": "Seuil de sécurité",
+"Maximum": "Maximum",
+
+"Send": "Envoyer",
+"File": "Fichier",
+
+"Import stock moves from csv": "Importer des mouvements de stock a partir d'un csv",
+"Import stock's moves": "Importer des mouvements de stock",
+"%d move(s), %d error(s)": "%d mouvement(s), %d erreurs",
+"On line $d: exeptionnal error": "À la ligne %d: erreur exceptionnelle",
+"On line %d: Location not define or invalid": "À la ligne %d: Localisation non définie ou invalide",
+"On line %d: Quantity not define or invalid": "À la ligne %d: Quantitée non définie ou invalide",
+"On line %d: Product not define or invalid": "À la ligne %d: Produit non défini ou invalide"
+}

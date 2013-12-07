@@ -30,4 +30,40 @@ namespace {
         $args = array_slice($args, 2);
         echo \Pasteque\__($label, $module, $args);
     }
+
+    function pi18nCurr($amount) {
+        echo \Pasteque\__cur($amount);
+    }
+    function i18nCurr($amount) {
+        return \Pasteque\__cur($amount);
+    }
+
+    function i18nDate($timestamp) {
+        return \Pasteque\__d($timestamp);
+    }
+    function i18nDatetime($timestamp) {
+        return \Pasteque\__dt($timestamp);
+    }
+    function i18nRevDate($date) {
+        return \Pasteque\__rd($date);
+    }
+    function i18nRevDatetime($datetime) {
+        return \Pasteque\__rdt($datetime);
+    }
+
+    function pi18nDate($timestamp) {
+        echo \Pasteque\__d($timestamp);
+    }
+    function pi18nDatetime($timestamp) {
+        echo \Pasteque\__dt($timestamp);
+    }
+
+    function i18nFlt($float) {
+        return \Pasteque\__flt($float);
+    }
+
+    function i18nInt($float) {
+        return \Pasteque\__int($float);
+    }
+
 }

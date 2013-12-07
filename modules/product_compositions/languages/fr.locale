@@ -1,0 +1,56 @@
+{
+"Compositions": "Compositions",
+"Changes saved": "Changements sauvegardé",
+"Unable to save changes": "Impossible de sauvegardé les changements",
+
+"%d compositions": "%d compositions",
+
+"Composition edit": "Edition d'une composition",
+"Delete this composition": "Supprimer cette composition",
+"Display": "Affichage",
+
+"Price": "Prix",
+"Buy price": "Buy price",
+"Sell price": "Sell price",
+"Sell price + taxes": "Prix TTC",
+"VAT": "VAT",
+"Auto discount": "Auto discount",
+"Discount rate": "Discount rate",
+"Margin": "Marge",
+
+"Referencing": "Referencement",
+"Reference": "Reference",
+"Order": "Ordre",
+
+"SubGroups": "Sous-groupes",
+"Name": "Nom",
+"Image": "Image",
+"Rename subgroup": "Renommer le sous-groupe",
+"Product": "Produit",
+
+"Add composition": "Créer une composition",
+"Add all products of the category": "Ajouter tous les produits de la catégorie",
+"Delete subgroup": "Supprimer le sous-groupe",
+"Add subgroup": "Créer un sous-groupe",
+
+"ERR_COMPOSITION_UNDEFINED": "Ajouté d'abord une composiition",
+"ERR_COMPOSITION_NAME_EMPTY": "Le nom de la composition est vide",
+"ERR_COMPOSITION_NAME": "Le nom de la composition est déjà défini",
+"ERR_COMPOSITION_REF_EMPTY": "La référence de la composition n'est pas définie",
+"ERR_COMPOSITION_REF": "La référence de la composition est déjà utilisée",
+
+"ERR_SUBGROUP_NAME_EMPTY": "Le nom du sous-groupe est vide",
+"ERR_SUBGROUP_NAME": "Le nom du sous-groupe est déjà défini",
+"ERR_SUBGROUP_UNDEFINED": "Ajouté d'abord un sous-groupe",
+
+"ERR_UPDATE_COMPOSITION": "impossible de mettre à jour la composition %s",
+"ERR_CREATE_COMPOSITION": "impossible de créer la composition %s",
+"ERR_DELETE_COMPOSITION": "impossible de supprimer la composition %s",
+
+"ERR_UPDATE_SUBGROUP %s": "impossible de mettre à jour le sous-groupe %s",
+"ERR_CREATE_SUBGROUP %s": "impossible de créer le sous-groupe %s",
+"ERR_DELETE_SUBGROUP %s": "impossible de supprimer le sous-groupe %s",
+
+"ERR_CREATE_SUBGROUP_PROD %s": "impossible d'ajouter le produit %s",
+"ERR_DELETE_SUBGROUP_PROD %s": "impossible de supprimer le produit %s"
+}

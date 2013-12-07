@@ -31,11 +31,17 @@ function form_value_hidden($form_id, $name, $value) {
 }
 
 function form_input($form_id, $class, $object, $field, $type, $args = array()) {
+    echo "<div class=\"row\">\n";
     if ($type != "pick_multiple") {
         echo '<label for="' . $form_id . '-' . $field . '">';
-        echo \i18n($class . "." . $field);
+        $fieldLabel = $field;
+        if (substr($field, -2) == "Id") {
+            $fieldLabel = substr($field, 0, -2);
+        }
+        echo \i18n($class . "." . $fieldLabel);
         echo "</label>\n";
     }
+    $required = "";
     if (isset($args['required']) && $args['required']) {
         $required = ' required="true"';
     }
@@ -47,6 +53,14 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
             echo ' value="' . $object->{$field} . '"';
         }
         echo "$required />\n";
+        break;
+    case 'text':
+        echo '<textarea id="' . $form_id . '-' . $field . '" name="' . $field
+                . '">';
+        if ($object != NULL) {
+            echo $object->{$field};
+        }
+        echo '</textarea>';
         break;
     case 'numeric':
         echo '<input id="' . $form_id . '-' . $field . '" type="numeric" name="'
@@ -64,7 +78,9 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
                 echo ' checked="checked"';
             }
         } else {
-            echo ' checked="checked"';
+            if (!isset($args['default']) || $args['default'] == TRUE) {
+                echo ' checked="checked"';
+            }
         }
         echo " />\n";
         break;
@@ -98,6 +114,19 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
         case 'TaxCategory':
             $data = TaxesService::getAll();
             break;
+        case 'Tax':
+            $cats = TaxesService::getAll();
+            $data = array();
+            foreach ($cats as $cat) {
+                $data[] = $cat->getCurrentTax();
+            }
+            break;
+        case 'CustTaxCat':
+            $data = CustTaxCatsService::getAll();
+            break;
+        case 'Role':
+            $data = RolesService::getAll();
+            break;
         }
         echo '<select id="' . $form_id . '-' . $field . '" name="' . $field . '">';
         if (isset($args['nullable']) && $args['nullable']) {
@@ -106,11 +135,11 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
         foreach ($data as $r) {
             $selected = "";
             if ($object != NULL && ($object->{$field} == $r->id
-                    || $object->{$field}->id == $r->id)) {
+                    || (is_object($object->{$field}) && $object->{$field}->id == $r->id))) {
                 $selected = ' selected="true"';
             }
             echo '<option value="' . $r->id . '"' . $selected . '>'
-                    . $r->name . '</option>';
+                    . $r->label . '</option>';
         }
         echo "</select>\n";
         break;
@@ -128,16 +157,20 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
                 $selected = ' checked="true"';
             }
             $id = $form_id . "-" . $field . "-" .$r->id;
-            echo '<label for="' . $id . '">' . $r->name . '</label>';
+            echo '<label for="' . $id . '">' . $r->label . '</label>';
             echo '<input id="' . $id . '" type="checkbox" name="' . $field
                     . '[]" value="' . $r->id . '"' . $selected . "/>\n";
         }
         break;
     }
+    echo "</div>";
 }
 
 function form_send() {
-    echo '<button class="btn btn-primary" type="submit">' . \i18n('Save') . '</button>';
+    echo '<button class="btn-send" type="submit">' . \i18n('Send') . '</button>';
+}
+function form_save() {
+    echo '<button class="btn-send" type="submit">' . \i18n('Save') . '</button>';
 }
 function form_delete($what, $id, $img_src = NULL) {
     echo '<input type="hidden" name="delete-' . $what . '" value="' . $id . '" />';

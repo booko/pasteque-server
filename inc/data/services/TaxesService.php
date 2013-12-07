@@ -1,31 +1,34 @@
 <?php
-//    Pastèque Web back office
+//    POS-Tech API
 //
-//    Copyright (C) 2013 Scil (http://scil.coop)
+//    Copyright (C) 2012 Scil (http://scil.coop)
 //
-//    This file is part of Pastèque.
+//    This file is part of POS-Tech.
 //
-//    Pastèque is free software: you can redistribute it and/or modify
+//    POS-Tech is free software: you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
 //    the Free Software Foundation, either version 3 of the License, or
 //    (at your option) any later version.
 //
-//    Pastèque is distributed in the hope that it will be useful,
+//    POS-Tech is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //    GNU General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
-//    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
+//    along with POS-Tech.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Pasteque;
 
 class TaxesService {
 
     private static function buildDBTaxCat($db_taxcat, $pdo) {
-        $taxcat = TaxCat::__build($db_taxcat['id'], $db_taxcat['name']);
-        $sqltax = 'SELECT * FROM taxes WHERE taxcategory_id = "' . $db_taxcat['id'] . '" ORDER BY validfrom DESC';
-        foreach ($pdo->query($sqltax) as $db_tax) {
+        $taxcat = TaxCat::__build($db_taxcat['ID'], $db_taxcat['NAME']);
+        $sql = "SELECT * FROM TAXES WHERE CATEGORY = :cat";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(":cat", $db_taxcat['ID']);
+        $stmt->execute();
+        while ($db_tax = $stmt->fetch()) {
             $tax = TaxesService::buildDBTax($db_tax);
             $taxcat->addTax($tax);
         }
@@ -33,15 +36,29 @@ class TaxesService {
     }
 
     private static function buildDBTax($db_tax) {
-        $tax = Tax::__build($db_tax['id'], $db_tax['taxcategory_id'],
-                            $db_tax['validfrom'], $db_tax['rate']);
+        $tax = Tax::__build($db_tax['ID'], $db_tax['CATEGORY'],
+                            $db_tax['NAME'], $db_tax['VALIDFROM'],
+                            $db_tax['RATE']);
         return $tax;
+    }
+
+    static function getByName($name) {
+        $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("SELECT * FROM TAXCATEGORIES WHERE NAME = :name");
+        $stmt->bindParam(":name", $name, \PDO::PARAM_STR);
+        if ($stmt->execute()) {
+            if ($row = $stmt->fetch()) {
+                $tax = TaxesService::buildDBTaxCat($row, $pdo);
+                return $tax;
+            }
+        }
+        return null;
     }
 
     static function getAll() {
         $taxcats = array();
         $pdo = PDOBuilder::getPDO();
-        $sql = "SELECT * FROM taxcategories";
+        $sql = "SELECT * FROM TAXCATEGORIES";
         foreach ($pdo->query($sql) as $db_taxcat) {
             $taxcat = TaxesService::buildDBTaxCat($db_taxcat, $pdo);
             $taxcats[] = $taxcat;
@@ -51,9 +68,8 @@ class TaxesService {
 
     static function get($id) {
         $pdo = PDOBuilder::getPDO();
-        $stmt = $pdo->prepare("SELECT * FROM taxcategories WHERE id = :id");
-        $stmt->bindParam(":id", $id, \PDO::PARAM_INT);
-        if ($stmt->execute()) {
+        $stmt = $pdo->prepare("SELECT * FROM TAXCATEGORIES WHERE ID = :id");
+        if ($stmt->execute(array(':id' => $id))) {
             if ($row = $stmt->fetch()) {
                 return TaxesService::buildDBTaxCat($row, $pdo);
             }
@@ -66,35 +82,57 @@ class TaxesService {
             return false;
         }
         $pdo = PDOBuilder::getPDO();
-        $stmt = $pdo->prepare('UPDATE taxcategories SET name = :name '
-                              . 'WHERE id = :id');
-        $stmt->bindParam(":id", $cat->id, \PDO::PARAM_INT);
-        $stmt->bindParam(":name", $cat->name, \PDO::PARAM_STR);
-        return $stmt->execute();
+        $stmt = $pdo->prepare('UPDATE TAXCATEGORIES SET NAME = :name '
+                              . 'WHERE ID = :id');
+        return $stmt->execute(array(':name' => $cat->label, ':id' => $cat->id));
     }
 
     static function createCat($cat) {
         $pdo = PDOBuilder::getPDO();
         $id = md5(time() . rand());
-        $stmt = $pdo->prepare('INSERT INTO taxcategories (id, name) VALUES '
-                              . '(:id, :name)');
-        $stmt->bindParam(":id", $id, \PDO::PARAM_INT);
-        $stmt->bindParam(":name", $cat->name, \PDO::PARAM_STR);
-        return $stmt->execute();
+        $stmt = $pdo->prepare('INSERT INTO TAXCATEGORIES (ID, NAME) VALUES '
+                . '(:id, :name)');
+        $stmt->bindParam(':id', $id);
+        $stmt->bindParam(':name', $cat->label);
+        if (!$stmt->execute()) {
+            return FALSE;
+        } else {
+            return $id;
+        }
     }
 
     static function deleteCat($id) {
         $pdo = PDOBuilder::getPDO();
-        $stmt = $pdo->prepare('DELETE FROM taxcategories WHERE id = :id');
-        $stmt->bindParam(":id", $id, \PDO::PARAM_INT);
-        return $stmt->execute();
+        $newTransaction = !$pdo->inTransaction();
+        if ($newTransaction) {
+            $pdo->beginTransaction();
+        }
+        $stmtTax = $pdo->prepare("DELETE FROM TAXES WHERE CATEGORY = :id");
+        $stmtTax->bindParam(':id', $id);
+        if ($stmtTax->execute() === FALSE) {
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
+            return FALSE;
+        }
+        $stmt = $pdo->prepare('DELETE FROM TAXCATEGORIES WHERE ID = :id');
+        $stmt->bindParam(':id', $id);
+        if ($stmt->execute() === FALSE) {
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
+            return FALSE;
+        }
+        if ($newTransaction) {
+            $pdo->commit();
+        }
+        return TRUE;
     }
 
     static function getTax($id) {
         $pdo = PDOBuilder::getPDO();
-        $stmt = $pdo->prepare("SELECT * FROM taxes WHERE id = :id");
-        $stmt->bindParam(":id", $id, \PDO::PARAM_INT);
-        if ($stmt->execute()) {
+        $stmt = $pdo->prepare("SELECT * FROM TAXES WHERE ID = :id");
+        if ($stmt->execute(array(':id' => $id))) {
             if ($row = $stmt->fetch()) {
                 return TaxesService::buildDBTax($row, $pdo);
             }
@@ -102,54 +140,45 @@ class TaxesService {
         return null;
     }
 
-    static function getTaxes($tax_cat_id) {
-        $pdo = PDOBuilder::getPDO();
-        $stmt = $pdo->prepare("SELECT * FROM taxes WHERE taxcategory_id = :id "
-                . "ORDER BY validfrom DESC");
-        $stmt->bindParam(":id", $tax_cat_id, \PDO::PARAM_INT);
-        $taxes = array();
-        if ($stmt->execute()) {
-            while ($row = $stmt->fetch()) {
-                $taxes[] = TaxesService::buildDBTax($row, $pdo);
-            }
-        }
-        return $taxes;
-    }
-
     static function updateTax($tax) {
         if ($tax->id == null) {
             return false;
         }
         $pdo = PDOBuilder::getPDO();
-        $stmt = $pdo->prepare('UPDATE taxes SET validfrom = :valid, '
-                              . 'taxcategory_id = :cat, rate = :rate '
-                              . 'WHERE id = :id');
+        $stmt = $pdo->prepare('UPDATE TAXES SET NAME = :name, VALIDFROM = :valid, '
+                              . 'CATEGORY = :cat, RATE = :rate '
+                              . 'WHERE ID = :id');
         $date = strftime("%Y-%m-%d %H:%M:%S", $tax->start_date);
-        $stmt->bindParam(":id", $tax->id, \PDO::PARAM_INT);
-        $stmt->bindParam(":cat", $tax->tax_cat_id, \PDO::PARAM_INT);
-        $stmt->bindParam(":rate", $tax->rate, \PDO::PARAM_STR);
-        $stmt->bindParam(":valid", $date, \PDO::PARAM_STR);
-        return $stmt->execute();
+        return $stmt->execute(array(':name' => $tax->label,
+                                    ':valid' => $date,
+                                    ':cat' => $tax->tax_cat_id,
+                                    ':rate' => $tax->rate,
+                                    ':id' => $tax->id));
     }
 
     static function createTax($tax) {
         $pdo = PDOBuilder::getPDO();
         $id = md5(time() . rand());
-        $stmt = $pdo->prepare('INSERT INTO taxes (validfrom, '
-                              . 'taxcategory_id, rate) VALUES '
-                              . '(:valid, :cat, :rate)');
+        $stmt = $pdo->prepare('INSERT INTO TAXES (ID, NAME, VALIDFROM, '
+                              . 'CATEGORY, RATE) VALUES '
+                              . '(:id, :name, :valid, :cat, :rate)');
         $date = strftime("%Y-%m-%d %H:%M:%S", $tax->start_date);
-        $stmt->bindParam(":cat", $tax->tax_cat_id, \PDO::PARAM_INT);
-        $stmt->bindParam(":rate", $tax->rate, \PDO::PARAM_STR);
-        $stmt->bindParam(":valid", $date, \PDO::PARAM_STR);
-        return $stmt->execute();
+        $stmt->bindParam(':name', $id);
+        $stmt->bindParam(':valid', $date);
+        $stmt->bindParam(':cat', $tax->tax_cat_id);
+        $stmt->bindParam(':rate', $tax->rate);
+        $stmt->bindParam(':id', $id);
+        if (!$stmt->execute()) {
+            return FALSE;
+        } else {
+            return $id;
+        }
     }
 
     static function deleteTax($id) {
         $pdo = PDOBuilder::getPDO();
-        $stmt = $pdo->prepare("DELETE FROM taxes WHERE id = :id");
-        $stmt->bindParam(":id", $id, \PDO::PARAM_INT);
-        return $stmt->execute();
+        $stmt = $pdo->prepare("DELETE FROM TAXES WHERE ID = :id");
+        return $stmt->execute(array(':id' => $id));
     }
 }
 

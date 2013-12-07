@@ -1,0 +1,12 @@
+{
+"Roles": "Rôles",
+"Add a role": "Ajouter un rôle",
+"Edit a role": "Édition d'un rôle",
+"Role saved. <a href=\"%s\">Go to the role page</a>.": "Rôle enregistré. <a href=\"%s\">Aller à la page du rôle</a>.",
+
+"Users": "Utilisateurs",
+"Add an user": "Ajouter un utilisateur",
+"Edit an user": "Édition d'un utilisateur",
+"%d users": "%d utilisateurs",
+"User saved. <a href=\"%s\">Go to the user page</a>.": "Utilisateur enregistré. <a href=\"%s\">Aller à la page de l'utilisateur</a>."
+}
