@@ -72,7 +72,6 @@ require_once(_check_core_module('modules'));
 
 // Load data
 require_once(ABSPATH . "/inc/data/models/Attribute.php");
-require_once(ABSPATH . "/inc/data/models/CashRegister.php");
 require_once(ABSPATH . "/inc/data/models/Cash.php");
 require_once(ABSPATH . "/inc/data/models/Category.php");
 require_once(ABSPATH . "/inc/data/models/Floor.php");
@@ -112,7 +111,6 @@ require_once(ABSPATH . "/inc/data/services/LocationsService.php");
 require_once(ABSPATH . "/inc/data/services/StocksService.php");
 require_once(ABSPATH . "/inc/data/services/ResourcesService.php");
 require_once(ABSPATH . "/inc/data/services/CurrenciesService.php");
-require_once(ABSPATH . "/inc/data/services/CashRegistersService.php");
 require_once(ABSPATH . "/inc/Csv.php");
 require_once(ABSPATH . "/inc/data/models/Subgroups.php");
 
