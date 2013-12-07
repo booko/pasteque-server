@@ -50,8 +50,8 @@ class TaxCat {
         $now = time();
         foreach ($this->taxes as $tax) {
             if ($current == null
-                || ($tax->start_date <= $now
-                    && $tax->start_date > $current->start_date)) {
+                || ($tax->startDate <= $now
+                    && $tax->startDate > $current->startDate)) {
                 $current = $tax;
             }
         }

@@ -28,10 +28,10 @@ class CompositionsService {
     private static function buildDBCompo($db_compo) {
         $prd = ProductsService::get($db_compo['COMPOSITION']);
         $compo = Composition::__build($prd->id, $prd->reference, $prd->label, 
-                $prd->price_sell, $prd->category, $prd->disp_order, 
-                $prd->tax_cat, $prd->visible, $prd->scaled, $prd->price_buy,
-                $prd->attributes_set, $prd->barcode, $prd->image,
-                $prd->discount_enabled, $prd->discount_rate);
+                $prd->priceSell, $prd->categoryId, $prd->dispOrder,
+                $prd->taxCatId, $prd->visible, $prd->scaled, $prd->priceBuy,
+                $prd->attributesSet, $prd->barcode, $prd->image,
+                $prd->discountEnabled, $prd->discountRate);
         $subgrpSrv = new SubgroupsService($compo->id);
         $compo->groups = $subgrpSrv->getAll();
         return $compo;
@@ -60,10 +60,10 @@ class CompositionsService {
             return NULL;
         }
         $compo = Composition::__build($prd->id, $prd->reference, $prd->label,
-                $prd->price_sell, $prd->category, $prd->disp_order,
-                $prd->tax_cat, $prd->visible, FALSE, $prd->price_buy,
+                $prd->priceSell, $prd->categoryId, $prd->dispOrder,
+                $prd->taxCatId, $prd->visible, false, $prd->priceBuy,
                 NULL, $prd->barcode, $prd->image,
-                $prd->discount_enabled, $prd->discount_rate);
+                $prd->discountEnabled, $prd->discountRate);
         $subgrpSrv = new SubGroupsService($compo->id);
         $compo->groups = $subgrpSrv->getAll();
         return $compo;

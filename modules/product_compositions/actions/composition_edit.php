@@ -20,9 +20,10 @@ if (isset($_POST['inputData'])) {
 
 if (isset($_GET['product_id'])) {
     $composition  = \Pasteque\CompositionsService::get($_GET['product_id']);
-    $tax = $composition->tax_cat->getCurrentTax();
-    $vatprice = $composition->price_sell * (1 + $tax->rate);
-    $price = sprintf("%.2f", $composition->price_sell);
+    $taxCat = \Pasteque\TaxesService::get($composition->taxCatId);
+    $tax = $taxCat->getCurrentTax();
+    $vatprice = $composition->priceSell * (1 + $tax->rate);
+    $price = sprintf("%.2f", $composition->priceSell);
 } else {
     $vatprice = "";
     $price = "";
@@ -77,7 +78,7 @@ function catalog_category($category, $js) {
         <legend><?php \pi18n("Display", PLUGIN_NAME); ?></legend>
         <?php \Pasteque\form_input("edit", "Product", $composition, "label", "string", array("required" => true)); ?>
         <?php \Pasteque\form_input("edit", "Product", $composition, "visible", "boolean"); ?>
-        <?php \Pasteque\form_input("edit", "Product", $composition, "disp_order", "numeric"); ?>
+        <?php \Pasteque\form_input("edit", "Product", $composition, "dispOrder", "numeric"); ?>
         </fieldset>
         <fieldset>
         <legend><?php \pi18n("Price", PLUGIN_NAME); ?></legend>
@@ -87,18 +88,18 @@ function catalog_category($category, $js) {
             <input id="sellvat" type="numeric" name="selltax" value="<?php echo $vatprice; ?>" />
         </div>
         <div class="row">
-            <label for="sell"><?php \pi18n("Product.price_sell"); ?></label>
-            <input type="hidden" id="realsell" name="realsell" <?php if ($composition != NULL) echo 'value="' . $composition->price_sell. '"'; ?> />
+            <label for="sell"><?php \pi18n("Product.priceSell"); ?></label>
+            <input type="hidden" id="realsell" name="realsell" <?php if ($composition != NULL) echo 'value="' . $composition->priceSell. '"'; ?> />
             <input id="sell" type="numeric" name="sell" value="<?php echo $price; ?>" />
         </div>
-        <?php \Pasteque\form_input("edit", "Product", $composition, "price_buy", "numeric"); ?>
+        <?php \Pasteque\form_input("edit", "Product", $composition, "priceBuy", "numeric"); ?>
         <div class="row">
             <label for="margin"><?php \pi18n("Margin", PLUGIN_NAME); ?></label>
             <input id="margin" type="numeric" disabled="true" />
         </div>
         <?php if ($discounts) {
-            \Pasteque\form_input("edit", "Product", $composition, "discount_enabled", "boolean", array("default" => FALSE));
-            \Pasteque\form_input("edit", "Product", $composition, "discount_rate", "numeric");
+            \Pasteque\form_input("edit", "Product", $composition, "discountEnabled", "boolean", array("default" => FALSE));
+            \Pasteque\form_input("edit", "Product", $composition, "discountRate", "numeric");
             } ?>
         </fieldset>
         <fieldset>
@@ -108,7 +109,7 @@ function catalog_category($category, $js) {
                 <label for="barcode"><?php \pi18n("Product.barcode"); ?></label>
                 <div style="display:inline-block; max-width:65%;">
                     <img id="barcodeImg" src="" />
-                    <input id="barcode" type="text" name="barcode" <?php if ($composition != NULL) echo 'value="' . $product->barcode . '"'; ?> />
+                    <input id="barcode" type="text" name="barcode" <?php if ($composition != NULL) echo 'value="' . $composition->barcode . '"'; ?> />
                     <a class="btn" href="" onClick="javascript:generateBarcode(); return false;"><?php \pi18n("Generate"); ?></a>
                 </div>
             </div>
@@ -127,7 +128,7 @@ function catalog_category($category, $js) {
         </div>
         <div class="row">
             <label for="edit-sgOrder">Order</label>
-            <input id="edit-sgOrder" type="numeric" name="disp_order" value='0'>
+            <input id="edit-sgOrder" type="numeric" name="dispOrder" value='0'>
         </div>
         <div class="row">
             <?php \Pasteque\tpl_js_btn("btn", "addSubGroup()", \i18n("Add subgroup", PLUGIN_NAME));?>
@@ -257,7 +258,7 @@ updateSellVatPrice = function() {
 	}
 updateMargin = function() {
 		var sell = jQuery("#realsell").val();
-		var buy = jQuery("#edit-price_buy").val();
+		var buy = jQuery("#edit-priceBuy").val();
 		var ratio = sell / buy - 1;
 		var margin = (ratio * 100).toFixed(2) + "%";
 		var rate = (sell / buy).toFixed(2);
@@ -280,9 +281,9 @@ updateMargin = function() {
 
     jQuery("#sell").change(function() {changeVal(this.id, updateSellVatPrice);});
 
-    jQuery("#edit-price_buy").change(function() {changeVal(this.id, updateMargin);});
+    jQuery("#edit-priceBuy").change(function() {changeVal(this.id, updateMargin);});
 
-    jQuery("#edit-discount_rate").change(function() {changeVal(this.id, updateMargin);});
+    jQuery("#edit-discountRate").change(function() {changeVal(this.id, updateMargin);});
 
     jQuery("#edit-sgNewName").change(function() {editSubGroup();});
 
@@ -340,11 +341,11 @@ updateMargin = function() {
 if (isset($composition)) {
     echo "addDataCmp(";
     echo "'" . esc_quote($composition->id) . "', '" . esc_quote($composition->reference)
-            . "', '" . esc_quote($composition->label) . "', '" . esc_quote($composition->disp_order)
-            . "', '" . esc_quote($composition->visible) . "', '" . esc_quote($composition->price_sell)
-            . "', '" . esc_quote($composition->price_buy) . "', null, '" . esc_quote($composition->tax_cat->label)
-            . "', '" . esc_quote($composition->barcode) . "', '" . esc_quote($composition->discount_enabled)
-            . "', '" . esc_quote($composition->discount_rate) . "', '" . esc_quote($composition->image )
+            . "', '" . esc_quote($composition->label) . "', '" . esc_quote($composition->dispOrder)
+            . "', '" . esc_quote($composition->visible) . "', '" . esc_quote($composition->priceSell)
+            . "', '" . esc_quote($composition->priceBuy) . "', null, '" . esc_quote($composition->tax_cat->label)
+            . "', '" . esc_quote($composition->barcode) . "', '" . esc_quote($composition->discountEnabled)
+            . "', '" . esc_quote($composition->discountRate) . "', '" . esc_quote($composition->image )
             . "');\n";
     if ($composition->groups !== NULL) {
         foreach ($composition->groups as $subG) {
