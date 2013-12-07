@@ -20,63 +20,78 @@
 
 namespace Pasteque;
 
-class CustomersService {
+class CustomersService extends AbstractService {
 
-    private static function buildDBCustomer($db_cust) {
-        $cust = Customer::__build($db_cust['ID'], $db_cust['TAXID'], $db_cust['SEARCHKEY'],
-                $db_cust['NAME'], $db_cust['CARD'], $db_cust['TAXCATEGORY'],
-                $db_cust['PREPAID'],
-                $db_cust['MAXDEBT'], $db_cust['CURDEBT'], $db_cust['CURDATE'],
-                $db_cust['FIRSTNAME'], $db_cust['LASTNAME'], $db_cust['EMAIL'],
-                $db_cust['PHONE'], $db_cust['PHONE2'], $db_cust['FAX'],
-                $db_cust['ADDRESS'], $db_cust['ADDRESS2'], $db_cust['POSTAL'],
-                $db_cust['CITY'], $db_cust['REGION'], $db_cust['COUNTRY'],
-                $db_cust['NOTES'], ord($db_cust['VISIBLE']) == 1);
+    protected static $dbTable = "CUSTOMERS";
+    protected static $dbIdField = "ID";
+    protected static $fieldMapping = array(
+            "ID" => "id",
+            "TAXID" => "number",
+            "SEARCHKEY" => "key",
+            "NAME" => "name",
+            "CARD" => "card",
+            "TAXCATEGORY" => "custTaxId",
+            "PREPAID" => "prepaid",
+            "MAXDEBT" => "maxDebt",
+            "CURDEBT" => "currDebt",
+            "CURDATE" => "debtDate",
+            "FIRSTNAME" => "firstName",
+            "LASTNAME" => "lastName",
+            "EMAIL" => "email",
+            "PHONE" => "phone1",
+            "PHONE2" => "phone2",
+            "FAX" => "fax",
+            "ADDRESS" => "addr1",
+            "ADDRESS2" => "addr2",
+            "POSTAL" => "zipCode",
+            "CITY" => "city",
+            "REGION" => "region",
+            "COUNTRY" => "country",
+            "NOTES" => "note",
+            "VISIBLE" => "visible"
+    );
+
+    protected function build($row, $pdo = null) {
+        $cust = Customer::__build($row['ID'], $row['TAXID'], $row['SEARCHKEY'],
+                $row['NAME'], $row['CARD'], $row['TAXCATEGORY'],
+                $row['PREPAID'],
+                $row['MAXDEBT'], $row['CURDEBT'], $row['CURDATE'],
+                $row['FIRSTNAME'], $row['LASTNAME'], $row['EMAIL'],
+                $row['PHONE'], $row['PHONE2'], $row['FAX'],
+                $row['ADDRESS'], $row['ADDRESS2'], $row['POSTAL'],
+                $row['CITY'], $row['REGION'], $row['COUNTRY'],
+                $row['NOTES'], ord($row['VISIBLE']) == 1);
         return $cust;
     }
 
 
-    static function getAll($include_hidden = FALSE) {
+    function getAll($include_hidden = false) {
         $customers = array();
         $pdo = PDOBuilder::getPDO();
-        $sql = NULL;
+        $sql = null;
         if ($include_hidden) {
             $sql = "SELECT * FROM CUSTOMERS";
         } else {
             $sql = "SELECT * FROM CUSTOMERS WHERE VISIBLE = 1";
         }
-        foreach ($pdo->query($sql) as $db_cust) {
-            $cust = CustomersService::buildDBCustomer($db_cust);
+        foreach ($pdo->query($sql) as $dbCust) {
+            $cust = $this->build($dbCust);
             $customers[] = $cust;
         }
         return $customers;
     }
 
-    static function get($id) {
-        if ($id === NULL) {
-            return NULL;
-        }
-        $pdo = PDOBuilder::getPDO();
-        $stmt = $pdo->prepare("SELECT * FROM CUSTOMERS WHERE ID = :id");
-        if ($stmt->execute(array(':id' => $id))) {
-            if ($row = $stmt->fetch()) {
-                return CustomersService::buildDBCustomer($row);
-            }
-        }
-        return NULL;
-    }
-
-    static function addPrepaid($custId, $amount) {
-        $cust = CustomersService::get($custId);
-        if ($cust !== NULL) {
+    function addPrepaid($custId, $amount) {
+        $cust = $this->get($custId);
+        if ($cust !== null) {
             $cust->prepaid += $amount;
-            $ret = CustomersService::update($cust);
+            $ret = $this->update($cust);
             return $ret;
         }
-        return FALSE;
+        return false;
     }
 
-    static function update($cust) {
+    function update($cust) {
         if ($cust->id == null) {
             return false;
         }
@@ -119,7 +134,7 @@ class CustomersService {
         return $stmt->execute();
     }
 
-    static function create($cust) {
+    function create($cust) {
         $pdo = PDOBuilder::getPDO();
         $id = md5(time() . rand());
         $sql = "INSERT INTO CUSTOMERS (ID, SEARCHKEY, TAXID, NAME, TAXCATEGORY, "
@@ -162,7 +177,7 @@ class CustomersService {
         }
     }
 
-    static function delete($id) {
+    function delete($id) {
         $pdo = PDOBuilder::getPDO();
         $sql = "DELETE FROM CUSTOMERS WHERE ID = :id";
         $stmt = $pdo->prepare($sql);

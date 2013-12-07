@@ -20,11 +20,12 @@
 
 namespace BaseCustomers;
 
+$srv = new \Pasteque\CustomersService();
 if (isset($_POST['delete-customer'])) {
-    \Pasteque\CustomersService::delete($_POST['delete-customer']);
+    $srv->delete($_POST['delete-customer']);
 }
 
-$customers = \Pasteque\CustomersService::getAll(TRUE);
+$customers = $srv->getAll(true);
 ?>
 <h1><?php \pi18n("Customers", PLUGIN_NAME); ?></h1>
 
@@ -48,7 +49,7 @@ foreach ($customers as $cust) {
 	<tr>
 		<td><?php echo $cust->number; ?></td>
 		<td><?php echo $cust->key; ?></td>
-		<td><?php echo $cust->disp_name; ?></td>
+		<td><?php echo $cust->dispName; ?></td>
 		<td class="edition">
 			<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'customer_edit', array('id' => $cust->id)); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
 			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("customer", $cust->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>

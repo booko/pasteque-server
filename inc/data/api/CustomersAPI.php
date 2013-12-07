@@ -33,12 +33,13 @@ class CustomersAPI extends APIService {
     }
 
     protected function proceed() {
+        $srv = new CustomersService();
         switch ($this->action) {
         case 'get':
-            $this->succeed(CustomersService::get($_GET['id']));
+            $this->succeed($srv->get($_GET['id']));
             break;
         case 'getAll':
-            $this->succeed(CustomersService::getAll());
+            $this->succeed($srv->getAll());
             break;
         }
     }
