@@ -28,6 +28,8 @@ class CustomersAPI extends APIService {
             return isset($this->params['id']);
         case 'getAll':
             return true;
+        case 'addPrepaid':
+            return isset($this->param['id'], $this->param['amount']);
         }
         return false;
     }
@@ -40,6 +42,10 @@ class CustomersAPI extends APIService {
             break;
         case 'getAll':
             $this->succeed($srv->getAll());
+            break;
+        case 'addPrepaid':
+            $this->succeed($srv->addPrepaid($this->params['id'],
+                    $this−>params['amount']));
             break;
         }
     }

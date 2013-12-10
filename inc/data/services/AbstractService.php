@@ -120,6 +120,19 @@ abstract class AbstractService {
         }
     }
 
+    /** Get the total number of data */
+    public function getCount() {
+        $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("SELECT count(" . static::$dbIdField) . ") FROM "
+                . static::$dbTable;
+        if ($stmt->execute()) {
+            if ($row = $stmt->fetch()) {
+                return $row[0];
+            }
+        }
+        return false;
+    }
+
     public function getAll() {
         $pdo = PDOBuilder::getPDO();
         $stmt = $pdo->prepare("SELECT * FROM " . static::$dbTable);
