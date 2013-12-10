@@ -71,8 +71,8 @@ class CategoriesServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($id, $read->id);
         $this->assertEquals($category->label, $read->label);
         $this->assertEquals($category->image, $read->image);
-        $this->assertEquals($category->parent_id, $read->parent_id);
-        $this->assertEquals($category->disp_order, $read->disp_order);
+        $this->assertEquals($category->parentId, $read->parentId);
+        $this->assertEquals($category->dispOrder, $read->dispOrder);
     }
 
     public function testReadInexistent() {
@@ -89,8 +89,8 @@ class CategoriesServiceTest extends \PHPUnit_Framework_TestCase {
         $category->id = $id;
         $category->label = "Updated";
         $category->image = 0xbb;
-        $category->disp_order = 3;
-        $category->parent_id = $id2;
+        $category->dispOrder = 3;
+        $category->parentId = $id2;
         $ret = CategoriesService::updateCat($category);
         $this->assertNotEquals(false, $ret, "Update failed");
         $pdo = PDOBuilder::getPDO();
@@ -120,8 +120,8 @@ class CategoriesServiceTest extends \PHPUnit_Framework_TestCase {
         $category->id = $id;
         $category->label = "Updated";
         $category->image = "";
-        $category->disp_order = 3;
-        $category->parent_id = $id2;
+        $category->dispOrder = 3;
+        $category->parentId = $id2;
         $ret = CategoriesService::updateCat($category);
         $this->assertNotEquals(false, $ret, "Update failed");
         $pdo = PDOBuilder::getPDO();

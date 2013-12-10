@@ -4,8 +4,10 @@ How to test Pasteque
 You must have phpunit installed. Then copy config-sample.php to config.php and
 set it to point to an empty test database.
 
-Run tests by calling phpunit in the test directory without arguments.
-
+Run full tests by calling phpunit in the test directory without arguments.
 $ phpunit
-
 It will get tests from phpunit.xml and execute them.
+
+To run a particular test suite name it in command line
+$ phpunit services
+will run only the test suite as defined in phpunit.xml

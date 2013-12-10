@@ -94,9 +94,9 @@ class CategoriesService {
         $sql .= " WHERE ID = :id";
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(":name", $cat->label, \PDO::PARAM_STR);
-        $stmt->bindParam(":pid", $cat->parent_id, \PDO::PARAM_INT);
+        $stmt->bindParam(":pid", $cat->parentId, \PDO::PARAM_INT);
         $stmt->bindParam(":id", $cat->id, \PDO::PARAM_INT);
-        $stmt->bindParam(":order", $cat->disp_order, \PDO::PARAM_INT);
+        $stmt->bindParam(":order", $cat->dispOrder, \PDO::PARAM_INT);
         if ($cat->image !== "") {
             $stmt->bindParam(":img", $cat->image, \PDO::PARAM_LOB);
         }
@@ -117,9 +117,9 @@ class CategoriesService {
         $sql .= ")";
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(":name", $cat->label, \PDO::PARAM_STR);
-        $stmt->bindParam(":pid", $cat->parent_id, \PDO::PARAM_INT);
+        $stmt->bindParam(":pid", $cat->parentId, \PDO::PARAM_INT);
         $stmt->bindParam(":id", $id, \PDO::PARAM_INT);
-        $stmt->bindParam(":order", $cat->disp_order, \PDO::PARAM_INT);
+        $stmt->bindParam(":order", $cat->dispOrder, \PDO::PARAM_INT);
         if ($cat->image !== "") {
             $stmt->bindParam(":img", $cat->image, \PDO::PARAM_LOB);
         }
