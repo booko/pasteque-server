@@ -27,14 +27,23 @@ class Installer {
     const NEED_DB_DOWNGRADE = 3;
 
     static function install($country) {
+        $uid = get_user_id();
+        $type = get_db_type($uid);
         $pdo = PDOBuilder::getPDO();
-        $file = ABSPATH . "/install/database/create.sql";
-        $pdo->query(\file_get_contents($file));
+        $file = ABSPATH . "/install/database/" . $type . "/create.sql";
+        if (!\file_exists($file)) {
+            return false;
+        }
+        if ($pdo->query(\file_get_contents($file)) === false) {
+            return false;
+        }
         // Load country data
         if ($country !== null) {
-            $cfile = ABSPATH . "/install/database/data_" . $country . ".sql";
+            $cfile = ABSPATH . "/install/database/" . $type
+                    . "/data_" . $country . ".sql";
             $pdo->query(\file_get_contents($cfile));
         }
+        return true;
     }
 
     /** Upgrade database from given version to the latest. */
@@ -43,12 +52,16 @@ class Installer {
             $version = Installer::getVersion();
         }
         while ($version != DB_VERSION) {
+            $uid = get_user_id();
+            $type = get_db_type($uid);
             $pdo = PDOBuilder::getPDO();
             // Load generic sql update for current version
-            $file = ABSPATH . "/install/database/upgrade-" . $version . ".sql";
+            $file = ABSPATH . "/install/database/" . $type
+                    . "/upgrade-" . $version . ".sql";
             $pdo->query(\file_get_contents($file));
             // Check for localized update data for current version
-            $file = ABSPATH . "/install/database/upgrade-" . $version . "_" . $country . ".sql";
+            $file = ABSPATH . "/install/database/" . $type
+                    . "upgrade-" . $version . "_" . $country . ".sql";
             if (\file_exists($file)) {
                 $pdo->query(\file_get_contents($file));
             }
@@ -60,7 +73,7 @@ class Installer {
         $pdo = PDOBuilder::getPDO();
         $sql = "SELECT VERSION FROM APPLICATIONS WHERE ID = :id";
         $stmt = $pdo->prepare($sql);
-        $stmt->bindValue(":id", "pasteque");
+        $stmt->bindValue(":id", "postech");
         $stmt->execute();
         $data = $stmt->fetch();
         if ($data !== false) {

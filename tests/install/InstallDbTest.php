@@ -31,9 +31,10 @@ class InstallDbTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testInstallStruct() {
-        Installer::install(null);
+        $this->assertEquals(Installer::install(null), true,
+                "Installation failed");
         $pdo = PDOBuilder::getPDO();
-        $this->assertEquals(Installer::getVersion(), DB_VERSION,
+        $this->assertEquals(DB_VERSION, Installer::getVersion(),
                 "Version doesn't match");
         // Check data insert
         $sql = "SELECT * FROM RESOURCES WHERE ID = 14";
