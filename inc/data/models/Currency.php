@@ -52,6 +52,19 @@ class Currency {
         $this->active = $active;
     }
 
+    public function format($amount) {
+        $realFormat = str_replace("$", "¤", $this->format);
+        $numFormatter = new \NumberFormatter(null,
+                \NumberFormatter::PATTERN_DECIMAL, $realFormat);
+        $numFormatter->setSymbol(\NumberFormatter::CURRENCY_SYMBOL,
+                $this->symbol);
+        $numFormatter->setSymbol(\NumberFormatter::DECIMAL_SEPARATOR_SYMBOL,
+                $this->decimalSeparator);
+        $numFormatter->setSymbol(\NumberFormatter::GROUPING_SEPARATOR_SYMBOL,
+                $this->thousandsSeparator);
+        return $numFormatter->format($amount);
+    }
+
 }
 
 ?>

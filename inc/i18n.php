@@ -63,7 +63,9 @@ class I18N {
     }
 
     public function currency($amount) {
-        return sprintf($this->entries['currency'], $amount);
+        $srv = new CurrenciesService();
+        $currency = $srv->getDefault();
+        return $currency->format($amount);
     }
     public function date($timestamp) {
         if ($timestamp) {

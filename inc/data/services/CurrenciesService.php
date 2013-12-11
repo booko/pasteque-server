@@ -41,4 +41,14 @@ class CurrenciesService extends AbstractService {
                 $row["DECIMALSEP"], $row["THOUSANDSSEP"], $row["FORMAT"],
                 $row["RATE"], ord($row["MAIN"]) == 1, ord($row["ACTIVE"]) == 1);
     }
+
+    public function getDefault() {
+        $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("SELECT * from CURRENCIES WHERE MAIN = 1");
+        $stmt->execute();
+        if ($row = $stmt->fetch()) {
+            return $this->build($row, $pdo);
+        }
+        return null;
+    }
 }

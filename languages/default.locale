@@ -1,7 +1,6 @@
 {
 "date": "%Y-%m-%d",
 "datetime": "%Y-%m-%d %h:%M",
-"currency": "%01.2f€",
 
 "Thousands sep": ",",
 "Dec point": ".",
