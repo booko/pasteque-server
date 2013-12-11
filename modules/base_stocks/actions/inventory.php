@@ -20,11 +20,35 @@
 
 namespace BaseStocks;
 
+$locSrv = new \Pasteque\LocationsService();
+$locations = $locSrv->getAll();
+$locNames = array();
+$locIds = array();
+foreach ($locations as $location) {
+    $locNames[] = $location->label;
+    $locIds[] = $location->id;
+}
+$currLocation = null;
+if (isset($_POST['location'])) {
+    $currLocation = $_POST['location'];
+}
 $products = \Pasteque\ProductsService::getAll();
-$stocks = \Pasteque\StocksService::getQties();
-$levels = \Pasteque\StocksService::getLevels();
+$stocks = \Pasteque\StocksService::getQties($currLocation);
+$levels = \Pasteque\StocksService::getLevels($currLocation);
+
 ?>
 <h1><?php \pi18n("Inventory", PLUGIN_NAME); ?></h1>
+
+<?php if (count($locations) > 1) { ?>
+<form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
+	<div class="row">
+		<?php \Pasteque\form_select("location", \i18n("Location"), $locIds, $locNames, $currLocation); ?>
+	</div>
+	<div class="row actions">
+		<?php \Pasteque\form_send(); ?>
+	</div>
+</form>
+<?php } ?>
 
 <table cellpadding="0" cellspacing="0">
 	<thead>

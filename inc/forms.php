@@ -166,6 +166,22 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
     echo "</div>";
 }
 
+/** Create a select with given labels. For relation in a model use form_input
+ * with type pick */
+function form_select($id, $label, $values, $labels, $currentValue) {
+    echo "<label for=\"" . $id ."\">" . $label . "</label>";
+    echo "<select id=\"" . $id . "\" name=\"" . $id . "\">>";
+    for ($i = 0; $i < count($values); $i++) {
+        $selected = "";
+        if ($values[$i] == $currentValue) {
+            $selected = ' selected="true"';
+        }
+        echo '<option value="' . $values[$i] . '"' . $selected . '>'
+                . $labels[$i] . '</option>';
+    }
+    echo "</select>";
+}
+
 function form_send() {
     echo '<button class="btn-send" type="submit">' . \i18n('Send') . '</button>';
 }

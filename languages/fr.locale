@@ -118,5 +118,7 @@
 "Currency.format": "Format",
 "Currency.active": "Active",
 
-"Resource.label": "Désignation"
+"Resource.label": "Désignation",
+
+"Location": "Entrepôt"
 }

@@ -118,5 +118,7 @@
 "Currency.format": "Format",
 "Currency.active": "Active",
 
-"Resource.label": "Label"
+"Resource.label": "Label",
+
+"Location": "Warehouse"
 }
