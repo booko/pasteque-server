@@ -26,6 +26,30 @@ class Installer {
     const NEED_DB_UPGRADE = 2;
     const NEED_DB_DOWNGRADE = 3;
 
+    private static function loadFile($pdo, $fileContent, $type) {
+        if ($type == "postgresql") {
+            // PDO Postgresql cannot run multiple queries at once
+            // Need to split them and run one by one in a transaction
+            $pdo->beginTransaction();
+            $sqls = str_replace("\r\n", "\n", $fileContent);
+            $sqls = explode(";\n", $sqls);
+            foreach ($sqls as $sql) {
+                $sql = trim($sql);
+                if ($sql == "") {
+                    continue;
+                }
+                if ($pdo->query($sql) === false) {
+                    $pdo->rollback();
+                    return false;
+                }
+            }
+            $pdo->commit();
+            return true;
+        } else {
+            return $pdo->query($fileContent);
+        }
+    }
+
     static function install($country) {
         $uid = get_user_id();
         $type = get_db_type($uid);
@@ -34,14 +58,16 @@ class Installer {
         if (!\file_exists($file)) {
             return false;
         }
-        if ($pdo->query(\file_get_contents($file)) === false) {
+        $fileContent = \file_get_contents($file);
+        if (!Installer::loadFile($pdo, $fileContent, $type)) {
             return false;
         }
         // Load country data
         if ($country !== null) {
             $cfile = ABSPATH . "/install/database/" . $type
                     . "/data_" . $country . ".sql";
-            $pdo->query(\file_get_contents($cfile));
+            $fileContent = \file_get_contents($cfile);
+            Installer::loadFile($pdo, $fileContent, $type);
         }
         return true;
     }
