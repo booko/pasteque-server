@@ -44,6 +44,7 @@ class CategoriesServiceTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testCreate() {
+        $type = get_db_type(get_user_id());
         $category = new Category(null, "Test", 0xaa, 1);
         $id = CategoriesService::createCat($category);
         $pdo = PDOBuilder::getPDO();
@@ -51,6 +52,9 @@ class CategoriesServiceTest extends \PHPUnit_Framework_TestCase {
         $stmt = $pdo->prepare($sql);
         $this->assertNotEquals($stmt->execute(), false, "Query failed");
         $row = $stmt->fetch();
+        if ($type == "postgresql") {
+            $row['IMAGE'] = fgets($row['IMAGE']);
+        }
         $this->assertNotEquals(false, $id, "Create failed");
         $this->assertEquals($id, $row['ID'], "Inconsistent returned id");
         $this->assertEquals("Test", $row['NAME'],
