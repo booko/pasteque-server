@@ -20,9 +20,19 @@
 
 namespace Pasteque;
 
-class CashesService {
+class CashesService extends AbstractService {
 
-    private static function buildDBCash($db_cash) {
+    protected static $dbTable = "CLOSEDCASH";
+    protected static $dbIdField = "MONEY";
+    protected static $fieldMapping = array(
+            "id" => "MONEY",
+            "host" => "HOST",
+            "sequence" => "HOSTSEQUENCE",
+            "openDate" => "DATESTART",
+            "closeDate" => "DATEEND"
+    );
+
+    protected function build($db_cash, $pdo = null) {
         $cash = Cash::__build($db_cash['MONEY'], $db_cash['HOST'],
                               $db_cash['HOSTSEQUENCE'],
                               stdtimefstr($db_cash['DATESTART']),
@@ -36,7 +46,7 @@ class CashesService {
         return $cash;
     }
 
-    private static function getLastSequence($host, $pdo) {
+    private function getLastSequence($host, $pdo) {
         $stmt = $pdo->prepare("SELECT max(HOSTSEQUENCE) FROM CLOSEDCASH WHERE "
                               . "HOST = :host");
         $stmt->execute(array(':host' => $host));
@@ -47,7 +57,7 @@ class CashesService {
         }
     }
 
-    static function getAll() {
+    public function getAll() {
         $cashes = array();
         $pdo = PDOBuilder::getPDO();
         $sql = "SELECT CLOSEDCASH.MONEY, CLOSEDCASH.HOST, "
@@ -67,7 +77,7 @@ class CashesService {
         return $cashes;
     }
 
-    static function getRunning() {
+    public function getRunning() {
         $cashes = array();
         $pdo = PDOBuilder::getPDO();
         $sql = "SELECT * FROM CLOSEDCASH WHERE DATESTART NOT NULL AND DATEEND "
@@ -79,30 +89,19 @@ class CashesService {
         return $cashes;
     }
 
-    static function get($id) {
-        $pdo = PDOBuilder::getPDO();
-        $stmt = $pdo->prepare("SELECT * FROM CLOSEDCASH WHERE MONEY = :id");
-        if ($stmt->execute(array(':id' => $id))) {
-            if ($row = $stmt->fetch()) {
-                return CashesService::buildDBCash($row);
-            }
-        }
-        return null;
-    }
-
-    static function getHost($host) {
+    public function getHost($host) {
         $pdo = PDOBuilder::getPDO();
         $stmt = $pdo->prepare("SELECT * FROM CLOSEDCASH WHERE HOST = :host "
                               . "ORDER BY HOSTSEQUENCE DESC");
         if ($stmt->execute(array(':host' => $host))) {
             if ($row = $stmt->fetch()) {
-                return CashesService::buildDBCash($row);
+                return $this->build($row, $pdo);
             }
         }
         return null;
     }
 
-    static function update($cash) {
+    public function update($cash) {
         $pdo = PDOBuilder::getPDO();
         $pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
         $startParam = ($cash->isOpened()) ? ':start' : 'NULL';
@@ -121,14 +120,23 @@ class CashesService {
         return $stmt->execute();
     }
 
-    static function add($host) {
+    /** Create a new cash for the given host and return it.
+     * Returns null in case of error.
+     */
+    public function add($host) {
         $pdo = PDOBuilder::getPDO();
         $id = md5(time() . rand());
         $stmt = $pdo->prepare("INSERT INTO CLOSEDCASH (MONEY, HOST, "
                               . "HOSTSEQUENCE) VALUES (:id, :host, :sequence)");
         $sequence = CashesService::getLastSequence($host, $pdo) + 1;
-        return $stmt->execute(array(':id' => $id, ':host' => $host,
-                                    ':sequence' => $sequence));
+        $stmt->bindParam(':id', $id);
+        $stmt->bindParam(':host', $host);
+        $stmt->bindParam(':sequence', $sequence);
+        if ($stmt->execute() !== false) {
+            return $this->get($id);
+        } else {
+            return null;
+        }
     }
 }
 
