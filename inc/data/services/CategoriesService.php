@@ -44,12 +44,13 @@ class CategoriesService {
     static function getChildren($parentId) {
         $cats = array();
         $pdo = PDOBuilder::getPDO();
-        $sql = "SELECT * FROM CATEGORIES WHERE PARENT = :parent "
-                + "ORDER BY DISPORDER ASC, NAME ASC";
-        $data = $pdo->query($sql);
-        if ($data !== FALSE) {
-            foreach ($pdo->query($sql) as $db_cat) {
-                $cat = CategoriesService::buildDBCat($db_cat);
+        $stmt = $pdo->prepare("SELECT * FROM CATEGORIES "
+                . "WHERE PARENTID = :pid "
+                . "ORDER BY DISPORDER ASC, NAME ASC");
+        $stmt->bindParam(":pid", $parentId);
+        if ($stmt->execute() !== false) {
+            while ($row = $stmt->fetch()) {
+                $cat = CategoriesService::buildDBCat($row);
                 $cats[] = $cat;
             }
         }

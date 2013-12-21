@@ -37,10 +37,11 @@ class CategoriesAPI extends APIService {
     protected function proceed() {
         switch ($this->action) {
         case 'get':
-            $this->succeed(CategoriesService::get($_GET['id']));
+            $this->succeed(CategoriesService::get($this->params['id']));
             break;
         case 'getChildren':
-            $this->succeed(CategoriesService::get($_GET['parentId']));
+            $this->succeed(CategoriesService::getChildren($this->params['parentId']));
+            break;
         case 'getAll':
             $this->succeed(CategoriesService::getAll());
             break;
