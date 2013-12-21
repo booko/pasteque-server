@@ -26,6 +26,7 @@ define("ABSPATH", dirname(__DIR__));
 $altConfigFile = "tests/config.php";
 require_once(ABSPATH . "/inc/load.php");
 require_once(ABSPATH . "/inc/load_logged.php");
+require_once(ABSPATH . "/inc/load_api.php");
 
 function dropDatabase() {
     global $config;

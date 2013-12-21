@@ -10,5 +10,8 @@
 		<testsuite name="services">
 		    <file>services/CategoriesServiceTest.php</file>
 		</testsuite>
+		<testsuite name="api">
+			<file>api/APIEngineTest.php</file>
+		</testsuite>
 	</testsuites>
 </phpunit>

@@ -51,6 +51,9 @@ class APIBroker {
         return $api->getResult();
     }
 
+    public function getAPIName() {
+        return $this->api;
+    }
 }
 
 ?>
