@@ -60,8 +60,24 @@ class Currency {
                 $this->symbol);
         $numFormatter->setSymbol(\NumberFormatter::DECIMAL_SEPARATOR_SYMBOL,
                 $this->decimalSeparator);
+        $numFormatter->setSymbol(\NumberFormatter::MONETARY_SEPARATOR_SYMBOL,
+                $this->decimalSeparator);
         $numFormatter->setSymbol(\NumberFormatter::GROUPING_SEPARATOR_SYMBOL,
                 $this->thousandsSeparator);
+        $numFormatter->setSymbol(\NumberFormatter::MONETARY_GROUPING_SEPARATOR_SYMBOL, $this->thousandsSeparator);
+        // PHP fix: number of decimal digits is forced without pattern analysis
+        // when in currency mode (with currency symbol in format)
+        if (strpos($realFormat, "¤") !== FALSE) {
+            // Count number of 0 after decimal separator
+            $parts = explode(".", $realFormat);
+            $decimals = 0;
+            if (count($parts) == 2) {
+                $decimalPart = $parts[1];
+                $decimals = count(explode("0", $decimalPart)) - 1;
+            }
+            $numFormatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS,
+                    $decimals);
+        }
         return $numFormatter->format($amount);
     }
 
