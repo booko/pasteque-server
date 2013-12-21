@@ -1,5 +1,8 @@
 <phpunit>
 	<testsuites>
+		<testsuite name="models">
+			<file>models/CashTest.php</file>
+		</testsuite>
 		<testsuite name="database">
 			<file>install/InstallDbTest.php</file>
 		</testsuite>
