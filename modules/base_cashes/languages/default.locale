@@ -1,15 +1,8 @@
 {
 "Sessions": "Sessions",
 "Active sessions": "Active sessions",
-"Closed sessions": "Closed sessions",
 "Consolidated sales": "Consolidates sales",
 "Payments": "Payments",
-"cash": "Cash",
-"magcard": "Magcard",
-"cheque": "Cheque",
-"paper": "Paper",
-"free": "Free",
-"debt": "Debt",
 "Taxes": "Taxes",
 "Sales by category": "Sales by category",
 
@@ -17,5 +10,7 @@
 "Closed session": "Closed session",
 
 "Sessions": "Cashes",
-"Closed pos report": "Total"
+"Z tickets": "Z tickets",
+
+"Sales": "Sales"
 }

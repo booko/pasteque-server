@@ -1,15 +1,8 @@
 {
 "Sessions": "Sessions",
 "Active sessions": "Sessions en cours",
-"Closed sessions": "Sessions terminées",
 "Consolidated sales": "Chiffre d'affaire",
 "Payments": "Paiements",
-"cash": "Espèces",
-"magcard": "Carte bleue",
-"cheque": "Chèque",
-"paper": "Coupon",
-"free": "Offert",
-"debt": "Dette",
 "Taxes": "Taxes",
 "Sales by category": "Ventes par catégorie",
 
@@ -17,5 +10,7 @@
 "Closed session": "Session terminée",
 
 "Sessions": "Caisses",
-"Closed pos report": "Total"
+"Z tickets": "Tickets Z",
+
+"Sales": "CA HT"
 }

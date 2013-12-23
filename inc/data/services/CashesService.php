@@ -71,7 +71,7 @@ class CashesService extends AbstractService {
                 . "GROUP BY CLOSEDCASH.MONEY "
                 . "ORDER BY DATESTART DESC";
         foreach ($pdo->query($sql) as $db_cash) {
-            $cash = CashesService::buildDBCash($db_cash);
+            $cash = $this->build($db_cash);
             $cashes[] = $cash;
         }
         return $cashes;

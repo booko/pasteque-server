@@ -20,17 +20,18 @@
 
 namespace BaseCashes;
 
-$message = NULL;
-$error = NULL;
+$message = null;
+$error = null;
+$srv = new \Pasteque\CashesService();
 
-
-$startStr = isset($_POST['start']) ? $_POST['start'] : \i18nDate(time() - 86400);
+$startStr = isset($_POST['start']) ? $_POST['start'] : \i18nDate(time() - 604800);
 $stopStr = isset($_POST['stop']) ? $_POST['stop'] : \i18nDate(time());
-$report = \Pasteque\get_report(PLUGIN_NAME, "closedpos_report");
-?>
-<h1><?php \pi18n("Closed pos report", PLUGIN_NAME); ?></h1>
 
-<p><a class="btn" href="<?php echo \Pasteque\get_report_url(PLUGIN_NAME, 'closedpos_report'); ?>&start=<?php echo $startStr; ?>&stop=<?php echo $stopStr; ?>"><?php \pi18n("Export"); ?></a></p>
+$report = \Pasteque\get_report(PLUGIN_NAME, "ztickets");
+?>
+<h1><?php \pi18n("Z tickets", PLUGIN_NAME); ?></h1>
+
+<p><a class="btn" href="<?php echo \Pasteque\get_report_url(PLUGIN_NAME, 'ztickets'); ?>&start=<?php echo $startStr; ?>&stop=<?php echo $stopStr; ?>"><?php \pi18n("Export"); ?></a></p>
 
 <form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
 	<div class="row">

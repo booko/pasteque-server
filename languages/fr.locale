@@ -54,8 +54,9 @@
 "Composition.label": "Désignation",
 
 "TaxCat.label": "Désignation",
+"Tax.label": "Désignation",
 "Tax.rate": "Taux",
-"Tax.start_date": "Effectif au",
+"Tax.startDate": "Effectif au",
 
 "Role.name": "Rôle",
 
@@ -119,5 +120,12 @@
 
 "Resource.label": "Désignation",
 
-"Location": "Entrepôt"
+"Location": "Entrepôt",
+
+"cash": "Espèces",
+"magcard": "Carte bleue",
+"cheque": "Chèque",
+"paper": "Coupon",
+"free": "Offert",
+"debt": "Dette"
 }

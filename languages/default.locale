@@ -54,8 +54,9 @@
 "Composition.label": "Name",
 
 "TaxCat.label": "Name",
+"Tax.label": "Name",
 "Tax.rate": "Rate",
-"Tax.start_date": "Valid from",
+"Tax.startDate": "Valid from",
 
 "Role.name": "Role",
 
@@ -119,5 +120,12 @@
 
 "Resource.label": "Label",
 
-"Location": "Warehouse"
+"Location": "Warehouse",
+
+"cash": "Cash",
+"magcard": "Magcard",
+"cheque": "Cheque",
+"paper": "Paper",
+"free": "Free",
+"debt": "Debt"
 }
