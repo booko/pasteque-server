@@ -28,12 +28,13 @@ $time = \i18nRevDate($dateStr);
 $date = \Pasteque\stdstrftime($time);
 if (isset($_POST['reason'])) {
     $reason = $_POST['reason'];
+    $locationId = $_POST['location'];
     foreach ($_POST as $key => $value) {
         if (strpos($key, "qty-") === 0) {
             $product_id = substr($key, 4);
             $qty = $value;
-            $move = new \Pasteque\StockMove($date, $reason, "0", $product_id,
-                    $qty);
+            $move = new \Pasteque\StockMove($date, $reason, $locationId,
+                    $product_id, $qty);
             if (\Pasteque\StocksService::addMove($move)) {
                 $message = \i18n("Changes saved");
             } else {
@@ -45,6 +46,21 @@ if (isset($_POST['reason'])) {
 
 $categories = \Pasteque\CategoriesService::getAll();
 $products = \Pasteque\ProductsService::getAll(TRUE);
+
+$locSrv = new \Pasteque\LocationsService();
+$locations = $locSrv->getAll();
+$locNames = array();
+$locIds = array();
+foreach ($locations as $location) {
+    $locNames[] = $location->label;
+    $locIds[] = $location->id;
+}
+$reasonIds = array(\Pasteque\StockMove::REASON_IN_BUY,
+        \Pasteque\StockMove::REASON_OUT_SELL,
+        \Pasteque\StockMove::REASON_OUT_BACK);
+$reasonNames = array(\i18n("Buy", PLUGIN_NAME),
+        \i18n("Sell", PLUGIN_NAME),
+        \i18n("Return to supplier", PLUGIN_NAME));
 
 function catalog_category($category, $js) {
     echo "<a id=\"category-" . $category->id . "\" class=\"catalog-category\" onClick=\"javascript:" . $js . "return false;\">";
@@ -61,28 +77,14 @@ function catalog_category($category, $js) {
         \i18n('Import stock\'s moves', PLUGIN_NAME), 'img/btn_add.png');?>
 
 <form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" id="move" method="post">
-	<div class="row">
-		<label for="reason"><?php \pi18n("Operation", PLUGIN_NAME); ?></label>
-		<select id="reason" name="reason">
-			<option value="<?php echo \Pasteque\StockMove::REASON_IN_BUY; ?>"><?php \pi18n("Input (buy)", PLUGIN_NAME); ?></option>
-			<option value="<?php echo \Pasteque\StockMove::REASON_OUT_SELL; ?>"><?php \pi18n("Output (sell)", PLUGIN_NAME); ?></option>
-			<option value="<?php echo \Pasteque\StockMove::REASON_OUT_BACK; ?>"><?php \pi18n("Output (return to supplyer)", PLUGIN_NAME); ?></option>
-		</select>
-	</div>
+	<?php \Pasteque\form_select("location", \i18n("Location"), $locIds, $locNames, null); ?>
+	<?php \Pasteque\form_select("reason", \i18n("Operation", PLUGIN_NAME), $reasonIds, $reasonNames, null); ?>
 	<div class="row">
 		<label for="date"><?php \pi18n("Date", PLUGIN_NAME); ?></label>
 		<input type="date" name="date" id="date" value="<?php echo $dateStr; ?>" />
 	</div>
 
-	<div class="catalog-categories-container">
-<?php foreach ($categories as $category) {
-	catalog_category($category, "changeCategory('" . $category->id . "');");
-} ?>
-	</div>
-
-	<div id="products" class="catalog-products-container">
-	</div>
-
+	<div id="catalog-picker"></div>
 
 	<table cellpadding="0" cellspacing="0">
 		<thead>
@@ -104,60 +106,11 @@ function catalog_category($category, $js) {
 
 </form>
 
+<?php \Pasteque\init_catalog("catalog", "catalog-picker", "addProduct",
+        $categories, $products); ?>
 <script type="text/javascript">
-	centerImage = function(selector) {
-		var container = jQuery(selector);
-		var img = container.children("img");
-		var containerWidth = parseInt(container.css('width'));
-		var containerHeight = parseInt(container.css('height'));
-		var imgWidth = parseInt(img.css('width'));
-		var imgHeight = parseInt(img.css('height'));
-		var hOffset = (containerWidth - imgWidth) / 2;
-		var vOffset = (containerHeight - imgHeight) / 2;
-		img.css("left", hOffset + "px");
-		img.css("top", vOffset + "px");
-	}
-
-	jQuery().ready(function() {
-<?php foreach ($categories as $category) {
-	echo "\t\tcenterImage('#category-" . $category->id . "');\n";
-} ?>
-	});
-
-	var productsByCategory = new Array();
-	var products = new Array();
-
-	addProductToCat = function(product, category) {
-		if (typeof(productsByCategory[category]) != 'object') {
-			productsByCategory[category] = new Array();
-		}
-		productsByCategory[category].push(product);
-	}
-<?php foreach ($products as $product) {
-	echo "\taddProductToCat(\"" . $product->id . "\", \"" . $product->category->id . "\");\n";
-	echo "\tproducts[\"" . $product->id . "\"] = {\"id\":\"" . $product->id . "\", \"label\": \"" . $product->label . "\", \"reference\": \"" . $product->reference . "\", \"img\": \"?" . \Pasteque\URL_ACTION_PARAM . "=img&w=product&id=" . $product->id . "\"};\n";
-} ?>
-
-	showProduct = function(productId) {
-		var product = products[productId];
-		html = "<a id=\"product-" + productId + "\"class=\"catalog-product\" onClick=\"javascript:addProduct('" + product['id'] + "');return false;\">";
-		html += "<img src=\"" + product["img"] + "\" />";
-		html += "<p>" + product['label'] + "</p>";
-		html += "</a>";
-		jQuery("#products").append(html);
-		centerImage("#product-" + productId);
-	}
-
-	changeCategory = function(category) {
-		jQuery("#products").html("");
-		var prdCat = productsByCategory[category];
-		for (var i = 0; i < prdCat.length; i++) {
-			showProduct(prdCat[i]);
-		}
-	}
-
 	addProduct = function(productId) {
-		var product = products[productId];
+		var product = catalog.getProduct(productId);
 		if (jQuery("#line-" + productId).length > 0) {
 			// Add quantity to existing line
 			var qty = jQuery("#line-" + productId + "-qty");
@@ -180,7 +133,4 @@ function catalog_category($category, $js) {
 		jQuery("#line-" + productId).detach();
 	}
 
-<?php if (count($categories) > 0) {
-	echo "\tchangeCategory(\"" . $categories[0]->id . "\");\n";
-} ?>
 </script>
