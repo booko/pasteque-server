@@ -39,41 +39,26 @@ $stopTime = \i18nRevDate($stopStr);
 $start = \Pasteque\stdstrftime($startTime);
 $stop = \Pasteque\stdstrftime($stopTime);
 
-$sql = "SELECT CLOSEDCASH.DATESTART, "
-        . "CLOSEDCASH.DATEEND, "
-        . "TAXES.NAME, SUM(TAXLINES.AMOUNT) AS AMOUNT "
+$sql = "SELECT "
+        . "TAXES.NAME, SUM(TAXLINES.BASE) AS BASE, "
+        . "SUM(TAXLINES.AMOUNT) AS AMOUNT "
         . "FROM CLOSEDCASH "
         . "LEFT JOIN RECEIPTS ON RECEIPTS.MONEY = CLOSEDCASH.MONEY "
-        . "LEFT JOIN TICKETS ON TICKETS.ID = RECEIPTS.ID "
-        . "LEFT JOIN TAXLINES ON TAXLINES.RECEIPT = TICKETS.ID "
+        . "LEFT JOIN TAXLINES ON TAXLINES.RECEIPT = RECEIPTS.ID "
         . "LEFT JOIN TAXES ON TAXLINES.TAXID = TAXES.ID "
         . "WHERE CLOSEDCASH.DATESTART > :start AND CLOSEDCASH.DATEEND < :stop "
-        . "GROUP BY TAXES.NAME "
-        . "ORDER BY CLOSEDCASH.DATESTART DESC, TICKETS.TICKETID DESC";
+        . "GROUP BY TAXES.NAME";
 
-$fields = array("DATESTART", "DATEEND", "NAME", "AMOUNT");
+$fields = array("NAME", "BASE", "AMOUNT");
 $headers = array(
-        \i18n("Session.openDate"),
-        \i18n("Session.closeDate"),
         \i18n("Tax name", PLUGIN_NAME),
-        \i18n("Tax amount", PLUGIN_NAME)
-        );
-
-
-$fields = array( "DATESTART", "DATEEND", "NAME", "AMOUNT");
-$headers = array(
-        \i18n("Session.openDate"),
-        \i18n("Session.closeDate"),
-        \i18n("Tax name", PLUGIN_NAME),
+        \i18n("Tax base", PLUGIN_NAME),
         \i18n("Tax amount", PLUGIN_NAME)
         );
 $report = new \Pasteque\Report($sql, $headers, $fields);
 $report->setParam(":start", $start);
 $report->setParam(":stop", $stop);
-$report->addFilter("DATESTART", "\Pasteque\stdtimefstr");
-$report->addFilter("DATESTART", "\i18nDatetime");
-$report->addFilter("DATEEND", "\Pasteque\stdtimefstr");
-$report->addFilter("DATEEND", "\i18nDatetime");
+$report->addFilter("BASE", "\i18nCurr");
 $report->addFilter("AMOUNT", "\i18nCurr");
 
 \Pasteque\register_report(PLUGIN_NAME, "taxes_report", $report);

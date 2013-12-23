@@ -15,6 +15,7 @@
 "Units": "Quantité",
 "Sell": "Prix HT",
 "Tax name": "TVA",
+"Tax base": "Base",
 "Tax amount": "TVA collectée",
 
 "CS report": "Synthèse",
