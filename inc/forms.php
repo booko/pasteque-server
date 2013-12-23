@@ -169,6 +169,7 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
 /** Create a select with given labels. For relation in a model use form_input
  * with type pick */
 function form_select($id, $label, $values, $labels, $currentValue) {
+    echo "<div class=\"row\">\n";
     echo "<label for=\"" . $id ."\">" . $label . "</label>";
     echo "<select id=\"" . $id . "\" name=\"" . $id . "\">>";
     for ($i = 0; $i < count($values); $i++) {
@@ -180,6 +181,7 @@ function form_select($id, $label, $values, $labels, $currentValue) {
                 . $labels[$i] . '</option>';
     }
     echo "</select>";
+    echo "</div>";
 }
 
 function form_send() {
