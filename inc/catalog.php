@@ -20,6 +20,17 @@
 
 namespace Pasteque;
 
+function jsonify($key, $value) {
+    // TODO: escape data
+    if (\is_string($value)) {
+        return '"' . $key . '": "' . $value . '"';
+    } else if ($value === null) {
+        return '"' . $key . '": null';
+    } else {
+        return '"' . $key . '": ' . $value;
+    }
+}
+
 function init_catalog($jsName, $containerId, $selectCallback,
         $categories, $products) {
     echo '<script type="text/javascript" src="inc/catalog.js"></script>';
@@ -34,8 +45,19 @@ function init_catalog($jsName, $containerId, $selectCallback,
                 . ", \"" . $cat->label . "\");\n";
     }
     foreach ($products as $product) {
+        $taxCat = TaxesService::get($product->taxCatId);
+        $tax = $taxCat->getCurrentTax();
+        $vatPrice = $product->priceSell * (1 + $tax->rate);
+        $prd = '{' . jsonify("id", $product->id) . ', '
+                . jsonify("label", $product->label) . ', '
+                . jsonify("reference", $product->reference) . ', '
+                . jsonify("img", "?" . URL_ACTION_PARAM . "=img&w=product&id=" . $product->id) . ', '
+                . jsonify("buy", $product->priceBuy) . ', '
+                . jsonify("sell", $product->priceSell) . ', '
+                . jsonify("vatSell", $vatPrice)
+                . '}';
         echo $jsName . ".addProductToCat(\"" . $product->id . "\", \"" . $product->categoryId . "\");\n";
-        echo $jsName . ".addProduct('" . $product->id . "', \"" . $product->label . "\", \"" . $product->reference ."\");\n";
+        echo $jsName . ".addProduct(" . $prd .");\n";
     }
     if (count($categories) > 0) {
         echo $jsName . ".changeCategory(\"" . $categories[0]->id . "\");\n";

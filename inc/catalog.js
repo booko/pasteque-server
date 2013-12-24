@@ -27,13 +27,13 @@ Catalog = function(containerId, selectCallback) {
 
 Catalog.prototype.createCategory = function(catVar, id, label) {
     var html = "<a class=\"category-" + id + " catalog-category\" onClick=\"javascript:" + catVar + ".changeCategory('" + id + "');return false;\">";
-    html += "<img src=\"?p=img&w=category&id=" + id + "\" />";
+    html += "<img src=\"?p=img&w=category&id=" + id + "\" onload=\"javascript:centerImage('.category-" + id + "');\" />";
     html += "<p>" + label + "</p></a>";
     jQuery("#" + this.containerId + " .catalog-categories-container").append(html);
 }
-Catalog.prototype.addProduct = function(id, label, reference) {
-    this.products[id] = {'id': id, 'label': label, 'reference': reference,
-            'img': "?p=img&w=product&id=" + id};
+/** Add a product to the catalog. Use full product object. */
+Catalog.prototype.addProduct = function(product) {
+    this.products[product['id']] = product;
 }
 Catalog.prototype.addProductToCat = function(product, category) {
     if (typeof(this.productsByCategory[category]) != 'object') {
@@ -45,7 +45,7 @@ Catalog.prototype.addProductToCat = function(product, category) {
 Catalog.prototype.showProduct = function(productId) {
     var product = this.products[productId];
     html = "<div id=\"product-" + productId + "\"class=\"catalog-product\" onClick=\"javascript:" + this.selectCallback + "('" + product['id'] + "');\">";
-    html += "<img src=\"" + product["img"] + "\" />";
+    html += "<img src=\"" + product["img"] + "\" onload=\"javascript:centerImage('#product-" + productId + "');\" />";
     html += "<p>" + product['label'] + "</p>";
     html += "</div>";
     jQuery("#" + this.containerId + " .catalog-products-container").append(html);
