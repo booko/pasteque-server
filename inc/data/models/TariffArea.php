@@ -24,16 +24,18 @@ class TariffArea {
 
     public $id;
     public $label;
+    public $dispOrder;
     public $prices;
 
-    static function __build($id, $label) {
-        $area = new TariffArea($label);
+    static function __build($id, $label, $dispOrder) {
+        $area = new TariffArea($label, $dispOrder);
         $area->id = $id;
         return $area;
     }
 
-    function __construct($label) {
+    function __construct($label, $dispOrder) {
         $this->label = $label;
+        $this->dispOrder = $dispOrder;
         $this->prices = array();
     }
 
@@ -47,6 +49,10 @@ class TariffArea {
         } else {
             return NULL;
         }
+    }
+
+    function getPrices() {
+        return $this->prices;
     }
 }
 

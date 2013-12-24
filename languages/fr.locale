@@ -118,6 +118,9 @@
 "Currency.format": "Format",
 "Currency.active": "Active",
 
+"TariffArea.label": "Désignation",
+"TariffArea.dispOrder": "Ordre",
+
 "Resource.label": "Désignation",
 
 "Location": "Entrepôt",

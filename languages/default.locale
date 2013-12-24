@@ -118,6 +118,9 @@
 "Currency.format": "Format",
 "Currency.active": "Active",
 
+"TariffArea.label": "Label",
+"TariffArea.dispOrder": "Order",
+
 "Resource.label": "Label",
 
 "Location": "Warehouse",

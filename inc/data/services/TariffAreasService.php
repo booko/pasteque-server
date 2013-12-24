@@ -20,10 +20,18 @@
 
 namespace Pasteque;
 
-class TariffAreasService {
+class TariffAreasService extends AbstractService {
 
-    private static function buildDBArea($db_area, $pdo) {
-        $area = TariffArea::__build($db_area['ID'], $db_area['NAME']);
+    protected static $dbTable = "TARIFFAREAS";
+    protected static $dbIdField = "ID";
+    protected static $fieldMapping = array(
+            "ID" => "id",
+            "NAME" => "label",
+            "TARIFFORDER" => "dispOrder"
+    );
+
+    protected function build($db_area, $pdo = null) {
+        $area = TariffArea::__build($db_area['ID'], $db_area['NAME'], $db_area['TARIFFORDER']);
         $stmt = $pdo->prepare("SELECT * FROM TARIFFAREAS_PROD "
                 . "WHERE TARIFFID = :id");
         $stmt->bindParam(":id", $area->id);
@@ -35,30 +43,62 @@ class TariffAreasService {
         return $area;
     }
 
-    private static function buildDBGrp($db_grp, $pdo) {
-        $grp = CompositionGroup::__build($db_grp['ID'], $db_grp['NAME']);
-        $stmt = $pdo->prepare("SELECT * FROM SUBGROUPS_PROD WHERE "
-                . "SUBGROUP = :id");
-        $stmt->execute(array(':id' => $db_grp['ID']));
-        while ($db_component = $stmt->fetch()) {
-            $grp->addProduct($db_component['PRODUCT']);
-        }
-        return $grp;
-    }
-
-    static function getAll() {
+    public function getAll() {
         $areas = array();
         $pdo = PDOBuilder::getPDO();
         $sql = "SELECT * FROM TARIFFAREAS ORDER BY NAME";
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
         while ($db_area = $stmt->fetch()) {
-            $area = TariffAreasService::buildDBArea($db_area, $pdo);
+            $area = $this->build($db_area, $pdo);
             $areas[] = $area;
         }
         return $areas;
     }
 
+    private function insertAreaPrices($id, $area) {
+        $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("INSERT INTO TARIFFAREAS_PROD "
+                . "(TARIFFID, PRODUCTID, PRICESELL) "
+                . "VALUES (:id, :pid, :price)");
+        foreach ($area->getPrices() as $pid => $price) {
+            $stmt->bindParam(":id", $id);
+            $stmt->bindParam(":pid", $pid);
+            $stmt->bindParam(":price", $price);
+            $stmt->execute();
+        }
+    }
+
+    public function create($area) {
+        $id = parent::create($area);
+        if ($id === false) {
+            return false;
+        }
+        $this->insertAreaPrices($id, $area);
+        return $id;
+    }
+
+    public function update($area) {
+        if (parent::update($area) === false) {
+            return false;
+        }
+        $pdo = PDOBuilder::getPDO();
+        $del = $pdo->prepare("DELETE FROM TARIFFAREAS_PROD "
+                . "WHERE TARIFFID = :id");
+        $del->bindParam(":id", $area->id);
+        $del->execute();
+        $this->insertAreaPrices($area->id, $area);
+        return true;
+    }
+
+    public function delete($areaId) {
+        $pdo = PDOBuilder::getPDO();
+        $del = $pdo->prepare("DELETE FROM TARIFFAREAS_PROD "
+                . "WHERE TARIFFID = :id");
+        $del->bindParam(":id", $areaId);
+        $del->execute();
+        return parent::delete($areaId);
+    }
 }
 
 ?>
