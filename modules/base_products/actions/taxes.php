@@ -44,7 +44,6 @@ $taxes = \Pasteque\TaxesService::getAll();
 	<thead>
 		<tr>
 			<th><?php \pi18n("TaxCat.label"); ?></th>
-			<th><?php \pi18n("Tax.rate"); ?></th>
 			<th></th>
 		</tr>
 	</thead>
@@ -56,7 +55,6 @@ $par = !$par;
 ?>
 	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
 		<td><?php echo $tax->label; ?></td>
-		<td><?php echo $tax->getCurrentTax()->rate; ?>
 		<td class="edition">
 			<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'tax_edit', array('id' => $tax->id)); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
 			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("taxcat", $tax->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>

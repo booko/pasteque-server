@@ -148,10 +148,10 @@ class TaxesService {
         $stmt = $pdo->prepare('UPDATE TAXES SET NAME = :name, VALIDFROM = :valid, '
                               . 'CATEGORY = :cat, RATE = :rate '
                               . 'WHERE ID = :id');
-        $date = strftime("%Y-%m-%d %H:%M:%S", $tax->start_date);
+        $date = strftime("%Y-%m-%d %H:%M:%S", $tax->startDate);
         return $stmt->execute(array(':name' => $tax->label,
                                     ':valid' => $date,
-                                    ':cat' => $tax->tax_cat_id,
+                                    ':cat' => $tax->taxCatId,
                                     ':rate' => $tax->rate,
                                     ':id' => $tax->id));
     }
@@ -162,10 +162,10 @@ class TaxesService {
         $stmt = $pdo->prepare('INSERT INTO TAXES (ID, NAME, VALIDFROM, '
                               . 'CATEGORY, RATE) VALUES '
                               . '(:id, :name, :valid, :cat, :rate)');
-        $date = strftime("%Y-%m-%d %H:%M:%S", $tax->start_date);
-        $stmt->bindParam(':name', $id);
+        $date = strftime("%Y-%m-%d %H:%M:%S", $tax->startDate);
+        $stmt->bindParam(':name', $tax->label);
         $stmt->bindParam(':valid', $date);
-        $stmt->bindParam(':cat', $tax->tax_cat_id);
+        $stmt->bindParam(':cat', $tax->taxCatId);
         $stmt->bindParam(':rate', $tax->rate);
         $stmt->bindParam(':id', $id);
         if (!$stmt->execute()) {

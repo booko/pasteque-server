@@ -31,15 +31,24 @@ function form_value_hidden($form_id, $name, $value) {
 }
 
 function form_input($form_id, $class, $object, $field, $type, $args = array()) {
-    echo "<div class=\"row\">\n";
+    if (!isset($args['nolabel']) || $args['nolabel'] === false) {
+        echo "<div class=\"row\">\n";
+    }
+    if (isset($args['nameid']) && $args['nameid'] == true) {
+        $name = $field . "-" . $form_id;
+    } else {
+        $name = $field;
+    }
     if ($type != "pick_multiple") {
-        echo '<label for="' . $form_id . '-' . $field . '">';
-        $fieldLabel = $field;
-        if (substr($field, -2) == "Id") {
-            $fieldLabel = substr($field, 0, -2);
+        if (!isset($args['nolabel']) || $args['nolabel'] === false) {
+            echo '<label for="' . $form_id . '-' . $field . '">';
+            $fieldLabel = $field;
+            if (substr($field, -2) == "Id") {
+                $fieldLabel = substr($field, 0, -2);
+            }
+            echo \i18n($class . "." . $fieldLabel);
+            echo "</label>\n";
         }
-        echo \i18n($class . "." . $fieldLabel);
-        echo "</label>\n";
     }
     $required = "";
     if (isset($args['required']) && $args['required']) {
@@ -48,14 +57,14 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
     switch ($type) {
     case 'string':
         echo '<input id="' . $form_id . '-' . $field . '" type="text" name="'
-                . $field . '"';
+                . $name . '"';
         if ($object != NULL) {
             echo ' value="' . $object->{$field} . '"';
         }
         echo "$required />\n";
         break;
     case 'text':
-        echo '<textarea id="' . $form_id . '-' . $field . '" name="' . $field
+        echo '<textarea id="' . $form_id . '-' . $field . '" name="' . $name
                 . '">';
         if ($object != NULL) {
             echo $object->{$field};
@@ -64,7 +73,7 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
         break;
     case 'numeric':
         echo '<input id="' . $form_id . '-' . $field . '" type="numeric" name="'
-                . $field . '"';
+                . $name . '"';
         if ($object != NULL) {
             echo ' value="' . $object->{$field} . '"';
         }
@@ -72,7 +81,7 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
         break;
     case 'boolean':
         echo '<input id="' . $form_id . '-' . $field
-            . '" type="checkbox" name="' . $field . '"';
+            . '" type="checkbox" name="' . $name . '"';
         if ($object != NULL) {
             if ($object->{$field}){
                 echo ' checked="checked"';
@@ -91,7 +100,7 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
             $step = $args['step'];
         }
         echo '<input id="' . $form_id . '-' . $field
-                . '" type="number" step="' . $step . '" min="0.00" name="' . $field . '"';
+                . '" type="number" step="' . $step . '" min="0.00" name="' . $name . '"';
         if ($object != NULL) {
             echo ' value="' . $object->{$field} . '"';
         }
@@ -99,9 +108,19 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
         break;
     case 'date':
         echo '<input id="' . $form_id . '-' . $field
-                . '" type="date" name="' . $field . '"';
-        if ($object != NULL) {
-            echo ' value="' . strftime("%Y-%m-%d", $object->{$field}) . '"';
+                . '" type="date" name="' . $name . '"';
+        if ($object !== null) {
+            if (isset($args['dataformat'])) {
+                if ($args['dataformat'] == 'standard') {
+                    $timestamp = stdtimefstr($object->{$field});
+                } else {
+                    $timestamp = timefstr($args['dataformat'],
+                            $object->{$field});
+                }
+            } else {
+                $timestamp = $object->{$field};
+            } 
+            echo ' value="' . \i18nDate($timestamp) . '"';
         }
         echo "$required />\n";
         break;    
@@ -128,7 +147,7 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
             $data = RolesService::getAll();
             break;
         }
-        echo '<select id="' . $form_id . '-' . $field . '" name="' . $field . '">';
+        echo '<select id="' . $form_id . '-' . $field . '" name="' . $name . '">';
         if (isset($args['nullable']) && $args['nullable']) {
             echo '<option value=""></option>';
         }
@@ -158,12 +177,14 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
             }
             $id = $form_id . "-" . $field . "-" .$r->id;
             echo '<label for="' . $id . '">' . $r->label . '</label>';
-            echo '<input id="' . $id . '" type="checkbox" name="' . $field
+            echo '<input id="' . $id . '" type="checkbox" name="' . $name
                     . '[]" value="' . $r->id . '"' . $selected . "/>\n";
         }
         break;
     }
-    echo "</div>";
+    if (!isset($args['nolabel']) || $args['nolabel'] === false) {
+        echo "</div>";
+    }
 }
 
 /** Create a select with given labels. For relation in a model use form_input

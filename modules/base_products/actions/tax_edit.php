@@ -22,39 +22,67 @@
 
 namespace BaseProducts;
 
-$message = NULL;
-$error = NULL;
+$message = null;
+$error = null;
 // Check saves
-if (isset($_POST['label'])) {
-    if (isset($_POST['label']) && isset($_POST['rate'])) {
-        $rate = $_POST['rate'];
-        if (isset($_POST['id'])) {
-            $cat = \Pasteque\TaxCat::__build($_POST['id'], $_POST['label']);
-            \Pasteque\TaxesService::updateCat($cat);
-            $tax = new \Pasteque\Tax($cat->id, $cat->label, time(), $rate);
-            if (\Pasteque\TaxesService::createTax($tax)) {
-                $message = \i18n("Changes saved");
-            } else {
-                $error = \i18n("Unable to save changes");
+if (isset($_POST['id'])) {
+    // Update tax category
+    $taxCat = \Pasteque\TaxCat::__build($_POST['id'], $_POST['label']);
+    $taxCatId = \Pasteque\TaxesService::updateCat($taxCat);
+    // rebuild tax rates
+    $taxValues = array();
+    foreach ($_POST as $key => $value) {
+        if (strpos($key, "label-") === 0) {
+            if (substr($key, 6) != "new") {
+                $taxValues[substr($key, 6)]['label'] = $value;
             }
-        } else {
-            $cat = new \Pasteque\TaxCat($_POST['label']);
-            $id = \Pasteque\TaxesService::createCat($cat);
-            $tax = new \Pasteque\Tax($id, $cat->label, time(), $rate);
-            if (\Pasteque\TaxesService::createTax($tax)) {
-                $message = \i18n("Changes saved");
-            } else {
-                $error = \i18n("Unable to save changes");
+        } else if (strpos($key, "rate-") === 0) {
+            if (substr($key, 5) != "new") {
+                $taxValues[substr($key, 5)]['rate'] = floatval($value);
+            }
+        } else if (strpos($key, "startDate-") === 0) {
+            if (substr($key, 10) != "new") {
+                $taxValues[substr($key, 10)]['startDate'] = \i18nRevDate($value);
             }
         }
     }
+    foreach ($taxValues as $id => $data) {
+        $tax = \Pasteque\Tax::__build($id, $taxCat->id, $data['label'],
+                $data['startDate'], floatval($data['rate']));
+        \Pasteque\TaxesService::updateTax($tax);
+    }
+    // new tax rate?
+    if (isset($_POST['label-new']) && isset($_POST['rate-new'])) {
+        if (!isset($_POST['startDate-new']) || $_POST['startDate-new'] == "") {
+            $start = \time();
+        } else {
+            $start = \i18nRevDate($_POST['startDate-new']);
+        }
+        $tax = new \Pasteque\Tax($_POST['id'], $_POST['label-new'],
+                $start, floatval($_POST['rate-new']));
+        \Pasteque\TaxesService::createTax($tax);
+    }
+} else if (isset($_POST['label'])) {
+    // Create tax category
+    $taxCat = new \Pasteque\TaxCat($_POST['label']);
+    $taxCatId = \Pasteque\TaxesService::createCat($taxCat);
+    if ($taxCatId === false) {
+        $error = \i18n("Unable to save tax.", PLUGIN_NAME);
+    } else {
+        if (!isset($_POST['new-startDate'])) {
+            $start = \time();
+        } else {
+            $start = \i18nRevDate($_POST['new-startDate']);
+        }
+        $tax = new \Pasteque\Tax($taxCatId, $_POST['new-label'],
+                $start, floatval($_POST['new-rate']));
+        \Pasteque\TaxesService::createTax($tax);
+    }
 }
 
-$tax_cat = NULL;
-$tax = NULL;
+$tax_cat = null;
 if (isset($_GET['id'])) {
     $tax_cat = \Pasteque\TaxesService::get($_GET['id']);
-    $tax = $tax_cat->getCurrentTax();
 }
 ?>
 <h1><?php \pi18n("Edit tax", PLUGIN_NAME); ?></h1>
@@ -63,12 +91,39 @@ if (isset($_GET['id'])) {
 
 <!-- Tax category edit -->
 <form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
-    <?php \Pasteque\form_hidden("edit", $tax_cat, "id"); ?>
-	<?php \Pasteque\form_input("edit", "TaxCat", $tax_cat, "label", "string", array("required" => true)); ?>
-	<?php \Pasteque\form_input("edit", "Tax", $tax, "rate", "float", array("required" => true)); ?>
+	<fieldset>
+		<legend><?php \pi18n("TaxCategory"); ?></legend>
+		<?php \Pasteque\form_hidden("edit", $tax_cat, "id"); ?>
+		<?php \Pasteque\form_input("edit", "TaxCat", $tax_cat, "label", "string", array("required" => true)); ?>
+	</fieldset>
+	<table cellpadding="0" cellspacing="0">
+		<thead>
+			<tr>
+				<th><?php \pi18n("Tax.label"); ?></th>
+				<th><?php \pi18n("Tax.rate"); ?></th>
+				<th><?php \pi18n("Tax.startDate"); ?></th>
+			</tr>
+		</thead>
+		<tbody id="list">
+	<?php foreach ($tax_cat->taxes as $tax) { ?>
+		<tr>
+			<td><?php \Pasteque\form_input($tax->id, "Tax", $tax, "label", "string", array("required" => true, "nolabel" => true, "nameid" => true)); ?></td>
+			<td><?php \Pasteque\form_input($tax->id, "Tax", $tax, "rate", "float", array("required" => true, "nolabel" => true, "nameid" => true)); ?></td>
+			<td><?php \Pasteque\form_input($tax->id, "Tax", $tax, "startDate", "date", array("required" => true, "nolabel" => true, "nameid" => true)); ?></td>
+		</tr>
+	<?php } ?>
+		<tr>
+			<td><?php \Pasteque\form_input("new", "Tax", null, "label", "string", array("nolabel" => true, "nameid" => true)); ?></td>
+			<td><?php \Pasteque\form_input("new", "Tax", null, "rate", "float", array("nolabel" => true, "nameid" => true)); ?></td>
+			<td><?php \Pasteque\form_input("new", "Tax", null, "startDate", "date", array("nolabel" => true, "nameid" => true)); ?></td>
+		</tr>
+		</tbody>
+	</table>
+
 	<div class="row actions">
 		<?php \Pasteque\form_save(); ?>
 	</div>
+	
 </form>
 <?php if ($tax_cat !== NULL) { ?>
 <form action="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'taxes'); ?>" method="post">
