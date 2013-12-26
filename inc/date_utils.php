@@ -32,6 +32,10 @@ function timefstr($format, $date) {
     $format = str_replace("%H", "H", $format);
     $format = str_replace("%M", "i", $format);
     $dateTime = \DateTime::createFromFormat($format, $date);
+    if (strpos($format, "i") === false && strpos($format, "H") === false) {
+        // Erase default hour/minute/second if not in format
+        $dateTime->setTime(0, 0, 0);
+    }
     return $dateTime->getTimestamp();
 }
 
