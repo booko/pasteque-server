@@ -26,7 +26,7 @@ function init() {
     $MENU->registerModuleEntry("catalog", PLUGIN_NAME, "menu_attributes.png",
             "Attributes", "attributes");
     $MENU->registerModuleEntry("catalog", PLUGIN_NAME,
-            "menu_attrubute_sets.png", "Sets", "sets");
+            "menu_attribute_sets.png", "Sets", "sets");
     \Pasteque\register_i18n(PLUGIN_NAME);
 
 }
