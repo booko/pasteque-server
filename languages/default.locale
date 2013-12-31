@@ -46,12 +46,18 @@
 "Product.visible": "Active",
 "Product.discountEnabled": "Auto discount",
 "Product.discountRate": "Discount rate",
+"Product.attributesSet": "Attribute set",
 
 "Category.label": "Name",
 "Category.parent_id": "Parent",
 "Category.disp_order": "Order",
 
 "Composition.label": "Name",
+
+"Attribute.label": "Name",
+"AttributeValue.label": "Value",
+
+"AttributeSet.label": "Name",
 
 "TaxCat.label": "Name",
 "Tax.label": "Name",

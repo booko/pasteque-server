@@ -46,12 +46,18 @@
 "Product.visible": "En vente",
 "Product.discountEnabled": "Remise auto",
 "Product.discountRate": "Taux de remise",
+"Product.attributesSet": "Jeu d'attributs",
 
 "Category.label": "Désignation",
 "Category.parent_id": "Parent",
 "Category.disp_order": "Ordre",
 
 "Composition.label": "Désignation",
+
+"Attribute.label": "Désignation",
+"AttributeValue.label": "Valeur",
+
+"AttributeSet.label": "Désignation",
 
 "TaxCat.label": "Désignation",
 "Tax.label": "Désignation",

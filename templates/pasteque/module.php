@@ -249,13 +249,13 @@ function tpl_btn($class, $href, $label, $image_btn, $alt = NULL, $title = NULL) 
 }
 
 function tpl_js_btn($class, $onclick, $label, $id = NULL, $image_btn = NULL, $alt = NULL, $title = NULL) {
-    $btn = "<a class=" . $class . " onclick=\"" . $onclick;
+    $btn = "<a class=\"" . $class . "\" onclick=\"javascript:" . $onclick . ";return false;\"";
     if (isset($id)) {
-        $btn .= "id='" . $id . "' ";
+        $btn .= "id=\"" . $id . "\" ";
     }
-    $btn .= "\">";
+    $btn .= ">";
     if (isset($image_btn)) {
-        $btn .= "<img src=\"" .\Pasteque\get_template_url() . "" . $image_btn . "\"";
+        $btn .= "<img src=\"" .\Pasteque\get_template_url() . "img/" . $image_btn . "\"";
 
         if (isset($alt)) {
             $btn .= " alt =\"" . $alt . "\"";

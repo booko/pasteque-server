@@ -39,6 +39,9 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
     } else {
         $name = $field;
     }
+    if (isset($args['array']) && $args['array'] == true) {
+        $name = $name . "[]";
+    }
     if ($type != "pick_multiple") {
         if (!isset($args['nolabel']) || $args['nolabel'] === false) {
             echo '<label for="' . $form_id . '-' . $field . '">';
@@ -145,6 +148,12 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
             break;
         case 'Role':
             $data = RolesService::getAll();
+            break;
+        case 'Attribute':
+            $data = AttributesService::getAllAttrs();
+            break;
+        case 'AttributeSet':
+            $data = AttributesService::getAll();
             break;
         }
         echo '<select id="' . $form_id . '-' . $field . '" name="' . $name . '">';

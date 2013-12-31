@@ -22,10 +22,29 @@ namespace Pasteque;
 
 class AttributesService {
 
+    private static function buildSet($dbSet, $pdo) {
+        $set = AttributeSet::__build($dbSet['ID'], $dbSet['NAME']);
+        $stmt = $pdo->prepare("SELECT * FROM ATTRIBUTEUSE "
+                . "WHERE ATTRIBUTESET_ID = :id");
+        $stmt->bindParam(":id", $set->id);
+        $stmt->execute();
+        while ($dbUse = $stmt->fetch()) {
+            $stmtAttr = $pdo->prepare("SELECT * FROM ATTRIBUTE "
+                    . "WHERE ID = :id");
+            $stmtAttr->bindParam(":id", $dbUse['ATTRIBUTE_ID']);
+            $stmtAttr->execute();
+            while ($dbAttr = $stmtAttr->fetch()) {
+                $attribute = AttributesService::buildDBAttr($dbAttr, $pdo);
+                $set->addAttribute($attribute, $dbUse['LINENO']);
+            }
+        }
+        return $set;
+    }
+
     private static function buildDBAttr($db_attr, $pdo) {
         $attr = Attribute::__build($db_attr['ID'], $db_attr['NAME']);
         $valstmt = $pdo->prepare("SELECT * FROM ATTRIBUTEVALUE WHERE "
-                                 . "ATTRIBUTE_ID = :id");
+                                 . "ATTRIBUTE_ID = :id ORDER BY VALUE");
         $valstmt->execute(array(':id' => $db_attr['ID']));
         while ($db_val = $valstmt->fetch()) {
             $val = AttributeValue::__build($db_val['ID'], $db_val['VALUE']);
@@ -37,9 +56,20 @@ class AttributesService {
     static function getAll() {
         $pdo = PDOBuilder::getPDO();
         $attrs = array();
+        $sql = "SELECT * FROM ATTRIBUTESET";
+        foreach ($pdo->query($sql) as $dbSet) {
+            $attr = AttributesService::buildSet($dbSet, $pdo);
+            $attrs[] = $attr;
+        }
+        return $attrs;
+    }
+
+    static function getAllAttrs() {
+        $pdo = PDOBuilder::getPDO();
+        $attrs = array();
         $sql = "SELECT * FROM ATTRIBUTE";
-        foreach ($pdo->query($sql) as $db_attr) {
-            $attr = AttributesService::buildDBAttr($db_attr, $pdo);
+        foreach ($pdo->query($sql) as $dbAttr) {
+            $attr = AttributesService::buildDBAttr($dbAttr, $pdo);
             $attrs[] = $attr;
         }
         return $attrs;
@@ -47,13 +77,77 @@ class AttributesService {
 
     static function get($id) {
         $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("SELECT * FROM ATTRIBUTESET WHERE ID = :id");
+        if ($stmt->execute(array(':id' => $id)) !== false) {
+            if ($row = $stmt->fetch()) {
+                return AttributesService::buildSet($row, $pdo);
+            }
+        }
+        return null;
+    }
+
+    static function createSet($set) {
+        $pdo = PDOBuilder::getPDO();
+        $id = md5(time() . rand());
+        $stmt = $pdo->prepare("INSERT INTO ATTRIBUTESET (ID, NAME) VALUES "
+                              . "(:id, :name)");
+        if ($stmt->execute(array(':id' => $id, ':name' => $set->label))) {
+            $set->id = $id;
+            $stmtUse = $pdo->prepare("INSERT INTO ATTRIBUTEUSE "
+                    . "(ID, ATTRIBUTESET_ID, ATTRIBUTE_ID) VALUES "
+                    . "(:id, :setId, :attrId)");
+            foreach ($set->attributes as $attr) {
+                $stmtUse->bindParam(":id", md5(time() . rand()));
+                $stmtUse->bindParam(":setId", $set->id);
+                $stmtUse->bindParam(":attrId", $attr->id);
+                $stmtUse->execute();
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    static function updateSet($set) {
+        if ($set->id == null) {
+            return false;
+        }
+        $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("UPDATE ATTRIBUTESET SET NAME = :name "
+                . "WHERE ID = :id");
+        $stmt->bindParam(":id", $set->id);
+        $stmt->bindParam(":name", $set->label);
+        $stmtDel = $pdo->prepare("DELETE FROM ATTRIBUTEUSE "
+                . "WHERE ATTRIBUTESET_ID = :id");
+        $stmtDel->bindParam(":id", $set->id);
+        $stmtDel->execute();
+        $stmtUse = $pdo->prepare("INSERT INTO ATTRIBUTEUSE "
+                . "(ID, ATTRIBUTESET_ID, ATTRIBUTE_ID) VALUES "
+                . "(:id, :setId, :attrId)");
+        foreach ($set->attributes as $attr) {
+            $stmtUse->bindParam(":id", md5(time() . rand()));
+            $stmtUse->bindParam(":setId", $set->id);
+            $stmtUse->bindParam(":attrId", $attr->id);
+            $stmtUse->execute();
+        }
+        return $stmt->execute();
+    }
+
+    static function deleteSet($id) {
+        $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("DELETE FROM ATTRIBUTESET WHERE ID = :id");
+        return $stmt->execute(array(':id' => $id));    
+    }
+
+    static function getAttr($id) {
+        $pdo = PDOBuilder::getPDO();
         $stmt = $pdo->prepare("SELECT * FROM ATTRIBUTE WHERE ID = :id");
         if ($stmt->execute(array(':id' => $id)) !== false) {
             if ($row = $stmt->fetch()) {
                 return AttributesService::buildDBAttr($row, $pdo);
             }
         }
-        return null;        
+        return null;
     }
 
     static function createAttribute($attr) {

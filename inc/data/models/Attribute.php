@@ -57,3 +57,28 @@ class AttributeValue {
         $this->label = $label;
     }
 }
+
+class AttributeSet {
+
+    public $id;
+    public $label;
+    public $attributes;
+    public $attributeOrder;
+
+    public function __construct($label) {
+        $this->label = $label;
+        $this->attributes = array();
+        $this->attributeOrder = array();
+    }
+
+    public function __build($id, $label) {
+        $set = new AttributeSet($label);
+        $set->id = $id;
+        return $set;
+    }
+
+    public function addAttribute($attr, $order) {
+        $this->attributes[] = $attr;
+        $this->attributeOrder[] = $order;
+    }
+}

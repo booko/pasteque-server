@@ -24,12 +24,16 @@ namespace BaseProducts;
 
 $stocks = FALSE;
 $discounts = FALSE;
+$attributes = FALSE;
 $modules = \Pasteque\get_loaded_modules(\Pasteque\get_user_id());
 if (in_array("base_stocks", $modules)) {
     $stocks = TRUE;
 }
 if (in_array("product_discounts", $modules)) {
     $discounts = TRUE;
+}
+if (in_array("product_attributes", $modules)) {
+    $attributes = TRUE;
 }
 
 $message = NULL;
@@ -83,9 +87,13 @@ if (isset($_POST['id'])) {
             $discount_enabled = isset($_POST['discount_enabled']) ? 1 : 0;
             $discount_rate = $_POST['discount_rate'];
         }
+        $attr = null;
+        if (isset($_POST['attributesSet']) && $_POST['attributesSet'] === "") {
+            $attr = \Pasteque\AttributeSet::__build($_POST['attributesSet'], "dummy");
+        }
         $prd = \Pasteque\Product::__build($_POST['id'], $_POST['reference'],
                 $_POST['label'], $_POST['realsell'], $cat, $disp_order,
-                $taxCat, $visible, $scaled, $_POST['price_buy'], NULL,
+                $taxCat, $visible, $scaled, $_POST['price_buy'], $attr,
                 $_POST['barcode'], $img, $discount_enabled, $discount_rate);
         if ($stocks) { saveStock(); }
         if (\Pasteque\ProductsService::update($prd)) {
@@ -116,9 +124,13 @@ if (isset($_POST['id'])) {
             $discount_enabled = isset($_POST['discount_enabled']) ? 1 : 0;
             $discount_rate = $_POST['discount_rate'];
         }
+        $attr = null;
+        if (isset($_POST['attributesSet']) && $_POST['attributesSet'] === "") {
+            $attr = \Pasteque\AttributeSet::__build($_POST['attributesSet'], "dummy");
+        }
         $prd = new \Pasteque\Product($_POST['reference'], $_POST['label'],
                 $_POST['realsell'], $cat, $disp_order, $taxCat,
-                $visible, $scaled, $_POST['price_buy'], NULL, $_POST['barcode'],
+                $visible, $scaled, $_POST['price_buy'], $attr, $_POST['barcode'],
                 $img, $discount_enabled, $discount_rate);
         $id = \Pasteque\ProductsService::create($prd);
         if ($id !== FALSE) {
@@ -208,6 +220,9 @@ if ($stocks === TRUE && $product != NULL) {
 			<a class="btn" href="" onClick="javascript:generateBarcode(); return false;"><?php \pi18n("Generate"); ?></a>
 		</div>
 	</div>
+	<?php if ($attributes) { ?>
+	<?php \Pasteque\form_input("edit", "Product", $product, "attributesSet", "pick", array("model" => "AttributeSet", "nullable" => true)); ?>
+	<?php } ?>
 	</fieldset>
 
 <?php if ($stocks) { ?>
