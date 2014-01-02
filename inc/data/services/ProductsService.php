@@ -22,38 +22,25 @@ namespace Pasteque;
 
 class ProductsService {
 
-    private static function buildDBLightPrd($db_prd, $pdo) {
+    private static function buildDBPrd($dpPrd, $pdo) {
         $stmt = $pdo->prepare("SELECT * FROM PRODUCTS_CAT WHERE PRODUCT = :id");
-        $stmt->execute(array(':id' => $db_prd['ID']));
-        $visible = ($stmt->fetch() !== false);
-        return ProductLight::__build($db_prd['ID'], $db_prd['REFERENCE'],
-                $db_prd['NAME'], $db_prd['PRICESELL'], $visible,
-                ord($db_prd['ISSCALE']) == 1, $db_prd['CODE'],
-                $db_prd['PRICEBUY'], ord($db_prd['DISCOUNTENABLED']),
-                $db_prd['DISCOUNTRATE']);
-    }
-
-    private static function buildDBPrd($db_prd, $pdo) {
-        $cat = CategoriesService::get($db_prd['CATEGORY']);
-        $tax_cat = TaxesService::get($db_prd['TAXCAT']);
-        $attr = AttributesService::get($db_prd['ATTRIBUTES']);
-        $stmt = $pdo->prepare("SELECT * FROM PRODUCTS_CAT WHERE PRODUCT = :id");
-        $stmt->execute(array(':id' => $db_prd['ID']));
-        $prd_cat = $stmt->fetch();
-        $visible = ($prd_cat !== false);
+        $stmt->execute(array(':id' => $dpPrd['ID']));
+        $prdCat = $stmt->fetch();
+        $visible = ($prdCat !== false);
         $dispOrder = null;
         if ($visible) {
-            $dispOrder = $prd_cat['CATORDER'];
+            $dispOrder = $prdCat['CATORDER'];
         }
-        return Product::__build($db_prd['ID'], $db_prd['REFERENCE'],
-                $db_prd['NAME'], $db_prd['PRICESELL'], $db_prd['CATEGORY'],
-                $dispOrder, $db_prd['TAXCAT'],
-                $visible, ord($db_prd['ISSCALE']) == 1,
-                $db_prd['PRICEBUY'], $attr, $db_prd['CODE'], $db_prd['IMAGE'],
-                ord($db_prd['DISCOUNTENABLED']) == 1, $db_prd['DISCOUNTRATE']);
+        return Product::__build($dpPrd['ID'], $dpPrd['REFERENCE'],
+                $dpPrd['NAME'], $dpPrd['PRICESELL'], $dpPrd['CATEGORY'],
+                $dispOrder, $dpPrd['TAXCAT'], $visible,
+                ord($dpPrd['ISSCALE']) == 1, $dpPrd['PRICEBUY'],
+                $dpPrd['ATTRIBUTESET_ID'], $dpPrd['CODE'],
+                $dpPrd['IMAGE'] !== null,
+                ord($dpPrd['DISCOUNTENABLED']) == 1, $dpPrd['DISCOUNTRATE']);
     }
 
-    static function getAll($full = FALSE, $include_hidden = FALSE) {
+    static function getAll($include_hidden = FALSE) {
         $prds = array();
         $pdo = PDOBuilder::getPDO();
         $sql = NULL;
@@ -68,12 +55,8 @@ class ProductsService {
         }
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
-        while ($db_prd = $stmt->fetch()) {
-            if ($full) {
-                $prd = ProductsService::buildDBPrd($db_prd, $pdo);
-            } else {
-                $prd = ProductsService::buildDBLightPrd($db_prd, $pdo);
-            }
+        while ($dpPrd = $stmt->fetch()) {
+            $prd = ProductsService::buildDBPrd($dpPrd, $pdo);
             $prds[] = $prd;
         }
         return $prds;
@@ -149,12 +132,22 @@ class ProductsService {
         return null;
     }
 
-    static function update($prd) {
+    static function getImage($id) {
         $pdo = PDOBuilder::getPDO();
-        $attr_id = null;
-        if ($prd->attributes_set != null) {
-            $attr_id = $prd->attributes_set->id;
+        $stmt = $pdo->prepare("SELECT IMAGE FROM PRODUCTS WHERE ID = :id");
+        $stmt->bindParam(":id", $id, \PDO::PARAM_STR);
+        if ($stmt->execute()) {
+            if ($row = $stmt->fetch()) {
+                return $row['IMAGE'];
+            }
         }
+        return null;
+    }
+
+    /** Update a product. $prd->id must be set. Set $image to "" (default)
+     * to keep the actual image */
+    static function update($prd, $image = "") {
+        $pdo = PDOBuilder::getPDO();
         $code = "";
         if ($prd->barcode != null) {
             $code = $prd->barcode;
@@ -162,9 +155,9 @@ class ProductsService {
         $sql = "UPDATE PRODUCTS SET REFERENCE = :ref, CODE = :code, "
                 . "NAME = :name, PRICEBUY = :buy, PRICESELL = :sell, "
                 . "CATEGORY = :cat, TAXCAT = :tax, ATTRIBUTESET_ID = :attr, "
-                . "ISSCALE = :scale, DISCOUNTENABLED = :discount_enabled, "
-                . "DISCOUNTRATE = :discount_rate";
-        if ($prd->image !== "") {
+                . "ISSCALE = :scale, DISCOUNTENABLED = :discountEnabled, "
+                . "DISCOUNTRATE = :discountRate";
+        if ($image !== "") {
             $sql .= ", IMAGE = :img";
         }
         $sql .= " WHERE ID = :id";
@@ -172,25 +165,26 @@ class ProductsService {
         $stmt->bindParam(":ref", $prd->reference, \PDO::PARAM_STR);
         $stmt->bindParam(":code", $code, \PDO::PARAM_STR);
         $stmt->bindParam(":name", $prd->label, \PDO::PARAM_STR);
-        if ($prd->price_buy === null || $prd->price_buy === "") {
-            $stmt->bindParam(":buy", $prd->price_buy, \PDO::PARAM_NULL);
+        if ($prd->priceBuy === null || $prd->priceBuy === "") {
+            $stmt->bindParam(":buy", $prd->priceBuy, \PDO::PARAM_NULL);
         } else {
-            $stmt->bindParam(":buy", $prd->price_buy, \PDO::PARAM_STR);
+            $stmt->bindParam(":buy", $prd->priceBuy, \PDO::PARAM_STR);
         }
-        $stmt->bindParam(":sell", $prd->price_sell, \PDO::PARAM_STR);
-        $stmt->bindParam(":cat", $prd->category->id, \PDO::PARAM_INT);
-        $stmt->bindParam(":tax", $prd->tax_cat->id, \PDO::PARAM_INT);
-        $stmt->bindParam(":attr", $attr_id, \PDO::PARAM_INT);
+        $stmt->bindParam(":sell", $prd->priceSell, \PDO::PARAM_STR);
+        $stmt->bindParam(":cat", $prd->categoryId, \PDO::PARAM_INT);
+        $stmt->bindParam(":tax", $prd->taxCatId, \PDO::PARAM_INT);
+        $stmt->bindParam(":attr", $prd->attributeSetId, \PDO::PARAM_INT);
         $stmt->bindParam(":scale", $prd->scaled, \PDO::PARAM_INT);
         $stmt->bindParam(":id", $prd->id, \PDO::PARAM_INT);
-        $stmt->bindParam(":discount_enabled", $prd->discount_enabled, \PDO::PARAM_INT);
-        if ($prd->discount_rate === null || $prd->discount_rate === "") {
-            $stmt->bindValue(":disc_rate", 0.0);
+        $stmt->bindParam(":discountEnabled", $prd->discountEnabled,
+                \PDO::PARAM_INT);
+        if ($prd->discountRate === null || $prd->discountRate === "") {
+            $stmt->bindValue(":discountRate", 0.0);
         } else {
-            $stmt->bindParam(":disc_rate", $prd->discount_rate);
+            $stmt->bindParam(":discountRate", $prd->discountRate);
         }
-        if ($prd->image !== "") {
-            $stmt->bindParam(":img", $prd->image, \PDO::PARAM_LOB);
+        if ($image !== "") {
+            $stmt->bindParam(":img", $image, \PDO::PARAM_LOB);
         }
         $vsql = "DELETE FROM PRODUCTS_CAT WHERE PRODUCT = :id";
         $vstmt = $pdo->prepare($vsql);
@@ -198,22 +192,24 @@ class ProductsService {
         $vstmt->execute();
         if ($prd->visible == 1 || $prd->visible == TRUE) {
             $vsql = "INSERT INTO PRODUCTS_CAT (PRODUCT, CATORDER) VALUES "
-                    . "(:id, :disp_order)";
+                    . "(:id, :dispOrder)";
             $vstmt = $pdo->prepare($vsql);
             $vstmt->bindParam(":id", $prd->id, \PDO::PARAM_STR);
-            $vstmt->bindParam(":disp_order", $prd->disp_order, \PDO::PARAM_INT);
+            $vstmt->bindParam(":dispOrder", $prd->dispOrder, \PDO::PARAM_INT);
             $vstmt->execute();
         }
-        return $stmt->execute();
+        if ($stmt->execute() !== false) {
+            return true;
+        } else {
+            var_dump($stmt->errorInfo());
+            return false;
+        }
     }
-    
-    static function create($prd) {
+
+    /** Create a product and return its id. */
+    static function create($prd, $image = null) {
         $pdo = PDOBuilder::getPDO();
         $id = md5(time() . rand());
-        $attr_id = null;
-        if ($prd->attributes_set != null) {
-            $attr_id = $prd->attributes_set->id;
-        }
         $code = "";
         if ($prd->barcode != null) {
             $code = $prd->barcode;
@@ -225,7 +221,7 @@ class ProductsService {
             $sql .= ", IMAGE";
         }
         $sql .= ") VALUES (:id, :ref, :code, :name, :buy, :sell, :cat, "
-                . ":tax, :attr, :scale, :disc_enabled, :disc_rate";
+                . ":tax, :attr, :scale, :discEnabled, :discRate";
         if ($prd->image !== "") {
             $sql .= ", :img";
         }
@@ -234,34 +230,35 @@ class ProductsService {
         $stmt->bindParam(":ref", $prd->reference, \PDO::PARAM_STR);
         $stmt->bindParam(":code", $code, \PDO::PARAM_STR);
         $stmt->bindParam(":name", $prd->label, \PDO::PARAM_STR);
-        if ($prd->price_buy === null || $prd->price_buy === "") {
-            $stmt->bindParam(":buy", $prd->price_buy, \PDO::PARAM_NULL);
+        if ($prd->priceBuy === null || $prd->priceBuy === "") {
+            $stmt->bindParam(":buy", $prd->priceBuy, \PDO::PARAM_NULL);
         } else {
-            $stmt->bindParam(":buy", $prd->price_buy, \PDO::PARAM_STR);
+            $stmt->bindParam(":buy", $prd->priceBuy, \PDO::PARAM_STR);
         }
-        $stmt->bindParam(":sell", $prd->price_sell, \PDO::PARAM_STR);
-        $stmt->bindParam(":cat", $prd->category->id, \PDO::PARAM_INT);
-        $stmt->bindParam(":tax", $prd->tax_cat->id, \PDO::PARAM_INT);
-        $stmt->bindParam(":attr", $attr_id, \PDO::PARAM_INT);
+        $stmt->bindParam(":sell", $prd->priceSell, \PDO::PARAM_STR);
+        $stmt->bindParam(":cat", $prd->categoryId, \PDO::PARAM_INT);
+        $stmt->bindParam(":tax", $prd->taxCatId, \PDO::PARAM_INT);
+        $stmt->bindParam(":attr", $prd->attributeSetId, \PDO::PARAM_INT);
         $stmt->bindParam(":scale", $prd->scaled, \PDO::PARAM_INT);
-        $stmt->bindParam(":disc_enabled", $prd->discount_enabled, \PDO::PARAM_INT);
-        if ($prd->discount_rate === null || $prd->discount_rate === "") {
-            $stmt->bindValue(":disc_rate", 0.0);
+        $stmt->bindParam(":discEnabled", $prd->discountEnabled,
+                \PDO::PARAM_INT);
+        if ($prd->discountRate === null || $prd->discountRate === "") {
+            $stmt->bindValue(":discRate", 0.0);
         } else {
-            $stmt->bindParam(":disc_rate", $prd->discount_rate);
+            $stmt->bindParam(":discRate", $prd->discountRate);
         }
         $stmt->bindParam(":id", $id, \PDO::PARAM_INT);
-        if ($prd->image !== "") {
-            $stmt->bindParam(":img", $prd->image, \PDO::PARAM_LOB);
+        if ($image !== null) {
+            $stmt->bindParam(":img", $image, \PDO::PARAM_LOB);
         }
         if (!$stmt->execute()) {
             return FALSE;
         }
         if ($prd->visible == 1 || $prd->visible == TRUE) {
             $catstmt = $pdo->prepare("INSERT INTO PRODUCTS_CAT (PRODUCT, CATORDER) "
-                    . "VALUES (:id, :disp_order)");
+                    . "VALUES (:id, :dispOrder)");
             $catstmt->bindParam(":id", $id);
-            $catstmt->bindParam(":disp_order", $prd->disp_order);
+            $catstmt->bindParam(":dispOrder", $prd->dispOrder);
             $catstmt->execute();
         }
         return $id;

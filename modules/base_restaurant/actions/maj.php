@@ -67,7 +67,7 @@ if (isset($_POST['inputData'])) {
 
                 if (!\Pasteque\PlacesService::deleteFloor($data['id'])) {
                     $error_mess[] .= \i18n("Impossible to delete floor: %s.",
-                            PLUGIN_NAME, $floor->name);
+                            PLUGIN_NAME, $floor->label);
                 }
                 // UPDATE THE FLOOR
             } else {
@@ -75,7 +75,7 @@ if (isset($_POST['inputData'])) {
                     managePlace($data['place']);
                 } else {
                     $error_mess[] .= \i18n("Impossible to update floor: %s.",
-                            PLUGIN_NAME, $newFloor->name);
+                            PLUGIN_NAME, $newFloor->label);
                 }
             }
             // CREATE FLOOR
@@ -85,7 +85,7 @@ if (isset($_POST['inputData'])) {
                 managePlace($data['place'], $floorId);
             } else {
                 $error_mess[] .= \i18n("Impossible to create floor: %s.",
-                        PLUGIN_NAME, $newFloor->name);
+                        PLUGIN_NAME, $newFloor->label);
             }
         }
     }
@@ -124,7 +124,7 @@ function managePlace($arrayPlaces, $floorId = NULL) {
             } else {
                 if (!\Pasteque\PlacesService::updatePlace($new_place)) {
                     $error_mess[] .= \i18n("Impossible to update place: %s.",
-                            PLUGIN_NAME, $place->name);
+                            PLUGIN_NAME, $place->label);
                 }
             }
             // CREATE PLACE

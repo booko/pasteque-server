@@ -23,19 +23,19 @@ namespace Pasteque;
 class Floor {
 
     public $id;
-    public $name;
+    public $label;
     public $places;
     public $image;
 
-    static function __build($id, $name, $image = NULL) {
-        $floor = new Floor($name, $image);
+    static function __build($id, $label, $image = NULL) {
+        $floor = new Floor($label, $image);
         $floor->id = $id;
         $floor->image = $image;
         return $floor;
     }
 
-    function __construct($name, $image = NULL) {
-        $this->name = $name;
+    function __construct($label, $image = NULL) {
+        $this->label = $label;
         $this->places = array();
         $this->image = $image;
     }

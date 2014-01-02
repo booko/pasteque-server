@@ -23,23 +23,21 @@ namespace Pasteque;
 class Place {
 
     public $id;
-    public $name;
+    public $label;
     public $x;
     public $y;
     public $floor;
 
-    static function __build($id, $name, $x, $y, $floor) {
-        $place = new Place($name, $x, $y, $floor);
+    static function __build($id, $label, $x, $y, $floor) {
+        $place = new Place($label, $x, $y, $floor);
         $place->id = $id;
         return $place;
     }
 
-    function __construct($name, $x, $y, $floor) {
-        $this->name = $name;
+    function __construct($label, $x, $y, $floor) {
+        $this->label = $label;
         $this->x = $x;
         $this->y = $y;
-        //???????
-        $places = array();
         $this->floor = $floor;
     }
 

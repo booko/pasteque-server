@@ -65,13 +65,11 @@ function saveStock($newId = NULL) {
 
 if (isset($_POST['id'])) {
     if (isset($_POST['reference']) && isset($_POST['label'])
-            && isset($_POST['realsell']) && isset($_POST['category'])
-            && isset($_POST['tax_cat'])) {
-        $cat = \Pasteque\Category::__build($_POST['category'], NULL, "dummy",
-                NULL, NULL);
-        $disp_order = $_POST['disp_order'] == "" ? NULL : $_POST['disp_order'];
-        $taxCat = \Pasteque\TaxesService::get($_POST['tax_cat']);
-        $taxRate = $taxCat->getCurrentTax()->rate;
+            && isset($_POST['realsell']) && isset($_POST['categoryId'])
+            && isset($_POST['taxCatId'])) {
+        $catId = $_POST['categoryId'];
+        $disp_order = $_POST['dispOrder'] == "" ? NULL : $_POST['dispOrder'];
+        $taxCatId = $_POST['taxCatId'];
         if ($_FILES['image']['tmp_name'] !== "") {
             $img = file_get_contents($_FILES['image']['tmp_name']);
         } else if ($_POST['clearImage']) {
@@ -83,20 +81,21 @@ if (isset($_POST['id'])) {
         $visible = isset($_POST['visible']) ? 1 : 0;
         $discount_enabled = FALSE;
         $discount_rate = 0.0;
-        if (isset($_POST['discount_rate'])) {
-            $discount_enabled = isset($_POST['discount_enabled']) ? 1 : 0;
-            $discount_rate = $_POST['discount_rate'];
+        if (isset($_POST['discountRate'])) {
+            $discount_enabled = isset($_POST['discountEnabled']) ? 1 : 0;
+            $discount_rate = $_POST['discountRate'];
         }
         $attr = null;
-        if (isset($_POST['attributesSet']) && $_POST['attributesSet'] === "") {
-            $attr = \Pasteque\AttributeSet::__build($_POST['attributesSet'], "dummy");
+        if (isset($_POST['attributeSetId']) && $_POST['attributeSetId'] !== "") {
+            $attr = $_POST['attributeSetId'];
         }
         $prd = \Pasteque\Product::__build($_POST['id'], $_POST['reference'],
-                $_POST['label'], $_POST['realsell'], $cat, $disp_order,
-                $taxCat, $visible, $scaled, $_POST['price_buy'], $attr,
-                $_POST['barcode'], $img, $discount_enabled, $discount_rate);
+                $_POST['label'], $_POST['realsell'], $catId, $disp_order,
+                $taxCatId, $visible, $scaled, $_POST['priceBuy'], $attr,
+                $_POST['barcode'], $img != null,
+                $discount_enabled, $discount_rate);
         if ($stocks) { saveStock(); }
-        if (\Pasteque\ProductsService::update($prd)) {
+        if (\Pasteque\ProductsService::update($prd, $img)) {
             $message = \i18n("Changes saved");
         } else {
             $error = \i18n("Unable to save changes");
@@ -104,13 +103,11 @@ if (isset($_POST['id'])) {
     }
 } else if (isset($_POST['reference'])) {
     if (isset($_POST['reference']) && isset($_POST['label'])
-            && isset($_POST['realsell']) && isset($_POST['category'])
-            && isset($_POST['tax_cat'])) {
-        $cat = \Pasteque\Category::__build($_POST['category'], NULL, "dummy",
-                NULL, NULL);
-        $disp_order = $_POST['disp_order'] == "" ? NULL : $_POST['disp_order'];
-        $taxCat = \Pasteque\TaxesService::get($_POST['tax_cat']);
-        $taxRate = $taxCat->getCurrentTax()->rate;
+            && isset($_POST['realsell']) && isset($_POST['categoryId'])
+            && isset($_POST['taxCatId'])) {
+        $cat = $_POST['categoryId'];
+        $disp_order = $_POST['dispOrder'] == "" ? NULL : $_POST['dispOrder'];
+        $taxCatId = $_POST['taxCatId'];
         if ($_FILES['image']['tmp_name'] !== "") {
             $img = file_get_contents($_FILES['image']['tmp_name']);
         } else {
@@ -120,19 +117,19 @@ if (isset($_POST['id'])) {
         $visible = isset($_POST['visible']) ? 1 : 0;
         $discount_enabled = FALSE;
         $discount_rate = 0.0;
-        if (isset($_POST['discount_rate'])) {
-            $discount_enabled = isset($_POST['discount_enabled']) ? 1 : 0;
-            $discount_rate = $_POST['discount_rate'];
+        if (isset($_POST['discountRate'])) {
+            $discount_enabled = isset($_POST['discountEnabled']) ? 1 : 0;
+            $discount_rate = $_POST['discountRate'];
         }
         $attr = null;
-        if (isset($_POST['attributesSet']) && $_POST['attributesSet'] === "") {
-            $attr = \Pasteque\AttributeSet::__build($_POST['attributesSet'], "dummy");
+        if (isset($_POST['attributeSetId']) && $_POST['attributeSetId'] !== "") {
+            $attr = $_POST['attributeSetId'];
         }
         $prd = new \Pasteque\Product($_POST['reference'], $_POST['label'],
-                $_POST['realsell'], $cat, $disp_order, $taxCat,
-                $visible, $scaled, $_POST['price_buy'], $attr, $_POST['barcode'],
-                $img, $discount_enabled, $discount_rate);
-        $id = \Pasteque\ProductsService::create($prd);
+                $_POST['realsell'], $catId, $disp_order, $taxCatId,
+                $visible, $scaled, $_POST['priceBuy'], $attr, $_POST['barcode'],
+                $img !== null, $discount_enabled, $discount_rate);
+        $id = \Pasteque\ProductsService::create($prd, $img);
         if ($id !== FALSE) {
             if ($stocks) { saveStock($id); }
             $message = \i18n("Product saved. <a href=\"%s\">Go to the product page</a>.", PLUGIN_NAME, \Pasteque\get_module_url_action(PLUGIN_NAME, 'product_edit', array('id' => $id)));
@@ -170,12 +167,12 @@ if ($stocks === TRUE && $product != NULL) {
 	<fieldset>
 	<legend><?php \pi18n("Display", PLUGIN_NAME); ?></legend>
 	<?php \Pasteque\form_input("edit", "Product", $product, "label", "string", array("required" => true)); ?>
-	<?php \Pasteque\form_input("edit", "Product", $product, "category", "pick", array("model" => "Category")); ?>
+	<?php \Pasteque\form_input("edit", "Product", $product, "categoryId", "pick", array("model" => "Category")); ?>
 	<div class="row">
 		<label for="image"><?php \pi18n("Image"); ?></label>
 		<div style="display:inline-block">
 			<input type="hidden" id="clearImage" name="clearImage" value="0" />
-		<?php if ($product !== NULL && $product->image !== NULL) { ?>
+		<?php if ($product !== null && $product->hasImage === true) { ?>
 			<img id="img" class="image-preview" src="?<?php echo \Pasteque\URL_ACTION_PARAM; ?>=img&w=product&id=<?php echo $product->id; ?>" />
 			<a class="btn" id="clear" href="" onClick="javascript:clearImage(); return false;"><?php \pi18n("Delete"); ?></a>
 			<a class="btn" style="display:none" id="restore" href="" onClick="javascript:restoreImage(); return false;"><?php \pi18n("Restore"); ?></a><br />
@@ -195,7 +192,7 @@ if ($stocks === TRUE && $product != NULL) {
 		<input id="sellvat" type="numeric" name="selltax" value="<?php echo $vatprice; ?>" />
 	</div>
 	<div class="row">
-		<label for="sell"><?php \pi18n("Product.price_sell"); ?></label>
+		<label for="sell"><?php \pi18n("Product.priceSell"); ?></label>
 		<input type="hidden" id="realsell" name="realsell" <?php if ($product != NULL) echo 'value="' . $product->priceSell. '"'; ?> />
 		<input id="sell" type="numeric" name="sell" value="<?php echo $price; ?>" />
 	</div>
@@ -221,7 +218,7 @@ if ($stocks === TRUE && $product != NULL) {
 		</div>
 	</div>
 	<?php if ($attributes) { ?>
-	<?php \Pasteque\form_input("edit", "Product", $product, "attributesSet", "pick", array("model" => "AttributeSet", "nullable" => true)); ?>
+	<?php \Pasteque\form_input("edit", "Product", $product, "attributeSetId", "pick", array("model" => "AttributeSet", "nullable" => true)); ?>
 	<?php } ?>
 	</fieldset>
 

@@ -15,12 +15,11 @@ function init_csv() {
         return NULL;
     }
 
-    $key = array('reference', 'barcode', 'label', 'price_buy', 'sellVat',
+    $key = array('reference', 'barcode', 'label', 'sellVat',
             'category', 'tax_cat');
 
-    $optionKey = array('visible', 'scaled', 'disp_order', 'discount_rate',
-            'discount_enabled');
-    $optionKey = array();
+    $optionKey = array('price_buy', 'visible', 'scaled', 'disp_order',
+            'discount_rate', 'discount_enabled', 'stock_min', 'stock_max');
 
     $csv = new \Pasteque\Csv($_FILES['csv']['tmp_name'], $key, $optionKey);
     if (!$csv->open()) {
@@ -30,7 +29,7 @@ function init_csv() {
     //manage empty string
     $csv->addFilter("visible", true);
     $csv->addFilter("scaled", false);
-    $csv->addFilter("disp_order", "0");
+    $csv->addFilter("disp_order", null);
     return $csv;
 }
 
@@ -63,24 +62,17 @@ function import_csv($csv) {
         $tax_cat = \Pasteque\TaxesService::getByName($tab['tax_cat']);
 
         if ($tax_cat && $category) {
-            $price_sell =  $tab['sellVat'] / ( 1 + $tax_cat->getCurrentTax()->rate);
-            $prod = new \Pasteque\Product($tab['reference'], $tab['label'],
-                    $price_sell, $category, $tab['disp_order'],
-                    $tax_cat, $tab['visible'], $tab['scaled']);
-
-            // manage optional value may be present in $tab
-            $prod = manage_header_option($prod, $tab);
-            $product_exist= \Pasteque\ProductsService::getByRef($prod->reference);
-
-            //UPDATE product
-            if ($product_exist !== NULL ) {
+            $prod = readProductLine($tab, $category, $tax_cat);
+            $product_exist = \Pasteque\ProductsService::getByRef($prod->reference);
+            if ($product_exist !== null ) {
+                // update product
                 $prod->id = $product_exist->id;
                 $prod = mergeProduct($product_exist, $prod);
-
                 //if update imposible an is occurred
                 if (!\Pasteque\ProductsService::update($prod)) {
                    $error++;
-                   $error_mess[] = \i18n("On line %d: Cannot update product: '%s'", PLUGIN_NAME,
+                   $error_mess[] = \i18n("On line %d: "
+                           . "Cannot update product: '%s'", PLUGIN_NAME,
                             $csv->getCurrentLineNumber(), $tab['label']);
                 } else {
                     // update stock_curr and stock_diary
@@ -88,56 +80,75 @@ function import_csv($csv) {
                     $update++;
                 }
 
-            //CREATE product
             } else {
-                    $id = \Pasteque\ProductsService::create($prod);
-                    if ($id) {
-                        //create stock_curr and stock diary
-                        manage_stock_level($id, $tab, TRUE);
-                        $create++;
-                    } else {
-                        $error++;
-                        $error_mess[] = \i18n("On line %d: Cannot create product: '%s'", PLUGIN_NAME,
-                                 $csv->getCurrentLineNumber(), $tab['label']);
-                    }
+                // create product
+                $id = \Pasteque\ProductsService::create($prod);
+                if ($id) {
+                    //create stock_curr and stock diary
+                    manage_stock_level($id, $tab, TRUE);
+                    $create++;
+                } else {
+                    $error++;
+                    $error_mess[] = \i18n("On line %d: "
+                            . "Cannot create product: '%s'", PLUGIN_NAME,
+                            $csv->getCurrentLineNumber(), $tab['label']);
+                }
             }
-
-        // category or tax_category doesn't exist
         } else {
+            // Missing category or tax category
             $error++;
             if (!$category) {
-                $error_mess[] = \i18n("On line %d category: '%s' doesn't exist", PLUGIN_NAME,
+                $error_mess[] = \i18n("On line %d "
+                        . "category: '%s' doesn't exist", PLUGIN_NAME,
                         $csv->getCurrentLineNumber(), $tab['category']);
             }
             if (!$tax_cat) {
-                $error_mess[] = \i18n("On line %d: Tax category: '%s' doesn't exist", PLUGIN_NAME,
+                $error_mess[] = \i18n("On line %d: "
+                        . "Tax category: '%s' doesn't exist", PLUGIN_NAME,
                         $csv->getCurrentLineNumber(), $tab['tax_cat']);
             }
         }
     }
 
-    $message = \i18n("%d line(s) inserted, %d line(s) modified, %d error(s)", PLUGIN_NAME,
-            $create, $update, $error);
-    \Pasteque\tpl_msg_box($message, $error_mess);
+    $message = \i18n("%d line(s) inserted, %d line(s) modified, %d error(s)",
+            PLUGIN_NAME, $create, $update, $error);
+    return array($message, $error_mess);
 }
 
 // add to product values not obligatory may be present in array
-function manage_header_option($product, $array) {
-    if (isset($array['barcode'])) {
-        $product->barcode = $array['barcode'];
+function readProductLine($line, $category, $taxCat) {
+    $priceSell =  $line['sellVat'] / ( 1 + $taxCat->getCurrentTax()->rate);
+    if (isset($line['visible'])) {
+        $visible = $line['visible'];
+    } else {
+        $visible = true;
     }
-    if (isset($array['price_buy'])) {
-        $product->price_buy = $array['price_buy'];
+    if (isset($line['scaled'])) {
+        $scaled = $line['scaled'];
+    } else {
+        $scaled = false;
     }
-    if (isset($array['discount_enabled'])) {
-        $product->discount_enabled = $array['discount_enabled'];
+    if (isset($line['disp_order'])) {
+        $dispOrder = $line['disp_order'];
+    } else {
+        $dispOrder = null;
     }
-    if (isset($array['discount_rate'])) {
-        $product->discount_rate = $array['discount_rate'];
+    $product = new \Pasteque\Product($line['reference'], $line['label'],
+            $priceSell, $category->id, $dispOrder,
+            $taxCat, $visible, $scaled);
+    if (isset($line['barcode'])) {
+        $product->barcode = $line['barcode'];
     }
-    if (isset($array['attributes_set'])) {
-        $product->attributes_set = $array['attributes_set'];
+    if (isset($line['price_buy'])) {
+        $product->priceBuy = $line['price_buy'];
     }
+    if (isset($line['discount_enabled'])) {
+        $product->discountEnabled = $line['discount_enabled'];
+    }
+    if (isset($line['discount_rate'])) {
+        $product->discountRate = $line['discount_rate'];
+    }
+    // TODO: add support for attribute sets
     return $product;
 }
 
@@ -146,24 +157,30 @@ function manage_header_option($product, $array) {
  * if $create is true create a new entry in stockDiary and stockCurr in BDD
  * else update stockDiarry and  stockCurr.
  */
-function manage_stock_level($id, $array, $create) {
-    $stockLevel = new \Pasteque\StockLevel($id, "Principal", NULL, NULL);
-
+function manage_stock_level($id, $array) {
+    $level = \Pasteque\StocksService::getLevel($id);
+    $min = null;
+    $max = null;
     if (isset($array['stock_min'])) {
-        $stockLevel->security = $array['stock_min'];
+        $min = $array['stock_min'];
     }
     if (isset($array['stock_max'])) {
-        $stockLevel->max = $array['stock_max'];
+        $max = $array['stock_max'];
     }
-
-    if ($create) {
-        \Pasteque\StocksService::createLevel($stockLevel);
-
+    if ($level !== null) {
+        // Update existing level
+        if ($min !== null) {
+            $level->security = $min;
+        }
+        if ($max !== null) {
+            $level->max = $max;
+        }
+        return \Pasteque\StocksService::updateLevel($level);
     } else {
-        \Pasteque\StocksService::updateLevel($stockLevel);
+        // Create a new level
+        $level = new \Pasteque\StockLevel($id, "000", $min, $max);
+        return \Pasteque\StocksService::createLevel($level);
     }
-
-    return $stockLevel;
 }
 
 /* merge the old field values of product to new product
@@ -173,47 +190,51 @@ function mergeProduct($old, $new) {
         $new->barcode = $old->barcode;
     }
     if (!isset($new->price_buy)) {
-        $new->price_buy = $old->price_buy;
+        $new->priceBuy = $old->priceBuy;
     }
-    if (!isset($new->image)) {
-        $new->image = $old->image;
+    if (!isset($new->hasImage)) {
+        $new->hasImage = $old->hasImage;
     }
-    if (!isset($new->discount_enabled)) {
-        $new->discount_enabled = $old->discount_enabled;
+    if (!isset($new->discountEnabled)) {
+        $new->discountEnabled = $old->discountEnabled;
     }
-    if (!isset($new->discount_rate)) {
-        $new->discount_rate = $old->discount_rate;
+    if (!isset($new->discountRate)) {
+        $new->discountRate = $old->discountRate;
     }
-    if (!isset($new->attributes_set)) {
-        $new->attributes_set = $old->attributes_set;
+    if (!isset($new->attributeSetId)) {
+        $new->attributeSetId = $old->attributeSetId;
     }
     return $new;
 }
 ?>
 
 <?php
+$error = null;
+$message = null;
 if (isset($_FILES['csv'])) {
-    $dateStr = isset($_POST['date']) ? $_POST['date'] : \i18nDate(time());
-    $dateStr = \i18nRevDate($dateStr);
-    $date = \Pasteque\stdstrftime($dateStr);
-
     $csv = init_csv();
     if ($csv === NULL) {
-        \Pasteque\tpl_msg_box(NULL, \i18n("Selected file empty or bad format", PLUGIN_NAME));
+        $error = \i18n("Selected file empty or bad format", PLUGIN_NAME);
     } else if (!$csv->isOpen()) {
         $err = array();
         foreach ($csv->getErrors() as $mess) {
             $err[] = \i18n($mess);
         }
-        \Pasteque\tpl_msg_box(NULL, $err);
+        if (count($err) > 0) {
+            $error = $err;
+        }
     } else {
-        import_csv($csv, $date);
+        $msgs = import_csv($csv);
+        $message = $msgs[0];
+        $error = $msgs[1];
     }
 }
 ?>
 
 
 <h1><?php \pi18n("Import products from csv file", PLUGIN_NAME); ?></h1>
+
+<?php \Pasteque\tpl_msg_box($message, $error); ?>
 
 <form class="edit" method="post" action="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'productsManagement');?>" enctype="multipart/form-data">
     <div class="row">

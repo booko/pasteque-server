@@ -20,44 +20,6 @@
 
 namespace Pasteque;
 
-/** Light version without external references */
-class ProductLight {
-
-    public $id;
-    public $reference;
-    public $barcode;
-    public $label;
-    public $priceBuy;
-    public $priceSell;
-    public $visible;
-    public $scaled;
-    public $discountEnabled;
-    public $discountRate;
-
-    static function __build($id, $ref, $label, $priceSell, $visible, $scaled,
-            $barcode = null, $priceBuy = null, $discountEnabled = FALSE,
-            $discountRate = 0.0) {
-        $prd = new ProductLight($ref, $label, $priceSell, $visible, $scaled,
-                $barcode, $priceBuy, $discountEnabled, $discountRate);
-        $prd->id = $id;
-        return $prd;
-    }
-
-    function __construct($ref, $label, $priceSell, $visible, $scaled,
-            $barcode = null, $priceBuy = null, $discountEnabled = FALSE,
-            $discountRate = 0.0) {
-        $this->reference = $ref;
-        $this->label = $label;
-        $this->priceSell = $priceSell;
-        $this->visible = $visible;
-        $this->scaled = $scaled;
-        $this->barcode = $barcode;
-        $this->priceBuy = $priceBuy;
-        $this->discountEnabled = $discountEnabled;
-        $this->discountRate = $discountRate;
-    }
-}
-
 class Product {
 
     public $id;
@@ -71,21 +33,18 @@ class Product {
     public $categoryId;
     public $dispOrder;
     public $taxCatId;
-    public $attributesSet;
-    /** Contains the binary of the image. NULL if not any.
-     * For the services set this value to "" keep data unchanged.
-     */
-    public $image;
+    public $attributeSetId;
+    public $hasImage;
     public $discountEnabled;
     public $discountRate;
 
     static function __build($id, $ref, $label, $priceSell, $category,
             $dispOrder, $taxCatId, $visible, $scaled, $priceBuy = null,
-            $attributesSet = null, $barcode = null, $image = NULL,
+            $attributeSetId = null, $barcode = null, $hasImage = false,
             $discountEnabled = false, $discountRate = 0.0) {
         $prd = new Product($ref, $label, $priceSell, $category, $dispOrder,
                 $taxCatId, $visible, $scaled, $priceBuy,
-                $attributesSet, $barcode, $image,
+                $attributeSetId, $barcode, $hasImage,
                 $discountEnabled, $discountRate);
         $prd->id = $id;
         return $prd;
@@ -93,7 +52,7 @@ class Product {
 
     function __construct($ref, $label, $priceSell, $categoryId, $dispOrder,
             $taxCatId, $visible, $scaled, $priceBuy = null,
-            $attributesSet = null, $barcode = null, $image = null,
+            $attributeSetId = null, $barcode = null, $hasImage = false,
             $discountEnabled = false, $discountRate = 0.0) {
         $this->reference = $ref;
         $this->label = $label;
@@ -105,24 +64,25 @@ class Product {
         $this->categoryId = $categoryId;
         $this->dispOrder = $dispOrder;
         $this->taxCatId = $taxCatId;
-        $this->attributesSet = $attributesSet;
-        $this->image = $image;
+        $this->attributeSetId = $attributeSetId;
+        $this->hasImage = $hasImage;
         $this->discountEnabled = $discountEnabled;
         $this->discountRate = $discountRate;
     }
 
     function getTotalPrice() {
-        $currentTax = $this->tax_cat->getCurrentTax();
+        $taxCat = TaxesService::get($this->taxCatId);
+        $currentTax = $this->taxCat->getCurrentTax();
         if ($currentTax != null) {
-            return $this->price_sell * (1 + $currentTax->rate);
+            return $this->priceSell * (1 + $currentTax->rate);
         } else {
-            return $this->price_sell;
+            return $this->priceSell;
         }
     }
 
     function getMargin() {
-        if ($this->price_buy !== null) {
-            return $this->price_sell / $this->price_buy;
+        if ($this->priceBuy !== null) {
+            return $this->priceSell / $this->priceBuy;
         } else {
             return null;
         }

@@ -57,8 +57,8 @@ function generate_barcode($type, $data) {
 switch($_GET['w']) {
 case 'product':
     $prd = ProductsService::get($_GET['id']);
-    if ($prd->image !== NULL) {
-        echo $prd->image;
+    if ($prd->hasImage !== false) {
+        echo ProductsService::getImage($prd->id);
     } else {
         echo file_get_contents(ABSPATH . "/templates/" . $config['template'] . "/img/default_product.png");
     }

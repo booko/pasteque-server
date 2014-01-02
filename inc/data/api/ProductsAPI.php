@@ -50,10 +50,10 @@ class ProductsAPI extends APIService {
             }
             break;
         case 'getAll':
-            $this->succeed(ProductsService::getAll());
+            $this->succeed(ProductsService::getAll(true));
             break;
         case 'getAllFull':
-            $ret = ProductsService::getAll(true, true);
+            $ret = ProductsService::getAll(true);
             foreach ($ret as $r) {
                 if ($r->image !== NULL) {
                     $r->image = base64_encode($r->image);

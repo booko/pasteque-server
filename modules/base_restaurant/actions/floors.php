@@ -81,11 +81,11 @@ echo "<script type='text/javascript'>";
 // insert all floors and all places:
 $floors = \Pasteque\PlacesService::getAllFloors();
 foreach ($floors as $floor) {
-    echo "addFloorData('" . $floor->id . "', '" . $floor->name . "', '"
+    echo "addFloorData('" . $floor->id . "', '" . $floor->label . "', '"
             . $floor->image . "');\n";
     $places = \Pasteque\PlacesService::getAllPlacesByFloorId($floor->id);
     foreach ($places as $place) {
-        echo "addPlaceData('" . $place->id . "', '" . $place->name
+        echo "addPlaceData('" . $place->id . "', '" . $place->label
                 . "', '" . $place->x . "', '" . $place->y
                 . "', '" . $floor->id . "');\n";
     }
