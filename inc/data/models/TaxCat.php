@@ -45,13 +45,15 @@ class TaxCat {
         return $this->id;
     }
 
-    function getCurrentTax() {
+    function getCurrentTax($timestamp = null) {
         $current = null;
-        $now = time();
+        if ($timestamp === null) {
+            $timestamp = time();
+        }
         foreach ($this->taxes as $tax) {
-            if ($current == null
-                || ($tax->startDate <= $now
-                    && $tax->startDate > $current->startDate)) {
+            if ($tax->isValid($timestamp)
+                    && ($current === null
+                            ||$tax->startDate > $current->startDate)) {
                 $current = $tax;
             }
         }

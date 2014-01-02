@@ -51,6 +51,6 @@ class Tax {
         if ($date === null) {
             $date = time();
         }
-        return $this->startDate < $date;
+        return $this->startDate <= $date;
     }
 }

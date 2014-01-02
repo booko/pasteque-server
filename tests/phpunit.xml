@@ -3,6 +3,7 @@
 		<testsuite name="models">
 			<file>models/CashTest.php</file>
 			<file>models/CurrencyTest.php</file>
+			<file>models/TaxesTest.php</file>
 		</testsuite>
 		<testsuite name="database">
 			<file>install/InstallDbTest.php</file>
