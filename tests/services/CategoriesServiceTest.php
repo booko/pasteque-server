@@ -45,8 +45,8 @@ class CategoriesServiceTest extends \PHPUnit_Framework_TestCase {
 
     public function testCreate() {
         $type = get_db_type(get_user_id());
-        $category = new Category(null, "Test", 0xaa, 1);
-        $id = CategoriesService::createCat($category);
+        $category = new Category(null, "Test", true, 1);
+        $id = CategoriesService::createCat($category, 0xaa);
         $pdo = PDOBuilder::getPDO();
         $sql = "SELECT * FROM CATEGORIES";
         $stmt = $pdo->prepare($sql);
@@ -74,9 +74,9 @@ class CategoriesServiceTest extends \PHPUnit_Framework_TestCase {
         $read = CategoriesService::get($id);
         $this->assertEquals($id, $read->id);
         $this->assertEquals($category->label, $read->label);
-        $this->assertEquals($category->image, $read->image);
         $this->assertEquals($category->parentId, $read->parentId);
         $this->assertEquals($category->dispOrder, $read->dispOrder);
+        $this->markTestIncomplete("Image test is missing");
     }
 
     public function testReadInexistent() {
@@ -86,16 +86,15 @@ class CategoriesServiceTest extends \PHPUnit_Framework_TestCase {
 
     /** @depends testCreate */
     public function testUpdate() {
-        $category = new Category(null, "Test", 0xaa, 1);
+        $category = new Category(null, "Test", true, 1);
         $category2 = new Category(null, "Parent", null, 0);
-        $id = CategoriesService::createCat($category);
+        $id = CategoriesService::createCat($category, 0xaa);
         $id2 = CategoriesService::createCat($category2);
         $category->id = $id;
         $category->label = "Updated";
-        $category->image = 0xbb;
         $category->dispOrder = 3;
         $category->parentId = $id2;
-        $ret = CategoriesService::updateCat($category);
+        $ret = CategoriesService::updateCat($category, 0xbb);
         $this->assertNotEquals(false, $ret, "Update failed");
         $pdo = PDOBuilder::getPDO();
         $sql = "SELECT * FROM CATEGORIES WHERE ID = :id";
@@ -117,9 +116,9 @@ class CategoriesServiceTest extends \PHPUnit_Framework_TestCase {
 
     /** @depends testUpdate */
     public function testUpdateKeepImg() {
-        $category = new Category(null, "Test", 0xaa, 1);
+        $category = new Category(null, "Test", true, 1);
         $category2 = new Category(null, "Parent", null, 0);
-        $id = CategoriesService::createCat($category);
+        $id = CategoriesService::createCat($category, 0xaa);
         $id2 = CategoriesService::createCat($category2);
         $category->id = $id;
         $category->label = "Updated";
@@ -145,8 +144,8 @@ class CategoriesServiceTest extends \PHPUnit_Framework_TestCase {
      * @depends testReadInexistent
      */
     public function testDelete() {
-        $category = new Category(null, "Test", 0xaa, 1);
-        $id = CategoriesService::createCat($category);
+        $category = new Category(null, "Test", true, 1);
+        $id = CategoriesService::createCat($category, 0xaa);
         $this->assertTrue(CategoriesService::deleteCat($id));
         $read = CategoriesService::get($id);
         $this->assertNull(CategoriesService::get($id));

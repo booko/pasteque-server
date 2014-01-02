@@ -33,12 +33,12 @@ if (isset($_POST['id']) && isset($_POST['label'])) {
         $img = "";
     }
     $parent_id = NULL;
-    if ($_POST['parent_id'] !== "") {
-        $parent_id = $_POST['parent_id'];
+    if ($_POST['parentId'] !== "") {
+        $parent_id = $_POST['parentId'];
     }
     $cat = \Pasteque\Category::__build($_POST['id'], $parent_id,
-            $_POST['label'], $img, $_POST['disp_order']);
-    if (\Pasteque\CategoriesService::updateCat($cat)) {
+            $_POST['label'], $img !== null, $_POST['dispOrder']);
+    if (\Pasteque\CategoriesService::updateCat($cat, $img)) {
         $message = \i18n("Changes saved");
     } else {
         $error = \i18n("Unable to save changes");
@@ -50,12 +50,12 @@ if (isset($_POST['id']) && isset($_POST['label'])) {
         $img = NULL;
     }
     $parent_id = NULL;
-    if ($_POST['parent_id'] !== "") {
-        $parent_id = $_POST['parent_id'];
+    if ($_POST['parentId'] !== "") {
+        $parent_id = $_POST['parentId'];
     }
     $cat = new \Pasteque\Category($parent_id, $_POST['label'], $img,
-            $_POST['disp_order']);
-    $id = \Pasteque\CategoriesService::createCat($cat);
+            $_POST['dispOrder']);
+    $id = \Pasteque\CategoriesService::createCat($cat, $img);
     if ($id !== FALSE) {
         $message = \i18n("Category saved. <a href=\"%s\">Go to the category page</a>.", PLUGIN_NAME, \Pasteque\get_module_url_action(PLUGIN_NAME, 'category_edit', array('id' => $id)));
     } else {
@@ -75,13 +75,13 @@ if (isset($_GET['id'])) {
 <form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post" enctype="multipart/form-data">
     <?php \Pasteque\form_hidden("edit", $category, "id"); ?>
 	<?php \Pasteque\form_input("edit", "Category", $category, "label", "string", array("required" => true)); ?>
-	<?php \Pasteque\form_input("edit", "Category", $category, "parent_id", "pick", array("model" => "Category", "nullable" => TRUE)); ?>
-	<?php \Pasteque\form_input("edit", "Category", $category, "disp_order", "numeric"); ?>
+	<?php \Pasteque\form_input("edit", "Category", $category, "parentId", "pick", array("model" => "Category", "nullable" => TRUE)); ?>
+	<?php \Pasteque\form_input("edit", "Category", $category, "dispOrder", "numeric"); ?>
 	<div class="row">
 		<label for="image"><?php \pi18n("Image", PLUGIN_NAME); ?></label>
 		<div style="display:inline-block">
 			<input type="hidden" id="clearImage" name="clearImage" value="0" />
-		<?php if ($category !== NULL && $category->image !== NULL) { ?>
+		<?php if ($category !== null && $category->hasImage) { ?>
 			<img id="img" class="image-preview" src="?<?php echo \Pasteque\URL_ACTION_PARAM; ?>=img&w=category&id=<?php echo $category->id; ?>" />
 			<a class="btn" id="clear" href="" onClick="javascript:clearImage(); return false;"><?php \pi18n("Delete"); ?></a>
 			<a class="btn" style="display:none" id="restore" href="" onClick="javascript:restoreImage(); return false;"><?php \pi18n("Restore"); ?></a><br />

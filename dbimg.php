@@ -65,8 +65,8 @@ case 'product':
     break;
 case 'category':
     $cat = CategoriesService::get($_GET['id']);
-    if ($cat->image !== NULL) {
-        echo $cat->image;
+    if ($cat->hasImage !== false) {
+        echo CategoriesService::getImage($cat->id);
     } else {
         echo file_get_contents(ABSPATH . "/templates/" . $config['template'] . "/img/default_category.png");
     }

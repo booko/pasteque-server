@@ -49,8 +49,8 @@
 "Product.attributeSet": "Attribute set",
 
 "Category.label": "Name",
-"Category.parent_id": "Parent",
-"Category.disp_order": "Order",
+"Category.parent": "Parent",
+"Category.dispOrder": "Order",
 
 "Composition.label": "Name",
 

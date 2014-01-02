@@ -25,19 +25,19 @@ class Category {
     public $id;
     public $parentId;
     public $label;
-    public $image;
+    public $hasImage;
     public $dispOrder;
 
-    static function __build($id, $parentId, $label, $image, $order) {
-        $cat = new Category($parentId, $label, $image, $order);
+    static function __build($id, $parentId, $label, $hasImage, $order) {
+        $cat = new Category($parentId, $label, $hasImage, $order);
         $cat->id = $id;
         return $cat;
     }
 
-    function __construct($parentId, $label, $image, $order) {
+    function __construct($parentId, $label, $hasImage, $order) {
         $this->parentId = $parentId;
         $this->label = $label;
-        $this->image = $image;
+        $this->hasImage = $hasImage;
         $this->dispOrder = $order;
     }
 

@@ -24,7 +24,8 @@ class CategoriesService {
 
     private static function buildDBCat($db_cat) {
         return Category::__build($db_cat['ID'], $db_cat['PARENTID'],
-                $db_cat['NAME'], $db_cat['IMAGE'], $db_cat['DISPORDER']);
+                $db_cat['NAME'], $db_cat['IMAGE'] !== null,
+                $db_cat['DISPORDER']);
     }
 
     static function getAll() {
@@ -81,15 +82,27 @@ class CategoriesService {
         }
         return null;
     }
+    
+    static function getImage($id) {
+        $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("SELECT IMAGE FROM CATEGORIES WHERE ID = :id");
+        $stmt->bindParam(":id", $id, \PDO::PARAM_STR);
+        if ($stmt->execute()) {
+            if ($row = $stmt->fetch()) {
+                return $row['IMAGE'];
+            }
+        }
+        return null;
+    }
 
-    static function updateCat($cat) {
+    static function updateCat($cat, $image = "") {
         if ($cat->id == null) {
             return false;
         }
         $pdo = PDOBuilder::getPDO();
         $sql = "UPDATE CATEGORIES SET NAME = :name, PARENTID = :pid, "
                 . "DISPORDER = :order";
-        if ($cat->image !== "") {
+        if ($image !== "") {
             $sql .= ", IMAGE = :img";
         }
         $sql .= " WHERE ID = :id";
@@ -98,36 +111,27 @@ class CategoriesService {
         $stmt->bindParam(":pid", $cat->parentId, \PDO::PARAM_INT);
         $stmt->bindParam(":id", $cat->id, \PDO::PARAM_INT);
         $stmt->bindParam(":order", $cat->dispOrder, \PDO::PARAM_INT);
-        if ($cat->image !== "") {
-            $stmt->bindParam(":img", $cat->image, \PDO::PARAM_LOB);
+        if ($image !== "") {
+            $stmt->bindParam(":img", $image, \PDO::PARAM_LOB);
         }
         return $stmt->execute();
     }
 
-    static function createCat($cat) {
+    static function createCat($cat, $image = null) {
         $pdo = PDOBuilder::getPDO();
         $id = md5(time() . rand());
-        $sql = "INSERT INTO CATEGORIES (ID, NAME, PARENTID, DISPORDER";
-        if ($cat->image !== "") {
-            $sql .= ", IMAGE";
-        }
-        $sql .= ") VALUES (:id, :name, :pid, :order";
-        if ($cat->image !== "") {
-            $sql .= ", :img";
-        }
-        $sql .= ")";
+        $sql = "INSERT INTO CATEGORIES (ID, NAME, PARENTID, DISPORDER, IMAGE) "
+                . "VALUES (:id, :name, :pid, :order, :img)";
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(":name", $cat->label, \PDO::PARAM_STR);
         $stmt->bindParam(":pid", $cat->parentId, \PDO::PARAM_INT);
         $stmt->bindParam(":id", $id, \PDO::PARAM_INT);
         $stmt->bindParam(":order", $cat->dispOrder, \PDO::PARAM_INT);
-        if ($cat->image !== "") {
-            $stmt->bindParam(":img", $cat->image, \PDO::PARAM_LOB);
-        }
-        if ($stmt->execute() !== FALSE) {
+        $stmt->bindParam(":img", $image, \PDO::PARAM_LOB);
+        if ($stmt->execute() !== false) {
             return $id;
         } else {
-            return FALSE;
+            return false;
         }
     }
 

@@ -49,8 +49,8 @@
 "Product.attributeSet": "Jeu d'attributs",
 
 "Category.label": "Désignation",
-"Category.parent_id": "Parent",
-"Category.disp_order": "Ordre",
+"Category.parent": "Parent",
+"Category.dispOrder": "Ordre",
 
 "Composition.label": "Désignation",
 
