@@ -255,10 +255,12 @@ class ProductsService {
             return FALSE;
         }
         if ($prd->visible == 1 || $prd->visible == TRUE) {
-            $catstmt = $pdo->prepare("INSERT INTO PRODUCTS_CAT (PRODUCT, CATORDER) "
-                    . "VALUES (:id, :dispOrder)");
+            $catstmt = $pdo->prepare("INSERT INTO PRODUCTS_CAT (PRODUCT, "
+                    . "CATORDER, POS_ID) "
+                    . "VALUES (:id, :dispOrder, :pos)");
             $catstmt->bindParam(":id", $id);
-            $catstmt->bindParam(":dispOrder", $prd->dispOrder);
+            $catstmt->bindParam(":disp_order", $prd->dispOrder);
+            $catstmt->bindValue(":pos", 1);
             $catstmt->execute();
         }
         return $id;
