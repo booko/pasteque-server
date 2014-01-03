@@ -43,6 +43,8 @@ class CashesAPI extends APIService {
             return isset($this->params['host']) || isset($this->params['id']);
         case 'update':
             return isset($this->params['cash']);
+        case 'zticket':
+            return isset($this->params['id']);
         }
         return false;
     }
@@ -60,6 +62,10 @@ class CashesAPI extends APIService {
                     $ret = null;
                 }
             }
+            $this->succeed($ret);
+            break;
+        case 'zticket':
+            $ret = $srv->getZTicket($this->params['id']);
             $this->succeed($ret);
             break;
         case 'update':

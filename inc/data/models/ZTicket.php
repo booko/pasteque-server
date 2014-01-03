@@ -28,7 +28,7 @@ class ZTicket {
     public $custCount;
     public $paymentCount;
     public $cs;
-    /** Array of payment {code, currencyId, amount} */
+    /** Array of payments */
     public $payments;
     /** Array of taxes {id, base, amount} */
     public $taxes;

@@ -29,8 +29,8 @@ class Currency {
     public $thousandsSeparator;
     public $format;
     public $rate;
-    public $main;
-    public $active;
+    public $isMain;
+    public $isActive;
 
     static function __build($id, $label, $symbol, $decimalSeparator,
             $thousandsSeparator, $format, $rate, $main, $active) {
@@ -48,8 +48,8 @@ class Currency {
         $this->thousandsSeparator = $thousandsSeparator;
         $this->format = $format;
         $this->rate = $rate;
-        $this->main = $main;
-        $this->active = $active;
+        $this->isMain = $main;
+        $this->isActive = $active;
     }
 
     public function format($amount) {

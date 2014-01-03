@@ -169,7 +169,8 @@ class CashesService extends AbstractService {
         $pmtsSql = "SELECT PAYMENTS.PAYMENT AS TYPE, "
                 . "PAYMENTS.CURRENCY AS CURRENCYID, "
                 . "SUM(PAYMENTS.TOTAL) AS TOTAL, "
-                . "SUM(PAYMENTS.ID) AS COUNT "
+                . "SUM(PAYMENTS.ID) AS COUNT, "
+                . "SUM(PAYMENTS.TOTALCURRENCY) AS TOTALCURRENCY "
                 . "FROM PAYMENTS, RECEIPTS "
                 . "WHERE PAYMENTS.RECEIPT = RECEIPTS.ID "
                 . "AND RECEIPTS.MONEY = :id "
@@ -178,10 +179,9 @@ class CashesService extends AbstractService {
         $pmtsStmt->bindParam(":id", $cashId);
         $pmtsStmt->execute();
         while ($row = $pmtsStmt->fetch()) {
-            $payments[] = array("code" => $row['TYPE'],
-                    "currencyId" => $row['CURRENCYID'],
-                    "amount" => $row['TOTAL']);
             $paymentCount += $row['COUNT'];
+            $payments[] = new Payment($row['TYPE'], $row['TOTAL'],
+                    $row['CURRENCYID'], $row['TOTALCURRENCY']);
         }
         // Get taxes
         $taxes = array();

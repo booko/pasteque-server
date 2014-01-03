@@ -75,10 +75,18 @@ if ($session->isClosed()) {
 	</thead>
 	<tbody>
 <?php $currSrv = new \Pasteque\CurrenciesService();
-foreach ($zticket->payments as $payment) { ?>
+foreach ($zticket->payments as $payment) {
+    $currency = $currSrv->get($payment->currencyId);
+    if ($currency->isMain) {
+        $amount = \i18nCurr($payment->amount);
+    } else {
+        $amount = $currency->format($payment->currencyAmount) . " ("
+                . \i18nCurr($payment->amount) . ")";
+    }
+?>
 		<tr>
-			<td><?php \pi18n($payment['code'], PLUGIN_NAME); ?></td>
-			<td class="numeric"><?php echo $currSrv->get($payment['currencyId'])->format($payment['amount']); ?></td>
+			<td><?php \pi18n($payment->type); ?></td>
+			<td class="numeric"><?php echo $amount; ?></td>
 		</tr>
 <?php } ?>
 </table>

@@ -117,12 +117,12 @@
 
 "Currency.label": "Devise",
 "Currency.rate": "Taux de change",
-"Currency.main": "Principale",
+"Currency.isMain": "Principale",
 "Currency.symbol": "Symbole",
 "Currency.decimalSeparator": "Séparateur de décimale",
 "Currency.thousandsSeparator": "Séparateur de milliers",
 "Currency.format": "Format",
-"Currency.active": "Active",
+"Currency.isActive": "Active",
 
 "TariffArea.label": "Désignation",
 "TariffArea.dispOrder": "Ordre",

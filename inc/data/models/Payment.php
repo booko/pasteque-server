@@ -25,15 +25,19 @@ class Payment {
     public $id;
     public $type;
     public $amount;
+    public $currencyId;
+    public $currencyAmount;
 
-    static function __build($id, $type, $amount) {
-        $payment = new Payment($type, $amount);
+    static function __build($id, $type, $amount, $currencyId, $currencyAmount) {
+        $payment = new Payment($type, $amount, $currencyId, $currencyAmount);
         $payment->id = $id;
     }
 
-    function __construct($type, $amount) {
+    function __construct($type, $amount, $currencyId, $currencyAmount) {
         $this->type = $type;
         $this->amount = $amount;
+        $this->currencyId = $currencyId;
+        $this->currencyAmount = $currencyAmount;
     }
 }
 
