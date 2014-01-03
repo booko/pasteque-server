@@ -139,6 +139,87 @@ class CashesService extends AbstractService {
             return null;
         }
     }
+
+    public function getZTicket($cashId) {
+        $pdo = PDOBuilder::getPDO();
+        // Get tickets, cs and customers
+        $ticketCount = 0;
+        $sales = 0;
+        $custCount = null;
+        $paymentCount = 0;
+        $glbSql = "SELECT COUNT(DISTINCT RECEIPTS.ID) AS TKTS, "
+                . "SUM(TICKETLINES.UNITS * TICKETLINES.PRICE) AS SALES, "
+                . "SUM(TICKETS.CUSTCOUNT) AS CUSTCOUNT "
+                . "FROM RECEIPTS, TICKETS, TICKETLINES "
+                . "WHERE RECEIPTS.ID = TICKETLINES.TICKET "
+                . "AND RECEIPTS.ID = TICKETS.ID "
+                . "AND RECEIPTS.MONEY = :id";
+        $glbStmt = $pdo->prepare($glbSql);
+        $glbStmt->bindParam(":id", $cashId);
+        $glbStmt->execute();
+        if ($row = $glbStmt->fetch()) {
+            $ticketCount = $row['TKTS'];
+            $sales = $row['SALES'];
+            $custCount = $row['CUSTCOUNT'];
+        } else {
+            return null;
+        }
+        // Get payments
+        $payments = array();
+        $pmtsSql = "SELECT PAYMENTS.PAYMENT AS TYPE, "
+                . "PAYMENTS.CURRENCY AS CURRENCYID, "
+                . "SUM(PAYMENTS.TOTAL) AS TOTAL, "
+                . "SUM(PAYMENTS.ID) AS COUNT "
+                . "FROM PAYMENTS, RECEIPTS "
+                . "WHERE PAYMENTS.RECEIPT = RECEIPTS.ID "
+                . "AND RECEIPTS.MONEY = :id "
+                . "GROUP BY PAYMENTS.PAYMENT, PAYMENTS.CURRENCY";
+        $pmtsStmt = $pdo->prepare($pmtsSql);
+        $pmtsStmt->bindParam(":id", $cashId);
+        $pmtsStmt->execute();
+        while ($row = $pmtsStmt->fetch()) {
+            $payments[] = array("code" => $row['TYPE'],
+                    "currencyId" => $row['CURRENCYID'],
+                    "amount" => $row['TOTAL']);
+            $paymentCount += $row['COUNT'];
+        }
+        // Get taxes
+        $taxes = array();
+        $taxSql = "SELECT TAXES.ID AS TAXID, SUM(TAXLINES.BASE) AS BASE, "
+                . "SUM(TAXLINES.AMOUNT) AS AMOUNT "
+                . "FROM RECEIPTS, TAXLINES, TAXES, TAXCATEGORIES "
+                . "WHERE RECEIPTS.ID = TAXLINES.RECEIPT AND "
+                . "TAXLINES.TAXID = TAXES.ID AND "
+                . "TAXES.CATEGORY = TAXCATEGORIES.ID "
+                . "AND RECEIPTS.MONEY = :id "
+                . "GROUP BY TAXES.NAME";
+        $taxStmt = $pdo->prepare($taxSql);
+        $taxStmt->bindParam(":id", $cashId);
+        $taxStmt->execute();
+        while ($row = $taxStmt->fetch()) {
+            $taxes[] = array("id" => $row['TAXID'], "base" => $row['BASE'],
+                    "amount" => $row['AMOUNT']);
+        }
+        // Get categories
+        $catSales = array();
+        $catSql = "SELECT SUM(TICKETLINES.UNITS * TICKETLINES.PRICE) AS SUM, "
+                . "CATEGORIES.ID AS CATID "
+                . "FROM RECEIPTS, TICKETS, TICKETLINES, PRODUCTS, CATEGORIES "
+                . "WHERE RECEIPTS.ID = TICKETLINES.TICKET "
+                . "AND RECEIPTS.ID = TICKETS.ID "
+                . "AND TICKETLINES.PRODUCT = PRODUCTS.ID "
+                . "AND PRODUCTS.CATEGORY = CATEGORIES.ID "
+                . "AND RECEIPTS.MONEY = :id "
+                . "GROUP BY CATEGORIES.ID";
+        $catStmt = $pdo->prepare($catSql);
+        $catStmt->bindParam(":id", $cashId);
+        $catStmt->execute();
+        while ($row = $catStmt->fetch()) {
+            $catSales[] = array("id" => $row['CATID'], "amount" => $row['SUM']);
+        }
+        return new ZTicket($cashId, $ticketCount, $sales, $paymentCount,
+                $payments, $taxes, $catSales, $custCount);
+    }
 }
 
 ?>

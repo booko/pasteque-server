@@ -73,6 +73,7 @@ require_once(_check_core_module('modules'));
 // Load data
 require_once(ABSPATH . "/inc/data/models/Attribute.php");
 require_once(ABSPATH . "/inc/data/models/Cash.php");
+require_once(ABSPATH . "/inc/data/models/ZTicket.php");
 require_once(ABSPATH . "/inc/data/models/Category.php");
 require_once(ABSPATH . "/inc/data/models/Floor.php");
 require_once(ABSPATH . "/inc/data/models/Payment.php");
