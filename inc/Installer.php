@@ -99,7 +99,7 @@ class Installer {
         $pdo = PDOBuilder::getPDO();
         $sql = "SELECT VERSION FROM APPLICATIONS WHERE ID = :id";
         $stmt = $pdo->prepare($sql);
-        $stmt->bindValue(":id", "postech");
+        $stmt->bindValue(":id", "pasteque");
         $stmt->execute();
         $data = $stmt->fetch();
         if ($data !== false) {
