@@ -20,25 +20,33 @@
 
 namespace Pasteque;
 
-class Payment {
+class ZTicket {
 
-    public $id;
-    public $type;
-    public $amount;
-    public $currencyId;
-    public $currencyAmount;
+    public $cashId;
+    public $ticketCount;
+    /** Count of customers, may be null */
+    public $custCount;
+    public $paymentCount;
+    public $cs;
+    /** Array of payments */
+    public $payments;
+    /** Array of taxes {id, base, amount} */
+    public $taxes;
+    /** Array of categories {id, amount} */
+    public $catSales;
 
-    static function __build($id, $type, $amount, $currencyId, $currencyAmount) {
-        $payment = new Payment($type, $amount, $currencyId, $currencyAmount);
-        $payment->id = $id;
+    function __construct($cashId, $ticketCount, $cs, $paymentCount,
+            $payments, $taxes, $categories, $custCount) {
+        $this->cashId = $cashId;
+        $this->ticketCount = $ticketCount;
+        $this->cs = $cs;
+        $this->paymentCount = $paymentCount;
+        $this->payments = $payments;
+        $this->taxes = $taxes;
+        $this->catSales = $categories;
+        $this->custCount = $custCount;
     }
 
-    function __construct($type, $amount, $currencyId, $currencyAmount) {
-        $this->type = $type;
-        $this->amount = $amount;
-        $this->currencyId = $currencyId;
-        $this->currencyAmount = $currencyAmount;
-    }
 }
 
 ?>

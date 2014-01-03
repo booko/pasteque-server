@@ -46,7 +46,7 @@ $currencies = $currSrv->getAll();
 	<thead>
 		<tr>
 			<th><?php \pi18n("Currency.label"); ?></th>
-			<th><?php \pi18n("Currency.change"); ?></th>
+			<th><?php \pi18n("Currency.rate"); ?></th>
 			<th></th>
 		</tr>
 	</thead>
@@ -59,7 +59,7 @@ $par = !$par;
 	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
 		<td><?php echo $currency->label; ?></td>
 		<td><?php
-if ($currency->main) {
+if ($currency->isMain) {
     \pi18n("Main", PLUGIN_NAME);
 } else {
     echo($currency->rate);

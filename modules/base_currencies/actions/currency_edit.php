@@ -29,7 +29,7 @@ if (isset($_POST['id']) && isset($_POST['label'])) {
     $curr = \Pasteque\Currency::__build($_POST['id'], $_POST['label'],
             $_POST['symbol'], $_POST['decimalSeparator'],
             $_POST['thousandsSeparator'], $_POST['format'], $_POST['rate'],
-            $_POST['main'], $_POST['active']);
+            $_POST['isMain'], $_POST['isActive']);
     if ($currSrv->update($curr)) {
         $message = \i18n("Changes saved");
     } else {
@@ -64,8 +64,8 @@ if (isset($_GET['id'])) {
 	<?php \Pasteque\form_input("edit", "Currency", $currency, "decimalSeparator", "string"); ?>
 	<?php \Pasteque\form_input("edit", "Currency", $currency, "thousandsSeparator", "string"); ?>
 	<?php \Pasteque\form_input("edit", "Currency", $currency, "format", "string", array("required" => true)); ?>
-	<?php \Pasteque\form_input("edit", "Currency", $currency, "main", "boolean"); ?>
-	<?php \Pasteque\form_input("edit", "Currency", $currency, "active", "boolean"); ?>
+	<?php \Pasteque\form_input("edit", "Currency", $currency, "isMain", "boolean"); ?>
+	<?php \Pasteque\form_input("edit", "Currency", $currency, "isActive", "boolean"); ?>
 
 	<div class="row actions">
 		<?php \Pasteque\form_save(); ?>
