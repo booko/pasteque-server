@@ -65,13 +65,12 @@ class CashesAPITest extends \PHPUnit_Framework_TestCase {
                 "Close date mismatch");
     }
 
-    public function testGetByHost() {
+    public function testGetOpenedByHost() {
         $broker = new APIBroker("CashesAPI");
         $srv = new CashesService();
         // Init cash
         $cash = $srv->add("Host");
         $cash->openDate = stdtimefstr("2002-02-02 02:02:02");
-        $cash->closeDate = stdtimefstr("2002-02-03 03:03:03");
         $srv->update($cash);
         // Get it through API
         $result = $broker->run("get", array("host" => $cash->host));
@@ -85,8 +84,22 @@ class CashesAPITest extends \PHPUnit_Framework_TestCase {
                 "Sequence mismatch");
         $this->assertEquals($cash->openDate, $content->openDate,
                 "Open date mismatch");
-        $this->assertEquals($cash->closeDate, $content->closeDate,
-                "Close date mismatch");
+    }
+
+    public function testGetClosedByHost() {
+        $broker = new APIBroker("CashesAPI");
+        $srv = new CashesService();
+        // Init cash
+        $cash = $srv->add("Host");
+        $cash->openDate = stdtimefstr("2002-02-02 02:02:02");
+        $cash->closeDate = stdtimefstr("2002-02-03 03:03:03");
+        $srv->update($cash);
+        // Get it through API
+        $result = $broker->run("get", array("host" => $cash->host));
+        $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
+                "Result status check failed");
+        $content = $result->content;
+        $this->assertNull($content, "Content is not null");
     }
 
     public function testGetInexistentId() {
@@ -111,7 +124,7 @@ class CashesAPITest extends \PHPUnit_Framework_TestCase {
         $broker = new APIBroker("CashesAPI");
         $cash = new Cash("Host", 1, stdtimefstr("2002-02-02 02:02:02"),
                 stdtimefstr("2002-02-03 03:03:03"));
-        $result = $broker->run("update", array("cash" => $cash));
+        $result = $broker->run("update", array("cash" => json_encode($cash)));
         $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
                 "Result status check failed");
         $content = $result->content;
@@ -132,7 +145,7 @@ class CashesAPITest extends \PHPUnit_Framework_TestCase {
         $cash = $srv->add("Host");
         $cash->openDate = stdtimefstr("2002-02-02 02:02:02");
         $cash->closeDate = stdtimefstr("2002-02-03 03:03:03");
-        $result = $broker->run("update", array("cash" => $cash));
+        $result = $broker->run("update", array("cash" => json_encode($cash)));
         $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
                 "Result status check failed");
         $content = $result->content;

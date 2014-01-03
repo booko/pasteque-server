@@ -49,12 +49,13 @@ class CashesAPI extends APIService {
 
     /** Run the service and set result. */
     protected function proceed() {
+        $srv = new CashesService();
         switch ($this->action) {
         case 'get':
             if (isset($this->params['id'])) {
-                $ret = CashesService::get($this->params['id']);
+                $ret = $srv->get($this->params['id']);
             } else {
-                $ret = CashesService::getHost($this->params['host']);
+                $ret = $srv->getHost($this->params['host']);
                 if ($ret === null || $ret->isClosed()) {
                     $ret = null;
                 }
@@ -76,22 +77,22 @@ class CashesAPI extends APIService {
                 $close = $json->closeDate;
             }
             $host = $json->host;
-
+            $sequence = $json->sequence;
             if ($id !== null) {
                 // Update an existing cash
-                $cash = Cash::__build($id, $host, -1, $open, $close);
-                if (CashesService::update($cash)) {
+                $cash = Cash::__build($id, $host, $sequence, $open, $close);
+                if ($srv->update($cash)) {
                     $this->succeed($cash);
                 } else {
                     $this->fail(APIError::$ERR_GENERIC);
                 }
             } else {
                 // Create a cash and update with given data
-                if (CashesService::add($host)) {
-                    $cash = CashesService::getHost($host);
+                if ($srv->add($host)) {
+                    $cash = $srv->getHost($host);
                     $cash->openDate = $open;
                     $cash->closeDate = $close;
-                    if (CashesService::update($cash)) {
+                    if ($srv->update($cash)) {
                         $this->succeed($cash);
                     } else {
                         $this->fail(APIError::$ERR_GENERIC);

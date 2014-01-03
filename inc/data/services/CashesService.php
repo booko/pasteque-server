@@ -101,6 +101,7 @@ class CashesService extends AbstractService {
         return null;
     }
 
+    /** Update open and end date for a cash. */
     public function update($cash) {
         $pdo = PDOBuilder::getPDO();
         $pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
