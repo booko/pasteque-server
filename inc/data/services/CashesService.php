@@ -159,7 +159,9 @@ class CashesService extends AbstractService {
         $glbStmt->execute();
         if ($row = $glbStmt->fetch()) {
             $ticketCount = $row['TKTS'];
-            $sales = $row['SALES'];
+            if ($row['SALES'] !== null) {
+                $sales = $row['SALES'];
+            }
             $custCount = $row['CUSTCOUNT'];
         } else {
             return null;
