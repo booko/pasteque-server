@@ -105,7 +105,7 @@ if (isset($_POST['id'])) {
     if (isset($_POST['reference']) && isset($_POST['label'])
             && isset($_POST['realsell']) && isset($_POST['categoryId'])
             && isset($_POST['taxCatId'])) {
-        $cat = $_POST['categoryId'];
+        $catId = $_POST['categoryId'];
         $disp_order = $_POST['dispOrder'] == "" ? NULL : $_POST['dispOrder'];
         $taxCatId = $_POST['taxCatId'];
         if ($_FILES['image']['tmp_name'] !== "") {
@@ -249,7 +249,7 @@ if ($stocks === TRUE && $product != NULL) {
 
 	updateSellPrice = function() {
 		var sellvat = jQuery("#sellvat").val();
-		var rate = tax_rates[jQuery("#edit-tax_cat").val()];
+		var rate = tax_rates[jQuery("#edit-taxCatId").val()];
 		var sell = sellvat / (1 + rate);
 		jQuery("#realsell").val(sell);
 		jQuery("#sell").val(sell.toFixed(2));
@@ -258,7 +258,7 @@ if ($stocks === TRUE && $product != NULL) {
 	updateSellVatPrice = function() {
 		// Update sellvat price
 		var sell = jQuery("#sell").val();
-		var rate = tax_rates[jQuery("#edit-tax_cat").val()];
+		var rate = tax_rates[jQuery("#edit-taxCatId").val()];
 		var sellvat = sell * (1 + rate);
 		// Round to 2 decimals and refresh sell price to avoid unrounded payments
 		sellvat = sellvat.toFixed(2);
@@ -268,7 +268,7 @@ if ($stocks === TRUE && $product != NULL) {
 	}
 	updateMargin = function() {
 		var sell = jQuery("#realsell").val();
-		var buy = jQuery("#edit-price_buy").val();
+		var buy = jQuery("#edit-priceBuy").val();
 		var ratio = sell / buy - 1;
 		var margin = (ratio * 100).toFixed(2) + "%";
 		var rate = (sell / buy).toFixed(2);
@@ -281,7 +281,7 @@ if ($stocks === TRUE && $product != NULL) {
 		jQuery(this).val(val);
 		updateSellPrice();
 	});
-	jQuery("#edit-tax_cat").change(function() {
+	jQuery("#edit-taxCatId").change(function() {
 		var val = jQuery(this).val().replace(",", ".");
 		jQuery(this).val(val);
 		updateSellPrice()
@@ -291,12 +291,12 @@ if ($stocks === TRUE && $product != NULL) {
 		jQuery(this).val(val);
 		updateSellVatPrice()
 	});
-	jQuery("#edit-price_buy").change(function() {
+	jQuery("#edit-priceBuy").change(function() {
 		var val = jQuery(this).val().replace(",", ".");
 		jQuery(this).val(val);
 		updateMargin()
 	});
-	jQuery("#edit-discount_rate").change(function() {
+	jQuery("#edit-discountRate").change(function() {
 		var val = jQuery(this).val().replace(",", ".");
 		jQuery(this).val(val);
 		updateMargin()
