@@ -171,7 +171,7 @@ class CashesService extends AbstractService {
         $pmtsSql = "SELECT PAYMENTS.PAYMENT AS TYPE, "
                 . "PAYMENTS.CURRENCY AS CURRENCYID, "
                 . "SUM(PAYMENTS.TOTAL) AS TOTAL, "
-                . "SUM(PAYMENTS.ID) AS COUNT, "
+                . "COUNT(PAYMENTS.ID) AS COUNT, "
                 . "SUM(PAYMENTS.TOTALCURRENCY) AS TOTALCURRENCY "
                 . "FROM PAYMENTS, RECEIPTS "
                 . "WHERE PAYMENTS.RECEIPT = RECEIPTS.ID "
