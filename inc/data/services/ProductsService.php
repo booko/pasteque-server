@@ -216,16 +216,9 @@ class ProductsService {
         }
         $sql = "INSERT INTO PRODUCTS (ID, REFERENCE, CODE, NAME, "
                 . "PRICEBUY, PRICESELL, CATEGORY, TAXCAT, "
-                . "ATTRIBUTESET_ID, ISSCALE, DISCOUNTENABLED, DISCOUNTRATE";
-        if ($prd->image !== "") {
-            $sql .= ", IMAGE";
-        }
-        $sql .= ") VALUES (:id, :ref, :code, :name, :buy, :sell, :cat, "
-                . ":tax, :attr, :scale, :discEnabled, :discRate";
-        if ($prd->image !== "") {
-            $sql .= ", :img";
-        }
-        $sql .= ")";
+                . "ATTRIBUTESET_ID, ISSCALE, DISCOUNTENABLED, DISCOUNTRATE, "
+                . "IMAGE) VALUES (:id, :ref, :code, :name, :buy, :sell, :cat, "
+                . ":tax, :attr, :scale, :discEnabled, :discRate, :img)";
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(":ref", $prd->reference, \PDO::PARAM_STR);
         $stmt->bindParam(":code", $code, \PDO::PARAM_STR);
@@ -248,18 +241,16 @@ class ProductsService {
             $stmt->bindParam(":discRate", $prd->discountRate);
         }
         $stmt->bindParam(":id", $id, \PDO::PARAM_INT);
-        if ($image !== null) {
-            $stmt->bindParam(":img", $image, \PDO::PARAM_LOB);
-        }
+        $stmt->bindParam(":img", $image, \PDO::PARAM_LOB);
         if (!$stmt->execute()) {
-            return FALSE;
+            return false;
         }
         if ($prd->visible == 1 || $prd->visible == TRUE) {
             $catstmt = $pdo->prepare("INSERT INTO PRODUCTS_CAT (PRODUCT, "
                     . "CATORDER, POS_ID) "
                     . "VALUES (:id, :dispOrder, :pos)");
             $catstmt->bindParam(":id", $id);
-            $catstmt->bindParam(":disp_order", $prd->dispOrder);
+            $catstmt->bindParam(":dispOrder", $prd->dispOrder);
             $catstmt->bindValue(":pos", 1);
             $catstmt->execute();
         }
@@ -282,5 +273,3 @@ class ProductsService {
         return $stmt->execute();
     }
 }
-
-?>

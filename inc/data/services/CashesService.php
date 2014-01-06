@@ -159,7 +159,9 @@ class CashesService extends AbstractService {
         $glbStmt->execute();
         if ($row = $glbStmt->fetch()) {
             $ticketCount = $row['TKTS'];
-            $sales = $row['SALES'];
+            if ($row['SALES'] !== null) {
+                $sales = $row['SALES'];
+            }
             $custCount = $row['CUSTCOUNT'];
         } else {
             return null;
@@ -169,7 +171,7 @@ class CashesService extends AbstractService {
         $pmtsSql = "SELECT PAYMENTS.PAYMENT AS TYPE, "
                 . "PAYMENTS.CURRENCY AS CURRENCYID, "
                 . "SUM(PAYMENTS.TOTAL) AS TOTAL, "
-                . "SUM(PAYMENTS.ID) AS COUNT, "
+                . "COUNT(PAYMENTS.ID) AS COUNT, "
                 . "SUM(PAYMENTS.TOTALCURRENCY) AS TOTALCURRENCY "
                 . "FROM PAYMENTS, RECEIPTS "
                 . "WHERE PAYMENTS.RECEIPT = RECEIPTS.ID "

@@ -85,7 +85,7 @@ class TicketsAPI extends APIService {
                 foreach ($jsonTkt->payments as $jspay) {
                     $type = $jspay->mode->code;
                     $amount = $jspay->amount;
-                    if (!isse($jspay->currencyId)) {
+                    if (!isset($jspay->currencyId)) {
                         $currSrv = new CurrenciesService();
                         $currencyId = $currSrv->getDefault()->id;
                         $currencyAmount = $amount;
