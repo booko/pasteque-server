@@ -82,7 +82,7 @@ echo "<script type='text/javascript'>";
 $floors = \Pasteque\PlacesService::getAllFloors();
 foreach ($floors as $floor) {
     echo "addFloorData('" . $floor->id . "', '" . $floor->label . "', '"
-            . $floor->image . "');\n";
+            . null . "');\n";
     $places = \Pasteque\PlacesService::getAllPlacesByFloorId($floor->id);
     foreach ($places as $place) {
         echo "addPlaceData('" . $place->id . "', '" . $place->label

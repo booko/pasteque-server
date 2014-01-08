@@ -28,7 +28,7 @@ class CustomersService extends AbstractService {
             "ID" => "id",
             "TAXID" => "number",
             "SEARCHKEY" => "key",
-            "NAME" => "name",
+            "NAME" => "dispName",
             "CARD" => "card",
             "TAXCATEGORY" => "custTaxId",
             "PREPAID" => "prepaid",
@@ -55,7 +55,7 @@ class CustomersService extends AbstractService {
         $cust = Customer::__build($row['ID'], $row['TAXID'], $row['SEARCHKEY'],
                 $row['NAME'], $row['CARD'], $row['TAXCATEGORY'],
                 $row['PREPAID'],
-                $row['MAXDEBT'], $row['CURDEBT'], $row['CURDATE'],
+                $row['MAXDEBT'], $row['CURDEBT'], stdtimefstr($row['CURDATE']),
                 $row['FIRSTNAME'], $row['LASTNAME'], $row['EMAIL'],
                 $row['PHONE'], $row['PHONE2'], $row['FAX'],
                 $row['ADDRESS'], $row['ADDRESS2'], $row['POSTAL'],
@@ -63,7 +63,6 @@ class CustomersService extends AbstractService {
                 $row['NOTES'], ord($row['VISIBLE']) == 1);
         return $cust;
     }
-
 
     function getAll($include_hidden = false) {
         $customers = array();
@@ -129,7 +128,7 @@ class CustomersService extends AbstractService {
         $stmt->bindParam(":note", $cust->note, \PDO::PARAM_STR);
         $stmt->bindParam(":visible", $cust->visible, \PDO::PARAM_INT);
         $stmt->bindParam(":date", $cust->debtDate, \PDO::PARAM_STR);
-        $stmt->bindParam(":debt", $cust->currDebt, \PDO::PARAM_STR);
+        $stmt->bindParam(":debt", stdstrftime($cust->currDebt));
         $stmt->bindParam(":id", $cust->id, \PDO::PARAM_INT);
         return $stmt->execute();
     }
@@ -168,7 +167,7 @@ class CustomersService extends AbstractService {
         $stmt->bindParam(":fax", $cust->fax, \PDO::PARAM_STR);
         $stmt->bindParam(":note", $cust->note, \PDO::PARAM_STR);
         $stmt->bindParam(":visible", $cust->visible, \PDO::PARAM_INT);
-        $stmt->bindParam(":date", $cust->debtDate, \PDO::PARAM_STR);
+        $stmt->bindParam(":date", stdstrftime($cust->debtDate));
         $stmt->bindParam(":debt", $cust->currDebt, \PDO::PARAM_STR);
         if ($stmt->execute() !== FALSE) {
             return $id;

@@ -5,6 +5,9 @@
 			<file>models/CurrencyTest.php</file>
 			<file>models/TaxesTest.php</file>
 			<file>models/CashRegisterTest.php</file>
+			<file>models/CustomerTest.php</file>
+			<file>models/PlaceTest.php</file>
+			<file>models/FloorTest.php</file>
 		</testsuite>
 		<testsuite name="database">
 			<file>install/InstallDbTest.php</file>
@@ -13,6 +16,7 @@
 		    <file>services/CategoriesServiceTest.php</file>
 			<file>services/CashesServiceTest.php</file>
 			<file>services/CashRegistersServiceTest.php</file>
+			<file>services/CustomersServiceTest.php</file>
 		</testsuite>
 		<testsuite name="api">
 			<file>api/APIEngineTest.php</file>
@@ -20,6 +24,7 @@
 			<file>api/CashesAPITest.php</file>
 			<file>api/CategoriesAPITest.php</file>
 			<file>api/CashRegistersAPITest.php</file>
+			<file>api/CustomersAPITest.php</file>
 		</testsuite>
 	</testsuites>
 </phpunit>
