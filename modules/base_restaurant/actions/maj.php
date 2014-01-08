@@ -131,7 +131,7 @@ function managePlace($arrayPlaces, $floorId = NULL) {
         } else {
             // if the id floor start with "-" use the param $floorId
             if ($data['idFloor']{0} == "-" ) {
-                $new_place->floor = $floorId;
+                $new_place->floorId = $floorId;
             }
             if (!\Pasteque\PlacesService::createPlace($new_place)) {
                 $error_mess[] .= \i18n("Impossible to create place: %s.",

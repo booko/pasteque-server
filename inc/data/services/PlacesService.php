@@ -62,30 +62,18 @@ class PlacesService {
         return null;
     }
 
-    static function createFloor($floor) {
+    static function createFloor($floor, $img = null) {
         $pdo = PDOBuilder::getPDO();
         $id = md5(time() . rand());
 
-        $sql = "INSERT INTO FLOORS (ID, NAME";
-        if ($floor->image !== "") {
-            $sql .= ", IMAGE";
-        }
-        $sql .= ") VALUES (:id, :name";
-        if ($floor->image !== "") {
-            $sql .= ", :img";
-        }
-        $sql .= ")";
-
+        $sql = "INSERT INTO FLOORS (ID, NAME, IMAGE) VALUES (:id, :name, :img)";
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(":id", $id, \PDO::PARAM_STR);
         $stmt->bindParam(":name", $floor->name, \PDO::PARAM_STR);
-        if ($floor->image !== "") {
-            $stmt->bindParam(":img",$floor->image);
-        }
+        $stmt->bindParam(":img",$img);
         if (!$stmt->execute()) {
-            return NULL;
+            return false;
         }
-
         return $id;
     }
 
@@ -98,18 +86,18 @@ class PlacesService {
         return false;
     }
 
-    static function updateFloor($floor) {
+    static function updateFloor($floor, $image = "") {
         $pdo = PDOBuilder::getPDO();
         $sql = "UPDATE FLOORS SET NAME = :name ";
-        if ($floor->image !== "") {
+        if ($image !== "") {
             $sql .= ", IMAGE = :image ";
         }
         $sql .= "WHERE ID = :id";
         $stmt = $pdo->prepare($sql);
 
         $stmt->bindParam(":name", $floor->name, \PDO::PARAM_STR);
-        if ($floor->image !== "") {
-            $stmt->bindParam(":image", $floor->image);
+        if ($image !== "") {
+            $stmt->bindParam(":image", $image);
         }
         $stmt->bindParam(":id", $floor->id, \PDO::PARAM_STR);
 
@@ -196,5 +184,3 @@ class PlacesService {
         return $id;
     }
 }
-
-?>

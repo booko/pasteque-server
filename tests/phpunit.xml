@@ -4,7 +4,9 @@
 			<file>models/CashTest.php</file>
 			<file>models/CurrencyTest.php</file>
 			<file>models/TaxesTest.php</file>
-			<file>models/CustomerTest</file>
+			<file>models/CustomerTest.php</file>
+			<file>models/PlaceTest.php</file>
+			<file>models/FloorTest.php</file>
 		</testsuite>
 		<testsuite name="database">
 			<file>install/InstallDbTest.php</file>
