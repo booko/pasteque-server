@@ -29,12 +29,12 @@ class PlacesService {
         return $place;
     }
 
-    private static function buildDBFloor($db_floor, $pdo) {
-        $floor = Floor::__build($db_floor['ID'], $db_floor['NAME']);
+    private static function buildDBFloor($dbFloor, $pdo) {
+        $floor = Floor::__build($dbFloor['ID'], $dbFloor['NAME']);
         $sqlplaces = 'SELECT * FROM PLACES WHERE FLOOR = "'
-                     . $db_floor['ID'] . '"';
-        foreach ($pdo->query($sqlplaces) as $db_place) {
-            $place = PlacesService::buildDBPlace($db_place);
+                     . $dbFloor['ID'] . '"';
+        foreach ($pdo->query($sqlplaces) as $dbPlace) {
+            $place = PlacesService::buildDBPlace($dbPlace);
             $floor->addPlace($place);
         }
         return $floor;
@@ -44,8 +44,8 @@ class PlacesService {
         $floors = array();
         $pdo = PDOBuilder::getPDO();
         $sql = "SELECT * FROM FLOORS";
-        foreach ($pdo->query($sql) as $db_floor) {
-            $floor = PlacesService::buildDBFloor($db_floor, $pdo);
+        foreach ($pdo->query($sql) as $dbFloor) {
+            $floor = PlacesService::buildDBFloor($dbFloor, $pdo);
             $floors[] = $floor;
         }
         return $floors;
@@ -69,7 +69,7 @@ class PlacesService {
         $sql = "INSERT INTO FLOORS (ID, NAME, IMAGE) VALUES (:id, :name, :img)";
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(":id", $id, \PDO::PARAM_STR);
-        $stmt->bindParam(":name", $floor->name, \PDO::PARAM_STR);
+        $stmt->bindParam(":name", $floor->label, \PDO::PARAM_STR);
         $stmt->bindParam(":img",$img);
         if (!$stmt->execute()) {
             return false;
@@ -95,7 +95,7 @@ class PlacesService {
         $sql .= "WHERE ID = :id";
         $stmt = $pdo->prepare($sql);
 
-        $stmt->bindParam(":name", $floor->name, \PDO::PARAM_STR);
+        $stmt->bindParam(":name", $floor->label, \PDO::PARAM_STR);
         if ($image !== "") {
             $stmt->bindParam(":image", $image);
         }
@@ -108,8 +108,8 @@ class PlacesService {
         $place = array();
         $pdo = PDOBuilder::getPDO();
         $sql = "SELECT * FROM PLACES";
-        foreach ($pdo->query($sql) as $db_place) {
-            $place = PlacesService::buildDBPlace($db_place, $pdo);
+        foreach ($pdo->query($sql) as $dbPlace) {
+            $place = PlacesService::buildDBPlace($dbPlace, $pdo);
             $places[] = $place;
         }
         return $places;
@@ -122,7 +122,7 @@ class PlacesService {
         $stmt->bindParam(":floor", $idFloor, \PDO::PARAM_STR);
         if ($stmt->execute(array(':floor' => $idFloor))) {
             while( $db_place = $stmt->fetch()) {
-                $place = PlacesService::buildDBPlace($db_place, $pdo);
+                $place = PlacesService::buildDBPlace($dbPlace, $pdo);
                 $places[] = $place;
             }
         }
@@ -155,10 +155,10 @@ class PlacesService {
                 . " WHERE ID = :id";
         $stmt = $pdo->prepare($sql);
 
-        $stmt->bindParam(":name", $place->name, \PDO::PARAM_STR);
+        $stmt->bindParam(":name", $place->label, \PDO::PARAM_STR);
         $stmt->bindParam(":x", $place->x, \PDO::PARAM_INT);
         $stmt->bindParam(":y", $place->y, \PDO::PARAM_INT);
-        $stmt->bindParam(":floor", $place->floor, \PDO::PARAM_STR);
+        $stmt->bindParam(":floor", $place->floorId, \PDO::PARAM_STR);
         $stmt->bindParam(":id", $place->id, \PDO::PARAM_STR);
 
         return $stmt->execute();
@@ -173,10 +173,10 @@ class PlacesService {
         $stmt = $pdo->prepare($sql);
 
         $stmt->bindParam(":id", $id, \PDO::PARAM_STR);
-        $stmt->bindParam(":name", $place->name, \PDO::PARAM_STR);
+        $stmt->bindParam(":name", $place->label, \PDO::PARAM_STR);
         $stmt->bindParam(":x", $place->x, \PDO::PARAM_INT);
         $stmt->bindParam(":y", $place->y, \PDO::PARAM_INT);
-        $stmt->bindParam(":floor", $place->floor, \PDO::PARAM_STR);
+        $stmt->bindParam(":floor", $place->floorId, \PDO::PARAM_STR);
 
         if (!$stmt->execute()) {
             return NULL;

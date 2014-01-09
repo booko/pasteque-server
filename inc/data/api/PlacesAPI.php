@@ -35,7 +35,7 @@ class PlacesAPI extends APIService {
     protected function proceed() {
         switch ($this->action) {
         case 'get':
-            $this->succeed(PlacesService::getFloor($_GET['id']));
+            $this->succeed(PlacesService::getFloor($this->params['id']));
             break;
         case 'getAll':
             $this->succeed(PlacesService::getAllFloors());

@@ -39,16 +39,17 @@ class TariffArea {
         $this->prices = array();
     }
 
-    function addPrice($product_id, $price) {
-        $this->prices[$product_id] = $price;
+    function addPrice($productId, $price) {
+        $this->prices[] = new TariffAreaPrice($productId, $price);
     }
 
-    function getPrice($produc_id) {
-        if (isset($this->prices[$product_id])) {
-            return $this->prices[$product_id];
-        } else {
-            return NULL;
+    function getPrice($productId) {
+        foreach ($this->prices as $price) {
+            if ($price->productId == $productId) {
+                return $price->price;
+            }
         }
+        return null;
     }
 
     function getPrices() {
@@ -56,4 +57,13 @@ class TariffArea {
     }
 }
 
-?>
+class TariffAreaPrice {
+
+    public $productId;
+    public $price;
+
+    public function __construct($prdId, $price) {
+        $this->productId = $prdId;
+        $this->price = $price;
+    }
+}

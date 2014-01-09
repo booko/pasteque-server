@@ -17,6 +17,7 @@
 			<file>services/CashesServiceTest.php</file>
 			<file>services/CustomersServiceTest.php</file>
 			<file>services/AttributesServiceTest.php</file>
+			<file>services/TariffAreasServiceTest.php</file>
 		</testsuite>
 		<testsuite name="api">
 			<file>api/APIEngineTest.php</file>
@@ -25,6 +26,14 @@
 			<file>api/CategoriesAPITest.php</file>
 			<file>api/CustomersAPITest.php</file>
 			<file>api/AttributesAPITest.php</file>
+			<file>api/UsersAPITest.php</file>
+			<file>api/RolesAPITest.php</file>
+			<file>api/CurrenciesAPITest.php</file>
+			<file>api/TaxesAPITest.php</file>
+			<file>api/TariffAreasAPITest.php</file>
+			<file>api/PlacesAPITest.php</file>
+			<file>api/ProductsAPITest.php</file>
+			<file>api/ResourcesAPITest.php</file>
 		</testsuite>
 	</testsuites>
 </phpunit>

@@ -32,8 +32,8 @@ class CurrenciesService extends AbstractService {
             "THOUSANDSSEP" => "thousandsSeparator",
             "FORMAT" => "format",
             "RATE" => "rate",
-            "MAIN" => "main",
-            "ACTIVE" => "active"
+            "MAIN" => "isMain",
+            "ACTIVE" => "isActive"
     );
 
     protected function build($row, $pdo = null) {

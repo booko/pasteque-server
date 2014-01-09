@@ -201,7 +201,6 @@ class ProductsService {
         if ($stmt->execute() !== false) {
             return true;
         } else {
-            var_dump($stmt->errorInfo());
             return false;
         }
     }

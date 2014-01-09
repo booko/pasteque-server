@@ -24,6 +24,8 @@ class TariffAreasAPI extends APIService {
 
     protected function check() {
         switch ($this->action) {
+        case 'get':
+            return isset($this->params['id']);
         case 'getAll':
             return true;
         }
@@ -31,11 +33,14 @@ class TariffAreasAPI extends APIService {
     }
 
     protected function proceed() {
+        $srv = new TariffAreasService();
         switch ($this->action) {
+        case 'get':
+            $this->succeed($srv->get($this->params['id']));
+            break;
         case 'getAll':
-            $this->succeed(TariffAreasService::getAll());
+            $this->succeed($srv->getAll());
+            break;
         }
     }
 }
-
-?>
