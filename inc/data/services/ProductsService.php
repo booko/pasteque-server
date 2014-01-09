@@ -23,6 +23,7 @@ namespace Pasteque;
 class ProductsService {
 
     private static function buildDBPrd($dpPrd, $pdo) {
+        $db = DB::get();
         $stmt = $pdo->prepare("SELECT * FROM PRODUCTS_CAT WHERE PRODUCT = :id");
         $stmt->execute(array(':id' => $dpPrd['ID']));
         $prdCat = $stmt->fetch();
@@ -34,24 +35,26 @@ class ProductsService {
         return Product::__build($dpPrd['ID'], $dpPrd['REFERENCE'],
                 $dpPrd['NAME'], $dpPrd['PRICESELL'], $dpPrd['CATEGORY'],
                 $dispOrder, $dpPrd['TAXCAT'], $visible,
-                ord($dpPrd['ISSCALE']) == 1, $dpPrd['PRICEBUY'],
+                $db->readBool($dpPrd['ISSCALE']), $dpPrd['PRICEBUY'],
                 $dpPrd['ATTRIBUTESET_ID'], $dpPrd['CODE'],
                 $dpPrd['IMAGE'] !== null,
-                ord($dpPrd['DISCOUNTENABLED']) == 1, $dpPrd['DISCOUNTRATE']);
+                $db->readBool($dpPrd['DISCOUNTENABLED']),
+                $dpPrd['DISCOUNTRATE']);
     }
 
     static function getAll($include_hidden = FALSE) {
         $prds = array();
         $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
         $sql = NULL;
         if ($include_hidden) {
             $sql = "SELECT * FROM PRODUCTS LEFT JOIN PRODUCTS_CAT ON "
                     . "PRODUCTS_CAT.PRODUCT = PRODUCTS.ID "
-                    . "WHERE DELETED = 0 ORDER BY CATORDER";
+                    . "WHERE DELETED = " . $db->false() . " ORDER BY CATORDER";
         } else {
             $sql = "SELECT * FROM PRODUCTS, PRODUCTS_CAT WHERE "
-                    . "PRODUCTS.ID = PRODUCTS_CAT.PRODUCT AND DELETED = 0 "
-                    . "ORDER BY CATORDER";
+                    . "PRODUCTS.ID = PRODUCTS_CAT.PRODUCT AND DELETED = "
+                    . $db->false() . " ORDER BY CATORDER";
         }
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
@@ -65,7 +68,9 @@ class ProductsService {
     static function getPrepaidIds() {
         $ids = array();
         $pdo = PDOBuilder::getPDO();
-        $sql = "SELECT ID FROM PRODUCTS WHERE CATEGORY = :cat AND DELETED = 0";
+        $db = DB::get();
+        $sql = "SELECT ID FROM PRODUCTS WHERE CATEGORY = :cat AND DELETED = "
+                . $db->false() . ";";
         $stmt = $pdo->prepare($sql);
         $stmt->bindValue(":cat", '-1');
         $stmt->execute();
@@ -148,6 +153,7 @@ class ProductsService {
      * to keep the actual image */
     static function update($prd, $image = "") {
         $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
         $code = "";
         if ($prd->barcode != null) {
             $code = $prd->barcode;
@@ -174,10 +180,10 @@ class ProductsService {
         $stmt->bindParam(":cat", $prd->categoryId, \PDO::PARAM_INT);
         $stmt->bindParam(":tax", $prd->taxCatId, \PDO::PARAM_INT);
         $stmt->bindParam(":attr", $prd->attributeSetId, \PDO::PARAM_INT);
-        $stmt->bindParam(":scale", $prd->scaled, \PDO::PARAM_INT);
+        $stmt->bindParam(":scale", $dp->boolVal($prd->scaled));
         $stmt->bindParam(":id", $prd->id, \PDO::PARAM_INT);
-        $stmt->bindParam(":discountEnabled", $prd->discountEnabled,
-                \PDO::PARAM_INT);
+        $stmt->bindParam(":discountEnabled",
+                $dp->boolVal($prd->discountEnabled));
         if ($prd->discountRate === null || $prd->discountRate === "") {
             $stmt->bindValue(":discountRate", 0.0);
         } else {
@@ -208,6 +214,7 @@ class ProductsService {
     /** Create a product and return its id. */
     static function create($prd, $image = null) {
         $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
         $id = md5(time() . rand());
         $code = "";
         if ($prd->barcode != null) {
@@ -231,9 +238,8 @@ class ProductsService {
         $stmt->bindParam(":cat", $prd->categoryId, \PDO::PARAM_INT);
         $stmt->bindParam(":tax", $prd->taxCatId, \PDO::PARAM_INT);
         $stmt->bindParam(":attr", $prd->attributeSetId, \PDO::PARAM_INT);
-        $stmt->bindParam(":scale", $prd->scaled, \PDO::PARAM_INT);
-        $stmt->bindParam(":discEnabled", $prd->discountEnabled,
-                \PDO::PARAM_INT);
+        $stmt->bindParam(":scale", $db->boolVal($prd->scaled));
+        $stmt->bindParam(":discEnabled", $db->boolVal($prd->discountEnabled));
         if ($prd->discountRate === null || $prd->discountRate === "") {
             $stmt->bindValue(":discRate", 0.0);
         } else {
@@ -244,7 +250,7 @@ class ProductsService {
         if (!$stmt->execute()) {
             return false;
         }
-        if ($prd->visible == 1 || $prd->visible == true) {
+        if ($prd->visible == true) {
             $catstmt = $pdo->prepare("INSERT INTO PRODUCTS_CAT (PRODUCT, "
                     . "CATORDER) VALUES (:id, :dispOrder)");
             $catstmt->bindParam(":id", $id);
@@ -256,14 +262,15 @@ class ProductsService {
     
     static function delete($id) {
         $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
         $stmtcat = $pdo->prepare("DELETE FROM PRODUCTS_CAT WHERE PRODUCT = :id");
         $stmtcat->execute(array(":id" => $id));
         $stmtstk = $pdo->prepare("DELETE FROM STOCKLEVEL WHERE PRODUCT = :id");
         $stmtstk->execute(array(":id" => $id));
         // Update reference with garbage to break unicity constraint
         $garbage = "_deleted_" . \md5(\time());
-        $stmt = $pdo->prepare("UPDATE PRODUCTS SET DELETED = 1, "
-               . "REFERENCE = concat(REFERENCE, :garbage), "
+        $stmt = $pdo->prepare("UPDATE PRODUCTS SET DELETED = " . $dp->true()
+                . ", REFERENCE = concat(REFERENCE, :garbage), "
                . "NAME = concat(NAME, :garbage) WHERE ID = :id");
         $stmt->bindParam(':id', $id);
         $stmt->bindParam(':garbage', $garbage);
