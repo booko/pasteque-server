@@ -55,7 +55,7 @@
 "Composition.label": "Name",
 
 "Attribute.label": "Name",
-"AttributeValue.label": "Value",
+"AttributeValue.value": "Value",
 
 "AttributeSet.label": "Name",
 

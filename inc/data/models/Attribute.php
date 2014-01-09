@@ -25,16 +25,18 @@ class Attribute {
     public $id;
     public $label;
     public $values;
+    public $dispOrder;
 
-    static function __build($id, $label) {
-        $attr = new Attribute($label);
+    static function __build($id, $label, $dispOrder) {
+        $attr = new Attribute($label, $dispOrder);
         $attr->id = $id;
         return $attr;
     }
 
-    function __construct($label) {
+    function __construct($label, $dispOrder) {
         $this->label = $label;
         $this->values = array();
+        $this->dispOrder = $dispOrder;
     }
 
     function addValue($value) {
@@ -45,16 +47,16 @@ class Attribute {
 class AttributeValue {
 
     public $id;
-    public $label;
+    public $value;
 
-    static function __build($id, $label) {
-        $val = new AttributeValue($label);
+    static function __build($id, $value) {
+        $val = new AttributeValue($value);
         $val->id = $id;
         return $val;
     }
 
-    function __construct($label) {
-        $this->label = $label;
+    function __construct($value) {
+        $this->value = $value;
     }
 }
 
@@ -63,12 +65,10 @@ class AttributeSet {
     public $id;
     public $label;
     public $attributes;
-    public $attributeOrder;
 
     public function __construct($label) {
         $this->label = $label;
         $this->attributes = array();
-        $this->attributeOrder = array();
     }
 
     public function __build($id, $label) {
@@ -77,8 +77,7 @@ class AttributeSet {
         return $set;
     }
 
-    public function addAttribute($attr, $order) {
+    public function addAttribute($attr) {
         $this->attributes[] = $attr;
-        $this->attributeOrder[] = $order;
     }
 }
