@@ -18,6 +18,7 @@
 			<file>services/CustomersServiceTest.php</file>
 			<file>services/AttributesServiceTest.php</file>
 			<file>services/TariffAreasServiceTest.php</file>
+			<file>services/CurrenciesServiceTest.php</file>
 		</testsuite>
 		<testsuite name="api">
 			<file>api/APIEngineTest.php</file>

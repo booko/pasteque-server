@@ -77,7 +77,8 @@ class TariffAreasService extends AbstractService {
         $stmt->bindParam(":label", $area->label);
         $stmt->bindParam(":dispOrder", $area->dispOrder);
         if ($stmt->execute() !== false) {
-            $id = $pdo->lastInsertId();
+            $id = $pdo->lastInsertId(static::$dbTable . "_"
+                    . static::$dbIdField . "_seq");
         } else {
             return false;
         }
