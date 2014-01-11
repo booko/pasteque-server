@@ -44,27 +44,32 @@ class CategoriesServiceTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testCreate() {
-        $type = get_db_type(get_user_id());
         $category = new Category(null, "Test", true, 1);
         $id = CategoriesService::createCat($category, 0xaa);
         $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
         $sql = "SELECT * FROM CATEGORIES";
         $stmt = $pdo->prepare($sql);
         $this->assertNotEquals($stmt->execute(), false, "Query failed");
         $row = $stmt->fetch();
-        if ($type == "postgresql") {
-            $row['IMAGE'] = fgets($row['IMAGE']);
-        }
         $this->assertNotEquals(false, $id, "Create failed");
         $this->assertEquals($id, $row['ID'], "Inconsistent returned id");
         $this->assertEquals("Test", $row['NAME'],
                 "Inconsistent label after create");
         $this->assertEquals(null, $row['PARENTID'],
                 "Inconsistent parent id after create");
-        $this->assertEquals(0xaa, $row['IMAGE'],
+        $this->assertEquals(0xaa, $db->readBin($row['IMAGE']),
                 "Inconsistent image after create");
         $this->assertEquals(1, $row['DISPORDER'],
                 "Inconsistent display order after create");
+    }
+
+    /** @depends testCreate */
+    public function testGetImage() {
+        $category = new Category(null, "Test", true, 1);
+        $id = CategoriesService::createCat($category, 0xaa);
+        $img = CategoriesService::getImage($id);
+        $this->assertEquals(0xaa, $img);
     }
 
     /** @depends testCreate */
@@ -76,7 +81,6 @@ class CategoriesServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($category->label, $read->label);
         $this->assertEquals($category->parentId, $read->parentId);
         $this->assertEquals($category->dispOrder, $read->dispOrder);
-        $this->markTestIncomplete("Image test is missing");
     }
 
     public function testReadInexistent() {
@@ -97,6 +101,7 @@ class CategoriesServiceTest extends \PHPUnit_Framework_TestCase {
         $ret = CategoriesService::updateCat($category, 0xbb);
         $this->assertNotEquals(false, $ret, "Update failed");
         $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
         $sql = "SELECT * FROM CATEGORIES WHERE ID = :id";
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(":id", $id);
@@ -105,7 +110,8 @@ class CategoriesServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($id, $row['ID'], "Id was modified");
         $this->assertEquals("Updated", $row['NAME'], "Label update failed");
         $this->assertEquals($id2, $row['PARENTID'], "Parent id update failed");
-        $this->assertEquals(0xbb, $row['IMAGE'], "Image update failed");
+        $this->assertEquals(0xbb, $db->readBin($row['IMAGE']),
+                "Image update failed");
         $this->assertEquals(3, $row['DISPORDER'], "Display order update failed");
     }
 
@@ -128,6 +134,7 @@ class CategoriesServiceTest extends \PHPUnit_Framework_TestCase {
         $ret = CategoriesService::updateCat($category);
         $this->assertNotEquals(false, $ret, "Update failed");
         $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
         $sql = "SELECT * FROM CATEGORIES WHERE ID = :id";
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(":id", $id);
@@ -136,7 +143,8 @@ class CategoriesServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($id, $row['ID'], "Id was modified");
         $this->assertEquals("Updated", $row['NAME'], "Label update failed");
         $this->assertEquals($id2, $row['PARENTID'], "Parent id update failed");
-        $this->assertEquals(0xaa, $row['IMAGE'], "Image keeping failed");
+        $this->assertEquals(0xaa, $db->readBin($row['IMAGE']),
+                "Image keeping failed");
         $this->assertEquals(3, $row['DISPORDER'], "Display order update failed");
     }
 
@@ -156,4 +164,3 @@ class CategoriesServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertTrue(CategoriesService::deleteCat(0));
     }
 }
-?>

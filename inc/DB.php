@@ -24,6 +24,7 @@ class DB {
 
     const BOOL = 1;
     const TIME = 2;
+    const BIN  = 3;
 
     private $type;
 
@@ -76,6 +77,15 @@ class DB {
             return 0;
         case 'postgresql':
             return "'f'";
+        }
+    }
+
+    public function readBin($val) {
+        switch ($this->type) {
+        case 'mysql':
+            return $val;
+        case 'postgresql':
+            return fgets($val);
         }
     }
 }

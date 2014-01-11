@@ -85,11 +85,12 @@ class CategoriesService {
     
     static function getImage($id) {
         $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
         $stmt = $pdo->prepare("SELECT IMAGE FROM CATEGORIES WHERE ID = :id");
         $stmt->bindParam(":id", $id, \PDO::PARAM_STR);
         if ($stmt->execute()) {
             if ($row = $stmt->fetch()) {
-                return $row['IMAGE'];
+                return $db->readBin($row['IMAGE']);
             }
         }
         return null;
