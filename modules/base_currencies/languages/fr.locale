@@ -3,5 +3,7 @@
 
 "Add a currency": "Ajouter une devise",
 "Main": "Ref.",
-"Edit a currency": "Édition d'une devise"
+"Edit a currency": "Édition d'une devise",
+
+"Currency saved. <a href=\"%s\">Go to the currecy page</a>.": "Devise enregistrée, <a href=\"%s\">Aller à la page de la devise</a>."
 }

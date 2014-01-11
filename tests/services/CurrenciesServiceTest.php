@@ -109,9 +109,38 @@ class CurrenciesServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(null, $read);
     }
 
-    /** @depends testCreate */
+    /** @depends testCreate
+     * @depends testRead
+     */
     public function testUpdate() {
-        $this->markTestIncomplete();
+        $srv = new CurrenciesService();
+        $eur = new Currency("Eur", "€", ",", ".", "#,##0.00$", 1, true, true);
+        $eur->id = $srv->create($eur);
+        $eur->label = "Euro";
+        $eur->symbol = "E";
+        $eur->decimalSeparator = " ";
+        $eur->thousandsSeparator = "_";
+        $eur->format = "$#,##0";
+        $eur->rate = 1.1;
+        $eur->isActive = false;
+        $this->assertTrue($srv->update($eur));
+        $read = $srv->get($eur->id);
+        $this->checkEquality($eur, $read);
+    }
+
+    /** @depends testUpdate */
+    public function testUpdateMain() {
+        $srv = new CurrenciesService();
+        $eur = new Currency("Eur", "€", ",", ".", "#,##0.00$", 1, true, true);
+        $eur->id = $srv->create($eur);
+        $yen = new Currency("Yen", "Y", " ", " ", "#$", 120, false, false);
+        $yen->id = $srv->create($yen);
+        $yen->isMain = true;
+        $this->assertTrue($srv->update($yen));
+        $eurRead = $srv->get($eur->id);
+        $yenRead = $srv->get($yen->id);
+        $this->assertTrue($yenRead->isMain, "Main not set");
+        $this->assertFalse($eurRead->isMain, "Old main not unset");
     }
 
     public function testUpdateInexistent() {
