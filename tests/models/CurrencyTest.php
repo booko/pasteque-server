@@ -40,8 +40,8 @@ class CurrencyTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(",", $curr->thousandsSeparator);
         $this->assertEquals("$##0.00", $curr->format);
         $this->assertEquals(1.2, $curr->rate);
-        $this->assertTrue($curr->main);
-        $this->assertTrue($curr->active);
+        $this->assertTrue($curr->isMain);
+        $this->assertTrue($curr->isActive);
     }
 
     /** @depends testConstructEmpty */
@@ -140,5 +140,3 @@ class CurrencyTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals("0,00 €", $curr->format(0));
     }
 }
-
-?>
