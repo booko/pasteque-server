@@ -32,11 +32,15 @@ class ResourcesService extends AbstractService {
     );
 
     protected function build($dbRow, $pdo = null) {
-        $res = Resource::__build($dbRow['ID'], $dbRow['NAME'],
-                $dbRow['RESTYPE'], $dbRow['CONTENT']);
-        return $res;
+        $db = DB::get();
+        switch ($dbRow['RESTYPE']) {
+        case Resource::TYPE_IMAGE:
+        case Resource::TYPE_BIN:
+            return Resource::__build($dbRow['ID'], $dbRow['NAME'],
+                    $dbRow['RESTYPE'], $db->readBin($dbRow['CONTENT']));
+        default:
+            return Resource::__build($dbRow['ID'], $dbRow['NAME'],
+                    $dbRow['RESTYPE'], $dbRow['CONTENT']);
+        }
     }
-
 }
-
-?>
