@@ -19,6 +19,7 @@
 			<file>services/AttributesServiceTest.php</file>
 			<file>services/TariffAreasServiceTest.php</file>
 			<file>services/CurrenciesServiceTest.php</file>
+			<file>services/StocksServiceTest.php</file>
 		</testsuite>
 		<testsuite name="api">
 			<file>api/APIEngineTest.php</file>
@@ -35,6 +36,8 @@
 			<file>api/PlacesAPITest.php</file>
 			<file>api/ProductsAPITest.php</file>
 			<file>api/ResourcesAPITest.php</file>
+			<file>api/LocationsAPITest.php</file>
+			<file>api/StocksAPITest.php</file>
 		</testsuite>
 	</testsuites>
 </phpunit>

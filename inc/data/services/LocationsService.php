@@ -32,4 +32,19 @@ class LocationsService extends AbstractService {
     protected function build($row, $pdo = null) {
         return Location::__build($row["ID"], $row["NAME"]);
     }
+
+    public function create($area) {
+        $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("INSERT INTO LOCATIONS "
+                . "(ID, NAME) VALUES (:id, :label)");
+        $id = md5(time() . rand());
+        $stmt->bindParam(":id", $id);
+        $stmt->bindParam(":label", $area->label);
+        if ($stmt->execute() !== false) {
+            return $id;
+        } else {
+            return false;
+        }
+    }
+
 }
