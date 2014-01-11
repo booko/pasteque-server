@@ -49,6 +49,7 @@ class CustomersServiceTest extends \PHPUnit_Framework_TestCase {
                 "Address2", "59000", "City", "Region", "France", "Note", true);
         $id = $srv->create($cust);
         $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
         $sql = "SELECT * FROM CUSTOMERS";
         $stmt = $pdo->prepare($sql);
         $this->assertNotEquals($stmt->execute(), false, "Query failed");
@@ -78,8 +79,7 @@ class CustomersServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals("Region", $row['REGION'], "Region mismatch");
         $this->assertEquals("France", $row['COUNTRY'], "Country mismatch");
         $this->assertEquals("Note", $row['NOTES'], "Note mismatch");
-        // TODO postgresql boolean
-        $this->assertEquals(true, ord($row['VISIBLE']) == 1,
+        $this->assertEquals(true, $dp->readBool($row['VISIBLE']),
                 "Visible mismatch");
     }
 
@@ -148,4 +148,3 @@ class CustomersServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertTrue($srv->delete(0));
     }
 }
-?>

@@ -25,6 +25,7 @@ class DB {
     const BOOL = 1;
     const TIME = 2;
     const BIN  = 3;
+    const DATE = 4;
 
     private $type;
 
@@ -87,5 +88,13 @@ class DB {
         case 'postgresql':
             return fgets($val);
         }
+    }
+
+    public function readDate($val) {
+        return stdtimefstr($val);
+    }
+
+    public function dateVal($val) {
+        return stdstrftime($val);
     }
 }
