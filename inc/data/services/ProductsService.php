@@ -181,10 +181,10 @@ class ProductsService {
         $stmt->bindParam(":cat", $prd->categoryId, \PDO::PARAM_INT);
         $stmt->bindParam(":tax", $prd->taxCatId, \PDO::PARAM_INT);
         $stmt->bindParam(":attr", $prd->attributeSetId, \PDO::PARAM_INT);
-        $stmt->bindParam(":scale", $dp->boolVal($prd->scaled));
+        $stmt->bindParam(":scale", $db->boolVal($prd->scaled));
         $stmt->bindParam(":id", $prd->id, \PDO::PARAM_INT);
         $stmt->bindParam(":discountEnabled",
-                $dp->boolVal($prd->discountEnabled));
+                $db->boolVal($prd->discountEnabled));
         if ($prd->discountRate === null || $prd->discountRate === "") {
             $stmt->bindValue(":discountRate", 0.0);
         } else {
@@ -270,7 +270,7 @@ class ProductsService {
         $stmtstk->execute(array(":id" => $id));
         // Update reference with garbage to break unicity constraint
         $garbage = "_deleted_" . \md5(\time());
-        $stmt = $pdo->prepare("UPDATE PRODUCTS SET DELETED = " . $dp->true()
+        $stmt = $pdo->prepare("UPDATE PRODUCTS SET DELETED = " . $db->true()
                 . ", REFERENCE = concat(REFERENCE, :garbage), "
                . "NAME = concat(NAME, :garbage) WHERE ID = :id");
         $stmt->bindParam(':id', $id);
