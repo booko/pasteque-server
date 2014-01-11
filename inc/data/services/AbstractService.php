@@ -49,6 +49,9 @@ abstract class AbstractService {
                 case DB::DATE:
                     $ret[$field] = $db->dateVal($model->{$value['attr']});
                     break;
+                case DB::BIN:
+                    $ret[$field] = $model->{$value['attr']};
+                    break;
                 }
             } else {
                 $ret[$field] = $model->{$value};

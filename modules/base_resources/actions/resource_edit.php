@@ -44,7 +44,7 @@ if (isset($_POST['id'])) {
     }
     $res = new \Pasteque\Resource($_POST['label'],
             $_POST['type'], $content);;
-    if ($resSrv->create($res)) {
+    if ($resSrv->create($res) !== false) {
         $message = \i18n("Changes saved");
     } else {
         $error = \i18n("Unable to save changes");
