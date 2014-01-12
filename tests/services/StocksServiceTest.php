@@ -76,9 +76,9 @@ class StocksServiceTest extends \PHPUnit_Framework_TestCase {
     /** Full level equality check */
     private function checkEquality($level, $ref) {
         $this->checkLevelEquality($level, $ref);
-        $this->assertEquals($level->attrSetInstId, $ref->attrSetInstId,
+        $this->assertEquals($ref->attrSetInstId, $level->attrSetInstId,
                 "Attribute set instance id mismatch");
-        $this->assertEquals($level->qty, $ref->qty, "Quantity mismatch");
+        $this->assertEquals($ref->qty, $level->qty, "Quantity mismatch");
     }
 
     public function testCreate() {
@@ -248,7 +248,7 @@ class StocksServiceTest extends \PHPUnit_Framework_TestCase {
         $move = new StockMove(stdtimefstr("2014-01-01 00:00:00"),
                 StockMove::REASON_IN_BUY, $level->productId,
                 $level->locationId, $level->attrSetInstId,
-                3.5, 10);
+                $level->qty, 10);
         $move->id = StocksService::addMove($move);
         $read = StocksService::getLevel($move->productId, $move->locationId,
                 $move->attrSetInstId);

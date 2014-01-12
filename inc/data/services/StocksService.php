@@ -109,41 +109,47 @@ class StocksService {
 
     static function getLevel($productId, $locationId, $attrSetInstId = null) {
         $pdo = PDOBuilder::getPDO();
-        /* Start from LOCATIONS table to return a line with null everywhere
-         * if there is no stocklevel nor current stock and no line at all
-         * if the location does not exist.
-         * Check attribute set instance afterward to still get security and max
-         * even if there is no stock for the attribute set instance. */
-        $sql = "SELECT STOCKLEVEL.ID, LOCATIONS.ID AS LOCATION, "
-                . "ATTRIBUTESETINSTANCE_ID, STOCKSECURITY, STOCKMAXIMUM, UNITS "
-                . "FROM LOCATIONS "
-                . "LEFT JOIN STOCKLEVEL ON STOCKLEVEL.LOCATION = LOCATIONS.ID "
-                . "LEFT JOIN STOCKCURRENT ON "
-                . "STOCKLEVEL.PRODUCT = STOCKCURRENT.PRODUCT "
-                . "AND STOCKCURRENT.LOCATION = STOCKLEVEL.LOCATION "
-                . "WHERE LOCATIONS.ID = :loc AND "
-                . "(STOCKLEVEL.PRODUCT = :id OR STOCKCURRENT.PRODUCT = :id)";
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(":id", $productId);
-        $stmt->bindParam(":loc", $locationId);
-        $stmt->execute();
-        while ($row = $stmt->fetch()) {
-            // Explicitly product id set because two potential sources from db
-            $row['PRODUCT'] = $productId;
-            if ($row['ATTRIBUTESETINSTANCE_ID'] == $attrSetInstId) {
-                // Found the line for the given attribute set instance id
-                $lvl = StocksService::buildDBLevel($row);
-                return $lvl;
-            } else if ($row['ATTRIBUTESETINSTANCE_ID'] === null) {
-                // Use the line without attribute for security and max if
-                // there is no line with the requested attribute set instance
-                $lvl = StocksService::buildDBLevel($row);
-            }
+        $id = null;
+        $security = null;
+        $max = null;
+        $qty = null;
+        $sqlLvl = "SELECT ID, PRODUCT, STOCKSECURITY, STOCKMAXIMUM "
+                . "FROM STOCKLEVEL "
+                . "WHERE LOCATION = :loc AND PRODUCT = :prd";
+        $stmtLvl = $pdo->prepare($sqlLvl);
+        $stmtLvl->bindParam(":loc", $locationId);
+        $stmtLvl->bindParam(":prd", $productId);
+        $stmtLvl->execute();
+        if ($row = $stmtLvl->fetch()) {
+            $id = $row['ID'];
+            $security = $row['STOCKSECURITY'];
+            $max = $row['STOCKMAXIMUM'];
         }
-        if (isset($lvl)) {
-            return $lvl;
+        // Get quantity
+        $sqlQty = "SELECT UNITS "
+                . "FROM STOCKCURRENT "
+                . "WHERE LOCATION = :loc AND PRODUCT = :prd ";
+        if ($attrSetInstId === null) {
+            $sqlQty .= "AND ATTRIBUTESETINSTANCE_ID IS NULL";
+        } else {
+            $sqlQty .= "AND ATTRIBUTESETINSTANCE_ID = :attrSetInstId";
         }
-        return null;
+        $stmtQty = $pdo->prepare($sqlQty);
+        $stmtQty->bindParam(':loc', $locationId);
+        $stmtQty->bindParam(":prd", $productId);
+        if ($attrSetInstId !== null) {
+            $stmtQty->bindParam(":attrSetInstId", $attrSetInstId);
+        }
+        $stmtQty->execute();
+        if ($row = $stmtQty->fetch()) {
+            $qty = $row['UNITS'];
+        }
+        if ($id !== null || $qty !== null) {
+            return StockLevel::__build($id, $productId, $locationId,
+                    $attrSetInstId, $security, $max, $qty);
+        } else {
+            return null;
+        }
     }
 
     /** Set security and maximum level for a product in a location.
