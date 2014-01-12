@@ -20,10 +20,6 @@
 
 namespace Pasteque;
 
-if (@constant("\Pasteque\ABSPATH") === NULL) {
-    die();
-}
-
 switch ($_GET['w']) {
 case 'pdf':
     require_once(ABSPATH . "/lib/fpdf17/fpdf.php");
@@ -34,4 +30,3 @@ default:
     break;
 }
 print_content($_GET['m'], $_GET['n']);
-?>

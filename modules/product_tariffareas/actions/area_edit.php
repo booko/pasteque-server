@@ -71,12 +71,6 @@ if (isset($_GET['id'])) {
 $categories = \Pasteque\CategoriesService::getAll();
 $products = \Pasteque\ProductsService::getAll(true);
 
-function catalog_category($category, $js) {
-    echo "<a id=\"category-" . $category->id . "\" class=\"catalog-category\" onClick=\"javascript:" . $js . "return false;\">";
-    echo "<img src=\"?" . \Pasteque\URL_ACTION_PARAM . "=img&w=category&id=" . $category->id . "\" />";
-    echo "<p>" . $category->label . "</p>";
-    echo "</a>";
-}
 ?>
 <h1><?php \pi18n("Tariff area", PLUGIN_NAME); ?></h1>
 

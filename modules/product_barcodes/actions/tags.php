@@ -32,12 +32,6 @@ foreach ($allProducts as $product) {
     }
 }
 
-function catalog_category($category, $js) {
-    echo "<a id=\"category-" . $category->id . "\" class=\"catalog-category\" onClick=\"javascript:" . $js . "return false;\">";
-    echo "<img src=\"?" . \Pasteque\URL_ACTION_PARAM . "=img&w=category&id=" . $category->id . "\" />";
-    echo "<p>" . $category->label . "</p>";
-    echo "</a>";
-}
 ?>
 <h1><?php \pi18n("Tags", PLUGIN_NAME); ?></h1>
 
@@ -49,20 +43,7 @@ function catalog_category($category, $js) {
 		<input type="numeric" name="start_from" id="start_from" value="1" />
 	</div>
 
-	<div class="catalog-categories-container">
-<?php foreach ($categories as $category) {
-    foreach ($products as $product) {
-        if ($product->category->id == $category->id) {
-            catalog_category($category, "changeCategory('" . $category->id . "');");
-            break;
-        }
-    }
-} ?>
-	</div>
-
-	<div id="products" class="catalog-products-container">
-	</div>
-
+    <div id="catalog-picker"></div>
 
 	<table cellpadding="0" cellspacing="0">
 		<thead>
@@ -84,60 +65,13 @@ function catalog_category($category, $js) {
 
 </form>
 
+<?php \Pasteque\init_catalog("catalog", "catalog-picker", "addProduct",
+        $categories, $products); ?>
+
 <script type="text/javascript">
-	centerImage = function(selector) {
-		var container = jQuery(selector);
-		var img = container.children("img");
-		var containerWidth = parseInt(container.css('width'));
-		var containerHeight = parseInt(container.css('height'));
-		var imgWidth = parseInt(img.css('width'));
-		var imgHeight = parseInt(img.css('height'));
-		var hOffset = (containerWidth - imgWidth) / 2;
-		var vOffset = (containerHeight - imgHeight) / 2;
-		img.css("left", hOffset + "px");
-		img.css("top", vOffset + "px");
-	}
-
-	jQuery().ready(function() {
-<?php foreach ($categories as $category) {
-	echo "\t\tcenterImage('#category-" . $category->id . "');\n";
-} ?>
-	});
-
-	var productsByCategory = new Array();
-	var products = new Array();
-
-	addProductToCat = function(product, category) {
-		if (typeof(productsByCategory[category]) != 'object') {
-			productsByCategory[category] = new Array();
-		}
-		productsByCategory[category].push(product);
-	}
-<?php foreach ($products as $product) {
-	echo "\taddProductToCat(\"" . $product->id . "\", \"" . $product->category->id . "\");\n";
-	echo "\tproducts[\"" . $product->id . "\"] = {\"id\":\"" . $product->id . "\", \"label\": \"" . $product->label . "\", \"reference\": \"" . $product->reference . "\", \"img\": \"?" . \Pasteque\URL_ACTION_PARAM . "=img&w=product&id=" . $product->id . "\"};\n";
-} ?>
-
-	showProduct = function(productId) {
-		var product = products[productId];
-		html = "<a id=\"product-" + productId + "\"class=\"catalog-product\" onClick=\"javascript:addProduct('" + product['id'] + "');return false;\">";
-		html += "<img src=\"" + product["img"] + "\" />";
-		html += "<p>" + product['label'] + "</p>";
-		html += "</a>";
-		jQuery("#products").append(html);
-		centerImage("#product-" + productId);
-	}
-
-	changeCategory = function(category) {
-		jQuery("#products").html("");
-		var prdCat = productsByCategory[category];
-		for (var i = 0; i < prdCat.length; i++) {
-			showProduct(prdCat[i]);
-		}
-	}
 
 	addProduct = function(productId) {
-		var product = products[productId];
+		var product = catalog.products[productId];
 		if (jQuery("#line-" + productId).length > 0) {
 			// Add quantity to existing line
 			var qty = jQuery("#line-" + productId + "-qty");
@@ -160,7 +94,4 @@ function catalog_category($category, $js) {
 		jQuery("#line-" + productId).detach();
 	}
 
-<?php if (count($categories) > 0) {
-	echo "\tchangeCategory(\"" . $categories[0]->id . "\");\n";
-} ?>
 </script>
