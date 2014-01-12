@@ -26,11 +26,6 @@ class CurrenciesAPITest extends \PHPUnit_Framework_TestCase {
     const API = "CurrenciesAPI";
     private $currencies;
 
-    public static function setUpBeforeClass() {
-        // Install empty database
-        Installer::install(null);
-    }
-
     protected function setUp() {
         $this->currencies = array();
         $srv = new CurrenciesService();
@@ -52,11 +47,6 @@ class CurrenciesAPITest extends \PHPUnit_Framework_TestCase {
         if ($pdo->exec("DELETE FROM CURRENCIES") === false) {
             echo("[ERROR] Unable to restore db\n");
         }
-    }
-
-    public static function tearDownAfterClass() {
-        // Erase database
-        dropDatabase();
     }
 
     public function testGet() {
@@ -117,4 +107,3 @@ class CurrenciesAPITest extends \PHPUnit_Framework_TestCase {
         $this->markTestIncomplete("Check content");
     }
 }
-?>

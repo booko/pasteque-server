@@ -25,17 +25,7 @@ class UsersAPITest extends \PHPUnit_Framework_TestCase {
 
     const API = "UsersAPI";
 
-    public static function setUpBeforeClass() {
-        // Install empty database
-        Installer::install(null);
-    }
-
     protected function tearDown() {
-    }
-
-    public static function tearDownAfterClass() {
-        // Erase database
-        dropDatabase();
     }
 
     public function testGet() {
@@ -67,4 +57,3 @@ class UsersAPITest extends \PHPUnit_Framework_TestCase {
         $this->markTestIncomplete("Check content");
     }
 }
-?>

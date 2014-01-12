@@ -26,11 +26,6 @@ class LocationsAPITest extends \PHPUnit_Framework_TestCase {
     const API = "LocationsAPI";
     private $locations;
 
-    public static function setUpBeforeClass() {
-        // Install empty database
-        Installer::install(null);
-    }
-
     protected function setUp() {
         $this->locations = array();
         $srv = new LocationsService();
@@ -48,11 +43,6 @@ class LocationsAPITest extends \PHPUnit_Framework_TestCase {
         if ($pdo->exec("DELETE FROM LOCATIONS") === false) {
             echo("[ERROR] Unable to restore db\n");
         }
-    }
-
-    public static function tearDownAfterClass() {
-        // Erase database
-        dropDatabase();
     }
 
     public function testGet() {

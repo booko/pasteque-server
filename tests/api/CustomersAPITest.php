@@ -25,22 +25,12 @@ class CustomersAPITest extends \PHPUnit_Framework_TestCase {
 
     const API = "CustomersAPI";
 
-    public static function setUpBeforeClass() {
-        // Install empty database
-        Installer::install(null);
-    }
-
     protected function tearDown() {
         // Restore database in its empty state
         $pdo = PDOBuilder::getPDO();
         if ($pdo->exec("DELETE FROM CUSTOMERS") === false) {
             echo("[ERROR] Unable to restore db\n");
         }
-    }
-
-    public static function tearDownAfterClass() {
-        // Erase database
-        dropDatabase();
     }
 
     private function createCust($parentId, $label, $image, $dispOrder) {

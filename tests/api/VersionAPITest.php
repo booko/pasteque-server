@@ -23,15 +23,6 @@ require_once(dirname(dirname(__FILE__)) . "/common_load.php");
 
 class VersionAPITest extends \PHPUnit_Framework_TestCase {
 
-    public static function setUpBeforeClass() {
-    }
-
-    protected function tearDown() {
-    }
-
-    public static function tearDownAfterClass() {
-    }
-
     public function testVersionAPI() {
         $broker = new APIBroker("VersionAPI");
         $result = $broker->run(null, null);
@@ -44,4 +35,3 @@ class VersionAPITest extends \PHPUnit_Framework_TestCase {
     }
 
 }
-?>

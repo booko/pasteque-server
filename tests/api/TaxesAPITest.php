@@ -26,11 +26,6 @@ class TaxesAPITest extends \PHPUnit_Framework_TestCase {
     const API = "TaxesAPI";
     private $taxes;
 
-    public static function setUpBeforeClass() {
-        // Install empty database
-        Installer::install(null);
-    }
-
     protected function setUp() {
         $this->taxes = array();
         $taxCat1 = new TaxCat("Standard");
@@ -60,11 +55,6 @@ class TaxesAPITest extends \PHPUnit_Framework_TestCase {
                 || $pdo->exec("DELETE FROM TAXCATEGORIES") === false) {
             echo("[ERROR] Unable to restore db\n");
         }
-    }
-
-    public static function tearDownAfterClass() {
-        // Erase database
-        dropDatabase();
     }
 
     public function testGet() {
@@ -100,4 +90,3 @@ class TaxesAPITest extends \PHPUnit_Framework_TestCase {
         $this->markTestIncomplete("Check content");
     }
 }
-?>

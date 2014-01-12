@@ -25,17 +25,7 @@ class RolesAPITest extends \PHPUnit_Framework_TestCase {
 
     const API = "RolesAPI";
 
-    public static function setUpBeforeClass() {
-        // Install empty database
-        Installer::install(null);
-    }
-
     protected function tearDown() {
-    }
-
-    public static function tearDownAfterClass() {
-        // Erase database
-        dropDatabase();
     }
 
     public function testGet() {
@@ -65,4 +55,3 @@ class RolesAPITest extends \PHPUnit_Framework_TestCase {
         $this->markTestIncomplete("Check content");
     }
 }
-?>

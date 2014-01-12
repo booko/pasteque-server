@@ -28,11 +28,6 @@ class StocksAPITest extends \PHPUnit_Framework_TestCase {
     private $locations;
     private $levels;
 
-    public static function setUpBeforeClass() {
-        // Install empty database
-        Installer::install(null);
-    }
-
     protected function setUp() {
         // Products
         $taxCat = new TaxCat("Tax");
@@ -79,11 +74,6 @@ class StocksAPITest extends \PHPUnit_Framework_TestCase {
                 || $pdo->exec("DELETE FROM TAXCATEGORIES") === false) {
             echo("[ERROR] Unable to restore db\n");
         }
-    }
-
-    public static function tearDownAfterClass() {
-        // Erase database
-        dropDatabase();
     }
 
     public function testGetAll() {

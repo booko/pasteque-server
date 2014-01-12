@@ -41,12 +41,8 @@ class CurrenciesAPI extends APIService {
             $this->succeed($srv->get($this->params['id']));
             break;
         case 'getMain':
-            $main = $srv->search(array(array("main", "=", true)));
-            if (count($main) >= 1) {
-                $this->succeed($main[0]);
-            } else { 
-                $this->succeed(null);
-            }
+            $main = $srv->getDefault();
+            $this->succeed($main);
             break;
         case 'getAll':
             $this->succeed($srv->getAll());
@@ -55,5 +51,3 @@ class CurrenciesAPI extends APIService {
     }
 
 }
-
-?>

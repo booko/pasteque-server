@@ -26,11 +26,6 @@ class ProductsAPITest extends \PHPUnit_Framework_TestCase {
     const API = "ProductsAPI";
     private $products;
 
-    public static function setUpBeforeClass() {
-        // Install empty database
-        Installer::install(null);
-    }
-
     protected function setUp() {
         $this->products = array();
         $taxCat = new TaxCat("Tax");
@@ -56,11 +51,6 @@ class ProductsAPITest extends \PHPUnit_Framework_TestCase {
                 || $pdo->exec("DELETE FROM TAXCATEGORIES") === false) {
             echo("[ERROR] Unable to restore db\n");
         }
-    }
-
-    public static function tearDownAfterClass() {
-        // Erase database
-        dropDatabase();
     }
 
     public function testGet() {

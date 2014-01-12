@@ -25,11 +25,6 @@ class AttributesAPITest extends \PHPUnit_Framework_TestCase {
 
     const API = "AttributesAPI";
 
-    public static function setUpBeforeClass() {
-        // Install empty database
-        Installer::install(null);
-    }
-
     protected function tearDown() {
         // Restore database in its empty state
         $pdo = PDOBuilder::getPDO();
@@ -39,11 +34,6 @@ class AttributesAPITest extends \PHPUnit_Framework_TestCase {
                 || $pdo->exec("DELETE FROM ATTRIBUTE") === false) {
             echo("[ERROR] Unable to restore db\n");
         }
-    }
-
-    public static function tearDownAfterClass() {
-        // Erase database
-        dropDatabase();
     }
 
     public function testGet() {

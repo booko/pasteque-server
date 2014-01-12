@@ -25,16 +25,6 @@ class ResourcesAPITest extends \PHPUnit_Framework_TestCase {
 
     const API = "ResourcesAPI";
 
-    public static function setUpBeforeClass() {
-        // Install empty database
-        Installer::install(null);
-    }
-
-    public static function tearDownAfterClass() {
-        // Erase database
-        dropDatabase();
-    }
-
     public function testGet() {
         $broker = new APIBroker(ResourcesAPITest::API);
         $result = $broker->run("get", array("label" => "Window.Logo"));

@@ -26,11 +26,6 @@ class PlacesAPITest extends \PHPUnit_Framework_TestCase {
     const API = "PlacesAPI";
     private $floors;
 
-    public static function setUpBeforeClass() {
-        // Install empty database
-        Installer::install(null);
-    }
-
     protected function setUp() {
         $this->floors = array();
         // Create some floors and places
@@ -61,11 +56,6 @@ class PlacesAPITest extends \PHPUnit_Framework_TestCase {
                 || $pdo->exec("DELETE FROM FLOORS") === false) {
             echo("[ERROR] Unable to restore db\n");
         }
-    }
-
-    public static function tearDownAfterClass() {
-        // Erase database
-        dropDatabase();
     }
 
     public function testGet() {
@@ -102,4 +92,3 @@ class PlacesAPITest extends \PHPUnit_Framework_TestCase {
         $this->markTestIncomplete("Check content");
     }
 }
-?>
