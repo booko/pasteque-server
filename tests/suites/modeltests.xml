@@ -1,0 +1,13 @@
+<phpunit>
+	<testsuites>
+		<testsuite name="models">
+			<file>models/CashTest.php</file>
+			<file>models/CurrencyTest.php</file>
+			<file>models/TaxesTest.php</file>
+			<file>models/CustomerTest.php</file>
+			<file>models/PlaceTest.php</file>
+			<file>models/FloorTest.php</file>
+			<file>models/AttributeTest.php</file>
+		</testsuite>
+	</testsuites>
+</phpunit>

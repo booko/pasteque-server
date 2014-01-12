@@ -23,11 +23,6 @@ require_once(dirname(dirname(__FILE__)) . "/common_load.php");
 
 class StocksServiceTest extends \PHPUnit_Framework_TestCase {
 
-    public static function setUpBeforeClass() {
-        // Install empty database
-        Installer::install(null);
-    }
-
     protected function setUp() {
         // Products
         $taxCat = new TaxCat("Tax");
@@ -64,11 +59,6 @@ class StocksServiceTest extends \PHPUnit_Framework_TestCase {
                 || $pdo->exec("DELETE FROM TAXCATEGORIES") === false) {
             echo("[ERROR] Unable to restore db\n");
         }
-    }
-
-    public static function tearDownAfterClass() {
-        // Erase database
-        dropDatabase();
     }
 
     /** Check equality of two levels for security and max levels */

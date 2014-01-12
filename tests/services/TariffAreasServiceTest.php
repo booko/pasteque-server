@@ -25,11 +25,6 @@ class TariffAreasServiceTest extends \PHPUnit_Framework_TestCase {
 
     private $prdId;
 
-    public static function setUpBeforeClass() {
-        // Install empty database
-        Installer::install(null);
-    }
-
     protected function setUp() {
         $taxCat = new TaxCat("Tax");
         $taxCat->id = TaxesService::createCat($taxCat);
@@ -52,11 +47,6 @@ class TariffAreasServiceTest extends \PHPUnit_Framework_TestCase {
                 || $pdo->exec("DELETE FROM TAXCATEGORIES") === false) {
             echo("[ERROR] Unable to restore db\n");
         }
-    }
-
-    public static function tearDownAfterClass() {
-        // Erase database
-        dropDatabase();
     }
 
     public function testCreateEmpty() {

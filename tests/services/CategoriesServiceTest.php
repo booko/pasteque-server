@@ -23,11 +23,6 @@ require_once(dirname(dirname(__FILE__)) . "/common_load.php");
 
 class CategoriesServiceTest extends \PHPUnit_Framework_TestCase {
 
-    public static function setUpBeforeClass() {
-        // Install empty database
-        Installer::install(null);
-    }
-
     protected function tearDown() {
         // Restore database in its empty state
         $pdo = PDOBuilder::getPDO();
@@ -36,11 +31,6 @@ class CategoriesServiceTest extends \PHPUnit_Framework_TestCase {
                 || $pdo->exec("DELETE FROM CATEGORIES") === false) {
             echo("[ERROR] Unable to restore db\n");
         }
-    }
-
-    public static function tearDownAfterClass() {
-        // Erase database
-        dropDatabase();
     }
 
     public function testCreate() {

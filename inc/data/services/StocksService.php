@@ -57,12 +57,11 @@ class StocksService {
         }
         // Get quantities
         $qties = array();
-        $sqlQty = "SELECT PRODUCT, ATTRIBUTEINSTANCE_ID AS ATTR, UNITS "
-                . "FROM STOCKLEVEL "
+        $sqlQty = "SELECT PRODUCT, ATTRIBUTESETINSTANCE_ID AS ATTR, UNITS "
+                . "FROM STOCKCURRENT "
                 . "WHERE LOCATION = :loc";
         $stmtQty = $pdo->prepare($sqlQty);
         $stmtQty->bindParam(':loc', $locationId);
-        $stmtQty->execute();
         while ($row = $stmtQty->fetch()) {
             $prdId = $row['PRODUCT'];
             if (!isset($qties[$row['PRODUCT']])) {

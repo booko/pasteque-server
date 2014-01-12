@@ -23,22 +23,12 @@ require_once(dirname(dirname(__FILE__)) . "/common_load.php");
 
 class CustomersServiceTest extends \PHPUnit_Framework_TestCase {
 
-    public static function setUpBeforeClass() {
-        // Install empty database
-        Installer::install(null);
-    }
-
     protected function tearDown() {
         // Restore database in its empty state
         $pdo = PDOBuilder::getPDO();
         if ($pdo->exec("DELETE FROM CUSTOMERS") === false) {
             echo("[ERROR] Unable to restore db\n");
         }
-    }
-
-    public static function tearDownAfterClass() {
-        // Erase database
-        dropDatabase();
     }
 
     public function testCreate() {
@@ -79,7 +69,7 @@ class CustomersServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals("Region", $row['REGION'], "Region mismatch");
         $this->assertEquals("France", $row['COUNTRY'], "Country mismatch");
         $this->assertEquals("Note", $row['NOTES'], "Note mismatch");
-        $this->assertEquals(true, $dp->readBool($row['VISIBLE']),
+        $this->assertEquals(true, $db->readBool($row['VISIBLE']),
                 "Visible mismatch");
     }
 
