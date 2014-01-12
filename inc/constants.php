@@ -24,5 +24,4 @@ const DB_VERSION = "4";
 const VERSION = "0.6.1";
 
 const URL_ACTION_PARAM = "p";
-
-?>
+const URL_REPORT_PARAM = "r";

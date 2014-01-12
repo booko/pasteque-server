@@ -20,25 +20,6 @@
 
 namespace BaseCashes;
 
-$startStr = NULL;
-$stopStr = NULL;
-if (isset($_GET['start']) || isset($_POST['start'])) {
-    $startStr = isset($_GET['start']) ? $_GET['start'] : $_POST['start'];
-} else {
-    $startStr = \i18nDate(time() - 86400);
-}
-if (isset($_GET['stop']) || isset($_POST['stop'])) {
-    $stopStr = isset($_GET['stop']) ? $_GET['stop'] : $_POST['stop'];
-} else {
-    $stopStr = \i18nDate(time());
-}
-// Set $start and $stop as timestamps
-$startTime = \i18nRevDate($startStr);
-$stopTime = \i18nRevDate($stopStr);
-// Sql values
-$start = \Pasteque\stdstrftime($startTime);
-$stop = \Pasteque\stdstrftime($stopTime);
-
 // Cash session request
 $sqls[] = "SELECT "
         . "CLOSEDCASH.HOST, CLOSEDCASH.MONEY, CLOSEDCASH.DATESTART, "
@@ -84,9 +65,15 @@ $headers = array(
         \i18n("Tickets", PLUGIN_NAME),
         \i18n("Sales", PLUGIN_NAME),
 );
-$report = new \Pasteque\MergedReport($sqls, $headers, $fields, $mergeFields);
-$report->setParam(":start", $start);
-$report->setParam(":stop", $stop);
+
+$report = new \Pasteque\MergedReport(PLUGIN_NAME, "ztickets",
+        \i18n("Z tickets", PLUGIN_NAME),
+        $sqls, $headers, $fields, $mergeFields);
+
+$report->addInput("start", \i18n("Session.openDate"), \Pasteque\DB::DATE);
+$report->setDefaultInput("start", time() - 86400);
+$report->addInput("stop", \i18n("Session.closeDate"), \Pasteque\DB::DATE);
+$report->setDefaultinput("stop", time());
 
 $report->addFilter("DATESTART", "\Pasteque\stdtimefstr");
 $report->addFilter("DATESTART", "\i18nDatetime");
@@ -96,5 +83,5 @@ $report->addFilter("SALES", "\i18nCurr");
 $report->addMergedFilter(0, "\i18nCurr");
 $report->addMergedHeaderFilter(0, "\i18n");
 $report->addMergedFilter(1, "\i18nCurr");
-\Pasteque\register_report(PLUGIN_NAME, "ztickets", $report);
-?>
+
+\Pasteque\register_report($report);

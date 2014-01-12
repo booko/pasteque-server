@@ -24,12 +24,10 @@ function init() {
     global $MENU;
     $MENU->addSection("sales", "Sales", PLUGIN_NAME);
 
-    $MENU->registerModuleEntry("sales", PLUGIN_NAME, "menu_sales.png", "CS report", "cs_report");
-    $MENU->registerModuleEntry("sales", PLUGIN_NAME, "menu_product_sales.png", "Sales by product", "sales_by_product_report");
-    $MENU->registerModuleEntry("sales", PLUGIN_NAME, "menu_sales_details.png", "Sales report", "sales_report");
-    $MENU->registerModuleEntry("sales", PLUGIN_NAME, "menu_tax.png", "Taxes report", "taxes_report");
+    $MENU->registerModuleReport("sales", PLUGIN_NAME, "menu_sales.png", "CS report", "cs_report");
+    $MENU->registerModuleReport("sales", PLUGIN_NAME, "menu_product_sales.png", "Sales by product", "sales_by_product_report");
+    $MENU->registerModuleReport("sales", PLUGIN_NAME, "menu_sales_details.png", "Sales report", "sales_report");
+    $MENU->registerModuleReport("sales", PLUGIN_NAME, "menu_tax.png", "Taxes report", "taxes_report");
     \Pasteque\register_i18n(PLUGIN_NAME);
 }
 \Pasteque\hook("module_load", __NAMESPACE__ . "\init");
-
-?>

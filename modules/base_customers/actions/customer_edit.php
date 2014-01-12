@@ -90,7 +90,7 @@ if (isset($_GET['id'])) {
 <?php \Pasteque\tpl_msg_box($message, $error); ?>
 
 <?php if ($cust !== NULL) { ?>
-<p><a class="btn" href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'customers_diary'); ?>&id=<?php echo $cust->id; ?>"><?php \pi18n("Customer's diary", PLUGIN_NAME); ?></a></p>
+<p><a class="btn" href="<?php echo \Pasteque\get_report_url(PLUGIN_NAME, 'customers_diary', 'display'); ?>&id=<?php echo $cust->id; ?>"><?php \pi18n("Customer's diary", PLUGIN_NAME); ?></a></p>
 <?php } ?>
 
 <form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post">

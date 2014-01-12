@@ -20,25 +20,6 @@
 
 namespace BaseSales;
 
-$startStr = NULL;
-$stopStr = NULL;
-if (isset($_GET['start']) || isset($_POST['start'])) {
-    $startStr = isset($_GET['start']) ? $_GET['start'] : $_POST['start'];
-} else {
-    $startStr = \i18nDate(time() - 86400);
-}
-if (isset($_GET['stop']) || isset($_POST['stop'])) {
-    $stopStr = isset($_GET['stop']) ? $_GET['stop'] : $_POST['stop'];
-} else {
-    $stopStr = \i18nDate(time());
-}
-// Set $start and $stop as timestamps
-$startTime = \i18nRevDate($startStr);
-$stopTime = \i18nRevDate($stopStr);
-// Sql values
-$start = \Pasteque\stdstrftime($startTime);
-$stop = \Pasteque\stdstrftime($stopTime);
-
 $sql = "SELECT CLOSEDCASH.HOST, CLOSEDCASH.DATESTART, "
         . "CLOSEDCASH.DATEEND, TICKETS.TICKETID, RECEIPTS.DATENEW, "
         . "PRODUCTS.NAME AS PRD_NAME, CATEGORIES.NAME AS CAT_NAME, "
@@ -59,9 +40,16 @@ $headers = array(\i18n("Session.host"), \i18n("Session.openDate"),
         \i18n("Ticket.date"), \i18n("Product name", PLUGIN_NAME),
         \i18n("Category name", PLUGIN_NAME),
         \i18n("Units", PLUGIN_NAME), \i18n("Sell", PLUGIN_NAME));
-$report = new \Pasteque\Report($sql, $headers, $fields);
-$report->setParam(":start", $start);
-$report->setParam(":stop", $stop);
+
+$report = new \Pasteque\Report(PLUGIN_NAME, "sales_report",
+        \i18n("Sales report", PLUGIN_NAME),
+        $sql, $headers, $fields);
+
+$report->addInput("start", \i18n("Session.openDate"), \Pasteque\DB::DATE);
+$report->setDefaultInput("start", time() - 86400);
+$report->addInput("stop", \i18n("Session.closeDate"), \Pasteque\DB::DATE);
+$report->setDefaultinput("stop", time());
+
 $report->addFilter("DATESTART", "\Pasteque\stdtimefstr");
 $report->addFilter("DATESTART", "\i18nDatetime");
 $report->addFilter("DATEEND", "\Pasteque\stdtimefstr");
@@ -70,5 +58,4 @@ $report->addFilter("DATENEW", "\Pasteque\stdtimefstr");
 $report->addFilter("DATENEW", "\i18nDatetime");
 $report->addFilter("SELL", "\i18nCurr");
 
-\Pasteque\register_report(PLUGIN_NAME, "sales_report", $report);
-?>
+\Pasteque\register_report($report);

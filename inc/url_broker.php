@@ -20,13 +20,15 @@
 
 namespace Pasteque;
 
-function redirect($path) {
+/** Redirect page content to an action */
+function redirectAction($path) {
     if (!file_exists(ABSPATH . "/" . $path . ".php")) {
         tpl_404();
         return;
     }
     require_once(ABSPATH . "/" . $path . ".php");
 }
+
 function redirect_report($module, $name) {
     if (!file_exists(ABSPATH . "/modules/" . $module . "/reports/" . $name . ".php")) {
         $ret = array("error" => "No such seport");
@@ -38,13 +40,17 @@ function redirect_report($module, $name) {
 
 /** Redirect page to the given one in url */
 function url_content() {
-    if (!isset($_GET[URL_ACTION_PARAM])) {
+    if (!isset($_GET[URL_ACTION_PARAM]) && !isset($_GET[URL_REPORT_PARAM])) {
         $action = "home";
-    } else {
+    } else if (isset($_GET[URL_ACTION_PARAM])) {
         $action = $_GET[URL_ACTION_PARAM];
+        $action = str_replace("..", "", $action);
+        redirectAction($action);
+    } else if (isset($_GET[URL_REPORT_PARAM])) {
+        $report = $_GET[URL_REPORT_PARAM];
+        $report = str_replace("..", "", $report);
+        redirectReport($report);
     }
-    $action = str_replace("..", "", $action);
-    redirect($action);
 }
 /** Redirect to the given report data */
 function report_content($module, $name) {
@@ -61,6 +67,9 @@ function print_content($module, $name) {
 
 function get_url_action($action) {
     return "./?" . URL_ACTION_PARAM . "=" . $action;
+}
+function get_url_report($report) {
+    return "./?" . URL_REPORT_PARAM . "=" . $report;
 }
 
 function get_module_url_action($module, $action, $params = array()) {
@@ -83,6 +92,9 @@ function get_current_url() {
 function get_module_action($module, $action) {
     return "modules/" . $module . "/actions/" . $action;
 }
+function get_module_report($module, $report) {
+    return "modules/" . $module . "/reports/" . $report;
+}
 
 function get_report_url($module, $report_name, $type = "csv") {
     return "./?" . URL_ACTION_PARAM . "=report&w=" . $type . "&m=" . $module
@@ -93,4 +105,3 @@ function get_template_url() {
     global $config;
     return "templates/" . $config['template'] . "/";
 }
-?>
