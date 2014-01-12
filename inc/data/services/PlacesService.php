@@ -31,9 +31,10 @@ class PlacesService {
 
     private static function buildDBFloor($dbFloor, $pdo) {
         $floor = Floor::__build($dbFloor['ID'], $dbFloor['NAME']);
-        $sqlplaces = 'SELECT * FROM PLACES WHERE FLOOR = "'
-                     . $dbFloor['ID'] . '"';
-        foreach ($pdo->query($sqlplaces) as $dbPlace) {
+        $stmt = $pdo->prepare("SELECT * FROM PLACES WHERE FLOOR = :id");
+        $stmt->bindParam(":id", $dbFloor['ID']);
+        $stmt->execute();
+        while ($dbPlace = $stmt->fetch()) {
             $place = PlacesService::buildDBPlace($dbPlace);
             $floor->addPlace($place);
         }

@@ -88,7 +88,6 @@ class StocksServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertNotEquals(false, $level->id, "Creation failed");
         $pdo = PDOBuilder::getPDO();
         $stmt = $pdo->prepare("SELECT * FROM STOCKLEVEL");
-        $stmt->bindParam(":id", $level->id);
         $this->assertNotEquals(false, $stmt->execute(), "Query failed");
         if ($row = $stmt->fetch()) {
             $this->assertEquals($level->id, $row['ID'], "Id mismatch");

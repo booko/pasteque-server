@@ -193,6 +193,7 @@ class StocksService {
 
     static function addMove($move) {
         $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
         $newTransaction = !$pdo->inTransaction();
         if ($newTransaction) {
             $pdo->beginTransaction();
@@ -235,7 +236,7 @@ class StocksService {
                 . ":qty, :price)";
         $diaryStmt = $pdo->prepare($diarySql);
         $diaryStmt->bindParam(":id", $id);
-        $diaryStmt->bindParam(":date", $move->date);
+        $diaryStmt->bindParam(":date", $db->dateVal($move->date));
         $diaryStmt->bindParam(":reason", $move->reason);
         $diaryStmt->bindParam(":loc", $move->locationId);
         $diaryStmt->bindParam(":prd", $move->productId);

@@ -30,16 +30,15 @@ class UsersService extends AbstractService {
             "ROLE" => "roleId",
             "APPPASSWORD" => "password",
             "CARD" => "card",
-            "VISIBLE" => "visible",
+            "VISIBLE" => array("type" => DB::BOOL, "attr" => "visible"),
     );
 
-    protected function build($db_user, $pdo = null) {
-        $user = User::__build($db_user['ID'], $db_user['NAME'],
-                $db_user['APPPASSWORD'], $db_user['CARD'], $db_user['ROLE'],
-                ord($db_user['VISIBLE']) == 1, $db_user['IMAGE'] != null);
+    protected function build($dbUser, $pdo = null) {
+        $db = DB::get();
+        $user = User::__build($dbUser['ID'], $dbUser['NAME'],
+                $dbUser['APPPASSWORD'], $dbUser['CARD'], $dbUser['ROLE'],
+                $db->readBool($dbUser['VISIBLE']), $dbUser['IMAGE'] != null);
         return $user;
     }
 
 }
-
-?>
