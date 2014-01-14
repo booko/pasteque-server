@@ -53,6 +53,8 @@
 "Category.dispOrder": "Order",
 
 "Composition.label": "Name",
+"Subgroup.label": "Name",
+"Subgroup.dispOrder": "Display order",
 
 "Attribute.label": "Name",
 "AttributeValue.value": "Value",

@@ -53,6 +53,8 @@
 "Category.dispOrder": "Ordre",
 
 "Composition.label": "Désignation",
+"Subgroup.label": "Désignation",
+"Subgroup.dispOrder": "Ordre",
 
 "Attribute.label": "Désignation",
 "AttributeValue.value": "Valeur",

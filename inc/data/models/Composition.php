@@ -20,35 +20,81 @@
 
 namespace Pasteque;
 
-class Composition extends Product{
+class Composition extends Product {
 
-    public $groups = Array();
+    public $groups;
 
     function addGroup($group) {
         $this->groups[] = $group;
     }
 
-    static function __build($id, $reference, $label, $price_sell, $category, $disp_order,
-                $tax_cat, $visible, $scaled, $price_buy = null,
-                $attributes_set = null, $barcode = null, $image = null,
-                $discount_enabled = false, $discount_rate = 0.0) {
-       $compo = new Composition($reference, $label, $price_sell, $category, $disp_order,
-                $tax_cat, $visible, $scaled, $price_buy,
-                $attributes_set, $barcode, $image, $discount_enabled,
-                $discount_rate);
+    static function __build($id, $reference, $label, $priceSell, $categoryId,
+            $dispOrder, $taxCatId, $visible, $scaled, $priceBuy = null,
+            $attributeSetId = null, $barcode = null, $hasImage = false,
+            $discountEnabled = false, $discountRate = 0.0) {
+        $compo = new Composition($reference, $label, $priceSell, $categoryId,
+                $dispOrder, $taxCatId, $visible, $scaled, $priceBuy,
+                $attributeSetId, $barcode, $hasImage, $discountEnabled,
+                $discountRate);
         $compo->id = $id;
         return $compo;
     }
     
-    function __construct($reference, $label, $price_sell, $category, $disp_order,
-                $tax_cat, $visible, $scaled, $price_buy,
-                $attributes_set, $barcode, $image, $discount_enabled,
-                $discount_rate) {
-        parent::__construct($reference, $label, $price_sell, $category, $disp_order,
-                $tax_cat, $visible, $scaled, $price_buy,
-                $attributes_set, $barcode, $image, $discount_enabled,
-                $discount_rate);
+    function __construct($reference, $label, $priceSell, $categoryId,
+            $dispOrder, $taxCatId, $visible, $scaled, $priceBuy,
+            $attributeSetId, $barcode, $hasImage, $discountEnabled,
+            $discountRate) {
+        parent::__construct($reference, $label, $priceSell, $categoryId,
+                $dispOrder, $taxCatId, $visible, $scaled, $priceBuy,
+                $attributeSetId, $barcode, $hasImage, $discountEnabled,
+                $discountRate);
+        $this->groups = array();
     }
 
 }
-?>
+
+class SubGroup {
+    public $id;
+    public $compositionId;
+    public $label;
+    public $hasImage;
+    public $dispOrder;
+    public $subgroupProds;
+
+    static function __build($id, $compositionId, $label,
+            $dispOrder = null, $hasImage = false) {
+        $sbg = new SubGroup($compositionId, $label,
+                $dispOrder, $hasImage);
+        $sbg->id = $id;
+        return $sbg;
+    }
+
+    function __construct($compositionId, $label, $dispOrder, $hasImage) {
+        $this->compositionId = $compositionId;
+        $this->label = $label;
+        $this->image = $hasImage;
+        $this->dispOrder = $dispOrder;
+        $this->subgroupProds = array();
+    }
+
+    function addProduct($subgroupProd) {
+        $this->subgroupProds[] = $subgroupProd;
+    }
+}
+
+class SubGroupProduct {
+    public $subgroupId;
+    public $productId;
+    public $dispOrder;
+
+    static function __build($productId, $groupId, $dispOrder = null) {
+        $sbgp = new SubGroupProduct($productId, $groupId, $dispOrder);
+        return $sbgp;
+    }
+
+    function __construct($productId, $groupId, $dispOrder = null) {
+        $this->productId = $productId;
+        $this->subgroupId = $groupId;
+        $this->dispOrder = $dispOrder;
+    }
+}

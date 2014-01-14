@@ -177,7 +177,7 @@ if ($stocks === TRUE && $product != NULL) {
 			<a class="btn" id="clear" href="" onClick="javascript:clearImage(); return false;"><?php \pi18n("Delete"); ?></a>
 			<a class="btn" style="display:none" id="restore" href="" onClick="javascript:restoreImage(); return false;"><?php \pi18n("Restore"); ?></a><br />
 		<?php } ?>
-			<input type="file" name="image" />
+			<input id="image" type="file" name="image" />
 		</div>
 	</div>
 	<?php \Pasteque\form_input("edit", "Product", $product, "visible", "boolean"); ?>
