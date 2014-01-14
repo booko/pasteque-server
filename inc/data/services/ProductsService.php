@@ -268,6 +268,8 @@ class ProductsService {
         $stmtcat->execute(array(":id" => $id));
         $stmtstk = $pdo->prepare("DELETE FROM STOCKLEVEL WHERE PRODUCT = :id");
         $stmtstk->execute(array(":id" => $id));
+        $stmtstk2 = $pdo->prepare("DELETE FROM STOCKCURRENT WHERE PRODUCT = :id");
+        $stmtstk2->execute(array(":id" => $id));
         // Update reference with garbage to break unicity constraint
         $garbage = "_deleted_" . \md5(\time());
         $stmt = $pdo->prepare("UPDATE PRODUCTS SET DELETED = " . $db->true()

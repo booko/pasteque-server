@@ -62,9 +62,10 @@ class StocksService {
                 . "WHERE LOCATION = :loc";
         $stmtQty = $pdo->prepare($sqlQty);
         $stmtQty->bindParam(':loc', $locationId);
+        $stmtQty->execute();
         while ($row = $stmtQty->fetch()) {
             $prdId = $row['PRODUCT'];
-            if (!isset($qties[$row['PRODUCT']])) {
+            if (!isset($qties[$prdId])) {
                 $qties[$prdId] = array();
             }
             $qties[$prdId][$row['ATTR']] = $row['UNITS'];

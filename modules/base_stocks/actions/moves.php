@@ -20,21 +20,35 @@
 
 namespace BaseStocks;
 
-$message = NULL;
-$error = NULL;
+$message = null;
+$error = null;
 
 $dateStr = isset($_POST['date']) ? $_POST['date'] : \i18nDate(time());
 $time = \i18nRevDate($dateStr);
-$date = \Pasteque\stdstrftime($time);
 if (isset($_POST['reason'])) {
     $reason = $_POST['reason'];
     $locationId = $_POST['location'];
     foreach ($_POST as $key => $value) {
         if (strpos($key, "qty-") === 0) {
-            $product_id = substr($key, 4);
+            $productId = substr($key, 4);
+            $product = \Pasteque\ProductsService::get($productId);
+            switch ($reason) {
+            case \Pasteque\StockMove::REASON_OUT_SELL:
+                $price = $product->priceSell;
+                break;
+            case \Pasteque\StockMove::REASON_IN_BUY:
+            case \Pasteque\StockMove::REASON_OUT_BACK:
+            default:
+                if ($product->priceBuy !== null) {
+                    $price = $product->priceBuy;
+                } else {
+                    $price = 0.0;
+                }
+                break;
+            }
             $qty = $value;
-            $move = new \Pasteque\StockMove($date, $reason, $locationId,
-                    $product_id, $qty);
+            $move = new \Pasteque\StockMove($time, $reason, $productId,
+                    $locationId, null, $qty, $price);
             if (\Pasteque\StocksService::addMove($move)) {
                 $message = \i18n("Changes saved");
             } else {
