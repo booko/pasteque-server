@@ -137,12 +137,12 @@ $products = \Pasteque\ProductsService::getAll(true);
     }
 
     jQuery(document).ready(function() {
-<?php if ($area !== null) foreach ($area->getPrices() as $id => $value) {
-    $product = \Pasteque\ProductsService::get($id);
+<?php if ($area !== null) foreach ($area->getPrices() as $price) {
+    $product = \Pasteque\ProductsService::get($price->productId);
     $taxCat = \Pasteque\TaxesService::get($product->taxCatId);
     $tax = $taxCat->getCurrentTax();
-    $price = $value * (1 + $tax->rate);
-    echo "\t\tinitProduct(\"" . $id . "\", " . $price . ");\n";
+    $vatPrice = $price->price * (1 + $tax->rate);
+    echo "\t\tinitProduct(\"" . $price->productId . "\", " . $vatPrice . ");\n";
 } ?>
     });
 </script>
