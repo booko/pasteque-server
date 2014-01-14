@@ -114,7 +114,8 @@
 "Header doesn't contain : %s": "L'entête ne contient pas : %s",
 "Header default": "Defaut d'entête",
 
-"Floors.name": "Désignation",
+"Floor.label": "Désignation",
+"Place.label": "Désignation",
 "Average": "Moyenne",
 
 "Currency.label": "Devise",

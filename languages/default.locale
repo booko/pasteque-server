@@ -114,7 +114,8 @@
 "Header doesn't contain : %s": "Header doesn't contain : %s",
 "Header default": "Header default",
 
-"Floors.name": "Name",
+"Floor.label": "Name",
+"Place.label": "Name",
 "Average": "Average",
 
 "Currency.name": "Currency",

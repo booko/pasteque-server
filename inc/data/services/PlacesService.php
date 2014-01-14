@@ -80,6 +80,11 @@ class PlacesService {
 
     static function deleteFloor($id) {
         $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("DELETE FROM PLACES WHERE FLOOR = :id");
+        $stmt->bindParam(":id", $id);
+        if ($stmt->execute() === false) {
+            return false;
+        }
         $stmt = $pdo->prepare("DELETE FROM FLOORS WHERE ID = :id");
         if ($stmt->execute(array(':id' => $id))) {
             return true;
@@ -101,8 +106,11 @@ class PlacesService {
             $stmt->bindParam(":image", $image);
         }
         $stmt->bindParam(":id", $floor->id, \PDO::PARAM_STR);
-
-        return $stmt->execute();
+        if ($stmt->execute() !== false) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     static function getAllPlaces() {
