@@ -193,6 +193,9 @@ class StocksService {
     }
 
     static function addMove($move) {
+        if ($move->qty == 0) {
+            return;
+        }
         $pdo = PDOBuilder::getPDO();
         $db = DB::get();
         $newTransaction = !$pdo->inTransaction();
@@ -202,16 +205,22 @@ class StocksService {
         $qty = StockMove::isIn($move->reason)
                 ? $move->qty : $move->qty * -1;
         // Update STOCKCURRENT
-        $stockSql = "UPDATE STOCKCURRENT SET UNITS = (UNITS + :qty) "
-                . "WHERE LOCATION = :loc AND PRODUCT = :prd "
-                . "AND ATTRIBUTESETINSTANCE_ID = :attrSetInstId";
+        $stockSql = "UPDATE STOCKCURRENT SET UNITS = (UNITS + "
+                . floatval($qty) . ") "
+                . "WHERE LOCATION = :loc AND PRODUCT = :prd ";
+        if ($move->attrSetInstId === null) {
+            $stockSql .= "AND ATTRIBUTESETINSTANCE_ID IS NULL";
+        } else {
+            $stockSql .= "AND ATTRIBUTESETINSTANCE_ID = :attrSetInstId";
+        }
         $stockStmt = $pdo->prepare($stockSql);
-        $stockStmt->bindParam(":qty", $qty);
         $stockStmt->bindParam(":loc", $move->locationId);
         $stockStmt->bindParam(":prd", $move->productId);
-        $stockStmt->bindParam(":attrSetInstId", $move->attrSetInstId);
+        if ($move->attrSetInstId !== null) {
+            $stockStmt->bindParam(":attrSetInstId", $move->attrSetInstId);
+        }
         $exec = $stockStmt->execute();
-        if ($exec !== false && $stockStmt->rowcount() == 0) {
+        if ($exec === false || $stockStmt->rowcount() === 0) {
             // Unable to update, insert
             $stockSql = "INSERT INTO STOCKCURRENT (LOCATION, PRODUCT, "
                     . "ATTRIBUTESETINSTANCE_ID, UNITS) "
@@ -223,7 +232,7 @@ class StocksService {
             $stockStmt->bindParam(":attrSetInstId", $move->attrSetInstId);
             $stockStmt->execute();
         }
-        if ($stockStmt->rowcount() == 0) {
+        if ($stockStmt->rowcount() === 0) {
             if ($newTransaction) {
                 $pdo->rollback();
             }
