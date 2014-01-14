@@ -18,6 +18,7 @@
 			<file>api/ResourcesAPITest.php</file>
 			<file>api/LocationsAPITest.php</file>
 			<file>api/StocksAPITest.php</file>
+			<file>api/CompositionsAPITest.php</file>
 			<file>clear.php</file>
 		</testsuite>
 	</testsuites>

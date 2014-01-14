@@ -230,6 +230,7 @@ class SubgroupsService {
                 return false;
             }
             $id = $pdo->lastInsertId("SUBGROUPS_ID_seq");
+            $group->id = $id;
             // Insert subgroup prods
             foreach ($group->subgroupProds as $sgprd) {
                 $srv = new SubgroupProdsService($id);
