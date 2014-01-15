@@ -41,4 +41,23 @@ class UsersService extends AbstractService {
         return $user;
     }
 
+    public function create($user) {
+        $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
+        $stmt = $pdo->prepare("INSERT INTO PEOPLE (ID, NAME, APPPASSWORD, "
+                . "CARD, ROLE, VISIBLE) VALUES "
+                . "(:id, :label, :pwd, :card, :roleId, :vis)");
+        $id = md5(time() . rand());
+        $stmt->bindParam(":id", $id);
+        $stmt->bindParam(":label", $user->name);
+        $stmt->bindParam(":pwd", $user->password);
+        $stmt->bindParam(":card", $user->card);
+        $stmt->bindParam(":roleId", $user->roleId);
+        $stmt->bindParam(":vis", $db->boolVal($user->visible));
+        if ($stmt->execute() !== false) {
+            return $id;
+        } else {
+            return false;
+        }
+    }
 }
