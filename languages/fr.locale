@@ -91,7 +91,7 @@
 "Customer.currDebt": "Dette actuelle",
 "Customer.debtDate": "Date",
 "Customer.note": "Note",
-"Customer.custTaxId": "Catégorie de taxe",
+"Customer.custTax": "Catégorie de taxe",
 "Customer.firstName": "Prénom",
 "Customer.lastName": "Nom",
 "Customer.email": "Email",

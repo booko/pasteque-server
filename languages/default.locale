@@ -91,7 +91,7 @@
 "Customer.currDebt": "Current debt",
 "Customer.debtDate": "Debt date",
 "Customer.note": "Note",
-"Customer.custTaxId": "Tax category",
+"Customer.custTax": "Tax category",
 "Customer.firstName": "First name",
 "Customer.lastName": "Last name",
 "Customer.email": "Email",
