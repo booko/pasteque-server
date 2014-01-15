@@ -9,6 +9,7 @@
 			<file>services/TariffAreasServiceTest.php</file>
 			<file>services/CurrenciesServiceTest.php</file>
 			<file>services/StocksServiceTest.php</file>
+			<file>services/TicketsServiceTest.php</file>
 			<file>clear.php</file>
 		</testsuite>
 	</testsuites>

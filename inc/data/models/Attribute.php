@@ -81,3 +81,41 @@ class AttributeSet {
         $this->attributes[] = $attr;
     }
 }
+
+class AttributeSetInstance {
+
+    public $id;
+    public $attrSetId;
+    public $value;
+    public $attrInsts;
+
+    public static function __build($id, $attrSetId, $value) {
+        $attrInst = new AttributeSetInstance($attrSetId, $value);
+        $attrInst->id = $id;
+        return $attrInst;
+    }
+
+    public function __construct($attrSetId, $value) {
+        $this->attrSetId = $attrSetId;
+        $this->value = $value;
+        $this->attrInsts = array();
+    }
+
+    public function addAttrInst($attrInst) {
+        $this->attrInsts[] = $attrInst;
+    }
+}
+
+class AttributeInstance {
+
+    public $id;
+    public $attrSetInstId;
+    public $attrId;
+    public $value;
+
+    public function __construct($attrSetInstId, $attrId, $value) {
+        $this->attrSetInstId = $attrSetInstId;
+        $this->attrId = $attrId;
+        $this->value = $value;
+    }
+}

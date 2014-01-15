@@ -20,94 +20,63 @@
 
 namespace Pasteque;
 
-/** Ticket with id only for external references */
-class TicketLight {
-    public $cashId;
-    public $label;
-    public $cashierId;
-    /** Payment date, as timestamp */
-    public $date;
-    public $linesLight;
-    public $payments;
-    public $customerId;
-
-    function __construct($label, $cashierId, $date, $lines, $payments, $cashId,
-            $customerId = NULL) {
-        $this->label = $label;
-        $this->cashierId = $cashierId;
-        $this->date = $date;
-        $this->linesLight = $lines;
-        $this->payments = $payments;
-        $this->cashId = $cashId;
-        $this->customerId = $customerId;
-    }
-
-    function getTaxAmounts() {
-        $amounts = array();
-        foreach ($ticket->lines as $line) {
-            if (isset($amounts[$line->tax])) {
-                $amounts[$line->tax] += $line->getSubtotal();
-            } else {
-                $amounts[$line->tax] = $line->getSubtotal();
-            }
-        }
-        $ta = array();
-        foreach ($amounts as $tax => $base) {
-            $ta[] = new TaxAmount($tax, $base);
-        }
-        return $ta;
-    }
-}
-
 class Ticket {
+    /** Sale ticket type */
+    const TYPE_SELL = 0;
+    /** Refund ticket type */
+    const TYPE_REFUND = 1;
+    /** Debt recovery ticket type */
+    const TYPE_PAYMENT = 2;
 
-    public $id;
-    public $cash;
+    public $cashId;
+    public $type;
     public $label;
-    public $cashier;
+    public $userId;
     /** Payment date, as timestamp */
     public $date;
     public $lines;
     public $payments;
-    public $customer;
+    public $customerId;
+    public $custCount;
+    public $tariffAreaId;
 
-    static function __build($id, $label, $cashier, $date, $lines, $payments,
-                            $cash, $customer = NULL) {
-        $ticket = new Ticket($label, $cashier, $date, $lines, $payments,
-                $cash, $customer);
-        $ticket->id = $id;
-        return $ticket;
+    static function __build($id, $type, $label, $userId, $date, $lines,
+            $payments, $cashId, $customerId = null, $custCount = null,
+            $tariffAreaId = null) {
+        $tkt = new Ticket($type, $label, $userId, $date, $lines, $payments,
+                $cashId, $customerId, $custCount, $tariffAreaId);
+        $tkt->id = $id;
+        return $tkt;
     }
 
-    function __construct($label, $cashier, $date, $lines, $payments, $cash,
-            $customer = NULL) {
+    function __construct($type, $label, $userId, $date, $lines, $payments,
+            $cashId, $customerId = null, $custCount = null,
+            $tariffAreaId = null) {
+        $this->type = $type;
         $this->label = $label;
-        $this->cashier = $cashier;
+        $this->userId = $userId;
         $this->date = $date;
         $this->lines = $lines;
         $this->payments = $payments;
-        $this->cash = $cash;
-        $this->customer = $customer;
+        $this->cashId = $cashId;
+        $this->customerId = $customerId;
+        $this->custCount = $custCount;
+        $this->tariffAreaId = $tariffAreaId;
     }
 
     function getTaxAmounts() {
         $amounts = array();
-        $taxesMap = array(); // taxes by id
-        $amountsMap = array(); // amounts by tax id
         foreach ($this->lines as $line) {
-            if (isset($taxesMap[$line->tax->id])) {
-                $amountsMap[$line->tax->id] += $line->getSubtotal();
+            if (isset($amounts[$line->taxId])) {
+                $amounts[$line->taxId] += $line->getSubtotal();
             } else {
-                $amountsMap[$line->tax->id] = $line->getSubtotal();
-                $taxesMap[$line->tax->id] = $line->tax;
+                $amounts[$line->taxId] = $line->getSubtotal();
             }
         }
         $ta = array();
-        foreach ($taxesMap as $taxId => $tax) {
-            $ta[] = new TaxAmount($taxesMap[$taxId], $amountsMap[$taxId]);
+        foreach ($amounts as $taxId => $base) {
+            $ta[] = new TaxAmount($taxId, $base);
         }
         return $ta;
     }
 }
-
-?>

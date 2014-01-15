@@ -23,22 +23,16 @@ namespace Pasteque;
 // Mapped to TAXLINE
 class TaxAmount {
 
-    public $id;
-    public $tax_id;
+    public $taxId;
     public $base;
 
-    static function __build($id, $tax, $base) {
-        $ta = new TaxAmount($tax, $base);
-        $ta->id = $id;
-        return $ta;
-    }
-
-    function __construct($tax, $base) {
-        $this->tax = $tax;
+    function __construct($taxId, $base) {
+        $this->taxId = $taxId;
         $this->base = $base;
     }
 
     function getAmount() {
-        return $this->base * $this->tax->rate;
+        $tax = TaxesService::getTax($this->taxId);
+        return $this->base * $tax->rate;
     }
 }

@@ -20,43 +20,29 @@
 
 namespace Pasteque;
 
-class TicketLineLight {
+class TicketLine {
 
-    public $line;
+    public $dispOrder;
     public $productId;
+    public $attrSetInstId;
     public $quantity;
     public $price;
     public $taxId;
-
-    function __construct($line, $productId, $quantity, $price, $taxId) {
-        $this->line = $line;
-        $this->productId = $productId;
-        $this->quantity = $quantity;
-        $this->price = $price;
-        $this->taxId = $taxId;
-    }
-
-    function getSubtotal() {
-        return $this->price * $this->quantity;
-    }
-}
-
-class TicketLine {
-
-    public $line;
-    public $product;
-    public $quantity;
-    public $price;
-    public $tax;
+    /** XML attribute field */
     public $attributes;
 
-    function __construct($line, $product, $quantity, $price, $tax) {
-        $this->line = $line;
-        $this->product = $product;
+    /** Constructor must take full product and tax objects to build
+     * xml attributes. Only the id is then kept.
+     */
+    function __construct($line, $product, $attrSetInstId, $quantity, $price,
+            $tax) {
+        $this->dispOrder = $line;
+        $this->productId = $product->id;
+        $this->attrSetInstId = $attrSetInstId;
         $this->quantity = $quantity;
         $this->price = $price;
-        $this->tax = $tax;
-        $this->createAttributes();
+        $this->taxId = $tax->id;
+        $this->createAttributes($product, $tax);
     }
 
     function getSubtotal() {
@@ -64,7 +50,7 @@ class TicketLine {
     }
 
     /** Build xml attributes from line data. See TicketLineInfo constructors. */
-    private function createAttributes() {
+    private function createAttributes($product, $tax) {
         // Set xml
         $domimpl = new \DOMImplementation();
         $doctype = $domimpl->createDocumentType('properties', null,
@@ -85,7 +71,7 @@ class TicketLine {
         $key = $attrs->createAttribute("key");
         $key->appendChild($attrs->createTextNode("product.taxcategoryid"));
         $entry->appendChild($key);
-        $entry->appendChild($attrs->createTextNode($this->tax->taxCatId));
+        $entry->appendChild($attrs->createTextNode($tax->taxCatId));
         $properties->appendChild($entry);
         $entry = $attrs->createElement("entry");
         $key = $attrs->createAttribute("key");
@@ -97,24 +83,22 @@ class TicketLine {
         $key = $attrs->createAttribute("key");
         $key->appendChild($attrs->createTextNode("product.categoryid"));
         $entry->appendChild($key);
-        $entry->appendChild($attrs->createTextNode($this->product->categoryId));
+        $entry->appendChild($attrs->createTextNode($product->categoryId));
         $properties->appendChild($entry);
         $entry = $attrs->createElement("entry");
         $key = $attrs->createAttribute("key");
         $key->appendChild($attrs->createTextNode("product.scale"));
         $entry->appendChild($key);
-        $entry->appendChild($attrs->createTextNode(strval($this->product->scaled)?"true":"false"));
+        $entry->appendChild($attrs->createTextNode(strval($product->scaled)?"true":"false"));
         $properties->appendChild($entry);
         $entry = $attrs->createElement("entry");
         $key = $attrs->createAttribute("key");
         $key->appendChild($attrs->createTextNode("product.name"));
         $entry->appendChild($key);
-        $entry->appendChild($attrs->createTextNode($this->product->label));
+        $entry->appendChild($attrs->createTextNode($product->label));
         $properties->appendChild($entry);
         // Save all this stuff
         $this->attributes = $attrs->saveXML();
     }
 
 }
-
-?>

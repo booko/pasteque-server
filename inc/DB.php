@@ -37,6 +37,10 @@ class DB {
         return new DB(get_db_type(get_user_id()));
     }
 
+    public function getType() {
+        return $this->type;
+    }
+
     public function readBool($val) {
         switch ($this->type) {
         case 'mysql':

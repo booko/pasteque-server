@@ -22,92 +22,90 @@ namespace Pasteque;
 
 class TicketsService {
 
-    /** Build a full ticket from a light ticket */
-    static function buildLight($ticketLight) {
-        $cashier = UsersService::get($ticketLight->cashierId);
-        $cash = CashesService::get($ticketLight->cashId);
-        $customer = CustomersService::get($ticketLight->customerId);
-        $lines = array();
-        foreach ($ticketLight->linesLight as $lineLight) {
-            $product = ProductsService::get($lineLight->productId);
-            $tax = TaxesService::getTax($lineLight->taxId);
-            $line = new TicketLine($lineLight->line, $product,
-                    $lineLight->quantity, $lineLight->price, $tax);
-            $lines[] = $line;
-        }
-        $ticket = new Ticket($ticketLight->label, $cashier, $ticketLight->date,
-                $lines, $ticketLight->payments, $cash, $customer);
-        return $ticket;
+    private static function buildDBTkt($dbTkt, $pdo) {
+        return Ticket::__build($dbTkt['ID'], $dbTkt['TICKETTYPE'],
+                $dbTkt['TICKETID'], $dbTkt['PERSON'], $dbTkt['DATENEW'],
+                array(), array(), $dbTkt['MONEY'], $dbTkt['CUSTOMER'],
+                $dbTkt['CUSTCOUNT'], $dbTkt['TARIFFAREA']);
     }
 
-    private static function buildDBTkt($db_tkt, $pdo) {
-        // TODO: add references
-        return Ticket::__build($db_tkt['ID'], $db_tkt['TICKETID'],
-                $db_tkt['PERSON'], $db_tkt['DATENEW'], array(), array(),
-                $db_tkt['MONEY']);
-    }
-
-    static function getBySession($sessId) {
-        $tkts = array();
+    static function save($ticket, $locationId = "0") {
         $pdo = PDOBuilder::getPDO();
-        $stmt = $pdo->prepare("SELECT * FROM `TICKETS` LEFT JOIN RECEIPTS ON "
-                . "TICKETS.ID = RECEIPTS.ID WHERE MONEY = :id");
-        $stmt->bindParam(':id', $sessId);
-        while ($db_tkt = $stmt->fetch()) {
-            $tkt = TicketsService::buildDBTkt($db_tkt, $pdo);
-            $tkts[] = $tkt;
-        }
-        return $tkts;
-    }
-
-    static function save($ticket, $location = "0") {
-        $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
         $newTransaction = !$pdo->inTransaction();
         if ($newTransaction) {
             $pdo->beginTransaction();
         }
         $id = md5(time() . rand());
         $stmtRcpt = $pdo->prepare("INSERT INTO RECEIPTS	(ID, MONEY, DATENEW) "
-                                  . "VALUES (:id, :money, :date)");
-        $strdate = strftime("%Y-%m-%d %H:%M", $ticket->date);
-        $ok = $stmtRcpt->execute(array(':id' => $id,
-                                       ':money' => $ticket->cash->id,
-                                       ':date' => $strdate));
-        if ($ok === false) {
+                . "VALUES (:id, :money, :date)");
+        $stmtRcpt->bindParam(":id", $id);
+        $stmtRcpt->bindParam(":money", $ticket->cashId);
+        $stmtRcpt->bindParam(":date", $db->dateVal($ticket->date));
+        if ($stmtRcpt->execute() === false) {
             if ($newTransaction) {
                 $pdo->rollback();
             }
             return false;
         }
         // Get next ticket number
-        $stmtNum = $pdo->prepare("SELECT ID FROM TICKETSNUM");
-        $ok = $stmtNum->execute();
-        if ($ok === false) {
-            if ($newTransaction) {
-                $pdo->rollback();
-            }
-            return false;
+        switch ($ticket->type) {
+        case Ticket::TYPE_REFUND:
+            $ticketNumTable = "TICKETSNUM_REFUND";
+            break;
+        case Ticket::TYPE_PAYMENT:
+            $ticketNumTable = "TICKETSNUM_PAYMENT";
+        case Ticket::TYPE_SELL:
+        default:
+            $ticketNumTable = "TICKETSNUM";
+            break;
         }
-        $nextNum = $stmtNum->fetchColumn(0);
+        switch ($db->getType()) {
+        case 'mysql':
+            // Get ticket number
+            $stmtNum = $pdo->prepare("SELECT ID FROM " . $ticketNumTable);
+            if ($stmtNum->execute() === false) {
+                if ($newTransaction) {
+                    $pdo->rollback();
+                }
+                return false;
+            }
+            $nextNum = $stmtNum->fetchColumn(0);
+            // Increment next ticket number
+            $stmtNumInc = $pdo->prepare("UPDATE " . $ticketNumTable
+                    . " SET ID = :id");
+            $stmtNumInc->bindParam(":id", $nextNum + 1);
+            if ($stmtNumInc->execute() === false) {
+                if ($newTransaction) {
+                    $pdo->rollback();
+                }
+                return false;
+            }
+            break;
+        case 'postgresql':
+            $stmtNum = $pdo->prepare("SELECT nextval('"
+                    . $ticketNumTable . "')");
+            if ($stmtNum->execute() === false) {
+                if ($newTransaction) {
+                    $pdo->rollback();
+                }
+                return false;
+            }
+            $nextNum = $stmtNum->fetchColumn(0);
+            break;
+        }
         //  Insert ticket
-        $stmtTkt = $pdo->prepare("INSERT INTO TICKETS (ID, TICKETID, PERSON, "
-                . "CUSTOMER) VALUES (:id, :tktId, :person, :cust)");
-        $cust = $ticket->customer === NULL ? NULL : $ticket->customer->id;
+        $stmtTkt = $pdo->prepare("INSERT INTO TICKETS (ID, TICKETID, "
+                . "TICKETTYPE, PERSON, CUSTOMER, CUSTCOUNT, TARIFFAREA) VALUES "
+                . "(:id, :tktId, :tktType, :person, :cust, :custcount, :taId)");
         $stmtTkt->bindParam(':id', $id, \PDO::PARAM_STR);
         $stmtTkt->bindParam(':tktId', $nextNum, \PDO::PARAM_INT);
-        $stmtTkt->bindParam(':person', $ticket->cashier->id, \PDO::PARAM_STR);
-        $stmtTkt->bindParam(':cust', $cust, \PDO::PARAM_STR);
-        $ok = $stmtTkt->execute();
-        if ($ok === false) {
-            if ($newTransaction) {
-                $pdo->rollback();
-            }
-            return false;
-        }
-        // Increment next ticket number
-        $stmtNumInc = $pdo->prepare("UPDATE TICKETSNUM SET ID = :id");
-        $ok = $stmtNumInc->execute(array(':id' => $nextNum + 1));
-        if ($ok === false) {
+        $stmtTkt->bindParam(":tktType", $ticket->type);
+        $stmtTkt->bindParam(':person', $ticket->userId);
+        $stmtTkt->bindParam(':cust', $ticket->customerId);
+        $stmtTkt->bindParam(":custcount", $ticket->custCount);
+        $stmtTkt->bindParam(":taId", $ticket->tariffAreaId);
+        if ($stmtTkt->execute() === false) {
             if ($newTransaction) {
                 $pdo->rollback();
             }
@@ -116,43 +114,46 @@ class TicketsService {
         // Insert ticket lines
         // Also check for prepayments refill
         $stmtLines = $pdo->prepare("INSERT INTO TICKETLINES (TICKET, LINE, "
-                                   . "PRODUCT, UNITS, "
-                                   . "PRICE, TAXID, ATTRIBUTES) VALUES "
-                                   . "(:id, :line, :product, :qty, :price, "
-                                   . ":tax, :attrs)");
-        $prepaidIds = ProductsService::getPrepaidIds();
+                . "PRODUCT, ATTRIBUTESETINSTANCE_ID, UNITS, PRICE, TAXID, "
+                . "ATTRIBUTES) VALUES (:id, :line, :prdId, :attrSetInstId, "
+                .":qty, :price, :taxId, :attrs)");
         foreach ($ticket->lines as $line) {
-            $ok = $stmtLines->execute(array(':id' => $id,
-                                            ':line' => $line->line,
-                                            ':product' => $line->product->id,
-                                            ':qty' => $line->quantity,
-                                            ':price' => $line->price,
-                                            ':tax' => $line->tax->id,
-                                            ':attrs' => $line->attributes));
-            if ($ok === false) {
+            $stmtLines->bindParam(":id", $id);
+            $stmtLines->bindParam(":line", $line->dispOrder);
+            $stmtLines->bindParam(":prdId", $line->productId);
+            $stmtLines->bindParam(":attrSetInstId", $line->attrSetInstId);
+            $stmtLines->bindParam(":qty", $line->quantity);
+            $stmtLines->bindParam(":price", $line->price);
+            $stmtLines->bindParam(":taxId", $line->taxId);
+            $stmtLines->bindParam(":attrs", $line->attributes);
+            if ($stmtLines->execute() === false) {
                 if ($newTransaction) {
                     $pdo->rollback();
                 }
                 return false;
             }
             // Update stock
-            $move = new StockMove($strdate, StockMove::REASON_OUT_SELL,
-                    $location, $line->product->id, $line->quantity);
-            if (!StocksService::addMove($move)) {
+            $move = new StockMove($ticket->date, StockMove::REASON_OUT_SELL,
+                    $line->productId, $locationId, $line->attrSetInstId,
+                    $line->quantity, $line->price);
+            if (StocksService::addMove($move) === false) {
                 if ($newTransaction) {
                     $pdo->rollback();
                 }
                 return false;
             }
-            // Check prepayment
-            if ($cust !== NULL && in_array($line->product->id, $prepaidIds)) {
-                $ok = CustomersService::addPrepaid($cust,
+            // Check prepayment refill
+            $prepaidIds = ProductsService::getPrepaidIds();
+            if ($ticket->customerId !== null
+                    && in_array($line->productId, $prepaidIds)) {
+                $custSrv = new CustomersService();
+                $ok = $custSrv->addPrepaid($ticket->customerId,
                         $line->price * $line->quantity);
-                if ($ok === FALSE) {
+                if ($ok === false) {
                     if ($newTransaction) {
                         $pdo->rollback();
                     }
-                    return FALSE;
+                    return false;
                 }
             }
         }
@@ -160,26 +161,30 @@ class TicketsService {
         // Also check for prepayment debit
         $stmtPay = $pdo->prepare("INSERT INTO PAYMENTS (ID, RECEIPT, PAYMENT, "
                 . "TOTAL, CURRENCY, TOTALCURRENCY) VALUES (:id, :rcptId, "
-                . ":type, :amount, 1, :amount)");
+                . ":type, :amount, :currId, :currAmount)");
         foreach ($ticket->payments as $payment) {
             $paymentId = md5(time() . rand());
-            $ok = $stmtPay->execute(array(':id' => $paymentId,
-                                          ':rcptId' => $id,
-                                          ':type' => $payment->type,
-                                          ':amount' => $payment->amount));
-            if ($ok === false) {
+            $stmtPay->bindParam(":id", $paymentId);
+            $stmtPay->bindParam(":rcptId", $id);
+            $stmtPay->bindParam(":type", $payment->type);
+            $stmtPay->bindParam(":amount", $payment->amount);
+            $stmtPay->bindParam(":currId", $payment->currencyId);
+            $stmtPay->bindParam(":currAmount", $payment->currencyAmount);
+            if ($stmtPay->execute() === false) {
                 if ($newTransaction) {
                     $pdo->rollback();
                 }
                 return false;
             }
             if ($payment->type == 'prepaid') {
-                $ok = CustomersService::addPrepaid($cust, $payment->amount * -1);
-                if ($ok === FALSE) {
+                $custSrv = new CustomersService();
+                $ok = $custSrv->addPrepaid($ticket->customerId,
+                        $payment->amount * -1);
+                if ($ok === false) {
                     if ($newTransaction) {
                         $pdo->rollback();
                     }
-                    return FALSE;
+                    return false;
                 }
             }
         }
@@ -189,12 +194,12 @@ class TicketsService {
                                  . ":taxId, :base, :amount)");
         foreach ($ticket->getTaxAmounts() as $ta) {
             $taxId = md5(time() . rand());
-            $ok = $stmtTax->execute(array(':id' => $taxId,
-                                          ':rcptId' => $id,
-                                          ':taxId' => $ta->tax->id,
-                                          ':base' => $ta->base,
-                                          ':amount' => $ta->getAmount()));
-            if ($ok === false) {
+            $stmtTax->bindParam(":id", $taxId);
+            $stmtTax->bindParam(":rcptId", $id);
+            $stmtTax->bindParam(":taxId", $ta->taxId);
+            $stmtTax->bindParam(":base", $ta->base);
+            $stmtTax->bindParam(":amount", $ta->getAmount());
+            if ($stmtTax->execute() === false) {
                 if ($newTransaction) {
                     $pdo->rollback();
                 }
@@ -204,8 +209,48 @@ class TicketsService {
         if ($newTransaction) {
             $pdo->commit();
         }
-        return true;
+        return $id;
+    }
+
+    static function createAttrSetInst($attrs) {
+        $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
+        $newTransaction = !$pdo->inTransaction();
+        if ($newTransaction) {
+            $pdo->beginTransaction();
+        }
+        $id = md5(time() . rand());
+        $stmt = $pdo->prepare("INSERT INTO ATTRIBUTESETINSTANCE (ID, "
+                . "ATTRIBUTESET_ID, DESCRIPTION) VALUES (:id, :setId, :val)");
+        $stmt->bindParam(":id", $id);
+        $stmt->bindParam(":setId", $attrs->attrSetId);
+        $stmt->bindParam(":val", $attrs->value);
+        if ($stmt->execute() !== false) {
+            $attrId = md5(time() . rand());
+            $stmtAttr = $pdo->prepare("INSERT INTO ATTRIBUTEINSTANCE "
+                    . "(ID, ATTRIBUTESETINSTANCE_ID, ATTRIBUTE_ID, VALUE) "
+                    . " VALUES (:id, :attrSetInstId, :attrId, :val)");
+            foreach ($attrs->attrInsts as $inst) {
+                $stmtAttr->bindParam(":id", $attrId);
+                $stmtAttr->bindParam(":attrSetInstId", $id);
+                $stmtAttr->bindParam(":attrId", $inst->attrId);
+                $stmtAttr->bindParam(":val", $inst->value);
+                if ($stmtAttr->execute() === false) {
+                    if ($newTransaction) {
+                        $pdo->rollback();
+                    }
+                    return false;
+                }
+            }
+            if ($newTransaction) {
+                $pdo->commit();
+            }
+            return $id;
+        } else {
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
+            return false;
+        }
     }
 }
-
-?>
