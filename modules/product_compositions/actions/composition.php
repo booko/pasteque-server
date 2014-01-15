@@ -38,7 +38,7 @@ foreach ($compositions as $composition) {
 $par = !$par;
 ?>
 	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
-		<td><img class="thumbnail" src="?<?php echo \Pasteque\URL_ACTION_PARAM; ?>=img&w=category&product_id=<?php echo $composition->id; ?>" />
+		<td><img class="thumbnail" src="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=category&product_id=<?php echo $composition->id; ?>" />
 		<td><?php echo $composition->label; ?></td>
 		<td class="edition">
             <?php \Pasteque\tpl_btn("edition", \Pasteque\get_module_url_action(PLUGIN_NAME,

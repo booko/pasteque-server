@@ -22,7 +22,7 @@ namespace Pasteque;
 
 switch ($_GET['w']) {
 case 'pdf':
-    require_once(ABSPATH . "/lib/fpdf17/fpdf.php");
+    require_once(PT::$ABSPATH . "/lib/fpdf17/fpdf.php");
     //header("Content-type: text/pdf");
     break;
 case 'display':

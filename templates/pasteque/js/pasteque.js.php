@@ -27,5 +27,5 @@ function closePopup() {
 }
 
 function showAbout() {
-    showPopup('<p><img id="about-icon" src="<?php echo get_template_url() . "img/icon.png"; ?>" /> Pastèque <?php echo \i18n("Version.Codename"); ?> <?php echo VERSION ?></p>');
+    showPopup('<p><img id="about-icon" src="<?php echo get_template_url() . "img/icon.png"; ?>" /> Pastèque <?php echo \i18n("Version.Codename"); ?> <?php echo PT::VERSION ?></p>');
 }

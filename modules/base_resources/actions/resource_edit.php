@@ -62,7 +62,7 @@ if (isset($_GET['id'])) {
         $txtContent = $resource->content;
         break;
     case \Pasteque\Resource::TYPE_IMAGE:
-        $imgContent = \Pasteque\URL_ACTION_PARAM . "=img&w=resource&id=" . $resource->id;
+        $imgContent = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=resource&id=" . $resource->id;
         break;
     }
 }

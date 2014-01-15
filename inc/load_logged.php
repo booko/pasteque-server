@@ -24,7 +24,7 @@ namespace Pasteque;
 if(!isset($config['template'])) {
     die("No template given");
 }
-$tmpl_file = ABSPATH . "/templates/" . $config['template'] . "/module.php";
+$tmpl_file = PT::$ABSPATH . "/templates/" . $config['template'] . "/module.php";
 if (!file_exists($tmpl_file) || !is_readable($tmpl_file)) {
     die("Template not found");
 }
@@ -32,7 +32,7 @@ require_once($tmpl_file);
 // Load modules
 $modules = get_loaded_modules(get_user_id());
 foreach ($modules as $module) {
-    $module_file = ABSPATH . "/modules/" . $module . "/module.php";
+    $module_file = PT::$ABSPATH . "/modules/" . $module . "/module.php";
     if (file_exists($module_file)) {
         require_once($module_file);
     }

@@ -157,7 +157,7 @@ if (isset($_GET['id'])) {
 <script type="text/javascript">
 	updateBarcode = function() {
 		var barcode = jQuery("#barcode").val();
-		var src = "?<?php echo \Pasteque\URL_ACTION_PARAM; ?>=img&w=custcard&code=" + barcode;
+		var src = "?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=custcard&code=" + barcode;
 		jQuery("#barcodeImg").attr("src", src);
 	}
 	updateBarcode();

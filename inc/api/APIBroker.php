@@ -39,12 +39,12 @@ class APIBroker {
         if ($this->api === null || $this->api == ""
                 || strpos("..", $this->api) !== false
                 || strpos("/", $this->api) !== false
-                || !file_exists(ABSPATH . "/inc/data/api/"
+                || !file_exists(PT::$ABSPATH . "/inc/data/api/"
                         . $this->api . ".php")) {
             return APIResult::reject(APIError::$REJ_WRONG_API);
         }
         // Run the api
-        require_once(ABSPATH . "/inc/data/api/" . $this->api . ".php");
+        require_once(PT::$ABSPATH . "/inc/data/api/" . $this->api . ".php");
         $apiClass = new \ReflectionClass("\\Pasteque\\" . $this->api);
         $api = $apiClass->newInstance($action, $input);
         $api->run();

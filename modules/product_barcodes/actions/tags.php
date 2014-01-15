@@ -37,7 +37,7 @@ foreach ($allProducts as $product) {
 
 <?php \Pasteque\tpl_msg_box($message, $error); ?>
 
-<form class="edit" action="?<?php echo \Pasteque\URL_ACTION_PARAM; ?>=print&w=pdf&m=<?php echo PLUGIN_NAME; ?>&n=tags" method="post">
+<form class="edit" action="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=print&w=pdf&m=<?php echo PLUGIN_NAME; ?>&n=tags" method="post">
 	<div class="row">
 		<label for="start_from"><?php \pi18n("Start from", PLUGIN_NAME); ?></label>
 		<input type="numeric" name="start_from" id="start_from" value="1" />

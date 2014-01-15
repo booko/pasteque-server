@@ -128,7 +128,7 @@ $taxes = \Pasteque\TaxesService::getAll();
 			<div style="display:inline-block">
 				<input type="hidden" id="clearImage" name="clearImage" value="0" />
 				<?php if ($composition !== null && $composition->hasImage === true) { ?>
-				<img id="img" class="image-preview" src="?<?php echo \Pasteque\URL_ACTION_PARAM; ?>=img&w=product&id=<?php echo $product->id; ?>" />
+				<img id="img" class="image-preview" src="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=product&id=<?php echo $product->id; ?>" />
 				<a class="btn" id="clear" href="" onClick="javascript:clearImage(); return false;"><?php \pi18n("Delete"); ?></a>
 				<a class="btn" style="display:none" id="restore" href="" onClick="javascript:restoreImage(); return false;"><?php \pi18n("Restore"); ?></a><br />
 				<?php } ?>
@@ -293,7 +293,7 @@ updateMargin = function() {
 
     updateBarcode = function() {
 		var barcode = jQuery("#barcode").val();
-		var src = "?<?php echo \Pasteque\URL_ACTION_PARAM; ?>=img&w=barcode&code=" + barcode;
+		var src = "?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=barcode&code=" + barcode;
 		jQuery("#barcodeImg").attr("src", src);
 	}
 

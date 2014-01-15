@@ -30,7 +30,7 @@ function tpl_open() {
 	<link rel="stylesheet" type="text/css" href="templates/pasteque/catalog.css" />
 	<link rel="stylesheet" type="text/css" href="templates/pasteque/stock.css" />	
 	<script type="text/javascript" src="templates/pasteque/js/jquery-1.9.1.min.js"></script>
-	<script type="text/javascript" src="?<?php echo \Pasteque\URL_ACTION_PARAM; ?>=img&w=js&id=js/pasteque.js.php"></script>
+	<script type="text/javascript" src="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=js&id=js/pasteque.js.php"></script>
 </head>
 <body>
 <?php tpl_menu(); ?>	<div id="header">

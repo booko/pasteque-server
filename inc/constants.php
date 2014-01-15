@@ -20,8 +20,11 @@
 
 namespace Pasteque;
 
-const DB_VERSION = "4";
-const VERSION = "1.0 beta 1";
+class PT {
+    public static $ABSPATH;
+    const DB_LEVEL = "4";
+    const VERSION = "1.0 beta 1";
 
-const URL_ACTION_PARAM = "p";
-const URL_REPORT_PARAM = "r";
+    const URL_ACTION_PARAM = "p";
+    const URL_REPORT_PARAM = "r";
+}

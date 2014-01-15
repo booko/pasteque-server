@@ -91,7 +91,7 @@ if ($qty < 0) {
 }
 ?>
 	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
-	    <td><img class="thumbnail" src="?<?php echo \Pasteque\URL_ACTION_PARAM; ?>=img&w=product&id=<?php echo $level->productId; ?>" />
+	    <td><img class="thumbnail" src="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=product&id=<?php echo $level->productId; ?>" />
 		<td><?php echo $prdRef; ?></td>
 		<td><?php echo $prdLabel; ?></td>
 		<td class="numeric<?php echo $class; ?>"<?php echo $help; ?>><?php echo $qty; ?></td>

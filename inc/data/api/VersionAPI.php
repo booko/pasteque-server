@@ -27,8 +27,8 @@ class VersionAPI extends APIService {
     }
     protected function proceed() {
         $ret = new \StdClass();
-        $ret->version = VERSION;
-        $ret->level = DB_VERSION;
+        $ret->version = PT::VERSION;
+        $ret->level = PT::DB_LEVEL;
         $this->succeed($ret);
     }
 }

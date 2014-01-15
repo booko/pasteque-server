@@ -28,9 +28,9 @@ class VersionAPITest extends \PHPUnit_Framework_TestCase {
         $result = $broker->run(null, null);
         $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
                 "Result status check failed");
-        $this->assertEquals(VERSION, $result->content->version,
+        $this->assertEquals(PT::VERSION, $result->content->version,
                 "Version check failed");
-        $this->assertEquals(DB_VERSION, $result->content->level,
+        $this->assertEquals(PT::DB_LEVEL, $result->content->level,
                 "API level check failed");
     }
 

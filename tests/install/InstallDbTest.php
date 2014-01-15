@@ -34,7 +34,7 @@ class InstallDbTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(true, Installer::install(null),
                 "Installation failed");
         $pdo = PDOBuilder::getPDO();
-        $this->assertEquals(DB_VERSION, Installer::getVersion(),
+        $this->assertEquals(PT::DB_LEVEL, Installer::getVersion(),
                 "Version doesn't match");
         // Check data insert
         $sql = "SELECT * FROM RESOURCES WHERE ID = '14'";
@@ -49,7 +49,7 @@ class InstallDbTest extends \PHPUnit_Framework_TestCase {
     public function testInstallFrance() {
         Installer::install("france");
         $pdo = PDOBuilder::getPDO();
-        $this->assertEquals(DB_VERSION, Installer::getVersion(),
+        $this->assertEquals(PT::DB_LEVEL, Installer::getVersion(),
                 "Version doesn't match");
         // Check data insert
         $sql = "SELECT * FROM PLACES WHERE ID = '10'";
@@ -64,7 +64,7 @@ class InstallDbTest extends \PHPUnit_Framework_TestCase {
     public function testInstallBelgique() {
         Installer::install("belgique");
         $pdo = PDOBuilder::getPDO();
-        $this->assertEquals(DB_VERSION, Installer::getVersion(),
+        $this->assertEquals(PT::DB_LEVEL, Installer::getVersion(),
                 "Version doesn't match");
         // Check data insert
         $sql = "SELECT * FROM PLACES WHERE ID = '10'";
@@ -79,7 +79,7 @@ class InstallDbTest extends \PHPUnit_Framework_TestCase {
     public function testInstallUnitedKingdom() {
         Installer::install("united_kingdom");
         $pdo = PDOBuilder::getPDO();
-        $this->assertEquals(DB_VERSION, Installer::getVersion(),
+        $this->assertEquals(PT::DB_LEVEL, Installer::getVersion(),
                 "Version doesn't match");
         // Check data insert
         $sql = "SELECT * FROM PLACES WHERE ID = '10'";
