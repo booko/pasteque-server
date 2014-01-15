@@ -137,7 +137,8 @@
 "cash": "Cash",
 "magcard": "Magcard",
 "cheque": "Cheque",
-"paper": "Paper",
+"paperin": "Paper",
 "free": "Free",
-"debt": "Debt"
+"debt": "Debt",
+"prepaid": "Prepaid"
 }

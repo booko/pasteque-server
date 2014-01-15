@@ -137,7 +137,8 @@
 "cash": "Espèces",
 "magcard": "Carte bleue",
 "cheque": "Chèque",
-"paper": "Coupon",
+"paperin": "Coupon",
 "free": "Offert",
-"debt": "Dette"
+"debt": "Dette",
+"prepaid": "Pré-payé"
 }
