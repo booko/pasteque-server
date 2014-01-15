@@ -74,7 +74,7 @@ class TicketsService {
             // Increment next ticket number
             $stmtNumInc = $pdo->prepare("UPDATE " . $ticketNumTable
                     . " SET ID = :id");
-            $stmtNumInc->bindParam(":id", $nextNum + 1);
+            $stmtNumInc->bindValue(":id", $nextNum + 1);
             if ($stmtNumInc->execute() === false) {
                 if ($newTransaction) {
                     $pdo->rollback();
