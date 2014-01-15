@@ -484,30 +484,30 @@ class MergedReportRun extends ReportRun {
         }
         $this->substmts = array();
         foreach ($mergedReport->getSubsqls() as $sql) {
-            $stmt = $pdo->prepare($sql);
-            $this->substmts[] = $stmt;
+            $substmt = $pdo->prepare($sql);
             foreach ($mergedReport->getParams() as $param) {
                 $id = $param['param'];
                 if (isset($this->values[$id])) {
-                    $stmt->bindValue(":" . $id, $this->values[$id]);
+                    $val = $this->values[$id];
                 } else if (isset($param['default'])) {
-                    $stmt->bindValue(":" . $id, $param['default']);
+                    $val = $param['default'];
                 } else {
                     // This is an error
                 }
                 $db = DB::get();
                 switch ($param["type"]) {
                 case DB::DATE:
-                    $stmt->bindValue(":" . $id, $db->dateVal($val));
+                    $substmt->bindValue(":" . $id, $db->dateVal($val));
                     break;
                 case DB::BOOL:
-                    $stmt->bindValue(":" . $id, $db->boolVal($val));
+                    $substmt->bindValue(":" . $id, $db->boolVal($val));
                     break;
                 default:
-                    $stmt->bindValue(":" . $id, $val);
+                    $substmt->bindValue(":" . $id, $val);
                     break;
                 }
             }
+            $this->substmts[] = $substmt;
         }
         $this->groupRowCount = 0;
         $this->totalRowCount = 0;
@@ -525,14 +525,14 @@ class MergedReportRun extends ReportRun {
         $this->stmt->execute();
         // Make a first run of substatements to get new fields
         for ($i = 0; $i < count($this->substmts); $i++) {
-            $stmt = $this->substmts[$i];
-            $stmt->execute();
-            while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $substmt = $this->substmts[$i];
+            $substmt->execute();
+            while ($row = $substmt->fetch(\PDO::FETCH_ASSOC)) {
                 $this->report->addMergedField($i, $row["__KEY__"]);
             }
             // Reopen
-            $stmt->closeCursor();
-            $stmt->execute();
+            $substmt->closeCursor();
+            $substmt->execute();
         }
         $this->resetTmpSubtotals();
         foreach ($this->report->getTotals() as $field => $type) {
