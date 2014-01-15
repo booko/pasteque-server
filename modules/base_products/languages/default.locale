@@ -29,6 +29,8 @@
 "Rates": "Rates",
 "New tax rate": "New rate",
 "Unable to delete tax. Tax cannot be deleted when in use.": "Unable to delete tax. Tax cannot be deleted when in use.",
+"Unable to save tax.": "Unable to save tax.",
+"Tax saved": "Tax saved",
 
 "File": "Fichier",
 "send": "send",

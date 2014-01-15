@@ -28,6 +28,8 @@
 "Rates": "Taux",
 "New tax rate": "Nouveau taux",
 "Unable to delete tax. Tax cannot be deleted when in use.": "Impossible de supprimer la taxe. Une taxe ne peut pas être supprimée lorsqu'elle est utilisée.",
+"Unable to save tax.": "Impossible d'enregistrer la taxe.",
+"Tax saved": "Taxe enregistrée",
 
 "send": "envoyer",
 "File": "Fichier",
