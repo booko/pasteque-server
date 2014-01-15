@@ -28,9 +28,10 @@ class Ticket {
     /** Debt recovery ticket type */
     const TYPE_PAYMENT = 2;
 
+    public $id;
+    public $ticketId;
     public $cashId;
     public $type;
-    public $label;
     public $userId;
     /** Payment date, as timestamp */
     public $date;
@@ -40,20 +41,20 @@ class Ticket {
     public $custCount;
     public $tariffAreaId;
 
-    static function __build($id, $type, $label, $userId, $date, $lines,
+    static function __build($id, $ticketId, $type, $userId, $date, $lines,
             $payments, $cashId, $customerId = null, $custCount = null,
             $tariffAreaId = null) {
         $tkt = new Ticket($type, $label, $userId, $date, $lines, $payments,
                 $cashId, $customerId, $custCount, $tariffAreaId);
         $tkt->id = $id;
+        $tkt->ticketId = $ticketId;
         return $tkt;
     }
 
-    function __construct($type, $label, $userId, $date, $lines, $payments,
+    function __construct($type, $userId, $date, $lines, $payments,
             $cashId, $customerId = null, $custCount = null,
             $tariffAreaId = null) {
         $this->type = $type;
-        $this->label = $label;
         $this->userId = $userId;
         $this->date = $date;
         $this->lines = $lines;

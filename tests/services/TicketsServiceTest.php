@@ -231,7 +231,7 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
 
     public function testSaveEmpty() {
         $date = stdtimefstr("2013-01-01 00:00:00");
-        $ticket = new Ticket(Ticket::TYPE_SELL, "Ticket", $this->user->id,
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
                 $date, array(), array(),
                 $this->cash->id);
         $id = TicketsService::save($ticket, $this->location->id);
@@ -280,7 +280,7 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
     /** @depends testSaveEmpty */
     public function testSaveCustomer() {
         $date = stdtimefstr("2013-01-01 00:00:00");
-        $ticket = new Ticket(Ticket::TYPE_SELL, "Ticket", $this->user->id,
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
                 $date, array(), array(),
                 $this->cash->id, $this->customer->id);
         $id = TicketsService::save($ticket, $this->location->id);
@@ -300,7 +300,7 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
     /** @depends testSaveEmpty */
     public function testSaveTariffArea() {
         $date = stdtimefstr("2013-01-01 00:00:00");
-        $ticket = new Ticket(Ticket::TYPE_SELL, "Ticket", $this->user->id,
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
                 $date, array(), array(),
                 $this->cash->id, null, null, $this->area->id);
         $id = TicketsService::save($ticket, $this->location->id);
@@ -320,7 +320,7 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
     /** @depends testSaveEmpty */
     public function testSaveCustCount() {
         $date = stdtimefstr("2013-01-01 00:00:00");
-        $ticket = new Ticket(Ticket::TYPE_SELL, "Ticket", $this->user->id,
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
                 $date, array(), array(),
                 $this->cash->id, null, 3);
         $id = TicketsService::save($ticket, $this->location->id);
@@ -342,7 +342,7 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $date = stdtimefstr("2013-01-01 00:00:00");
         $line = new TicketLine(1, $this->prd, null, 1, 12, $this->tax);
         $payment = new Payment("cash", 12, $this->currency->id, 14);
-        $ticket = new Ticket(Ticket::TYPE_SELL, "Ticket", $this->user->id,
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
                 $date, array($line), array($payment),
                 $this->cash->id, null, 3);
         $id = TicketsService::save($ticket, $this->location->id);
@@ -386,7 +386,7 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $date = stdtimefstr("2013-01-01 00:00:00");
         $line = new TicketLine(1, $this->prdRefill, null, 1, 10, $this->tax);
         $payment = new Payment("cash", 12, $this->currency->id, 14);
-        $ticket = new Ticket(Ticket::TYPE_SELL, "Ticket", $this->user->id,
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
                 $date, array($line), array($payment),
                 $this->cash->id,  $this->customer->id);
         $id = TicketsService::save($ticket, $this->location->id);
@@ -400,7 +400,7 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $date = stdtimefstr("2013-01-01 00:00:00");
         $line = new TicketLine(1, $this->prd, null, 1, 10, $this->tax);
         $payment = new Payment("prepaid", 12, $this->currency->id, 14);
-        $ticket = new Ticket(Ticket::TYPE_SELL, "Ticket", $this->user->id,
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
                 $date, array($line), array($payment),
                 $this->cash->id,  $this->customer->id);
         $id = TicketsService::save($ticket, $this->location->id);
@@ -419,7 +419,7 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $attrsId = TicketsService::createAttrSetInst($attrSetInst);
         $line = new TicketLine(1, $this->prd, $attrSetInst->id , 1, 12, $this->tax);
         $payment = new Payment("cash", 12, $this->currency->id, 14);
-        $ticket = new Ticket(Ticket::TYPE_SELL, "Ticket", $this->user->id,
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
                 $date, array($line), array($payment),
                 $this->cash->id, null, 3);
         $id = TicketsService::save($ticket, $this->location->id);
@@ -450,7 +450,7 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $line3 = new TicketLine(3, $this->prd, null, 1.5, 10, $this->tax);
         $payment1 = new Payment("cash", 12, $this->currency->id, 14);
         $payment2 = new Payment("cheque", 25, $this->currency->id, 20);
-        $ticket = new Ticket(Ticket::TYPE_SELL, "Ticket", $this->user->id,
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
                 $date, array($line1, $line2, $line3),
                 array($payment1, $payment2), $this->cash->id, null, null);
         $id = TicketsService::save($ticket, $this->location->id);
