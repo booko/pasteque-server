@@ -24,8 +24,6 @@ class TicketsAPI extends APIService {
 
     protected function check() {
         switch ($this->action) {
-        case 'share':
-            return isset($this->params['ticket']);
         case 'save':
             return (isset($this->params['ticket'])
                             || isset($this->params['tickets']))
@@ -36,8 +34,6 @@ class TicketsAPI extends APIService {
 
     protected function proceed() {
         switch ($this->action) {
-        case 'share':
-            // id, name, content
         case 'save':
             // Receive ticket data as json
             if (isset($this->params['tickets'])) {
