@@ -159,6 +159,10 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
             $locSrv = new LocationsService();
             $data = $locSrv->getAll();
             break;
+        case 'DiscountProfile':
+            $profSrv = new DiscountProfilesService();
+            $data = $profSrv->getAll();
+            break;
         }
         echo '<select id="' . $form_id . '-' . $field . '" name="' . $name . '">';
         if (isset($args['nullable']) && $args['nullable']) {

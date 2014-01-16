@@ -55,8 +55,8 @@ class CustomersService extends AbstractService {
     protected function build($row, $pdo = null) {
         $db = DB::get();
         $cust = Customer::__build($row['ID'], $row['TAXID'], $row['SEARCHKEY'],
-                $row['NAME'], $row['CARD'], $row['DISCOUNTPROFILE_ID'],
-                $row['TAXCATEGORY'], $row['PREPAID'], $row['MAXDEBT'],
+                $row['NAME'], $row['CARD'], $row['TAXCATEGORY'],
+                $row['DISCOUNTPROFILE_ID'], $row['PREPAID'], $row['MAXDEBT'],
                 $row['CURDEBT'], $db->readDate($row['CURDATE']),
                 $row['FIRSTNAME'], $row['LASTNAME'], $row['EMAIL'],
                 $row['PHONE'], $row['PHONE2'], $row['FAX'],
