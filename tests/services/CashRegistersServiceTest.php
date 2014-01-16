@@ -23,28 +23,27 @@ require_once(dirname(dirname(__FILE__)) . "/common_load.php");
 
 class CashRegistersServiceTest extends \PHPUnit_Framework_TestCase {
 
-    public static function setUpBeforeClass() {
-        // Install empty database
-        Installer::install(null);
+    private $location;
+
+    protected function setUp() {
+        $srv = new LocationsService();
+        $location = new Location("Location");
+        $location->id = $srv->create($location);
+        $this->location = $location;
     }
 
     protected function tearDown() {
         // Restore database in its empty state
         $pdo = PDOBuilder::getPDO();
-        if ($pdo->exec("DELETE FROM CASHREGISTERS") === false) {
+        if ($pdo->exec("DELETE FROM CASHREGISTERS") === false
+                || $pdo->exec("DELETE FROM LOCATIONS") === false) {
             echo("[ERROR] Unable to restore db\n");
         }
     }
 
-    public static function tearDownAfterClass() {
-        // Erase database
-        dropDatabase();
-    }
-
     public function testCreate() {
-        $type = get_db_type(get_user_id());
         $srv = new CashRegistersService();
-        $cashReg = new CashRegister("CashReg", "0", 1);
+        $cashReg = new CashRegister("CashReg", $this->location->id);
         $id = $srv->create($cashReg);
         $this->assertNotEquals(false, $id, "Insertion failed");
         $pdo = PDOBuilder::getPDO();
@@ -57,20 +56,18 @@ class CashRegistersServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($cashReg->label, $row['NAME'], "Label mismatch");
         $this->assertEquals($cashReg->locationId, $row['LOCATION_ID'],
                 "Location id mismatch");
-        $this->assertEquals($cashReg->posId, $row['POS_ID'], "POS id mismatch");
     }
 
     /** @depends testCreate */
     public function testGet() {
         $srv = new CashRegistersService();
-        $cashReg = new CashRegister("CashReg", "0", 1);
+        $cashReg = new CashRegister("CashReg", $this->location->id, 1);
         $id = $srv->create($cashReg);
         $read = $srv->get($id);
         $this->assertEquals($id, $read->id, "Id mismatch");
         $this->assertEquals($cashReg->label, $read->label, "Label mismatch");
         $this->assertEquals($cashReg->locationId, $read->locationId,
                 "Location id mismatch");
-        $this->assertEquals($cashReg->posId, $read->posId, "POS id mismatch");
     }
 
     public function testGetInexistent() {
@@ -89,5 +86,3 @@ class CashRegistersServiceTest extends \PHPUnit_Framework_TestCase {
         $this->markTestIncomplete();
     }
 }
-
-?>

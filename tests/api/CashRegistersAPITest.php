@@ -23,29 +23,29 @@ require_once(dirname(dirname(__FILE__)) . "/common_load.php");
 
 class CashRegistersAPITest extends \PHPUnit_Framework_TestCase {
 
-    public static function setUpBeforeClass() {
-        // Install empty database
-        Installer::install(null);
+    private $location;
+
+    protected function setUp() {
+        $srv = new LocationsService();
+        $location = new Location("Location");
+        $location->id = $srv->create($location);
+        $this->location = $location;
     }
 
     protected function tearDown() {
         // Restore database in its empty state
         $pdo = PDOBuilder::getPDO();
-        if ($pdo->exec("DELETE FROM CASHREGISTERS") === false) {
+        if ($pdo->exec("DELETE FROM CASHREGISTERS") === false
+                || $pdo->exec("DELETE FROM LOCATIONS") === false) {
             echo("[ERROR] Unable to restore db\n");
         }
-    }
-
-    public static function tearDownAfterClass() {
-        // Erase database
-        dropDatabase();
     }
 
     public function testGetById() {
         $broker = new APIBroker("CashRegistersAPI");
         $srv = new CashRegistersService();
         // Init cash register
-        $cashReg = new CashRegister("Cash", "0", 1);
+        $cashReg = new CashRegister("Cash", $this->location->id, 1);
         $id = $srv->create($cashReg);
         // Get it through API
         $result = $broker->run("get", array("id" => $id));
@@ -57,8 +57,6 @@ class CashRegistersAPITest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($cashReg->label, $content->label, "Label mismatch");
         $this->assertEquals($cashReg->locationId, $content->locationId,
                 "Location id mismatch");
-        $this->assertEquals($cashReg->posId, $content->posId,
-                "POS id mismatch");
     }
 
     public function testGetInexistentId() {
@@ -71,4 +69,3 @@ class CashRegistersAPITest extends \PHPUnit_Framework_TestCase {
     }
 
 }
-?>

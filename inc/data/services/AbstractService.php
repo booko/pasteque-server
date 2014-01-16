@@ -151,7 +151,7 @@ abstract class AbstractService {
                 return $row[0];
             }
         }
-        return false;
+        return null;
     }
 
     public function getAll() {
@@ -164,7 +164,7 @@ abstract class AbstractService {
             }
             return $ret;
         } else {
-            return false;
+            return null;
         }
     }
 
@@ -178,7 +178,7 @@ abstract class AbstractService {
                 return static::build($row, $pdo);
             }
         } else {
-            return false;
+            return null;
         }
     }
 
@@ -222,7 +222,7 @@ abstract class AbstractService {
             }
             return $ret;
         } else {
-            return false;
+            return null;
         }
     }
 
@@ -238,5 +238,3 @@ abstract class AbstractService {
         }
     }
 }
-
-?>
