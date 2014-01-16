@@ -101,9 +101,12 @@ class TicketsService {
             break;
         }
         //  Insert ticket
+        $discountRate = $ticket->discountRate;
         $stmtTkt = $pdo->prepare("INSERT INTO TICKETS (ID, TICKETID, "
-                . "TICKETTYPE, PERSON, CUSTOMER, CUSTCOUNT, TARIFFAREA) VALUES "
-                . "(:id, :tktId, :tktType, :person, :cust, :custcount, :taId)");
+                . "TICKETTYPE, PERSON, CUSTOMER, CUSTCOUNT, TARIFFAREA, "
+                . "DISCOUNTRATE, DISCOUNTPROFILE_ID) VALUES "
+                . "(:id, :tktId, :tktType, :person, :cust, :custcount, :taId, "
+                . ":discRate, :discProfId)");
         $stmtTkt->bindParam(':id', $id, \PDO::PARAM_STR);
         $stmtTkt->bindParam(':tktId', $nextNum, \PDO::PARAM_INT);
         $stmtTkt->bindParam(":tktType", $ticket->type);
@@ -111,6 +114,8 @@ class TicketsService {
         $stmtTkt->bindParam(':cust', $ticket->customerId);
         $stmtTkt->bindParam(":custcount", $ticket->custCount);
         $stmtTkt->bindParam(":taId", $ticket->tariffAreaId);
+        $stmtTkt->bindParam(":discRate", $ticket->discountRate);
+        $stmtTkt->bindParam(":discProfId", $ticket->discountProfileId);
         if ($stmtTkt->execute() === false) {
             if ($newTransaction) {
                 $pdo->rollback();
@@ -121,9 +126,11 @@ class TicketsService {
         // Also check for prepayments refill
         $stmtLines = $pdo->prepare("INSERT INTO TICKETLINES (TICKET, LINE, "
                 . "PRODUCT, ATTRIBUTESETINSTANCE_ID, UNITS, PRICE, TAXID, "
-                . "ATTRIBUTES) VALUES (:id, :line, :prdId, :attrSetInstId, "
-                .":qty, :price, :taxId, :attrs)");
+                . "DISCOUNTRATE, ATTRIBUTES) VALUES (:id, :line, :prdId, "
+                . ":attrSetInstId, :qty, :price, :taxId, :discRate, :attrs)");
         foreach ($ticket->lines as $line) {
+            $fullDiscount = $discountRate + $line->discountRate;
+            $discountPrice = $line->price * (1.0 - $fullDiscount);
             $stmtLines->bindParam(":id", $id);
             $stmtLines->bindParam(":line", $line->dispOrder);
             $stmtLines->bindParam(":prdId", $line->productId);
@@ -131,6 +138,7 @@ class TicketsService {
             $stmtLines->bindParam(":qty", $line->quantity);
             $stmtLines->bindParam(":price", $line->price);
             $stmtLines->bindParam(":taxId", $line->taxId);
+            $stmtLines->bindParam(":discRate", $line->discountRate);
             $stmtLines->bindParam(":attrs", $line->attributes);
             if ($stmtLines->execute() === false) {
                 if ($newTransaction) {
@@ -141,7 +149,7 @@ class TicketsService {
             // Update stock
             $move = new StockMove($ticket->date, StockMove::REASON_OUT_SELL,
                     $line->productId, $locationId, $line->attrSetInstId,
-                    $line->quantity, $line->price);
+                    $line->quantity, $discountPrice);
             if (StocksService::addMove($move) === false) {
                 if ($newTransaction) {
                     $pdo->rollback();
@@ -149,6 +157,7 @@ class TicketsService {
                 return false;
             }
             // Check prepayment refill
+            // Refill is not affected by discount
             $prepaidIds = ProductsService::getPrepaidIds();
             if ($ticket->customerId !== null
                     && in_array($line->productId, $prepaidIds)) {

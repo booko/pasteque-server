@@ -107,6 +107,9 @@ class TicketsAPI extends APIService {
                 $date = $jsonTkt->date;
                 $tktType = $jsonTkt->type;
                 $custCount = $jsonTkt->custCount;
+                $tariffAreaId = $jsonTkt->tariffAreaId;
+                $discountRate = $jsonTkt->discountRate;
+                $discountProfileId = $jsonTkt->discountProfileId;
                 // Get lines
                 $lines = array();
                 foreach ($jsonTkt->lines as $jsLine) {
@@ -116,6 +119,7 @@ class TicketsAPI extends APIService {
                     $quantity = $jsLine->quantity;
                     $price = $jsLine->price;
                     $taxId = $jsLine->taxId;
+                    $lineDiscountRate = $jsLine->discountRate;
                     if ($jsLine->attributes !== null) {
                         $jsAttr = $jsLine->attributes;
                         $attrSetId = $jsAttr->attributeSetId;
@@ -135,7 +139,6 @@ class TicketsAPI extends APIService {
                         
                         if ($attrsId === false) {
                             // Fail, will check line count to continue
-                            var_dump("attr");
                             break;
                         }
                     } else {
@@ -144,15 +147,14 @@ class TicketsAPI extends APIService {
                     $product = ProductsService::get($productId);
                     $tax = TaxesService::getTax($taxId);
                     if ($product == null || $tax == null) {
-                        var_dump("prd");
                         break;
                     }
                     $newLine = new TicketLine($number, $product,
-                            $attrsId, $quantity, $price, $tax);
+                            $attrsId, $quantity, $price, $tax,
+                            $lineDiscountRate);
                     $lines[] = $newLine;
                 }
                 if (count($lines) != count($jsonTkt->lines)) {
-                    var_dump("lines");
                     break;
                 }
                 // Get payments
@@ -173,11 +175,11 @@ class TicketsAPI extends APIService {
                     $payments[] = $payment;
                 }
                 $ticket = new Ticket($tktType, $userId, $date, $lines,
-                        $payments, $cashId, $customerId, $custCount);
+                        $payments, $cashId, $customerId, $custCount,
+                        $tariffAreaId, $discountRate, $discountProfileId);
                 if (TicketsService::save($ticket, $locationId)) {
                     $successes++;
                 } else {
-                    var_dump("ave");
                     break;
                 }
             }

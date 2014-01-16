@@ -40,12 +40,16 @@ class Ticket {
     public $customerId;
     public $custCount;
     public $tariffAreaId;
+    public $discountRate;
+    public $discountProfileId;
 
     static function __build($id, $ticketId, $type, $userId, $date, $lines,
             $payments, $cashId, $customerId = null, $custCount = null,
-            $tariffAreaId = null) {
+            $tariffAreaId = null, $discountRate = 0.0,
+            $discountProfileId = null) {
         $tkt = new Ticket($type, $label, $userId, $date, $lines, $payments,
-                $cashId, $customerId, $custCount, $tariffAreaId);
+                $cashId, $customerId, $custCount, $tariffAreaId, $discountRate,
+                $discountProfileId);
         $tkt->id = $id;
         $tkt->ticketId = $ticketId;
         return $tkt;
@@ -53,7 +57,8 @@ class Ticket {
 
     function __construct($type, $userId, $date, $lines, $payments,
             $cashId, $customerId = null, $custCount = null,
-            $tariffAreaId = null) {
+            $tariffAreaId = null, $discountRate = 0.0,
+            $discountProfileId = null) {
         $this->type = $type;
         $this->userId = $userId;
         $this->date = $date;
@@ -63,15 +68,17 @@ class Ticket {
         $this->customerId = $customerId;
         $this->custCount = $custCount;
         $this->tariffAreaId = $tariffAreaId;
+        $this->discountRate = $discountRate;
+        $this->discountProfileId = $discountProfileId;
     }
 
     function getTaxAmounts() {
         $amounts = array();
         foreach ($this->lines as $line) {
             if (isset($amounts[$line->taxId])) {
-                $amounts[$line->taxId] += $line->getSubtotal();
+                $amounts[$line->taxId] += $line->getSubtotal($this->discountRate);
             } else {
-                $amounts[$line->taxId] = $line->getSubtotal();
+                $amounts[$line->taxId] = $line->getSubtotal($this->discountRate);
             }
         }
         $ta = array();

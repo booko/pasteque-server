@@ -97,10 +97,16 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
         $loc = new Location("Location");
         $loc->id = $locSrv->create($loc);
         $this->locationId = $loc->id;
+        // Discount profile
+        $profSrv = new DiscountProfilesService();
+        $prof = new DiscountProfile("Profile", 0.1);
+        $prof->id = $profSrv->create($prof);
         // Ticket
         $tkt1 = array("date" => stdtimefstr("2012-01-01 00:00:00"),
                 "userId" => $user->id, "customerId" => null,
                 "type" => Ticket::TYPE_SELL, "custCount" => 3,
+                "tariffAreaId" => null, "discountRate" => 0.0,
+                "discountProfileId" => null,
                 "payments" => array(array("type" => "cash", "amount" => 10,
                                 "currencyId" => $curr->id,
                                 "currencyAmount" => 12)),
@@ -109,13 +115,16 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
                                 "taxId" => $tax->id,
                                 "attributes" => null,
                                 "quantity" => 1.0,
-                                "price" => 10.0)));
+                                "price" => 10.0,
+                                "discountRate" => 0.0)));
         $jsAttr = array("attributeSetId" => $set->id,
                 "values" => array(array("id" => $attr->id,
                                 "value" => "value")));
         $tkt2 = array("date" => stdtimefstr("2012-01-01 00:00:00"),
                 "userId" => $user->id, "customerId" => null,
                 "type" => Ticket::TYPE_SELL, "custCount" => 3,
+                "tariffAreaId" => null, "discountRate" => 0.25,
+                "discountProfileId" => $prof->id,
                 "payments" => array(array("type" => "cash", "amount" => 10,
                                 "currencyId" => $curr->id,
                                 "currencyAmount" => 12)),
@@ -124,7 +133,8 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
                                 "taxId" => $tax->id,
                                 "attributes" => $jsAttr,
                                 "quantity" => 1.0,
-                                "price" => 10.0)));
+                                "price" => 10.0,
+                                "discountRate" => 0.25)));
         $this->jsTicket1 = json_encode($tkt1);
         $this->jsTicket2 = json_encode($tkt2);
     }
@@ -160,7 +170,8 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
                 //|| $pdo->exec("DELETE FROM ROLES") === false
                 || $pdo->exec("DELETE FROM CURRENCIES") === false
                 || $pdo->exec("DELETE FROM CUSTOMERS") === false
-                || $pdo->exec("DELETE FROM SHAREDTICKETS") === false) {
+                || $pdo->exec("DELETE FROM SHAREDTICKETS") === false
+                || $pdo->exec("DELETE FROM DISCOUNTPROFILES") === false) {
             echo("[ERROR] Unable to restore db\n");
         }
     }
