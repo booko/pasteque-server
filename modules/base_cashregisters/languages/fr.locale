@@ -1,0 +1,7 @@
+{
+"Cash registers": "Caisses",
+
+"New cash register": "Ajouter une caisse",
+"Edit a cash register": "Édition d'une caisse",
+"Cash register saved. <a href=\"%s\">Go to the cash register page</a>.": "Caisse enregistrée. <a href=\"%s\">Aller à la page de la caisse</a>."
+}
