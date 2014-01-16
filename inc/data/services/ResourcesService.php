@@ -28,19 +28,29 @@ class ResourcesService extends AbstractService {
             "ID" => "id",
             "NAME" => "label",
             "RESTYPE" => "type",
-            "CONTENT" => "content"
+            "CONTENT" => array("type" => DB::BIN, "attr" =>"content")
     );
 
     protected function build($dbRow, $pdo = null) {
         $db = DB::get();
-        switch ($dbRow['RESTYPE']) {
-        case Resource::TYPE_IMAGE:
-        case Resource::TYPE_BIN:
-            return Resource::__build($dbRow['ID'], $dbRow['NAME'],
-                    $dbRow['RESTYPE'], $db->readBin($dbRow['CONTENT']));
-        default:
-            return Resource::__build($dbRow['ID'], $dbRow['NAME'],
-                    $dbRow['RESTYPE'], $dbRow['CONTENT']);
+        return Resource::__build($dbRow['ID'], $dbRow['NAME'],
+                $dbRow['RESTYPE'], $db->readBin($dbRow['CONTENT']));
+    }
+
+    public function create($model) {
+        $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("INSERT INTO RESOURCES "
+                . "(ID, NAME, RESTYPE, CONTENT) VALUES "
+                . "(:id, :label, :type, :content)");
+        $id = md5(time() . rand());
+        $stmt->bindParam(":id", $id);
+        $stmt->bindParam(":label", $model->label);
+        $stmt->bindParam(":type", $model->type);
+        $stmt->bindParam(":content", $model->content);
+        if ($stmt->execute() !== false) {
+            return $id;
+        } else {
+            return false;
         }
     }
 }

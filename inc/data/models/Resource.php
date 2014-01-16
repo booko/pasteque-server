@@ -43,5 +43,3 @@ class Resource {
         $this->content = $content;
     }
 }
-
-?>

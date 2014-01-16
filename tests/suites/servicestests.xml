@@ -2,6 +2,7 @@
 	<testsuites>
 		<testsuite name="services">
 			<file>install.php</file>
+			<file>services/ResourcesServiceTest.php</file>
 		    <file>services/CategoriesServiceTest.php</file>
 			<file>services/CashesServiceTest.php</file>
 			<file>services/CustomersServiceTest.php</file>
