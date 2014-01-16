@@ -23,22 +23,12 @@ require_once(dirname(dirname(__FILE__)) . "/common_load.php");
 
 class CashesAPITest extends \PHPUnit_Framework_TestCase {
 
-    public static function setUpBeforeClass() {
-        // Install empty database
-        Installer::install(null);
-    }
-
     protected function tearDown() {
         // Restore database in its empty state
         $pdo = PDOBuilder::getPDO();
         if ($pdo->exec("DELETE FROM CLOSEDCASH") === false) {
             echo("[ERROR] Unable to restore db\n");
         }
-    }
-
-    public static function tearDownAfterClass() {
-        // Erase database
-        dropDatabase();
     }
 
     public function testGetById() {
@@ -143,7 +133,7 @@ class CashesAPITest extends \PHPUnit_Framework_TestCase {
         $broker = new APIBroker("CashesAPI");
         $srv = new CashesService();
         $cash = $srv->add("Host");
-        $cash->openDate = stdtimefstr("2002-02-02 02:02:02");
+       $cash->openDate = stdtimefstr("2002-02-02 02:02:02");
         $cash->closeDate = stdtimefstr("2002-02-03 03:03:03");
         $result = $broker->run("update", array("cash" => json_encode($cash)));
         $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
@@ -160,4 +150,3 @@ class CashesAPITest extends \PHPUnit_Framework_TestCase {
                 "Close date mismatch");
     }
 }
-?>

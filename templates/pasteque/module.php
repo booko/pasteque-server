@@ -30,7 +30,7 @@ function tpl_open() {
 	<link rel="stylesheet" type="text/css" href="templates/pasteque/catalog.css" />
 	<link rel="stylesheet" type="text/css" href="templates/pasteque/stock.css" />	
 	<script type="text/javascript" src="templates/pasteque/js/jquery-1.9.1.min.js"></script>
-	<script type="text/javascript" src="?<?php echo \Pasteque\URL_ACTION_PARAM; ?>=img&w=js&id=js/pasteque.js.php"></script>
+	<script type="text/javascript" src="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=js&id=js/pasteque.js.php"></script>
 </head>
 <body>
 <?php tpl_menu(); ?>	<div id="header">
@@ -100,12 +100,59 @@ function tpl_menu() {
                 $img = get_template_url() . "img/menu_default.png";
             }
             $style = "style=\"background-image:url('$img');\"";
-            echo "<a $style href=\"" . get_url_action($entry->getAction()) . "\">" . __($entry->getName(), $entry->getNameDomain()) . "</a></li>\n";
+            switch ($entry->getType()) {
+            case MenuEntry::ACTION:
+                $url = get_url_action($entry->getAction());
+                break;
+            case MenuEntry::REPORT:
+                $url = get_report_url($entry->getNameDomain(),
+                        $entry->getAction(), 'display');
+                break;
+            }
+            echo "<a $style href=\"" . $url . "\">" . __($entry->getName(), $entry->getNameDomain()) . "</a></li>\n";
         }
         echo "\t\t</ul>\n";
         echo "\t</div>\n";
     }
     echo "</div>";
+}
+
+function __tpl_report_title($report) {
+    echo "<h1>" . $report->title . "</h1>\n";
+}
+
+function __tpl_report_input($report, $values) {
+    // Export button
+    echo "<p><a class=\"btn\" href=\""
+            . \Pasteque\get_report_url($report->domain, $report->id);
+    foreach($report->getParams() as $param) {
+        echo "&" . $param['param'] . "=" . $values[$param['param']];
+    }
+    echo "\">" . \i18n("Export") . "</a></p>\n";
+    // Input form
+    echo "<form class=\"edit\" action=\"" . \Pasteque\get_current_url() . "\" "
+            . "method=\"post\">";
+    foreach($report->getParams() as $param) {
+        $id = $param['param'];
+        echo "<div class=\"row\">";
+        echo "<label for=\"" . $id . "\">" . $param['label'] . "</label>";
+        switch ($param['type']) {
+        case DB::DATE:
+            $value = \i18nDate($values[$id]);
+            echo "<input type=\"date\" name=\"" . $id . "\" id=\"" . $id
+                    . "\" value=\"" . $value . "\" />";
+            break;
+        default:
+            $value = $values[$param['param']];
+            echo "<input type=\"text\" name=\"" . $id . "\" id=\"" . $id
+                    . "\" value=\"" . $value . "\" />";
+            break;
+        }
+        echo "</div>\n";
+    }
+    // Send
+    echo "<div class=\"row actions\">" . \Pasteque\form_send() . "</div>\n";
+    echo "</form>\n";
 }
 
 function __tpl_report_header($report) {
@@ -193,7 +240,39 @@ function __tpl_report_totals($report, $run) {
  * @param $report Report data, as given by get_report
  */
 function tpl_report($report) {
-    $run = $report->run();
+    // Read values
+    $values = array();
+    foreach ($report->getParams() as $param) {
+        $id = $param['param'];
+        if (isset($_POST[$id]) || isset($_GET[$id])) {
+            if (isset($_POST[$id])) {
+                $val = $_POST[$id];
+            } else {
+                $val = $_GET[$id];
+            }
+            $db = DB::get();
+            switch ($param['type']) {
+            case DB::DATE:
+                // Revert the i18n input to timestamp
+                $values[$id] = \i18nRevDate($val);
+                break;
+            default:
+                $values[$id] = $val;
+                break;
+            }
+        } else {
+            $default = $report->getDefault($id);
+            if ($default !== null) {
+                $values[$id] = $default;
+            } else {
+                // TODO: error
+            }
+        }
+    }
+    // Display
+    __tpl_report_title($report);
+    __tpl_report_input($report, $values);
+    $run = $report->run($values);
     $par = FALSE;
     if ($run->isEmpty()) {
         echo "<p>" . \i18n("No result") . "</p>";
@@ -268,4 +347,3 @@ function tpl_js_btn($class, $onclick, $label, $id = NULL, $image_btn = NULL, $al
     $btn .= $label . "</a>";
     echo $btn;
 }
-?>

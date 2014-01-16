@@ -22,11 +22,12 @@
 
 namespace Pasteque;
 
-define("ABSPATH", dirname(__DIR__));
+require_once(dirname(__DIR__) . "/inc/constants.php");
+PT::$ABSPATH = dirname(__DIR__);
 $altConfigFile = "tests/config.php";
-require_once(ABSPATH . "/inc/load.php");
-require_once(ABSPATH . "/inc/load_logged.php");
-require_once(ABSPATH . "/inc/load_api.php");
+require_once(PT::$ABSPATH . "/inc/load.php");
+require_once(PT::$ABSPATH . "/inc/load_logged.php");
+require_once(PT::$ABSPATH . "/inc/load_api.php");
 
 function dropDatabase() {
     global $config;
@@ -67,12 +68,15 @@ function dropDatabase() {
                 "DROP TABLE ATTRIBUTEINSTANCE;", "DROP TABLE PRODUCTS;",
                 "DROP TABLE POS;",
                 "DROP TABLE PRODUCTS_CAT;", "DROP TABLE PRODUCTS_COM;",
-                "DROP TABLE SUBGROUPS;", "DROP TABLE SUBGROUPS_PROD;",
+                "DROP SEQUENCE SUBGROUPS_ID_SEQ", "DROP TABLE SUBGROUPS;",
+                "DROP TABLE SUBGROUPS_PROD;",
+                "DROP SEQUENCE TARIFFAREAS_ID_SEQ CASCADE;",
                 "DROP TABLE TARIFFAREAS;", "DROP TABLE TARIFFAREAS_PROD;",
                 "DROP TABLE LOCATIONS;", "DROP TABLE STOCKDIARY;",
                 "DROP TABLE STOCKLEVEL;", "DROP TABLE STOCKCURRENT;",
                 "DROP TABLE PRODUCTS_EXCLUDE;", "DROP TABLE CASHREGISTERS;",
                 "DROP TABLE POSPARENTS;",
+                "DROP SEQUENCE CURRENCIES_ID_SEQ CASCADE;",
                 "DROP TABLE CURRENCIES;", "DROP TABLE CLOSEDCASH;",
                 "DROP TABLE RECEIPTS;", "DROP TABLE TICKETS;",
                 "DROP SEQUENCE TICKETSNUM;", "DROP SEQUENCE TICKETSNUM_REFUND;",
@@ -80,8 +84,7 @@ function dropDatabase() {
                 "DROP TABLE PAYMENTS;", "DROP TABLE TAXLINES;",
                 "DROP TABLE FLOORS;", "DROP TABLE PLACES;",
                 "DROP TABLE RESERVATIONS;", "DROP TABLE RESERVATION_CUSTOMERS;",
-                "DROP TABLE THIRDPARTIES;", "DROP TABLE SHAREDTICKETS;",
-                "DROP SEQUENCE CURRENCIES_ID_SEQ CASCADE;");
+                "DROP TABLE THIRDPARTIES;", "DROP TABLE SHAREDTICKETS;");
     }
     for ($i = count($sqls) - 1; $i >= 0; $i--) {
         if ($pdo->exec($sqls[$i]) === false) {

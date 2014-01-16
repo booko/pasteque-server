@@ -20,51 +20,60 @@
 
 namespace Pasteque;
 
-function redirect($path) {
-    if (!file_exists(ABSPATH . "/" . $path . ".php")) {
+/** Redirect page content to an action */
+function redirectAction($path) {
+    if (!file_exists(PT::$ABSPATH . "/" . $path . ".php")) {
         tpl_404();
         return;
     }
-    require_once(ABSPATH . "/" . $path . ".php");
+    require_once(PT::$ABSPATH . "/" . $path . ".php");
 }
+
 function redirect_report($module, $name) {
-    if (!file_exists(ABSPATH . "/modules/" . $module . "/reports/" . $name . ".php")) {
+    if (!file_exists(PT::$ABSPATH . "/modules/" . $module . "/reports/" . $name . ".php")) {
         $ret = array("error" => "No such seport");
         echo json_encode($ret);
         return;
     }
-    require_once(ABSPATH . "/modules/" . $module . "/reports/" . $name . ".php");
+    require_once(PT::$ABSPATH . "/modules/" . $module . "/reports/" . $name . ".php");
 }
 
 /** Redirect page to the given one in url */
 function url_content() {
-    if (!isset($_GET[URL_ACTION_PARAM])) {
+    if (!isset($_GET[PT::URL_ACTION_PARAM]) && !isset($_GET[PT::URL_REPORT_PARAM])) {
         $action = "home";
-    } else {
-        $action = $_GET[URL_ACTION_PARAM];
+    } else if (isset($_GET[PT::URL_ACTION_PARAM])) {
+        $action = $_GET[PT::URL_ACTION_PARAM];
+        $action = str_replace("..", "", $action);
+        redirectAction($action);
+    } else if (isset($_GET[PT::URL_REPORT_PARAM])) {
+        $report = $_GET[PT::URL_REPORT_PARAM];
+        $report = str_replace("..", "", $report);
+        redirectReport($report);
     }
-    $action = str_replace("..", "", $action);
-    redirect($action);
 }
 /** Redirect to the given report data */
 function report_content($module, $name) {
     redirect_report($module, $name);
 }
 function print_content($module, $name) {
-    if (!file_exists(ABSPATH . "/modules/" . $module . "/print/" . $name . ".php")) {
+    if (!file_exists(PT::$ABSPATH . "/modules/" . $module . "/print/" . $name . ".php")) {
         $ret = array("error" => "No such print");
         echo json_encode($ret);
         return;
     }
-    require_once(ABSPATH . "/modules/" . $module . "/print/" . $name . ".php");
+    require_once(PT::$ABSPATH . "/modules/" . $module . "/print/" . $name . ".php");
 }
 
 function get_url_action($action) {
-    return "./?" . URL_ACTION_PARAM . "=" . $action;
+    return "./?" . PT::URL_ACTION_PARAM . "=" . $action;
+}
+function get_url_report($report) {
+    return "./?" . PT::URL_REPORT_PARAM . "=" . $report;
 }
 
 function get_module_url_action($module, $action, $params = array()) {
-    $url = "./?" . URL_ACTION_PARAM . "=" . get_module_action($module, $action);
+    $url = "./?" . PT::URL_ACTION_PARAM . "=" . get_module_action($module, $action);
     foreach ($params as $key => $value) {
         $url .= "&" . $key . "=" . $value;
     }
@@ -83,9 +92,12 @@ function get_current_url() {
 function get_module_action($module, $action) {
     return "modules/" . $module . "/actions/" . $action;
 }
+function get_module_report($module, $report) {
+    return "modules/" . $module . "/reports/" . $report;
+}
 
 function get_report_url($module, $report_name, $type = "csv") {
-    return "./?" . URL_ACTION_PARAM . "=report&w=" . $type . "&m=" . $module
+    return "./?" . PT::URL_ACTION_PARAM . "=report&w=" . $type . "&m=" . $module
             . "&n=" . $report_name;
 } 
 
@@ -93,4 +105,3 @@ function get_template_url() {
     global $config;
     return "templates/" . $config['template'] . "/";
 }
-?>

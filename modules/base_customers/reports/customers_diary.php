@@ -20,31 +20,6 @@
 
 namespace BaseCustomers;
 
-$id = NULL;
-if (isset($_GET['id'])) {
-    $id = $_GET['id'];
-} else {
-    $id = $_POST['id'];
-}
-$startStr = NULL;
-$stopStr = NULL;
-if (isset($_GET['start']) || isset($_POST['start'])) {
-    $startStr = isset($_GET['start']) ? $_GET['start'] : $_POST['start'];
-} else {
-    $startStr = \i18nDate(time() - 86400);
-}
-if (isset($_GET['stop']) || isset($_POST['stop'])) {
-    $stopStr = isset($_GET['stop']) ? $_GET['stop'] : $_POST['stop'];
-} else {
-    $stopStr = \i18nDate(time());
-}
-// Set $start and $stop as timestamps
-$startTime = \i18nRevDate($startStr);
-$stopTime = \i18nRevDate($stopStr);
-// Sql values
-$start = \Pasteque\stdstrftime($startTime);
-$stop = \Pasteque\stdstrftime($stopTime);
-
 $sql = "SELECT RECEIPTS.DATENEW, TICKETS.TICKETID, "
         . "PRODUCTS.NAME AS PNAME, TICKETS.TICKETTYPE, "
         . "SUM(TICKETLINES.UNITS) AS UNITS, "
@@ -62,12 +37,19 @@ $sql = "SELECT RECEIPTS.DATENEW, TICKETS.TICKETID, "
 $fields = array("PNAME", "DATENEW", "TICKETID", "UNITS", "TOTAL");
 $headers = array(\i18n("Product.label"), \i18n("Date"), \i18n("Ticket number"),
         \i18n("Quantity"), \i18n("Subtotal"));
-$report = new \Pasteque\Report($sql, $headers, $fields);
-$report->setParam(":start", $start);
-$report->setParam(":stop", $stop);
-$report->setParam(":id", $id);
+
+$report = new \Pasteque\Report(PLUGIN_NAME, "customers_diary",
+        \pi18n("Customer's diary", PLUGIN_NAME),
+        $sql, $headers, $fields);
+
+$report->addInput("start", \i18n("Session.openDate"), \Pasteque\DB::DATE);
+$report->setDefaultInput("start", time() - 604800);
+$report->addInput("stop", \i18n("Session.closeDate"), \Pasteque\DB::DATE);
+$report->setDefaultInput("stop", time());
+$report->addInput("id", "", null);
+
 $report->addFilter("DATENEW", "\Pasteque\stdtimefstr");
 $report->addFilter("DATENEW", "\i18nDatetime");
+$report->addFilter("TOTAL", "\i18nCurr");
 
-\Pasteque\register_report(PLUGIN_NAME, "customers_diary", $report);
-?>
+\Pasteque\register_report($report);

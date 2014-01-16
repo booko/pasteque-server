@@ -40,5 +40,3 @@ class Payment {
         $this->currencyAmount = $currencyAmount;
     }
 }
-
-?>

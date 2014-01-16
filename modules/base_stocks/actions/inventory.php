@@ -31,11 +31,11 @@ foreach ($locations as $location) {
 $currLocation = null;
 if (isset($_POST['location'])) {
     $currLocation = $_POST['location'];
+} else {
+    $currLocation = $locations[0]->id;
 }
-$products = \Pasteque\ProductsService::getAll();
-$stocks = \Pasteque\StocksService::getQties($currLocation);
+$products = \Pasteque\ProductsService::getAll(true);
 $levels = \Pasteque\StocksService::getLevels($currLocation);
-
 ?>
 <h1><?php \pi18n("Inventory", PLUGIN_NAME); ?></h1>
 
@@ -57,18 +57,25 @@ $levels = \Pasteque\StocksService::getLevels($currLocation);
 			<th><?php \pi18n("Product.reference"); ?></th>
 			<th><?php \pi18n("Product.label"); ?></th>
 			<th><?php \pi18n("Quantity"); ?></th>
-			<th><?php \pi18n("Security threshold", PLUGIN_NAME); ?></th>
-			<th><?php \pi18n("Maximum", PLUGIN_NAME); ?></th>
 		</tr>
 	</thead>
 	<tbody>
 <?php
 $par = FALSE;
-foreach ($products as $product) {
+foreach ($levels as $level) {
 $par = !$par;
-$qty = isset($stocks[$product->id]) ? $stocks[$product->id] : 0;
-$security = isset($levels[$product->id]) ? $levels[$product->id]->security : NULL;
-$max = isset($levels[$product->id]) ? $levels[$product->id]->max : NULL;
+$prdRef = "";
+$prdLabel = "";
+foreach ($products as $product) {
+    if ($product->id == $level->productId) {
+        $prdLabel = $product->label;
+        $prdRef = $product->reference;
+        break;
+    }
+}
+$security = $level->security;
+$max = $level->max;
+$qty = $level->qty !== null ? $level->qty : 0;
 $class = "";
 $help = "";
 if ($security !== NULL && $qty < $security) {
@@ -84,12 +91,10 @@ if ($qty < 0) {
 }
 ?>
 	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
-	    <td><img class="thumbnail" src="?<?php echo \Pasteque\URL_ACTION_PARAM; ?>=img&w=product&id=<?php echo $product->id; ?>" />
-		<td><?php echo $product->reference; ?></td>
-		<td><?php echo $product->label; ?></td>
+	    <td><img class="thumbnail" src="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=product&id=<?php echo $level->productId; ?>" />
+		<td><?php echo $prdRef; ?></td>
+		<td><?php echo $prdLabel; ?></td>
 		<td class="numeric<?php echo $class; ?>"<?php echo $help; ?>><?php echo $qty; ?></td>
-		<td class="numeric"><?php echo $security === NULL ? \i18n("Undefined") : $security; ?></td>
-		<td class="numeric"><?php echo $max === NULL ? \i18n("Undefined") : $max; ?></td>
 	</tr>
 <?php
 }

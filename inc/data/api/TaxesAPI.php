@@ -35,7 +35,7 @@ class TaxesAPI extends APIService {
     protected function proceed() {
         switch ($this->action) {
         case 'get':
-            $this->succeed(TaxesService::get($_GET['id']));
+            $this->succeed(TaxesService::get($this->params['id']));
             break;
         case 'getAll':
             $this->succeed(TaxesService::getAll());

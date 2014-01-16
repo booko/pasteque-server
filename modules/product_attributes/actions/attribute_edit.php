@@ -27,7 +27,7 @@ $error = null;
 // Check saves
 if (isset($_POST['id'])) {
     // Update attribute
-    $attr = \Pasteque\Attribute::__build($_POST['id'], $_POST['label']);
+    $attr = \Pasteque\Attribute::__build($_POST['id'], $_POST['label'], null);
     \Pasteque\AttributesService::updateAttribute($attr);
     // edit values
     $taxValues = array();
@@ -52,7 +52,7 @@ if (isset($_POST['id'])) {
     }
 } else if (isset($_POST['label'])) {
     // Create attribute
-    $attr = new \Pasteque\Attribute($_POST['label']);
+    $attr = new \Pasteque\Attribute($_POST['label'], null);
     \Pasteque\AttributesService::createAttribute($attr);
     foreach ($_POST['label-new'] as $newVal) {
         if ($newVal !== null && $newVal !== "") {
@@ -64,7 +64,7 @@ if (isset($_POST['id'])) {
 
 $attribute = null;
 if (isset($_GET['id'])) {
-    $attribute = \Pasteque\AttributesService::getAttr($_GET['id']);
+    $attribute = \Pasteque\AttributesService::getAttribute($_GET['id']);
 }
 ?>
 <h1><?php \pi18n("Edit attribute", PLUGIN_NAME); ?></h1>
@@ -81,14 +81,14 @@ if (isset($_GET['id'])) {
 	<table cellpadding="0" cellspacing="0">
 		<thead>
 			<tr>
-				<th><?php \pi18n("AttributeValue.label"); ?></th>
+				<th><?php \pi18n("AttributeValue.value"); ?></th>
 				<th></th>
 			</tr>
 		</thead>
 		<tbody id="list">
 	<?php if ($attribute !== null) { foreach ($attribute->values as $value) { ?>
 		<tr id="line-<?php echo $value->id; ?>">
-			<td><?php \Pasteque\form_input($value->id, "AttributeValue", $value, "label", "string", array("required" => true, "nolabel" => true, "nameid" => true)); ?></td>
+			<td><?php \Pasteque\form_input($value->id, "AttributeValue", $value, "value", "string", array("required" => true, "nolabel" => true, "nameid" => true)); ?></td>
 			<td><?php \Pasteque\tpl_js_btn("", "del('" . $value->id . "');", "", "", "delete.png"); ?></td>
 		</tr>
 	<?php } } ?>

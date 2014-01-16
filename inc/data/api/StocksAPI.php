@@ -25,7 +25,7 @@ class StocksAPI extends APIService {
     protected function check() {
         switch ($this->action) {
         case 'getAll':
-            return isset($this->params['location']);
+            return isset($this->params['locationId']);
         }
         return false;
     }
@@ -33,41 +33,8 @@ class StocksAPI extends APIService {
     protected function proceed() {
         switch ($this->action) {
         case 'getAll':
-            $location = NULL;
-            if (isset($this->params['location'])) {
-                $location = $this->params['location'];
-                $location = StocksService::getLocationId($location);
-                if ($location === NULL) {
-                    $this->fail("unknown location");
-                    return;
-                }
-            }
-            $stocks = StocksService::getQties($location);
-            $levels = StocksService::getLevels($location);
-            $ret = array();
-            foreach ($stocks as $prd => $qty) {
-                $stock = new \StdClass();
-                $stock->product_id = $prd;
-                $stock->qty = $qty;
-                $found = FALSE;
-                foreach ($levels as $level) {
-                    if ($level->product_id == $prd) {
-                        $stock->security = $level->security;
-                        $stock->max = $level->max;
-                        $found = TRUE;
-                        break;
-                    }
-                }
-                if (!$found) {
-                    $stock->security = NULL;
-                    $stock->max = NULL;
-                }
-                $ret[] = $stock;
-            }
-            $this->succeed($ret);
+            $this->succeed(StocksService::getLevels($this->params['locationId']));
             break;
         }
     }
 }
-
-?>

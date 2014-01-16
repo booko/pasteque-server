@@ -38,10 +38,11 @@ if (isset($_POST['id']) && isset($_POST['label'])) {
 } else if (isset($_POST['label'])) {
     $curr = new \Pasteque\Currency($_POST['label'], $_POST['symbol'],
             $_POST['decimalSeparator'], $_POST['thousandsSeparator'],
-            $_POST['format'], $_POST['rate'], $_POST['main'], $_POST['active']);
+            $_POST['format'], $_POST['rate'], $_POST['isMain'],
+            $_POST['isActive']);
     $id = $currSrv->create($curr);
     if ($id !== FALSE) {
-        $message = \i18n("Currency saved. <a href=\"%s\">Go to the category page</a>.", PLUGIN_NAME, \Pasteque\get_module_url_action(PLUGIN_NAME, 'currency_edit', array('id' => $id)));
+        $message = \i18n("Currency saved. <a href=\"%s\">Go to the currecy page</a>.", PLUGIN_NAME, \Pasteque\get_module_url_action(PLUGIN_NAME, 'currency_edit', array('id' => $id)));
     } else {
         $error = \i18n("Unable to save changes");
     }

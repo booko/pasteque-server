@@ -21,10 +21,11 @@
 // Index is the entry point for everything.
 namespace Pasteque;
 
-define("ABSPATH", __DIR__); // Base path. Also to check if a call
+require_once(__DIR__ . "/inc/constants.php");
+PT::$ABSPATH = __DIR__; // Base path. Also to check if a call
                          // originates from index.php
 // Load
-require_once(ABSPATH . "/inc/load.php");
+require_once(PT::$ABSPATH . "/inc/load.php");
 
 function index_run() {
     tpl_open();
@@ -36,19 +37,19 @@ function index_run() {
 if (!is_user_logged_in()) {
     show_login_page();
 } else {
-    require_once(ABSPATH . "/inc/load_logged.php");
+    require_once(PT::$ABSPATH . "/inc/load_logged.php");
     // Check install
-    require_once(ABSPATH . "/install.php");
-    if (isset($_GET[URL_ACTION_PARAM])) {
-        switch($_GET[URL_ACTION_PARAM]) {
+    require_once(PT::$ABSPATH . "/install.php");
+    if (isset($_GET[PT::URL_ACTION_PARAM])) {
+        switch($_GET[PT::URL_ACTION_PARAM]) {
         case "img":
-            require_once(ABSPATH . "/dbimg.php");
+            require_once(PT::$ABSPATH . "/dbimg.php");
             break;
         case "report":
-            require_once(ABSPATH . "/report.php");
+            require_once(PT::$ABSPATH . "/report.php");
             break;
         case "print":
-            require_once(ABSPATH . "/print.php");
+            require_once(PT::$ABSPATH . "/print.php");
             break;
         default:
             index_run();

@@ -24,8 +24,6 @@ class TicketsAPI extends APIService {
 
     protected function check() {
         switch ($this->action) {
-        case 'share':
-            return isset($this->params['ticket']);
         case 'save':
             return (isset($this->params['ticket'])
                             || isset($this->params['tickets']))
@@ -36,54 +34,98 @@ class TicketsAPI extends APIService {
 
     protected function proceed() {
         switch ($this->action) {
-        case 'share':
-            // id, name, content
         case 'save':
             // Receive ticket data as json
+            // Convert single ticket to array for consistency
             if (isset($this->params['tickets'])) {
                 $json = json_decode($this->params['tickets']);
             } else {
                 $json = array(json_decode($this->params['ticket']));
             }
             $cashId = $this->params['cashId'];
-            $location = NULL;
-            if (isset($this->params['location'])) {
-                $location = StocksService::getLocationId($this->params['location']);
-                if ($location === NULL) {
+            // Check location existence if there is one
+            $locSrv = new LocationsService();
+            if (isset($this->params['locationId'])) {
+                $location = $locSrv->get($this->params['locationId']);
+                if ($location === null) {
                     $this->fail(APIError::$ERR_GENERIC);
                     break;
                 }
-            } else if (isset($this->params['locationId'])) {
-                $location = $this->params['locationId'];
-                if (!StocksService::locationExists($location)) {
+                $locationId = $this->params['locationId'];
+            } else {                
+                $locations = $locSrv->getAll();
+                if (count($locations) === 0) {
                     $this->fail(APIError::$ERR_GENERIC);
                     break;
                 }
+                $locationId = $locations[0]->id;
             }
+            // Register tickets
             $ticketsCount = count($json);
             $successes = 0;
             $pdo = PDOBuilder::getPDO();
             $pdo->beginTransaction();
             foreach ($json as $jsonTkt) {
-                $label = $jsonTkt->ticket->label;
-                $cashierId = $jsonTkt->cashier->id;
-                $customerId = $jsonTkt->ticket->customer;
+                if ($jsonTkt === null) {
+                    break;
+                }
+                $userId = $jsonTkt->userId;
+                $customerId = $jsonTkt->customerId;
                 $date = $jsonTkt->date;
+                $tktType = $jsonTkt->type;
+                $custCount = $jsonTkt->custCount;
+                // Get lines
                 $lines = array();
-                foreach ($jsonTkt->ticket->lines as $jsline) {
+                foreach ($jsonTkt->lines as $jsLine) {
                     // Get line info
-                    $line = count($lines) + 1;
-                    $productId = $jsline->product->id;
-                    $quantity = $jsline->quantity;
-                    $price = $jsline->product->price;
-                    $taxId = $jsline->product->taxId;
-                    $newLine = new TicketLineLight($line, $productId, $quantity, 
-                                                   $price, $taxId);
+                    $number = $jsLine->dispOrder;
+                    $productId = $jsLine->productId;
+                    $quantity = $jsLine->quantity;
+                    $price = $jsLine->price;
+                    $taxId = $jsLine->taxId;
+                    if ($jsLine->attributes !== null) {
+                        $jsAttr = $jsLine->attributes;
+                        $attrSetId = $jsAttr->attributeSetId;
+                        $values = $jsAttr->values;
+                        $desc = "";
+                        foreach ($values as $val) {
+                            $desc .= $val->value . ", ";
+                        }
+                        $desc = substr($desc, 0, -2);
+                        $attrs = new AttributeSetInstance($attrSetId, $desc);
+                        foreach ($values as $val) {
+                            $attrVal = new AttributeInstance(null,
+                                    $val->id, $val->value);
+                            $attrs->addAttrInst($attrVal);
+                        }
+                        $attrsId = TicketsService::createAttrSetInst($attrs);
+                        
+                        if ($attrsId === false) {
+                            // Fail, will check line count to continue
+                            var_dump("attr");
+                            break;
+                        }
+                    } else {
+                        $attrsId = null;
+                    }
+                    $product = ProductsService::get($productId);
+                    $tax = TaxesService::getTax($taxId);
+                    if ($product == null || $tax == null) {
+                        var_dump("prd");
+                        break;
+                    }
+                    $newLine = new TicketLine($number, $product,
+                            $attrsId, $quantity, $price, $tax);
                     $lines[] = $newLine;
                 }
+                if (count($lines) != count($jsonTkt->lines)) {
+                    var_dump("lines");
+                    break;
+                }
+                // Get payments
                 $payments = array();
                 foreach ($jsonTkt->payments as $jspay) {
-                    $type = $jspay->mode->code;
+                    $type = $jspay->type;
                     $amount = $jspay->amount;
                     if (!isset($jspay->currencyId)) {
                         $currSrv = new CurrenciesService();
@@ -97,21 +139,18 @@ class TicketsAPI extends APIService {
                             $currencyAmount);
                     $payments[] = $payment;
                 }
-                $tktLght = new TicketLight($label, $cashierId, $date, $lines,
-                                           $payments, $cashId, $customerId);
-                $ticket = TicketsService::buildLight($tktLght);
-                if ($location !== NULL) {
-                    if (TicketsService::save($ticket, $location)) {
-                        $successes++;
-                    }
+                $ticket = new Ticket($tktType, $userId, $date, $lines,
+                        $payments, $cashId, $customerId, $custCount);
+                if (TicketsService::save($ticket, $locationId)) {
+                    $successes++;
                 } else {
-                    if (TicketsService::save($ticket)) {
-                        $successes++;
-                    }
+                    var_dump("ave");
+                    break;
                 }
             }
+            // Check if all tickets were saved, if not rollback and error
             $ret = ($successes == $ticketsCount);
-            if ($ret === TRUE) {
+            if ($ret === true) {
                 $pdo->commit();
                 $this->succeed($ret);
             } else {
@@ -122,5 +161,3 @@ class TicketsAPI extends APIService {
         }
     }
 }
-
-?>

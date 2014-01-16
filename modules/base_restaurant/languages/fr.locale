@@ -5,26 +5,17 @@
 "Tables": "Tables",
 "Average price": "Prix moyen",
 
-"Floors": "Plan du restaurant",
-"Floors configuration": "Configuration des étages",
-"Delete floor": "Supprimer l'étage",
-"Add a place": "Ajouter une table",
+"Floors": "Salles",
+"Floors configuration": "Configuration des salles",
+"Floor": "Salle",
+"Delete floor": "Supprimer la salle",
+"Add place": "Ajouter une table",
+"New place": "Nouvelle",
 "Image": "Image",
 "File": "Fichier",
-"Add a floor": "Ajouter un étage",
-"Save changes": "Sauvegarder les changements",
-"Rename floor": "Renomer l'étage",
+"Add a floor": "Ajouter une salle",
 
-"Impossible to delete floor: %s.": "Impossible de supprimer l'étage %s.",
-"Impossible to update floor: %s.": "Impossible de mettre à jour l'étage %s.",
-"Impossible to create floor: %s.": "Impossible créer l'étage %s.",
-"Impossible to delete place: %s.": "Impossible de supprimer la table %s.",
-"Impossible to update place: %s.": "Impossible de mette à jour la table %s.",
-"Impossible to create place: %s.": "Impossible de créer la table %s.",
-
-"A name place cannot be empty": "Le nom de la table ne peut être vide.",
-"Name place already set": "Le nom de la table est déjà utilisé.",
-"Name floor already set": "Le nom de l'étage est déjà utilisé.",
-"A name floor cannot be empty": "Le nom de l'étage ne peut être vide.",
-"Exceptional error": "Erreur exceptionnelle"
+"Changes saved": "Modifications enregistrées",
+"Unable to save changes": "Impossible d'enregistrer les modifications",
+"Unable to save some changes": "Certaines modifications n'ont pu être enregitrées"
 }

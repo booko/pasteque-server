@@ -20,12 +20,12 @@
 
 namespace Pasteque;
 
-function report_csv($module, $name) {
+function report_csv($module, $name, $values) {
     $report = get_report($module, $name);
     if ($report === NULL) {
         die();
     }
-    $reportRun = $report->run();
+    $reportRun = $report->run($values);
     ob_clean();
     $output = fopen("php://output", "rb+");
 
@@ -121,11 +121,18 @@ function totals($report, $run) {
 switch ($_GET['w']) {
 case 'csv':
     header("Content-type: text/csv");
-    report_csv($_GET['m'], $_GET['n']);
+    $params = $_GET;
+    unset($params['m']);
+    unset($params['n']);
+    report_csv($_GET['m'], $_GET['n'], $params);
     break;
 case 'display':
 default:
-    // TODO: auto format display (input and result)
+    $domain = $_GET['m'];
+    $id = $_GET['n'];
+    $report = get_report($domain, $id);
+    tpl_open();
+    tpl_report($report);
+    tpl_close();
     break;
 }
-?>

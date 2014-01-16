@@ -30,15 +30,15 @@ class TariffAreasService extends AbstractService {
             "TARIFFORDER" => "dispOrder"
     );
 
-    protected function build($db_area, $pdo = null) {
-        $area = TariffArea::__build($db_area['ID'], $db_area['NAME'], $db_area['TARIFFORDER']);
+    protected function build($dbArea, $pdo = null) {
+        $area = TariffArea::__build($dbArea['ID'], $dbArea['NAME'], $dbArea['TARIFFORDER']);
         $stmt = $pdo->prepare("SELECT * FROM TARIFFAREAS_PROD "
                 . "WHERE TARIFFID = :id");
         $stmt->bindParam(":id", $area->id);
         $stmt->execute();
-        while ($db_price = $stmt->fetch()) {
-            $area->addPrice($db_price['PRODUCTID'],
-                    floatval($db_price['PRICESELL']));
+        while ($dbPrice = $stmt->fetch()) {
+            $area->addPrice($dbPrice['PRODUCTID'],
+                    floatval($dbPrice['PRICESELL']));
         }
         return $area;
     }
@@ -46,11 +46,11 @@ class TariffAreasService extends AbstractService {
     public function getAll() {
         $areas = array();
         $pdo = PDOBuilder::getPDO();
-        $sql = "SELECT * FROM TARIFFAREAS ORDER BY NAME";
+        $sql = "SELECT * FROM TARIFFAREAS ORDER BY TARIFFORDER";
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
-        while ($db_area = $stmt->fetch()) {
-            $area = $this->build($db_area, $pdo);
+        while ($dbArea = $stmt->fetch()) {
+            $area = $this->build($dbArea, $pdo);
             $areas[] = $area;
         }
         return $areas;
@@ -61,17 +61,25 @@ class TariffAreasService extends AbstractService {
         $stmt = $pdo->prepare("INSERT INTO TARIFFAREAS_PROD "
                 . "(TARIFFID, PRODUCTID, PRICESELL) "
                 . "VALUES (:id, :pid, :price)");
-        foreach ($area->getPrices() as $pid => $price) {
+        foreach ($area->getPrices() as $price) {
             $stmt->bindParam(":id", $id);
-            $stmt->bindParam(":pid", $pid);
-            $stmt->bindParam(":price", $price);
+            $stmt->bindParam(":pid", $price->productId);
+            $stmt->bindParam(":price", $price->price);
             $stmt->execute();
         }
     }
 
     public function create($area) {
-        $id = parent::create($area);
-        if ($id === false) {
+        $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("INSERT INTO TARIFFAREAS "
+                . "(NAME, TARIFFORDER) "
+                . "VALUES (:label, :dispOrder)");
+        $stmt->bindParam(":label", $area->label);
+        $stmt->bindParam(":dispOrder", $area->dispOrder);
+        if ($stmt->execute() !== false) {
+            $id = $pdo->lastInsertId(static::$dbTable . "_"
+                    . static::$dbIdField . "_seq");
+        } else {
             return false;
         }
         $this->insertAreaPrices($id, $area);
@@ -79,10 +87,18 @@ class TariffAreasService extends AbstractService {
     }
 
     public function update($area) {
-        if (parent::update($area) === false) {
+        if ($area->id == null) {
             return false;
         }
         $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("UPDATE TARIFFAREAS SET NAME = :label, "
+                . "TARIFFORDER = :dispOrder WHERE ID = :id");
+        $stmt->bindParam(":id", $area->id);
+        $stmt->bindParam(":label", $area->label);
+        $stmt->bindParam(":dispOrder", $area->dispOrder);
+        if ($stmt->execute() === false) {
+            return false;
+        }
         $del = $pdo->prepare("DELETE FROM TARIFFAREAS_PROD "
                 . "WHERE TARIFFID = :id");
         $del->bindParam(":id", $area->id);
@@ -100,5 +116,3 @@ class TariffAreasService extends AbstractService {
         return parent::delete($areaId);
     }
 }
-
-?>

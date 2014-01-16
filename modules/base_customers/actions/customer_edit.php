@@ -26,13 +26,13 @@ $message = NULL;
 $error = NULL;
 if (isset($_POST['id']) && isset($_POST['dispName'])) {
     $visible = isset($_POST['visible']) ? 1 : 0;
-    $tax_cat_id = NULL;
+    $taxCatId = NULL;
     if (isset($_POST['custTaxId']) && $_POST['custTaxId'] != "") {
-        $tax_cat_id = $_POST['custTaxId'];
+        $taxCatId = $_POST['custTaxId'];
     }
-    $curr_debt = NULL;
+    $currDebt = NULL;
     if (isset($_POST['currDebt']) && $_POST['currDebt'] != "") {
-        $curr_debt = $_POST['currDebt'];
+        $currDebt = $_POST['currDebt'];
     }
     $debtDate = NULL;
     if (isset($_POST['debtDate']) && $_POST['debtDate'] != "") {
@@ -41,7 +41,7 @@ if (isset($_POST['id']) && isset($_POST['dispName'])) {
         $debtDate = \Pasteque\stdstrftime($debtDate);
     }
     $cust = \Pasteque\Customer::__build($_POST['id'], $_POST['number'], $_POST['key'],
-            $_POST['disp_name'], $_POST['card'], $tax_cat_id,
+            $_POST['dispName'], $_POST['card'], $taxCatId,
             $_POST['prepaid'], $_POST['maxDebt'], $currDebt, $debtDate,
             $_POST['firstName'], $_POST['lastName'], $_POST['email'],
             $_POST['phone1'], $_POST['phone2'], $_POST['fax'], $_POST['addr1'],
@@ -54,12 +54,12 @@ if (isset($_POST['id']) && isset($_POST['dispName'])) {
     }
 } else if (isset($_POST['dispName'])) {
     $visible = isset($_POST['visible']) ? 1 : 0;
-    $tax_cat_id = NULL;
+    $taxCatId = NULL;
     if (isset($_POST['custTaxId']) && $_POST['custTaxId'] != "") {
-        $tax_cat_id = $_POST['custTaxId'];
+        $taxCatId = $_POST['custTaxId'];
     }
     $cust = new \Pasteque\Customer($_POST['number'], $_POST['key'],
-            $_POST['dispName'], $_POST['card'], $tax_cat_id,
+            $_POST['dispName'], $_POST['card'], $taxCatId,
             $_POST['prepaid'], $_POST['maxDebt'], NULL, NULL,
             $_POST['firstName'], $_POST['lastName'], $_POST['email'],
             $_POST['phone1'], $_POST['phone2'], $_POST['fax'], $_POST['addr1'],
@@ -90,7 +90,7 @@ if (isset($_GET['id'])) {
 <?php \Pasteque\tpl_msg_box($message, $error); ?>
 
 <?php if ($cust !== NULL) { ?>
-<p><a class="btn" href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'customers_diary'); ?>&id=<?php echo $cust->id; ?>"><?php \pi18n("Customer's diary", PLUGIN_NAME); ?></a></p>
+<p><a class="btn" href="<?php echo \Pasteque\get_report_url(PLUGIN_NAME, 'customers_diary', 'display'); ?>&id=<?php echo $cust->id; ?>"><?php \pi18n("Customer's diary", PLUGIN_NAME); ?></a></p>
 <?php } ?>
 
 <form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
@@ -157,7 +157,7 @@ if (isset($_GET['id'])) {
 <script type="text/javascript">
 	updateBarcode = function() {
 		var barcode = jQuery("#barcode").val();
-		var src = "?<?php echo \Pasteque\URL_ACTION_PARAM; ?>=img&w=custcard&code=" + barcode;
+		var src = "?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=custcard&code=" + barcode;
 		jQuery("#barcodeImg").attr("src", src);
 	}
 	updateBarcode();

@@ -3,5 +3,7 @@
 
 "Add a currency": "Add a currency",
 "Main": "Ref.",
-"Edit a currency": "Edit a currency"
+"Edit a currency": "Edit a currency",
+
+"Currency saved, <a href=\"%s\">Go to the currency page</a>.": "Currency saved, <a href=\"%s\">Go to the currency page</a>."
 }

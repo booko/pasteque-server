@@ -24,6 +24,8 @@ class CompositionsAPI extends APIService {
 
     protected function check() {
         switch ($this->action) {
+        case 'get':
+            return isset($this->params['id']);
         case 'getAll':
             return true;
         }
@@ -32,6 +34,9 @@ class CompositionsAPI extends APIService {
 
     protected function proceed() {
         switch ($this->action) {
+        case 'get':
+            $this->succeed(CompositionsService::get($this->params['id']));
+            break;
         case 'getAll':
             $this->succeed(CompositionsService::getAll());
             break;

@@ -26,9 +26,6 @@ $stocks = FALSE;
 $discounts = FALSE;
 $attributes = FALSE;
 $modules = \Pasteque\get_loaded_modules(\Pasteque\get_user_id());
-if (in_array("base_stocks", $modules)) {
-    $stocks = TRUE;
-}
 if (in_array("product_discounts", $modules)) {
     $discounts = TRUE;
 }
@@ -38,30 +35,6 @@ if (in_array("product_attributes", $modules)) {
 
 $message = NULL;
 $error = NULL;
-function saveStock($newId = NULL) {
-    $level = new \stdClass();
-    if (isset($_POST['stockId'])) {
-        $level->id = $_POST['stockId'];
-    }
-    if ($newId === NULL) {
-        $level->product = $_POST['id'];
-    } else {
-        $level->product = $newId;
-    }
-    $level->security = NULL;
-    if (isset($_POST['security']) && $_POST['security'] != "") {
-        $level->security = $_POST['security'];
-    }
-    $level->max = NULL;
-    if (isset($_POST['max']) && $_POST['max'] != "") {
-        $level->max = $_POST['max'];
-    }
-    if (isset($_POST['stockId'])) {
-        \Pasteque\StocksService::updateLevel($level);
-    } else {
-        \Pasteque\StocksService::createLevel($level);
-    }
-}
 
 if (isset($_POST['id'])) {
     if (isset($_POST['reference']) && isset($_POST['label'])
@@ -94,7 +67,6 @@ if (isset($_POST['id'])) {
                 $taxCatId, $visible, $scaled, $_POST['priceBuy'], $attr,
                 $_POST['barcode'], $img != null,
                 $discount_enabled, $discount_rate);
-        if ($stocks) { saveStock(); }
         if (\Pasteque\ProductsService::update($prd, $img)) {
             $message = \i18n("Changes saved");
         } else {
@@ -131,7 +103,6 @@ if (isset($_POST['id'])) {
                 $img !== null, $discount_enabled, $discount_rate);
         $id = \Pasteque\ProductsService::create($prd, $img);
         if ($id !== FALSE) {
-            if ($stocks) { saveStock($id); }
             $message = \i18n("Product saved. <a href=\"%s\">Go to the product page</a>.", PLUGIN_NAME, \Pasteque\get_module_url_action(PLUGIN_NAME, 'product_edit', array('id' => $id)));
         } else {
             $error = \i18n("Unable to save changes");
@@ -173,11 +144,11 @@ if ($stocks === TRUE && $product != NULL) {
 		<div style="display:inline-block">
 			<input type="hidden" id="clearImage" name="clearImage" value="0" />
 		<?php if ($product !== null && $product->hasImage === true) { ?>
-			<img id="img" class="image-preview" src="?<?php echo \Pasteque\URL_ACTION_PARAM; ?>=img&w=product&id=<?php echo $product->id; ?>" />
+			<img id="img" class="image-preview" src="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=product&id=<?php echo $product->id; ?>" />
 			<a class="btn" id="clear" href="" onClick="javascript:clearImage(); return false;"><?php \pi18n("Delete"); ?></a>
 			<a class="btn" style="display:none" id="restore" href="" onClick="javascript:restoreImage(); return false;"><?php \pi18n("Restore"); ?></a><br />
 		<?php } ?>
-			<input type="file" name="image" />
+			<input id="image" type="file" name="image" />
 		</div>
 	</div>
 	<?php \Pasteque\form_input("edit", "Product", $product, "visible", "boolean"); ?>
@@ -222,20 +193,6 @@ if ($stocks === TRUE && $product != NULL) {
 	<?php } ?>
 	</fieldset>
 
-<?php if ($stocks) { ?>
-	<fieldset>
-		<legend><?php \pi18n("Stock", "base_stocks"); ?></legend>
-		<?php if ($level != NULL) { ?><input type="hidden" name="stockId" value="<?php echo $level->id; ?>" /><?php } ?>
-		<div class="row">
-			<label for="security"><?php \pi18n("Security threshold", "base_stocks"); ?></label>
-			<input id="security" type="numeric" name="security" <?php if ($level !== NULL && $level->security !== NULL) echo 'value="' . $level->security . '"'; ?> />
-		</div>
-		<div class="row">
-			<label for="max-stock"><?php \pi18n("Maximum", "base_stocks"); ?></label>
-			<input id="max-stock" type="numeric" name="max" <?php if ($level !== NULL && $level->max !== NULL) echo 'value="' . $level->max . '"'; ?> />
-		</div>
-	</fieldset>
-<?php } ?>
 	<div class="row actions">
 		<?php \Pasteque\form_save(); ?>
 	</div>
@@ -317,7 +274,7 @@ if ($stocks === TRUE && $product != NULL) {
 
 	updateBarcode = function() {
 		var barcode = jQuery("#barcode").val();
-		var src = "?<?php echo \Pasteque\URL_ACTION_PARAM; ?>=img&w=barcode&code=" + barcode;
+		var src = "?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=barcode&code=" + barcode;
 		jQuery("#barcodeImg").attr("src", src);
 	}
 	updateBarcode();

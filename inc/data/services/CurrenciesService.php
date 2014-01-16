@@ -32,23 +32,38 @@ class CurrenciesService extends AbstractService {
             "THOUSANDSSEP" => "thousandsSeparator",
             "FORMAT" => "format",
             "RATE" => "rate",
-            "MAIN" => "main",
-            "ACTIVE" => "active"
+            "MAIN" => array("attr" =>"isMain", "type" => DB::BOOL),
+            "ACTIVE" => array("attr" => "isActive", "type" => DB::BOOL),
     );
 
     protected function build($row, $pdo = null) {
+        $db = DB::get();
         return Currency::__build($row["ID"], $row["NAME"], $row["SYMBOL"],
                 $row["DECIMALSEP"], $row["THOUSANDSSEP"], $row["FORMAT"],
-                $row["RATE"], ord($row["MAIN"]) == 1, ord($row["ACTIVE"]) == 1);
+                $row["RATE"], $db->readBool($row["MAIN"]),
+                $db->readBool($row["ACTIVE"]));
     }
 
     public function getDefault() {
         $pdo = PDOBuilder::getPDO();
-        $stmt = $pdo->prepare("SELECT * from CURRENCIES WHERE MAIN = 1");
+        $db = DB::get();
+        $stmt = $pdo->prepare("SELECT * from CURRENCIES WHERE "
+                . "MAIN = " . $db->true());
         $stmt->execute();
         if ($row = $stmt->fetch()) {
             return $this->build($row, $pdo);
         }
         return null;
+    }
+
+    public function update($model) {
+        if ($model->isMain) {
+            $pdo = PDOBuilder::getPDO();
+            $db = DB::get();
+            $stmt = $pdo->prepare("UPDATE CURRENCIES SET MAIN = "
+                    . $db->false());
+            $stmt->execute();
+        }
+        return parent::update($model);
     }
 }

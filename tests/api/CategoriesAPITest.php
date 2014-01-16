@@ -25,11 +25,6 @@ class CategoriesAPITest extends \PHPUnit_Framework_TestCase {
 
     const API = "CategoriesAPI";
 
-    public static function setUpBeforeClass() {
-        // Install empty database
-        Installer::install(null);
-    }
-
     protected function tearDown() {
         // Restore database in its empty state
         $pdo = PDOBuilder::getPDO();
@@ -42,11 +37,6 @@ class CategoriesAPITest extends \PHPUnit_Framework_TestCase {
                 echo("[ERROR] Unable to restore db\n");
             }
         }
-    }
-
-    public static function tearDownAfterClass() {
-        // Erase database
-        dropDatabase();
     }
 
     private function createCat($parentId, $label, $image, $dispOrder) {
@@ -135,4 +125,3 @@ class CategoriesAPITest extends \PHPUnit_Framework_TestCase {
         $this->markTestIncomplete("What is the most logical output?");
     }
 }
-?>

@@ -71,12 +71,6 @@ if (isset($_GET['id'])) {
 $categories = \Pasteque\CategoriesService::getAll();
 $products = \Pasteque\ProductsService::getAll(true);
 
-function catalog_category($category, $js) {
-    echo "<a id=\"category-" . $category->id . "\" class=\"catalog-category\" onClick=\"javascript:" . $js . "return false;\">";
-    echo "<img src=\"?" . \Pasteque\URL_ACTION_PARAM . "=img&w=category&id=" . $category->id . "\" />";
-    echo "<p>" . $category->label . "</p>";
-    echo "</a>";
-}
 ?>
 <h1><?php \pi18n("Tariff area", PLUGIN_NAME); ?></h1>
 
@@ -143,12 +137,12 @@ function catalog_category($category, $js) {
     }
 
     jQuery(document).ready(function() {
-<?php if ($area !== null) foreach ($area->getPrices() as $id => $value) {
-    $product = \Pasteque\ProductsService::get($id);
+<?php if ($area !== null) foreach ($area->getPrices() as $price) {
+    $product = \Pasteque\ProductsService::get($price->productId);
     $taxCat = \Pasteque\TaxesService::get($product->taxCatId);
     $tax = $taxCat->getCurrentTax();
-    $price = $value * (1 + $tax->rate);
-    echo "\t\tinitProduct(\"" . $id . "\", " . $price . ");\n";
+    $vatPrice = $price->price * (1 + $tax->rate);
+    echo "\t\tinitProduct(\"" . $price->productId . "\", " . $vatPrice . ");\n";
 } ?>
     });
 </script>

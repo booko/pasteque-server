@@ -54,7 +54,7 @@ class Installer {
         $uid = get_user_id();
         $type = get_db_type($uid);
         $pdo = PDOBuilder::getPDO();
-        $file = ABSPATH . "/install/database/" . $type . "/create.sql";
+        $file = PT::$ABSPATH . "/install/database/" . $type . "/create.sql";
         if (!\file_exists($file)) {
             return false;
         }
@@ -64,7 +64,7 @@ class Installer {
         }
         // Load country data
         if ($country !== null) {
-            $cfile = ABSPATH . "/install/database/" . $type
+            $cfile = PT::$ABSPATH . "/install/database/" . $type
                     . "/data_" . $country . ".sql";
             $fileContent = \file_get_contents($cfile);
             Installer::loadFile($pdo, $fileContent, $type);
@@ -77,16 +77,16 @@ class Installer {
         if ($version === null) {
             $version = Installer::getVersion();
         }
-        while ($version != DB_VERSION) {
+        while ($version != PT::DB_LEVEL) {
             $uid = get_user_id();
             $type = get_db_type($uid);
             $pdo = PDOBuilder::getPDO();
             // Load generic sql update for current version
-            $file = ABSPATH . "/install/database/" . $type
+            $file = PT::$ABSPATH . "/install/database/" . $type
                     . "/upgrade-" . $version . ".sql";
             $pdo->query(\file_get_contents($file));
             // Check for localized update data for current version
-            $file = ABSPATH . "/install/database/" . $type
+            $file = PT::$ABSPATH . "/install/database/" . $type
                     . "upgrade-" . $version . "_" . $country . ".sql";
             if (\file_exists($file)) {
                 $pdo->query(\file_get_contents($file));
@@ -114,9 +114,9 @@ class Installer {
             $dbVer = Installer::getVersion();
         }
         if ($dbVer !== null) {
-            if (intval($dbVer) < intval(DB_VERSION)) {
+            if (intval($dbVer) < intval(PT::DB_LEVEL)) {
                 return Installer::NEED_DB_UPGRADE;
-            } else if (intval($dbVer) > intval(DB_VERSION)) {
+            } else if (intval($dbVer) > intval(PT::DB_LEVEL)) {
                 return Installer::NEED_DB_DOWNGRADE;
             } else {
                 return Installer::OK;

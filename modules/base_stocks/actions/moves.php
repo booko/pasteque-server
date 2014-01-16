@@ -20,25 +20,75 @@
 
 namespace BaseStocks;
 
-$message = NULL;
-$error = NULL;
+$message = null;
+$error = null;
 
 $dateStr = isset($_POST['date']) ? $_POST['date'] : \i18nDate(time());
 $time = \i18nRevDate($dateStr);
-$date = \Pasteque\stdstrftime($time);
 if (isset($_POST['reason'])) {
     $reason = $_POST['reason'];
     $locationId = $_POST['location'];
     foreach ($_POST as $key => $value) {
         if (strpos($key, "qty-") === 0) {
-            $product_id = substr($key, 4);
+            $productId = substr($key, 4);
+            $product = \Pasteque\ProductsService::get($productId);
+            switch ($reason) {
+            case \Pasteque\StockMove::REASON_OUT_SELL:
+            case \Pasteque\StockMove::REASON_IN_REFUND:
+                $price = $product->priceSell;
+                break;
+            case \Pasteque\StockMove::REASON_IN_BUY:
+            case \Pasteque\StockMove::REASON_OUT_BACK:
+            case \Pasteque\StockMove::REASON_IN_MOVEMENT:
+            case \Pasteque\StockMove::REASON_OUT_REFUND:
+           	case \Pasteque\StockMove::REASON_OUT_MOVEMENT:
+           	case \Pasteque\StockMove::REASON_RESET:
+                if ($product->priceBuy !== null) {
+                    $price = $product->priceBuy;
+                } else {
+                    $price = 0.0;
+                }
+                break;
+            case \Pasteque\StockMove::REASON_TRANSFERT:
+                $price = 0.0;
+                break;
+            }
             $qty = $value;
-            $move = new \Pasteque\StockMove($date, $reason, $locationId,
-                    $product_id, $qty);
-            if (\Pasteque\StocksService::addMove($move)) {
-                $message = \i18n("Changes saved");
+            if ($reason == \Pasteque\StockMove::REASON_TRANSFERT) {
+                $destId = $_POST['destination'];
+                $move = new \Pasteque\StockMove($time,
+                        \Pasteque\StockMove::REASON_OUT_MOVEMENT, $productId,
+                        $locationId, null, $qty, $price);
+                $move2 = new \Pasteque\StockMove($time,
+                        \Pasteque\StockMove::REASON_IN_MOVEMENT, $productId,
+                        $destId, null, $qty, $price);
+                if (\Pasteque\StocksService::addMove($move)
+                        && \Pasteque\StocksService::addMove($move2)) {
+                    $message = \i18n("Changes saved");
+                } else {
+                    $error = \i18n("Unable to save changes");
+                }
+            } else if ($reason == \Pasteque\StockMove::REASON_RESET) {
+                $level = \Pasteque\StocksService::getLevel($productId,
+                        $locationId, null);
+                $move = new \Pasteque\StockMove($time, $reason, $productId,
+                    $locationId, null, -$level->qty, $price);
+                $move2 = new \Pasteque\StockMove($time, $reason, $productId,
+                    $locationId, null, $qty, $price);
+                if (\Pasteque\StocksService::addMove($move)
+                        && \Pasteque\StocksService::addMove($move2)) {
+                    $message = \i18n("Changes saved");
+                } else {
+                    $error = \i18n("Unable to save changes");
+                }
             } else {
-                $error = \i18n("Unable to save changes");
+                $move = new \Pasteque\StockMove($time, $reason, $productId,
+                        $locationId, null, $qty, $price);
+                if (\Pasteque\StocksService::addMove($move)) {
+                    $message = \i18n("Changes saved");
+                } else {
+                    $error = \i18n("Unable to save changes");
+                }
             }
         }
     }
@@ -57,17 +107,15 @@ foreach ($locations as $location) {
 }
 $reasonIds = array(\Pasteque\StockMove::REASON_IN_BUY,
         \Pasteque\StockMove::REASON_OUT_SELL,
-        \Pasteque\StockMove::REASON_OUT_BACK);
+        \Pasteque\StockMove::REASON_OUT_BACK,
+        \Pasteque\StockMove::REASON_TRANSFERT,
+        \Pasteque\StockMove::REASON_RESET);
 $reasonNames = array(\i18n("Buy", PLUGIN_NAME),
         \i18n("Sell", PLUGIN_NAME),
-        \i18n("Return to supplier", PLUGIN_NAME));
+        \i18n("Return to supplier", PLUGIN_NAME),
+        \i18n("Transfert", PLUGIN_NAME),
+        \i18n("Reset", PLUGIN_NAME));
 
-function catalog_category($category, $js) {
-    echo "<a id=\"category-" . $category->id . "\" class=\"catalog-category\" onClick=\"javascript:" . $js . "return false;\">";
-    echo "<img src=\"?" . \Pasteque\URL_ACTION_PARAM . "=img&w=category&id=" . $category->id . "\" />";
-    echo "<p>" . $category->label . "</p>";
-    echo "</a>";
-}
 ?>
 <h1><?php \pi18n("Stock move", PLUGIN_NAME); ?></h1>
 
@@ -79,6 +127,7 @@ function catalog_category($category, $js) {
 <form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" id="move" method="post">
 	<?php \Pasteque\form_select("location", \i18n("Location"), $locIds, $locNames, null); ?>
 	<?php \Pasteque\form_select("reason", \i18n("Operation", PLUGIN_NAME), $reasonIds, $reasonNames, null); ?>
+	<?php \Pasteque\form_select("destination", \i18n("Destination"), $locIds, $locNames, null); ?>
 	<div class="row">
 		<label for="date"><?php \pi18n("Date", PLUGIN_NAME); ?></label>
 		<input type="date" name="date" id="date" value="<?php echo $dateStr; ?>" />
@@ -133,4 +182,14 @@ function catalog_category($category, $js) {
 		jQuery("#line-" + productId).detach();
 	}
 
+    reasonChange = function() {
+        var reason = jQuery("#reason").val();
+        if (reason == <?php echo \Pasteque\StockMove::REASON_TRANSFERT; ?>) {
+            jQuery("#destination").prop("disabled", false);
+        } else {
+            jQuery("#destination").prop("disabled", true);
+        }
+    }
+    jQuery("#reason").change(function() { reasonChange(); });
+    reasonChange();
 </script>

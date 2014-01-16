@@ -44,7 +44,7 @@ if (isset($_POST['id'])) {
     }
     $res = new \Pasteque\Resource($_POST['label'],
             $_POST['type'], $content);;
-    if ($resSrv->create($res)) {
+    if ($resSrv->create($res) !== false) {
         $message = \i18n("Changes saved");
     } else {
         $error = \i18n("Unable to save changes");
@@ -62,7 +62,7 @@ if (isset($_GET['id'])) {
         $txtContent = $resource->content;
         break;
     case \Pasteque\Resource::TYPE_IMAGE:
-        $imgContent = \Pasteque\URL_ACTION_PARAM . "=img&w=resource&id=" . $resource->id;
+        $imgContent = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=resource&id=" . $resource->id;
         break;
     }
 }

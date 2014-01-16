@@ -141,15 +141,15 @@ $i18n_modules = array();
 /** Load generic i18n files */
 function load_base_i18n($language = NULL) {
     global $I18N;
-    $I18N->loadFile(ABSPATH . "/languages/default.locale");
+    $I18N->loadFile(PT::$ABSPATH . "/languages/default.locale");
     if ($language !== NULL) {
-        $base_i18n = ABSPATH . "/languages/" . $language . ".locale";
+        $base_i18n = PT::$ABSPATH . "/languages/" . $language . ".locale";
         if (file_exists($base_i18n) && is_readable($base_i18n)) {
             $I18N->loadFile($base_i18n);
         } else if (strpos($language, "-") !== FALSE) {
             // Check parent language
             $parent = substr($language, 0, 2);
-            $file = ABSPATH . "/languages/" . $parent . ".locale";
+            $file = PT::$ABSPATH . "/languages/" . $parent . ".locale";
             if (file_exists($file) && is_readable($file)) {
                 $I18N->loadFile($file);
             }
@@ -163,7 +163,7 @@ function load_modules_i18n($language = NULL) {
     global $i18n_modules;
     global $I18N;
     foreach ($i18n_modules as $module) {
-        $file = ABSPATH . "/modules/" . $module . "/languages/default.locale";
+        $file = PT::$ABSPATH . "/modules/" . $module . "/languages/default.locale";
         if (file_exists($file) && is_readable($file)) {
             $I18N->loadModuleFile($module, $file);
         }
@@ -171,14 +171,14 @@ function load_modules_i18n($language = NULL) {
     // Override with requested language
     if ($language !== NULL) {
         foreach ($i18n_modules as $module) {
-            $file = ABSPATH . "/modules/" . $module . "/languages/"
+            $file = PT::$ABSPATH . "/modules/" . $module . "/languages/"
                     . $language . ".locale";
             if (file_exists($file) && is_readable($file)) {
                 $I18N->loadModuleFile($module, $file);
             } else if (strpos($language, "-") !== FALSE) {
                 // Check parent language
                 $parent = substr($language, 0, 2);
-                $file = ABSPATH . "/modules/" . $module . "/languages/"
+                $file = PT::$ABSPATH . "/modules/" . $module . "/languages/"
                         . $parent . ".locale";
                 if (file_exists($file) && is_readable($file)) {
                     $I18N->loadModuleFile($module, $file);

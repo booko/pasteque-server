@@ -21,57 +21,78 @@
 namespace Pasteque;
 
 class StockMove {
-    // Reasion constants, see com.openbravo.pos.inventory.MovementReason
-    // to add missing ones
+
     const REASON_IN_BUY = 1;
+    const REASON_IN_REFUND = 2;
+    const REASON_IN_MOVEMENT = 4;
     const REASON_OUT_SELL = -1;
+    const REASON_OUT_REFUND = -2;
     const REASON_OUT_BACK = -3;
+    const REASON_OUT_MOVEMENT  = -4;
+    const REASON_TRANSFERT = 1000;
+    const REASON_RESET = 0;
 
     /** Check if the move in in or out. */
     public static function isIn($reason) {
-        return $reason == StockMove::REASON_IN_BUY;
+        return $reason >= 0;
     }
 
     public $date;
     public $reason;
-    public $location;
-    public $product_id;
-    public $quantity;
+    public $locationId;
+    public $productId;
+    public $attrSetInstId;
+    public $qty;
+    public $price;
 
-    public function __construct($date, $reason, $location, $product_id, $qty) {
+    public function __construct($date, $reason, $productId, $locationId,
+            $attrSetInstId, $qty, $price) {
         $this->date = $date;
         $this->reason = $reason;
-        $this->location = $location;
-        $this->product_id = $product_id;
-        $this->quantity = $qty;
+        $this->locationId = $locationId;
+        $this->productId = $productId;
+        $this->attrSetInstId = $attrSetInstId;
+        $this->qty = $qty;
+        $this->price = $price;
     }
 }
 
 class StockLevel {
     public $id;
-    public $product_id;
-    public $location;
+    public $productId;
+    public $locationId;
+    public $attrSetInstId;
     public $security;
     public $max;
+    public $qty;
 
-    public static function __build($id, $product_id, $location, $security, $max) {
-        $stock = new StockLevel($product_id, $location, $security, $max);
+    public static function __build($id, $productId, $locationId, $attrSetInstId,
+            $security, $max, $qty) {
+        $stock = new StockLevel($productId, $locationId, $attrSetInstId,
+                $security, $max, $qty);
         $stock->id = $id;
         return $stock;
     }
 
-    public function __construct($product_id, $location, $security, $max) {
-        $this->product_id = $product_id;
-        $this->location = $location;
+    /** Create a stock level. As quantities are set through stock moves
+     * leave $qty to null to create security and max levels. In that case
+     * also set $attrSetInstId to null as it is ignored.
+     */
+    public function __construct($productId, $locationId, $attrSetInstId,
+            $security, $max, $qty = null) {
+        $this->productId = $productId;
+        $this->locationId = $locationId;
+        $this->attrSetInstId = $attrSetInstId;
         if ($security !== NULL) {
-            $this->security = intval($security);
+            $this->security = floatval($security);
         } else {
             $this->security = NULL;
         }
         if ($max !== NULL) {
-            $this->max = intval($max);
+            $this->max = floatval($max);
         } else {
             $this->max = NULL;
         }
+        $this->qty = $qty;
     }
 }

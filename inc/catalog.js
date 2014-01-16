@@ -23,6 +23,7 @@ Catalog = function(containerId, selectCallback) {
     this.productsByCategory = new Array();
     this.containerId = containerId;
     this.selectCallback = selectCallback;
+    this.currentCategoryId = null;
 }
 
 Catalog.prototype.createCategory = function(catVar, id, label) {
@@ -58,6 +59,7 @@ Catalog.prototype.changeCategory = function(category) {
     for (var i = 0; i < prdCat.length; i++) {
         this.showProduct(prdCat[i]);
     }
+    this.currentCategoryId = category
 }
 
 Catalog.prototype.getProduct = function(productId) {

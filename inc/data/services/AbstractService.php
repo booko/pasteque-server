@@ -40,13 +40,33 @@ abstract class AbstractService {
     protected function unbuild($model) {
         $ret = array();
         foreach (static::$fieldMapping as $field => $value) {
-            $ret[$field] = $model->{$value};
+            if (is_array($value)) {
+                $db = DB::get();
+                switch ($value['type']) {
+                case DB::BOOL:
+                    $ret[$field] = $db->boolVal($model->{$value['attr']});
+                    break;
+                case DB::DATE:
+                    $ret[$field] = $db->dateVal($model->{$value['attr']});
+                    break;
+                case DB::BIN:
+                    $ret[$field] = $model->{$value['attr']};
+                    break;
+                }
+            } else {
+                $ret[$field] = $model->{$value};
+            }
         }
         return $ret;
     }
 
     protected function dbField($modelField) {
-        return array_search($modelField, static::$fieldMapping);
+        $field = array_search($modelField, static::$fieldMapping);
+        if (is_array($field)) {
+            return $field['attr'];
+        } else {
+            return $field;
+        }
     }
 
     /** Insert a new model in database. */
@@ -79,7 +99,8 @@ abstract class AbstractService {
         }
         // RUN!
         if ($stmt->execute()) {
-            return $pdo->lastInsertId();
+            return $pdo->lastInsertId(static::$dbTable . "_"
+                    . static::$dbIdField . "_seq");
         } else {
             return false;
         }

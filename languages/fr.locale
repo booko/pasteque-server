@@ -53,9 +53,11 @@
 "Category.dispOrder": "Ordre",
 
 "Composition.label": "Désignation",
+"Subgroup.label": "Désignation",
+"Subgroup.dispOrder": "Ordre",
 
 "Attribute.label": "Désignation",
-"AttributeValue.label": "Valeur",
+"AttributeValue.value": "Valeur",
 
 "AttributeSet.label": "Désignation",
 
@@ -89,7 +91,7 @@
 "Customer.currDebt": "Dette actuelle",
 "Customer.debtDate": "Date",
 "Customer.note": "Note",
-"Customer.custTaxId": "Catégorie de taxe",
+"Customer.custTax": "Catégorie de taxe",
 "Customer.firstName": "Prénom",
 "Customer.lastName": "Nom",
 "Customer.email": "Email",
@@ -112,7 +114,8 @@
 "Header doesn't contain : %s": "L'entête ne contient pas : %s",
 "Header default": "Defaut d'entête",
 
-"Floors.name": "Désignation",
+"Floor.label": "Désignation",
+"Place.label": "Désignation",
 "Average": "Moyenne",
 
 "Currency.label": "Devise",
@@ -134,7 +137,8 @@
 "cash": "Espèces",
 "magcard": "Carte bleue",
 "cheque": "Chèque",
-"paper": "Coupon",
+"paperin": "Coupon",
 "free": "Offert",
-"debt": "Dette"
+"debt": "Dette",
+"prepaid": "Pré-payé"
 }

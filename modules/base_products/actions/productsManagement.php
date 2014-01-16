@@ -59,10 +59,10 @@ function import_csv($csv) {
 
         //check
         $category = \Pasteque\CategoriesService::getByName($tab['category']);
-        $tax_cat = \Pasteque\TaxesService::getByName($tab['tax_cat']);
+        $taxCat = \Pasteque\TaxesService::getByName($tab['tax_cat']);
 
-        if ($tax_cat && $category) {
-            $prod = readProductLine($tab, $category, $tax_cat);
+        if ($taxCat && $category) {
+            $prod = readProductLine($tab, $category, $taxCat);
             $product_exist = \Pasteque\ProductsService::getByRef($prod->reference);
             if ($product_exist !== null ) {
                 // update product
@@ -102,7 +102,7 @@ function import_csv($csv) {
                         . "category: '%s' doesn't exist", PLUGIN_NAME,
                         $csv->getCurrentLineNumber(), $tab['category']);
             }
-            if (!$tax_cat) {
+            if (!$taxCat) {
                 $error_mess[] = \i18n("On line %d: "
                         . "Tax category: '%s' doesn't exist", PLUGIN_NAME,
                         $csv->getCurrentLineNumber(), $tab['tax_cat']);
@@ -135,7 +135,7 @@ function readProductLine($line, $category, $taxCat) {
     }
     $product = new \Pasteque\Product($line['reference'], $line['label'],
             $priceSell, $category->id, $dispOrder,
-            $taxCat, $visible, $scaled);
+            $taxCat->id, $visible, $scaled);
     if (isset($line['barcode'])) {
         $product->barcode = $line['barcode'];
     }
@@ -158,7 +158,7 @@ function readProductLine($line, $category, $taxCat) {
  * else update stockDiarry and  stockCurr.
  */
 function manage_stock_level($id, $array) {
-    $level = \Pasteque\StocksService::getLevel($id);
+    $level = \Pasteque\StocksService::getLevel($id, "0", null);
     $min = null;
     $max = null;
     if (isset($array['stock_min'])) {
@@ -178,7 +178,7 @@ function manage_stock_level($id, $array) {
         return \Pasteque\StocksService::updateLevel($level);
     } else {
         // Create a new level
-        $level = new \Pasteque\StockLevel($id, "000", $min, $max);
+        $level = new \Pasteque\StockLevel($id, "0", null, $min, $max);
         return \Pasteque\StocksService::createLevel($level);
     }
 }

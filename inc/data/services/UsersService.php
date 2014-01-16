@@ -30,16 +30,34 @@ class UsersService extends AbstractService {
             "ROLE" => "roleId",
             "APPPASSWORD" => "password",
             "CARD" => "card",
-            "VISIBLE" => "visible",
+            "VISIBLE" => array("type" => DB::BOOL, "attr" => "visible"),
     );
 
-    protected function build($db_user, $pdo = null) {
-        $user = User::__build($db_user['ID'], $db_user['NAME'],
-                $db_user['APPPASSWORD'], $db_user['CARD'], $db_user['ROLE'],
-                ord($db_user['VISIBLE']) == 1, $db_user['IMAGE'] != null);
+    protected function build($dbUser, $pdo = null) {
+        $db = DB::get();
+        $user = User::__build($dbUser['ID'], $dbUser['NAME'],
+                $dbUser['APPPASSWORD'], $dbUser['CARD'], $dbUser['ROLE'],
+                $db->readBool($dbUser['VISIBLE']), $dbUser['IMAGE'] != null);
         return $user;
     }
 
+    public function create($user) {
+        $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
+        $stmt = $pdo->prepare("INSERT INTO PEOPLE (ID, NAME, APPPASSWORD, "
+                . "CARD, ROLE, VISIBLE) VALUES "
+                . "(:id, :label, :pwd, :card, :roleId, :vis)");
+        $id = md5(time() . rand());
+        $stmt->bindParam(":id", $id);
+        $stmt->bindParam(":label", $user->name);
+        $stmt->bindParam(":pwd", $user->password);
+        $stmt->bindParam(":card", $user->card);
+        $stmt->bindParam(":roleId", $user->roleId);
+        $stmt->bindParam(":vis", $db->boolVal($user->visible));
+        if ($stmt->execute() !== false) {
+            return $id;
+        } else {
+            return false;
+        }
+    }
 }
-
-?>

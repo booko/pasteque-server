@@ -1,25 +1,92 @@
 <?php
 namespace ProductCompositions;
 
-$error = NULL;
-$message = NULL;
+$error = null;
+$message = null;
+$modules = \Pasteque\get_loaded_modules(\Pasteque\get_user_id());
+$discounts = false;
+if (in_array("product_discounts", $modules)) {
+    $discounts = true;
+}
 
-if (isset($_POST['inputData'])) {
-
-    $objJSON = json_decode($_POST['inputData']);
-    $compo = \Pasteque\CompositionsService::maj($objJSON);
-    if (!$compo) {
-        $err = \Pasteque\CompositionsService::errorInfo();
-        foreach($err as $errmess) {
-            $error[] = \i18n($errmess[0], PLUGIN_NAME, $errmess[1]);
+function parseSubgroups($data) {
+    $jsSubgroups = json_decode($data);
+    $subgroups = array();
+    foreach ($jsSubgroups as $jsSubgroup) {
+        $subgroup = new \Pasteque\Subgroup(null, $jsSubgroup->label,
+            $jsSubgroup->dispOrder, false);
+        foreach ($jsSubgroup->prodIds as $prdId) {
+            $subgroupProd = new \Pasteque\SubgroupProduct($prdId, null, null);
+            $subgroup->addProduct($subgroupProd);
         }
+        $subgroups[] = $subgroup;
+    }
+    return $subgroups;
+}
+
+if (isset($_POST['id'])) {
+    // Update composition
+    $catId = \Pasteque\CompositionsService::CAT_ID;
+    $dispOrder = $_POST['dispOrder'] == "" ? NULL : $_POST['dispOrder'];
+    $taxCatId = $_POST['taxCatId'];
+    if ($_FILES['image']['tmp_name'] !== "") {
+        $img = file_get_contents($_FILES['image']['tmp_name']);
+    } else if ($_POST['clearImage']) {
+        $img = NULL;
     } else {
-        $message = \i18n("Changes saved");
+        $img = "";
+    }
+    $scaled = isset($_POST['scaled']) ? 1 : 0;
+    $visible = isset($_POST['visible']) ? 1 : 0;
+    $discountEnabled = FALSE;
+    $discountRate = 0.0;
+    if (isset($_POST['discountRate'])) {
+        $discountEnabled = isset($_POST['discountEnabled']) ? 1 : 0;
+        $discountRate = $_POST['discountRate'];
+    }
+    $cmp = \Pasteque\Composition::__build($_POST['id'], $_POST['reference'],
+            $_POST['label'], $_POST['realsell'], $catId, $dispOrder,
+            $taxCatId, $visible, $scaled, $_POST['priceBuy'], null,
+            $_POST['barcode'], $img != null,
+            $discountEnabled, $discountRate);
+    $cmp->groups = parseSubgroups($_POST['subgroupData']);
+    if (\Pasteque\CompositionsService::update($cmp, $img, null)) {
+        $message = \i18n("Changes saved", PLUGIN_NAME);
+    } else {
+        $error = \i18n("Unable to save changes", PLUGIN_NAME);
+    }
+} else if (isset($_POST['reference'])) {
+    // Create composition
+    $catId = \Pasteque\CompositionsService::CAT_ID;
+    $dispOrder = $_POST['dispOrder'] == "" ? NULL : $_POST['dispOrder'];
+    $taxCatId = $_POST['taxCatId'];
+    if ($_FILES['image']['tmp_name'] !== "") {
+        $img = file_get_contents($_FILES['image']['tmp_name']);
+    } else {
+        $img = NULL;
+    }
+    $scaled = isset($_POST['scaled']) ? 1 : 0;
+    $visible = isset($_POST['visible']) ? 1 : 0;
+    $discountEnabled = FALSE;
+    $discountRate = 0.0;
+    if (isset($_POST['discountRate'])) {
+        $discountEnabled = isset($_POST['discountEnabled']) ? 1 : 0;
+        $discountRate = $_POST['discountRate'];
+    }
+    $cmp = new \Pasteque\Product($_POST['reference'], $_POST['label'],
+            $_POST['realsell'], $catId, $dispOrder, $taxCatId,
+            $visible, $scaled, $_POST['priceBuy'], null, $_POST['barcode'],
+            $img !== null, $discountEnabled, $discountRate);
+    $cmp->groups = parseSubgroups($_POST['subgroupData']);
+    if (\Pasteque\CompositionsService::create($cmp, $img, null)) {
+        $message = \i18n("Changes saved", PLUGIN_NAME);
+    } else {
+        $error = \i18n("Unable to save changes", PLUGIN_NAME);
     }
 }
 
-if (isset($_GET['product_id'])) {
-    $composition  = \Pasteque\CompositionsService::get($_GET['product_id']);
+if (isset($_GET['productId'])) {
+    $composition  = \Pasteque\CompositionsService::get($_GET['productId']);
     $taxCat = \Pasteque\TaxesService::get($composition->taxCatId);
     $tax = $taxCat->getCurrentTax();
     $vatprice = $composition->priceSell * (1 + $tax->rate);
@@ -31,29 +98,8 @@ if (isset($_GET['product_id'])) {
 }
 
 $categories = \Pasteque\CategoriesService::getAll();
-$products = \Pasteque\ProductsService::getAll(TRUE);
-$modules = \Pasteque\get_loaded_modules(\Pasteque\get_user_id());
+$products = \Pasteque\ProductsService::getAll(true);
 $taxes = \Pasteque\TaxesService::getAll();
-
-$stocks = FALSE;
-$discounts = FALSE;
-if (in_array("base_stocks", $modules)) {
-    $stocks = TRUE;
-}
-if (in_array("product_discounts", $modules)) {
-    $discounts = TRUE;
-}
-
-
-/** write a button representing the category whith action javascript
- * @param $category an object Category show
- * @param $js an function javascript we want to execute onClick */
-function catalog_category($category, $js) {
-    echo "<a id=\"category-" . $category->id . "\" class=\"catalog-category\" onClick=\"javascript:" . $js . "return false;\">";
-    echo "<img src=\"?" . \Pasteque\URL_ACTION_PARAM . "=img&w=category&id=" . $category->id . "\" />";
-    echo "<p>" . $category->label . "</p>";
-    echo "</a>";
-}
 
 ?>
 
@@ -68,21 +114,33 @@ function catalog_category($category, $js) {
     </form>
 <?php } ?>
 
-<form class='edit' id='data-compo' method='post' onsubmit='return submitData();' action="<?php echo \Pasteque\get_current_url();?>">
+<form class="edit" id="data-compo" method="post" onsubmit="return submitData();" action="<?php echo \Pasteque\get_current_url();?>" enctype="multipart/form-data">
 <div>
-    <div id='composition' class='row'>
-    <fieldset>
+	<div id="composition" class="row">
+	<fieldset>
         <legend>Composition</legend>
         <?php \Pasteque\form_hidden("edit", $composition, "id"); ?>
         <fieldset>
         <legend><?php \pi18n("Display", PLUGIN_NAME); ?></legend>
         <?php \Pasteque\form_input("edit", "Product", $composition, "label", "string", array("required" => true)); ?>
-        <?php \Pasteque\form_input("edit", "Product", $composition, "visible", "boolean"); ?>
+		<div class="row">
+			<label for="image"><?php \pi18n("Image"); ?></label>
+			<div style="display:inline-block">
+				<input type="hidden" id="clearImage" name="clearImage" value="0" />
+				<?php if ($composition !== null && $composition->hasImage === true) { ?>
+				<img id="img" class="image-preview" src="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=product&id=<?php echo $product->id; ?>" />
+				<a class="btn" id="clear" href="" onClick="javascript:clearImage(); return false;"><?php \pi18n("Delete"); ?></a>
+				<a class="btn" style="display:none" id="restore" href="" onClick="javascript:restoreImage(); return false;"><?php \pi18n("Restore"); ?></a><br />
+				<?php } ?>
+				<input id="image" type="file" name="image" />
+			</div>
+		</div>
+	<?php \Pasteque\form_input("edit", "Product", $composition, "visible", "boolean"); ?>
         <?php \Pasteque\form_input("edit", "Product", $composition, "dispOrder", "numeric"); ?>
         </fieldset>
         <fieldset>
         <legend><?php \pi18n("Price", PLUGIN_NAME); ?></legend>
-        <?php \Pasteque\form_input("edit", "Product", $composition, "tax_cat", "pick", array("model" => "TaxCategory")); ?>
+        <?php \Pasteque\form_input("edit", "Product", $composition, "taxCatId", "pick", array("model" => "TaxCategory")); ?>
         <div class="row">
             <label for="sellvat"><?php \pi18n("Sell price + taxes", PLUGIN_NAME); ?></label>
             <input id="sellvat" type="numeric" name="selltax" value="<?php echo $vatprice; ?>" />
@@ -114,122 +172,57 @@ function catalog_category($category, $js) {
                 </div>
             </div>
         </fieldset>
-        <?php \Pasteque\tpl_js_btn("btn", "addCmp()", \i18n("Add composition", PLUGIN_NAME));?>
     </fieldset>
 
 
     </div>
-    <div id='subGroup'>
+    <div id="subGroup">
     <fieldset>
     <legend><?php \pi18n('SubGroups',PLUGIN_NAME); ?></legend>
-        <div class='row'>
-            <label for='edit-sgName'><?php pi18n('Name', PLUGIN_NAME); ?>:</label>
-            <input type='text' id='edit-sgName'/>
+        <div class="row">
+        	<label for="listSubGr"><?php \pi18n("SubGroups", PLUGIN_NAME); ?></label>
+            <select id="listSubGr" onchange="showSubgroup()"></select>
+        </div class="row">
+        <div class="row">
+            <label for="edit-sgName"><?php \pi18n('Subgroup.label'); ?></label>
+            <input type="text" id="edit-sgName" onchange="javascript:editSubgroup();"/>
         </div>
         <div class="row">
-            <label for="edit-sgOrder">Order</label>
-            <input id="edit-sgOrder" type="numeric" name="dispOrder" value='0'>
+            <label for="edit-sgOrder"><?php \pi18n('Subgroup.dispOrder'); ?></label>
+            <input id="edit-sgOrder" type="numeric" name="dispOrder" onchange="javascript:editSubgroup();">
         </div>
-        <div class="row">
-            <?php \Pasteque\tpl_js_btn("btn", "addSubGroup()", \i18n("Add subgroup", PLUGIN_NAME));?>
+        <div class="row actions">
+            <?php \Pasteque\tpl_js_btn("btn", "newSubgroup()", \i18n("Add subgroup", PLUGIN_NAME));?>
+            <?php \Pasteque\tpl_js_btn("btn-delete", "delSubgroup()", \i18n("Delete subgroup", PLUGIN_NAME));?>
         </div>
 
-         <select id="listSubGr" onchange="showSubgroup()">
-        </select>
-
-        <input type='text' id='edit-sgNewName' placeholder='<?php \pi18n('Rename subgroup', PLUGIN_NAME); ?>'/>
-        <?php \Pasteque\tpl_js_btn("btn-delete", "delSubgroup()", \i18n("Delete subgroup", PLUGIN_NAME));?>
 
         <div>
-            <div id='product-sub-container' class="product-container"></div>
+            <div id="product-sub-container" class="product-container"></div>
         </div>
     </fieldset>
     </div>
     <!-- to change -->
-    <div id='product' class='row'>
+    <div id="product" class="row">
         <fieldSet>
             <legend><?php \pi18n('Product',PLUGIN_NAME); ?></legend>
-            <div class="catalog-categories-container">
-                <?php // add all category to div catalog-categories-container 
-                foreach ($categories as $category) {
-                    catalog_category($category, "changeCategory('" . $category->id . "');");
-                }
-                ?>
-            </div>
-            <div id="products" class="catalog-products-container"></div>
-            <div class='row' id='btnAddAllPrd'>
-                <input type='button' onclick='javascript:addAllPrd()' value='<?php pi18n('Add all products of the category',PLUGIN_NAME)?>'>
+            <div id="catalog-picker"></div>
+            <div class="row" id="btnAddAllPrd">
+                <input type="button" onclick="javascript:addAllPrd()" value="<?php pi18n('Add all products of the category',PLUGIN_NAME)?>">
             </div>
         </fieldSet>
     </div>
 </div>
-
-        <input id="inputData" name="inputData" type="text" style="display:none">
+<input type="hidden" name="subgroupData" id="subgroupData" />
         <?php \Pasteque\form_save();?>
 </form>
 
-<script src="<?php echo \Pasteque\get_module_action(PLUGIN_NAME, "model.js")?>" type="text/javascript"></script>
+<?php \Pasteque\init_catalog("catalog", "catalog-picker", "productPicked",
+        $categories, $products); ?>
+
 <script src="<?php echo \Pasteque\get_module_action(PLUGIN_NAME, "control.js")?>" type="text/javascript"></script>
 
 <script type="text/javascript">
-    currentCategory = null;
-    var productsByCategory = new Array();
-    var products = new Array();
-
-	centerImage = function(selector) {
-		var container = jQuery(selector);
-		var img = container.children("img");
-		var containerWidth = parseInt(container.css('width'));
-		var containerHeight = parseInt(container.css('height'));
-		var imgWidth = parseInt(img.css('width'));
-		var imgHeight = parseInt(img.css('height'));
-		var hOffset = (containerWidth - imgWidth) / 2;
-		var vOffset = (containerHeight - imgHeight) / 2;
-		img.css("left", hOffset + "px");
-		img.css("top", vOffset + "px");
-	}
-
-	jQuery().ready(function() {
-<?php foreach ($categories as $category) {
-	echo "\t\tcenterImage('#category-" . $category->id . "');\n";
-} ?>
-	});
-
-	addProductToCat = function(product, category) {
-		if (typeof(productsByCategory[category]) != 'object') {
-			productsByCategory[category] = new Array();
-		}
-		productsByCategory[category].push(product);
-	}
-<?php foreach ($products as $product) {
-	echo "\taddProductToCat(\"" . $product->id . "\", \"" . $product->category->id . "\");\n";
-	echo "\tproducts[\"" . $product->id . "\"] = {\"id\":\"" . $product->id . "\", \"label\": \"" . $product->label . "\", \"reference\": \"" . $product->reference . "\", \"img\": \"?" . \Pasteque\URL_ACTION_PARAM . "=img&w=product&id=" . $product->id . "\"};\n";
-} ?>
-
-    showProduct = function(productId) {
-		var product = products[productId];
-		html = "<a id=\"product-" + productId + "\"class=\"catalog-product\" onClick=\"javascript:addProduct('" + product['id'] + "');return false;\">";
-		html += "<img src=\"" + product["img"] + "\" />";
-		html += "<p>" + product['label'] + "</p>";
-		html += "</a>";
-		jQuery("#products").append(html);
-		centerImage("#product-" + productId);
-	}
-
-    changeCategory = function(category) {
-		jQuery("#products").html("");
-		var prdCat = productsByCategory[category];
-		for (var i = 0; i < prdCat.length; i++) {
-			showProduct(prdCat[i]);
-		}
-    currentCategory = category;
-
-	}
-
-
-<?php if (count($categories) > 0) {
-	echo "\tchangeCategory(\"" . $categories[0]->id . "\");\n";
-} ?>
 
 	var tax_rates = new Array();
 <?php foreach ($taxes as $tax) {
@@ -239,7 +232,7 @@ function catalog_category($category, $js) {
 
 updateSellPrice = function() {
 		var sellvat = jQuery("#sellvat").val();
-		var rate = tax_rates[jQuery("#edit-tax_cat").val()];
+		var rate = tax_rates[jQuery("#edit-taxCatId").val()];
 		var sell = sellvat / (1 + rate);
 		jQuery("#realsell").val(sell);
 		jQuery("#sell").val(sell.toFixed(2));
@@ -248,7 +241,7 @@ updateSellPrice = function() {
 updateSellVatPrice = function() {
 		// Update sellvat price
 		var sell = jQuery("#sell").val();
-		var rate = tax_rates[jQuery("#edit-tax_cat").val()];
+		var rate = tax_rates[jQuery("#edit-taxCatId").val()];
 		var sellvat = sell * (1 + rate);
 		// Round to 2 decimals and refresh sell price to avoid unrounded payments
 		sellvat = sellvat.toFixed(2);
@@ -277,7 +270,7 @@ updateMargin = function() {
 
     jQuery("#sellvat").change(function() {changeVal(this.id, updateSellPrice)});
 
-    jQuery("#edit-tax_cat").change(function() {changeVal(this.id, updateSellPrice)});
+    jQuery("#edit-taxCatId").change(function() {changeVal(this.id, updateSellPrice)});
 
     jQuery("#sell").change(function() {changeVal(this.id, updateSellVatPrice);});
 
@@ -285,13 +278,22 @@ updateMargin = function() {
 
     jQuery("#edit-discountRate").change(function() {changeVal(this.id, updateMargin);});
 
-    jQuery("#edit-sgNewName").change(function() {editSubGroup();});
-
-    jQuery("#edit-sgOrder").change(function() { editSubGroup();});
+	clearImage = function() {
+		jQuery("#img").hide();
+		jQuery("#clear").hide();
+		jQuery("#restore").show();
+		jQuery("#clearImage").val(1);
+	}
+	restoreImage = function() {
+		jQuery("#img").show();
+		jQuery("#clear").show();
+		jQuery("#restore").hide();
+		jQuery("#clearImage").val(0);
+	}
 
     updateBarcode = function() {
 		var barcode = jQuery("#barcode").val();
-		var src = "?<?php echo \Pasteque\URL_ACTION_PARAM; ?>=img&w=barcode&code=" + barcode;
+		var src = "?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=barcode&code=" + barcode;
 		jQuery("#barcodeImg").attr("src", src);
 	}
 
@@ -325,53 +327,30 @@ updateMargin = function() {
 
     /** Add all product contain in the category */
     addAllPrd = function() {
-        var prdCat = productsByCategory[currentCategory];
+        var prdCat = catalog.productsByCategory[catalog.currentCategoryId];
             for (var i = 0; i < prdCat.length; i++) {
-                addProduct(prdCat[i]);
+                productPicked(prdCat[i]);
             }
     }
 
 </script>
 
+<script type="text/javascript">
 <?php
-    function esc_quote($data) {
-        return str_replace("'", "\\'", $data);
-    }
-    echo "<script type='text/javascript'>";
-if (isset($composition)) {
-    echo "addDataCmp(";
-    echo "'" . esc_quote($composition->id) . "', '" . esc_quote($composition->reference)
-            . "', '" . esc_quote($composition->label) . "', '" . esc_quote($composition->dispOrder)
-            . "', '" . esc_quote($composition->visible) . "', '" . esc_quote($composition->priceSell)
-            . "', '" . esc_quote($composition->priceBuy) . "', null, '" . esc_quote($composition->tax_cat->label)
-            . "', '" . esc_quote($composition->barcode) . "', '" . esc_quote($composition->discountEnabled)
-            . "', '" . esc_quote($composition->discountRate) . "', '" . esc_quote($composition->image )
-            . "');\n";
-    if ($composition->groups !== NULL) {
-        foreach ($composition->groups as $subG) {
-            echo "addDataSg('"  . esc_quote($subG->id) . "', '" . esc_quote($subG->label)
-                    . "', '" . esc_quote($subG->image) . "','"  . esc_quote($subG->dispOrder)
-                    . "', 'status');\n";
-            if ($subG->groups !== NULL) {
-                foreach ($subG->groups as $prodG) {
-                    echo "addDataSgPrd('" . esc_quote($prodG->subgroup)
-                            . "', '" . esc_quote($prodG->product) . "', '" . esc_quote($prodG->label)
-                            . "', '" . esc_quote($prodG->dispOrder) . "' , 'status');\n";
-                }
-            }
+foreach ($products as $product) {
+    echo("registerProduct(\"" . $product->id . "\", \"" . $product->label . "\");\n");
+}
+if ($composition !== null) {
+    foreach($composition->groups as $group) {
+        echo "var id = addSubgroup(\"" . $group->label . "\", " . $group->dispOrder . ");\n";
+        foreach($group->subgroupProds as $prod) {
+            echo "addProduct(id, \"" . $prod->productId . "\");";
         }
     }
+    echo("showSubgroup();\n");
+} else {
+    echo("addSubgroup(\"\", \"\");\n");
+    echo("showSubgroup();\n");
 }
-    echo "showSubgroup();\n";
-    echo "ERR_COMPOSITION_UNDEFINED = \"" . i18n("ERR_COMPOSITION_UNDEFINED", PLUGIN_NAME) . "\";\n";
-    echo "ERR_COMPOSITION_NAME_EMPTY = \"" . i18n("ERR_COMPOSITION_NAME_EMPTY", PLUGIN_NAME) . "\";\n";
-    echo "ERR_COMPOSITION_NAME = \"" . i18n("ERR_COMPOSITION_NAME", PLUGIN_NAME) . "\";\n";
-    echo "ERR_SUBGROUP_NAME_EMPTY = \"" . i18n("ERR_SUBGROUP_NAME_EMPTY", PLUGIN_NAME) . "\";\n";
-    echo "ERR_SUBGROUP_NAME = \"" . i18n("ERR_SUBGROUP_NAME", PLUGIN_NAME) . "\";\n";
-    echo "ERR_SUBGROUP_UNDEFINED = \"" . i18n("ERR_SUBGROUP_UNDEFINED", PLUGIN_NAME) . "\";\n";
-    echo "ERR_PRD_EXIST = \"" . i18n("ERR_PRD_EXIST", PLUGIN_NAME) . "\";\n";
-    echo "ERR_COMPOSITION_REF_EMPTY = \"" . i18n("ERR_COMPOSITION_REF_EMPTY", PLUGIN_NAME). "\";\n";
-    echo "ERR_COMPOSITION_REF = \"" . i18n("ERR_COMPOSITION_REF", PLUGIN_NAME) . "\";\n";
-    echo "</script>";
-
 ?>
+</script>

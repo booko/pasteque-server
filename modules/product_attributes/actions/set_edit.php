@@ -30,7 +30,7 @@ if (isset($_POST['id'])) {
     $set = \Pasteque\AttributeSet::__build($_POST['id'], $_POST['label']);
     foreach ($_POST['id-attr'] as $attrId) {
         if ($attrId !== null && $attrId !== "") {
-            $attr = \Pasteque\Attribute::__build($attrId, "unused");
+            $attr = \Pasteque\Attribute::__build($attrId, "unused", null);
             $set->addAttribute($attr, null);
         }
     }
@@ -40,7 +40,7 @@ if (isset($_POST['id'])) {
     $set = new \Pasteque\AttributeSet($_POST['label']);
     foreach ($_POST['id-attr'] as $attrId) {
         if ($attrId !== null && $attrId !== "") {
-            $attr = \Pasteque\Attribute::__build($attrId, "unused");
+            $attr = \Pasteque\Attribute::__build($attrId, "unused", null);
             $set->addAttribute($attr, null);
         }
     }

@@ -53,9 +53,11 @@
 "Category.dispOrder": "Order",
 
 "Composition.label": "Name",
+"Subgroup.label": "Name",
+"Subgroup.dispOrder": "Display order",
 
 "Attribute.label": "Name",
-"AttributeValue.label": "Value",
+"AttributeValue.value": "Value",
 
 "AttributeSet.label": "Name",
 
@@ -89,7 +91,7 @@
 "Customer.currDebt": "Current debt",
 "Customer.debtDate": "Debt date",
 "Customer.note": "Note",
-"Customer.custTaxId": "Tax category",
+"Customer.custTax": "Tax category",
 "Customer.firstName": "First name",
 "Customer.lastName": "Last name",
 "Customer.email": "Email",
@@ -112,7 +114,8 @@
 "Header doesn't contain : %s": "Header doesn't contain : %s",
 "Header default": "Header default",
 
-"Floors.name": "Name",
+"Floor.label": "Name",
+"Place.label": "Name",
 "Average": "Average",
 
 "Currency.name": "Currency",
@@ -134,7 +137,8 @@
 "cash": "Cash",
 "magcard": "Magcard",
 "cheque": "Cheque",
-"paper": "Paper",
+"paperin": "Paper",
 "free": "Free",
-"debt": "Debt"
+"debt": "Debt",
+"prepaid": "Prepaid"
 }

@@ -19,7 +19,8 @@
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace WordPressID {
-    require_once(COREPATH . "/tools/wp_preprocessing.php");
+    require_once(\Pasteque\PT::$ABSPATH . "/core_modules/tools/wp_preprocessing.php");
+    require_once(dirname(__FILE__) . "/config.php");
     \WordPress\loadWP($config['wordpress_base_path']);
     $api_user = NULL;
 

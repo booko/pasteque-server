@@ -13,5 +13,6 @@
 "Customer's tax categories": "Catégories de taxes client",
 "Add a tax category": "Ajouter une catégorie",
 "Edit a customer tax": "Édition d'une catégorie de taxe client",
-"Customer's diary": "Historique client"
+"Customer's diary": "Historique client",
+"Customer saved. <a href=\"%s\">Go to the customer page</a>.": "Client enregistré. <a href=\"%s\">Aller à la page du client</a>."
 }

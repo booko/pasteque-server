@@ -21,12 +21,18 @@
 namespace Pasteque;
 
 class MenuEntry {
+
+    const ACTION = 1;
+    const REPORT = 2;
+
+    private $type;
     private $nameDomain;
     private $img;
     private $name;
     private $action;
 
-    public function __construct($name, $img, $action, $domain = NULL) {
+    public function __construct($type, $name, $img, $action, $domain = NULL) {
+        $this->type = $type;
         $this->img = $img;
         $this->name = $name;
         $this->action = $action;
@@ -37,6 +43,7 @@ class MenuEntry {
     public function getName() { return $this->name; }
     public function getNameDomain() { return $this->nameDomain; }
     public function getAction() { return $this->action; }
+    public function getType() { return $this->type; }
 }
 
 class MenuSection {
@@ -66,7 +73,8 @@ class Menu {
     public function __construct() {
         $this->sections = array();
         $this->addSection("general", "General");
-        $entry = new MenuEntry("Home", "menu_home.png", "home");
+        $entry = new MenuEntry(MenuEntry::ACTION, "Home", "menu_home.png",
+                "home");
         $this->addEntry("general", $entry);
     }
 
@@ -86,10 +94,16 @@ class Menu {
         return FALSE;
     }
 
-    public function registerModuleEntry($sectionId, $module_name, $img, $name,
+    public function registerModuleEntry($sectionId, $moduleName, $img, $name,
             $action) {
-        $entry = new MenuEntry($name, $img, 
-                get_module_action($module_name, $action), $module_name);
+        $entry = new MenuEntry(MenuEntry::ACTION, $name, $img,
+                get_module_action($moduleName, $action), $moduleName);
+        return $this->addEntry($sectionId, $entry);
+    }
+    public function registerModuleReport($sectionId, $moduleName, $img, $name,
+            $target) {
+        $entry = new MenuEntry(MenuEntry::REPORT, $name, $img,
+                $target, $moduleName);
         return $this->addEntry($sectionId, $entry);
     }
 
@@ -100,4 +114,3 @@ class Menu {
 
 global $MENU;
 $MENU = new Menu();
-?>

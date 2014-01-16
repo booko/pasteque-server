@@ -28,6 +28,9 @@ class Report {
     /* array use for ponderate the average */
     protected $ponderate;
     private $sql; //string
+    public $domain; // plugin name
+    public $id; // report id
+    public $title;
     public $headers; //array
     public $fields; //array
     protected $params;//array
@@ -37,7 +40,10 @@ class Report {
     protected $subtotals; //array
     protected $totals; //array
 
-    public function __construct($sql, $headers, $fields) {
+    public function __construct($domain, $id, $title, $sql, $headers, $fields) {
+        $this->domain = $domain;
+        $this->id = $id;
+        $this->title = $title;
         $this->sql = $sql;
         $this->headers = $headers;
         $this->fields = $fields;
@@ -48,16 +54,39 @@ class Report {
         $this->totals = array();
     }
 
-    public function setParam($param, $value, $type = \PDO::PARAM_STR) {
-        $this->params[$param] = array("value" => $value, "type" => $type);
+    public function addInput($param, $label, $type) {
+        $this->params[] = array("param" => $param, "label" => $label,
+                "type" => $type);
+    }
+
+    public function setDefaultInput($param, $value) {
+        foreach ($this->params as $i => $defParam) {
+            if ($defParam['param'] == $param) {
+                $this->params[$i]['default'] = $value;
+                break;
+            }
+        }
     }
 
     public function getParams() {
         return $this->params;
     }
 
-    public function run() {
-        return new ReportRun($this);
+    public function getDefault($param) {
+        foreach ($this->params as $p) {
+            if ($p['param'] == $param) {
+                if (isset($p['default'])) {
+                    return $p['default'];
+                } else {
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
+
+    public function run($values) {
+        return new ReportRun($this, $values);
     }
 
     public function getSql() {
@@ -137,6 +166,7 @@ class Report {
 class ReportRun {
 
     protected $report;
+    protected $values;
     public $subtotals;
     public $totals;
     protected $tmpSubtotals;
@@ -149,12 +179,33 @@ class ReportRun {
     protected $empty;
     protected $pnd;
 
-    public function __construct($report) {
+    public function __construct($report, $values) {
         $this->report = $report;
+        $this->values = $values;
         $pdo = PDOBuilder::getPDO();
         $this->stmt = $pdo->prepare($report->getSql());
-        foreach ($report->getParams() as $key => $param) {
-            $this->stmt->bindValue($key, $param['value'], $param['type']);
+        foreach ($report->getParams() as $param) {
+            $id = $param["param"];
+            $val = null;
+            if (isset($this->values[$id])) {
+                $val = $this->values[$id];
+            } else if (isset($param['default'])) {
+                $val = $param['default'];
+            } else {
+                // this is an error
+            }
+            $db = DB::get();
+            switch ($param["type"]) {
+            case DB::DATE:
+                $this->stmt->bindValue(":" . $id, $db->dateVal($val));
+                break;
+            case DB::BOOL:
+                $this->stmt->bindValue(":" . $id, $db->boolVal($val));
+                break;
+            default:
+                $this->stmt->bindValue(":" . $id, $val);
+                break;
+            }
         }
         $this->groupRowCount = 0;
         $this->totalRowCount = 0;
@@ -328,8 +379,9 @@ class MergedReport extends Report {
     private $mergedFilters;
     private $mergedHeaderFilters;
 
-    public function __construct($sqls, $headers, $fields, $mergeFields) {
-        parent::__construct($sqls[0], $headers, $fields);
+    public function __construct($domain, $id, $title, $sqls, $headers, $fields,
+            $mergeFields) {
+        parent::__construct($domain, $id, $title, $sqls[0], $headers, $fields);
         $this->sqls = array_slice($sqls, 1);
         $this->mergeFields = $mergeFields;
         $this->mergedTotals = array();
@@ -338,8 +390,8 @@ class MergedReport extends Report {
         $this->mergedHeaderFilters = array();
     }
 
-    public function run() {
-        return new MergedReportRun($this);
+    public function run($values) {
+        return new MergedReportRun($this, $values);
     }
 
     public function getSubsqls() {
@@ -402,20 +454,60 @@ class MergedReportRun extends ReportRun {
     private $substmts;
     private $lastValues;
 
-    public function __construct($mergedReport) {
+    public function __construct($mergedReport, $values) {
         $this->report = $mergedReport;
+        $this->values = $values;
         $pdo = PDOBuilder::getPDO();
         $this->stmt = $pdo->prepare($mergedReport->getSql());
-        foreach ($mergedReport->getParams() as $key => $param) {
-            $this->stmt->bindValue($key, $param['value'], $param['type']);
+        foreach ($mergedReport->getParams() as $param) {
+            $id = $param["param"];
+            $val = null;
+            if (isset($this->values[$id])) {
+                $val = $this->values[$id];
+            } else if (isset($param['default'])) {
+                $val = $param['default'];
+            } else {
+                // this is an error
+            }
+            $db = DB::get();
+            switch ($param["type"]) {
+            case DB::DATE:
+                $this->stmt->bindValue(":" . $id, $db->dateVal($val));
+                break;
+            case DB::BOOL:
+                $this->stmt->bindValue(":" . $id, $db->boolVal($val));
+                break;
+            default:
+                $this->stmt->bindValue(":" . $id, $val);
+                break;
+            }
         }
         $this->substmts = array();
         foreach ($mergedReport->getSubsqls() as $sql) {
-            $stmt = $pdo->prepare($sql);
-            $this->substmts[] = $stmt;
-            foreach ($mergedReport->getParams() as $key => $param) {
-                $stmt->bindValue($key, $param['value'], $param['type']);
+            $substmt = $pdo->prepare($sql);
+            foreach ($mergedReport->getParams() as $param) {
+                $id = $param['param'];
+                if (isset($this->values[$id])) {
+                    $val = $this->values[$id];
+                } else if (isset($param['default'])) {
+                    $val = $param['default'];
+                } else {
+                    // This is an error
+                }
+                $db = DB::get();
+                switch ($param["type"]) {
+                case DB::DATE:
+                    $substmt->bindValue(":" . $id, $db->dateVal($val));
+                    break;
+                case DB::BOOL:
+                    $substmt->bindValue(":" . $id, $db->boolVal($val));
+                    break;
+                default:
+                    $substmt->bindValue(":" . $id, $val);
+                    break;
+                }
             }
+            $this->substmts[] = $substmt;
         }
         $this->groupRowCount = 0;
         $this->totalRowCount = 0;
@@ -433,14 +525,14 @@ class MergedReportRun extends ReportRun {
         $this->stmt->execute();
         // Make a first run of substatements to get new fields
         for ($i = 0; $i < count($this->substmts); $i++) {
-            $stmt = $this->substmts[$i];
-            $stmt->execute();
-            while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $substmt = $this->substmts[$i];
+            $substmt->execute();
+            while ($row = $substmt->fetch(\PDO::FETCH_ASSOC)) {
                 $this->report->addMergedField($i, $row["__KEY__"]);
             }
             // Reopen
-            $stmt->closeCursor();
-            $stmt->execute();
+            $substmt->closeCursor();
+            $substmt->execute();
         }
         $this->resetTmpSubtotals();
         foreach ($this->report->getTotals() as $field => $type) {
@@ -481,9 +573,9 @@ class MergedReportRun extends ReportRun {
 global $REPORTS;
 $REPORTS = array();
 
-function register_report($module, $name, $report) {
+function register_report($report) {
     global $REPORTS;
-    $REPORTS[$module . ":" . $name] = $report;
+    $REPORTS[$report->domain . ":" . $report->id] = $report;
 }
 function get_report($module, $name) {
     report_content($module, $name);
@@ -494,4 +586,3 @@ function get_report($module, $name) {
         return NULL;
     }
 }
-?>

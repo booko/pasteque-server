@@ -20,8 +20,8 @@
 
 namespace Pasteque;
 
-require_once(ABSPATH . "/inc/api/APIResult.php");
-require_once(ABSPATH . "/inc/api/APIService.php");
-require_once(ABSPATH . "/inc/api/APIBroker.php");
+require_once(PT::$ABSPATH . "/inc/api/APIResult.php");
+require_once(PT::$ABSPATH . "/inc/api/APIService.php");
+require_once(PT::$ABSPATH . "/inc/api/APIBroker.php");
 
 ?>

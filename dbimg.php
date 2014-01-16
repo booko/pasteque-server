@@ -21,7 +21,7 @@
 namespace Pasteque;
 
 function generate_barcode($type, $data) {
-    require_once(ABSPATH . "/lib/barcode-master/php-barcode.php");
+    require_once(PT::$ABSPATH . "/lib/barcode-master/php-barcode.php");
     $font = "./lib/barcode-master/NOTTB___.TTF";
     $fontSize = 10;   // GD1 in px ; GD2 in point
     $marge    = 2;   // between barcode and hri in pixel
@@ -60,7 +60,7 @@ case 'product':
     if ($prd->hasImage !== false) {
         echo ProductsService::getImage($prd->id);
     } else {
-        echo file_get_contents(ABSPATH . "/templates/" . $config['template'] . "/img/default_product.png");
+        echo file_get_contents(PT::$ABSPATH . "/templates/" . $config['template'] . "/img/default_product.png");
     }
     break;
 case 'category':
@@ -68,7 +68,7 @@ case 'category':
     if ($cat->hasImage !== false) {
         echo CategoriesService::getImage($cat->id);
     } else {
-        echo file_get_contents(ABSPATH . "/templates/" . $config['template'] . "/img/default_category.png");
+        echo file_get_contents(PT::$ABSPATH . "/templates/" . $config['template'] . "/img/default_category.png");
     }
     break;
 case 'resource':
@@ -86,7 +86,7 @@ case 'custcard':
 case 'js':
     $file = $_GET['id'];
     $file = str_replace("..", ".", $file);
-    require_once(ABSPATH  . "/templates/" . $config['template'] . "/" . $file);
+    require_once(PT::$ABSPATH  . "/templates/" . $config['template'] . "/" . $file);
     break;
 }
 ?>

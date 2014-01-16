@@ -34,7 +34,7 @@ class CustomersService extends AbstractService {
             "PREPAID" => "prepaid",
             "MAXDEBT" => "maxDebt",
             "CURDEBT" => "currDebt",
-            "CURDATE" => "debtDate",
+            "CURDATE" => array("type" => DB::DATE, "attr" => "debtDate"),
             "FIRSTNAME" => "firstName",
             "LASTNAME" => "lastName",
             "EMAIL" => "email",
@@ -48,30 +48,33 @@ class CustomersService extends AbstractService {
             "REGION" => "region",
             "COUNTRY" => "country",
             "NOTES" => "note",
-            "VISIBLE" => "visible"
+            "VISIBLE" => array("type" => DB::BOOL, "attr" => "visible")
     );
 
     protected function build($row, $pdo = null) {
+        $db = DB::get();
         $cust = Customer::__build($row['ID'], $row['TAXID'], $row['SEARCHKEY'],
                 $row['NAME'], $row['CARD'], $row['TAXCATEGORY'],
                 $row['PREPAID'],
-                $row['MAXDEBT'], $row['CURDEBT'], stdtimefstr($row['CURDATE']),
+                $row['MAXDEBT'], $row['CURDEBT'],
+                $db->readDate($row['CURDATE']),
                 $row['FIRSTNAME'], $row['LASTNAME'], $row['EMAIL'],
                 $row['PHONE'], $row['PHONE2'], $row['FAX'],
                 $row['ADDRESS'], $row['ADDRESS2'], $row['POSTAL'],
                 $row['CITY'], $row['REGION'], $row['COUNTRY'],
-                $row['NOTES'], ord($row['VISIBLE']) == 1);
+                $row['NOTES'], $db->readBool($row['VISIBLE']));
         return $cust;
     }
 
     function getAll($include_hidden = false) {
         $customers = array();
         $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
         $sql = null;
         if ($include_hidden) {
             $sql = "SELECT * FROM CUSTOMERS";
         } else {
-            $sql = "SELECT * FROM CUSTOMERS WHERE VISIBLE = 1";
+            $sql = "SELECT * FROM CUSTOMERS WHERE VISIBLE = " . $db->true();
         }
         foreach ($pdo->query($sql) as $dbCust) {
             $cust = $this->build($dbCust);
@@ -90,99 +93,36 @@ class CustomersService extends AbstractService {
         return false;
     }
 
-    function update($cust) {
-        if ($cust->id == null) {
+    public function create($model) {
+        // This is a copy of AbstractService->create but with explicit id
+        $model->id = md5(time() . rand());
+        $dbData = static::unbuild($model);
+        $pdo = PDOBuilder::getPDO();
+        $dbFields = array_keys(static::$fieldMapping); // Copy
+        // Prepare sql query
+        $sql = "INSERT INTO " . static::$dbTable . " ("
+                . implode($dbFields, ", ") . ") VALUES (";
+        // Set :field for each field for values and bind values for PDO
+        foreach ($dbFields as $field) {
+            $sql .= ":" . $field . ", ";
+        }
+        $sql = substr($sql, 0, -2);
+        $sql .= ")";
+        // Assign values to sql
+        $stmt = $pdo->prepare($sql);
+        foreach ($dbFields as $field) {
+            if ($dbData[$field] === null) {
+                $stmt->bindValue(":" . $field, null, \PDO::PARAM_NULL);
+            } else {
+                $stmt->bindValue(":" . $field, $dbData[$field]);
+            }
+        }
+        // RUN!
+        if ($stmt->execute()) {
+            return $model->id;
+        } else {
             return false;
         }
-        $pdo = PDOBuilder::getPDO();
-        $sql = "UPDATE CUSTOMERS SET SEARCHKEY = :key, TAXID = :num, "
-                . "NAME = :name, TAXCATEGORY = :tax_id, CARD = :card, "
-                . "PREPAID = :prepaid, "
-                . "MAXDEBT = :max_debt, ADDRESS = :addr, ADDRESS2 = :addr2, "
-                . "POSTAL = :zip, CITY = :city, REGION = :region, "
-                . "COUNTRY = :country, FIRSTNAME = :first_name, "
-                . "LASTNAME = :last_name, EMAIL = :email, PHONE = :phone, "
-                . "PHONE2 = :phone2, FAX = :fax, NOTES = :note, "
-                . "VISIBLE = :visible, CURDATE = :date, CURDEBT = :debt";
-        $sql .= " WHERE ID = :id";
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(":key", $cust->key, \PDO::PARAM_STR);
-        $stmt->bindParam(":num", $cust->number, \PDO::PARAM_STR);
-        $stmt->bindParam(":name", $cust->dispName, \PDO::PARAM_STR);
-        $stmt->bindParam(":tax_id", $cust->custTaxId, \PDO::PARAM_STR);
-        $stmt->bindParam(":card", $cust->card, \PDO::PARAM_STR);
-        $stmt->bindParam(":prepaid", $cust->prepaid, \PDO::PARAM_STR);
-        $stmt->bindParam(":max_debt", $cust->maxDebt, \PDO::PARAM_STR);
-        $stmt->bindParam(":addr", $cust->addr1, \PDO::PARAM_STR);
-        $stmt->bindParam(":addr2", $cust->addr2, \PDO::PARAM_STR);
-        $stmt->bindParam(":zip", $cust->zipCode, \PDO::PARAM_STR);
-        $stmt->bindParam(":city", $cust->city, \PDO::PARAM_STR);
-        $stmt->bindParam(":region", $cust->region, \PDO::PARAM_STR);
-        $stmt->bindParam(":country", $cust->country, \PDO::PARAM_STR);
-        $stmt->bindParam(":first_name", $cust->firstName, \PDO::PARAM_STR);
-        $stmt->bindParam(":last_name", $cust->lastName, \PDO::PARAM_STR);
-        $stmt->bindParam(":email", $cust->email, \PDO::PARAM_STR);
-        $stmt->bindParam(":phone", $cust->phone1, \PDO::PARAM_STR);
-        $stmt->bindParam(":phone2", $cust->phone2, \PDO::PARAM_STR);
-        $stmt->bindParam(":fax", $cust->fax, \PDO::PARAM_STR);
-        $stmt->bindParam(":note", $cust->note, \PDO::PARAM_STR);
-        $stmt->bindParam(":visible", $cust->visible, \PDO::PARAM_INT);
-        $stmt->bindParam(":date", $cust->debtDate, \PDO::PARAM_STR);
-        $stmt->bindParam(":debt", stdstrftime($cust->currDebt));
-        $stmt->bindParam(":id", $cust->id, \PDO::PARAM_INT);
-        return $stmt->execute();
-    }
 
-    function create($cust) {
-        $pdo = PDOBuilder::getPDO();
-        $id = md5(time() . rand());
-        $sql = "INSERT INTO CUSTOMERS (ID, SEARCHKEY, TAXID, NAME, TAXCATEGORY, "
-                . "CARD, PREPAID, MAXDEBT, ADDRESS, ADDRESS2, POSTAL, CITY, REGION, "
-                . "COUNTRY, FIRSTNAME, LASTNAME, EMAIL, PHONE, PHONE2, FAX, "
-                . "NOTES, VISIBLE, CURDATE, CURDEBT) VALUES ("
-                . ":id, :key, :num, :name, :tax_id, :card, :prepaid, :max_debt, :addr, "
-                . ":addr2, :zip, :city, :region, :country, :first_name, "
-                . ":last_name, :email, :phone, :phone2, :fax, :note, :visible, "
-                . ":date, :debt)";
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(":id", $id, \PDO::PARAM_STR);
-        $stmt->bindParam(":key", $cust->key, \PDO::PARAM_STR);
-        $stmt->bindParam(":num", $cust->number, \PDO::PARAM_STR);
-        $stmt->bindParam(":name", $cust->dispName, \PDO::PARAM_STR);
-        $stmt->bindParam(":tax_id", $cust->custTaxId, \PDO::PARAM_STR);
-        $stmt->bindParam(":card", $cust->card, \PDO::PARAM_STR);
-        $stmt->bindParam(":prepaid", $cust->prepaid, \PDO::PARAM_STR);
-        $stmt->bindParam(":max_debt", $cust->maxDebt, \PDO::PARAM_STR);
-        $stmt->bindParam(":addr", $cust->addr1, \PDO::PARAM_STR);
-        $stmt->bindParam(":addr2", $cust->addr2, \PDO::PARAM_STR);
-        $stmt->bindParam(":zip", $cust->zipCode, \PDO::PARAM_STR);
-        $stmt->bindParam(":city", $cust->city, \PDO::PARAM_STR);
-        $stmt->bindParam(":region", $cust->region, \PDO::PARAM_STR);
-        $stmt->bindParam(":country", $cust->country, \PDO::PARAM_STR);
-        $stmt->bindParam(":first_name", $cust->firstName, \PDO::PARAM_STR);
-        $stmt->bindParam(":last_name", $cust->lastName, \PDO::PARAM_STR);
-        $stmt->bindParam(":email", $cust->email, \PDO::PARAM_STR);
-        $stmt->bindParam(":phone", $cust->phone1, \PDO::PARAM_STR);
-        $stmt->bindParam(":phone2", $cust->phone2, \PDO::PARAM_STR);
-        $stmt->bindParam(":fax", $cust->fax, \PDO::PARAM_STR);
-        $stmt->bindParam(":note", $cust->note, \PDO::PARAM_STR);
-        $stmt->bindParam(":visible", $cust->visible, \PDO::PARAM_INT);
-        $stmt->bindParam(":date", stdstrftime($cust->debtDate));
-        $stmt->bindParam(":debt", $cust->currDebt, \PDO::PARAM_STR);
-        if ($stmt->execute() !== FALSE) {
-            return $id;
-        } else {
-            return FALSE;
-        }
-    }
-
-    function delete($id) {
-        $pdo = PDOBuilder::getPDO();
-        $sql = "DELETE FROM CUSTOMERS WHERE ID = :id";
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(":id", $id, \PDO::PARAM_INT);
-        return $stmt->execute();
     }
 }
-
-?>

@@ -51,7 +51,7 @@ function init_catalog($jsName, $containerId, $selectCallback,
         $prd = '{' . jsonify("id", $product->id) . ', '
                 . jsonify("label", $product->label) . ', '
                 . jsonify("reference", $product->reference) . ', '
-                . jsonify("img", "?" . URL_ACTION_PARAM . "=img&w=product&id=" . $product->id) . ', '
+                . jsonify("img", "?" . PT::URL_ACTION_PARAM . "=img&w=product&id=" . $product->id) . ', '
                 . jsonify("buy", $product->priceBuy) . ', '
                 . jsonify("sell", $product->priceSell) . ', '
                 . jsonify("vatSell", $vatPrice)

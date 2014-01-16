@@ -34,20 +34,21 @@ class AttributesService {
             $stmtAttr->bindParam(":id", $dbUse['ATTRIBUTE_ID']);
             $stmtAttr->execute();
             while ($dbAttr = $stmtAttr->fetch()) {
-                $attribute = AttributesService::buildDBAttr($dbAttr, $pdo);
-                $set->addAttribute($attribute, $dbUse['LINENO']);
+                $attribute = AttributesService::buildDBAttr($dbAttr, $pdo, 0);
+                $attribute->dispOrder = $dbUse['LINENO'];
+                $set->addAttribute($attribute);
             }
         }
         return $set;
     }
 
-    private static function buildDBAttr($db_attr, $pdo) {
-        $attr = Attribute::__build($db_attr['ID'], $db_attr['NAME']);
+    private static function buildDBAttr($dbAttr, $pdo) {
+        $attr = Attribute::__build($dbAttr['ID'], $dbAttr['NAME'], null);
         $valstmt = $pdo->prepare("SELECT * FROM ATTRIBUTEVALUE WHERE "
                                  . "ATTRIBUTE_ID = :id ORDER BY VALUE");
-        $valstmt->execute(array(':id' => $db_attr['ID']));
-        while ($db_val = $valstmt->fetch()) {
-            $val = AttributeValue::__build($db_val['ID'], $db_val['VALUE']);
+        $valstmt->execute(array(':id' => $dbAttr['ID']));
+        while ($dbVal = $valstmt->fetch()) {
+            $val = AttributeValue::__build($dbVal['ID'], $dbVal['VALUE']);
             $attr->addValue($val);
         }
         return $attr;
@@ -94,15 +95,16 @@ class AttributesService {
         if ($stmt->execute(array(':id' => $id, ':name' => $set->label))) {
             $set->id = $id;
             $stmtUse = $pdo->prepare("INSERT INTO ATTRIBUTEUSE "
-                    . "(ID, ATTRIBUTESET_ID, ATTRIBUTE_ID) VALUES "
-                    . "(:id, :setId, :attrId)");
+                    . "(ID, ATTRIBUTESET_ID, ATTRIBUTE_ID, LINENO) VALUES "
+                    . "(:id, :setId, :attrId, :dispOrder)");
             foreach ($set->attributes as $attr) {
                 $stmtUse->bindParam(":id", md5(time() . rand()));
                 $stmtUse->bindParam(":setId", $set->id);
                 $stmtUse->bindParam(":attrId", $attr->id);
+                $stmtUse->bindParam(":dispOrder", $attr->dispOrder);
                 $stmtUse->execute();
             }
-            return true;
+            return $id;
         } else {
             return false;
         }
@@ -135,11 +137,34 @@ class AttributesService {
 
     static function deleteSet($id) {
         $pdo = PDOBuilder::getPDO();
+        $newTransaction = !$pdo->inTransaction();
+        if ($newTransaction) {
+            $pdo->beginTransaction();
+        }
+        $stmt = $pdo->prepare("DELETE FROM ATTRIBUTEUSE "
+                . "WHERE ATTRIBUTESET_ID = :id");
+        $stmt->bindParam(":id", $id);
+        if ($stmt->execute() === false) {
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
+            return false;
+        }
         $stmt = $pdo->prepare("DELETE FROM ATTRIBUTESET WHERE ID = :id");
-        return $stmt->execute(array(':id' => $id));    
+        if ($stmt->execute(array(':id' => $id)) === false) {
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
+            return false;            
+        } else {
+            if ($newTransaction) {
+                $pdo->commit();
+            }
+            return true;
+        }
     }
 
-    static function getAttr($id) {
+    static function getAttribute($id) {
         $pdo = PDOBuilder::getPDO();
         $stmt = $pdo->prepare("SELECT * FROM ATTRIBUTE WHERE ID = :id");
         if ($stmt->execute(array(':id' => $id)) !== false) {
@@ -157,7 +182,7 @@ class AttributesService {
                               . "(:id, :name)");
         if ($stmt->execute(array(':id' => $id, ':name' => $attr->label))) {
             $attr->id = $id;
-            return true;
+            return $attr->id;
         } else {
             return false;
         }
@@ -166,7 +191,11 @@ class AttributesService {
     static function deleteAttribute($id) {
         $pdo = PDOBuilder::getPDO();
         $stmt = $pdo->prepare("DELETE FROM ATTRIBUTE WHERE ID = :id");
-        return $stmt->execute(array(':id' => $id));
+        if ($stmt->execute(array(':id' => $id)) !== false) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     static function updateAttribute($attr) {
@@ -175,23 +204,39 @@ class AttributesService {
         }
         $pdo = PDOBuilder::getPDO();
         $stmt = $pdo->prepare("UPDATE ATTRIBUTE SET NAME = :name WHERE ID = :id");
-        return $stmt->execute(array(':id' => $attr->id, ':name' => $attr->label));
+        $stmt->bindParam(":id", $attr->id);
+        $stmt->bindParam(":name", $attr->label);
+        if ($stmt->execute() !== false) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    static function createValue($value, $attr_id) {
+    static function createValue($value, $attrId) {
         $id = md5(time() . rand());
         $pdo = PDOBuilder::getPDO();
         $stmt = $pdo->prepare("INSERT INTO ATTRIBUTEVALUE "
                               . "(ID, VALUE, ATTRIBUTE_ID) VALUES "
-                              . "(:id, :value, :attr_id)");
-        return $stmt->execute(array(':id' => $id, ':value' => $value->label,
-                                    ':attr_id' => $attr_id));
+                              . "(:id, :value, :attrId)");
+        $stmt->bindParam(":id", $id);
+        $stmt->bindParam(":value", $value->value);
+        $stmt->bindParam(":attrId", $attrId);
+        if ($stmt->execute() === false) {
+            return false;
+        } else {
+            return $id;
+        }
     }
 
     static function deleteValue($id) {
         $pdo = PDOBuilder::getPDO();
         $stmt = $pdo->prepare("DELETE FROM ATTRIBUTEVALUE WHERE ID = :id");
-        return $stmt->execute(array(':id' => $id));
+        if ($stmt->execute(array(':id' => $id)) !== false) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     static function updateValue($val) {
@@ -201,8 +246,12 @@ class AttributesService {
         $pdo = PDOBuilder::getPDO();
         $stmt = $pdo->prepare("UPDATE ATTRIBUTEVALUE SET VALUE = :value "
                               . "WHERE ID = :id");
-        return $stmt->execute(array(':id' => $val->id, ':value' => $val->label));
+        $stmt->bindParam(":id", $val->id);
+        $stmt->bindParam(":value", $val->value);
+        if ($stmt->execute() !== false) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
-
-?>

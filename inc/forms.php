@@ -204,7 +204,7 @@ function form_select($id, $label, $values, $labels, $currentValue) {
     echo "<select id=\"" . $id . "\" name=\"" . $id . "\">>";
     for ($i = 0; $i < count($values); $i++) {
         $selected = "";
-        if ($values[$i] == $currentValue) {
+        if ($values[$i] === $currentValue) {
             $selected = ' selected="true"';
         }
         echo '<option value="' . $values[$i] . '"' . $selected . '>'

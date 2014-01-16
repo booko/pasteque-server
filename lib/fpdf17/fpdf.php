@@ -7,7 +7,7 @@
 * Author:  Olivier PLATHEY                                                     *
 *******************************************************************************/
 
-define('FPDF_VERSION','1.7');
+define('FPDF_PT::VERSION','1.7');
 
 class FPDF
 {
@@ -1711,7 +1711,7 @@ function _putresources()
 
 function _putinfo()
 {
-	$this->_out('/Producer '.$this->_textstring('FPDF '.FPDF_VERSION));
+	$this->_out('/Producer '.$this->_textstring('FPDF '.FPDF_PT::VERSION));
 	if(!empty($this->title))
 		$this->_out('/Title '.$this->_textstring($this->title));
 	if(!empty($this->subject))

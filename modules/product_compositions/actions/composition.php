@@ -38,11 +38,11 @@ foreach ($compositions as $composition) {
 $par = !$par;
 ?>
 	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
-		<td><img class="thumbnail" src="?<?php echo \Pasteque\URL_ACTION_PARAM; ?>=img&w=category&product_id=<?php echo $composition->id; ?>" />
+		<td><img class="thumbnail" src="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=category&product_id=<?php echo $composition->id; ?>" />
 		<td><?php echo $composition->label; ?></td>
 		<td class="edition">
             <?php \Pasteque\tpl_btn("edition", \Pasteque\get_module_url_action(PLUGIN_NAME,
-                    'composition_edit', array("product_id" => $composition->id)), "",
+                    'composition_edit', array("productId" => $composition->id)), "",
                     'img/edit.png', \i18n('Edit'), \i18n('Edit'));
             ?>
 			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("comp", $composition->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>
