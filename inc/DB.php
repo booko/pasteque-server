@@ -42,6 +42,9 @@ class DB {
     }
 
     public function readBool($val) {
+        if ($val === null) {
+            return null;
+        }
         switch ($this->type) {
         case 'mysql':
             return (ord($val) == 1);
@@ -51,6 +54,9 @@ class DB {
     }
 
     public function boolVal($val) {
+        if ($val === null) {
+            return null;
+        }
         switch ($this->type) {
         case 'mysql':
             if ($val) {
@@ -86,6 +92,9 @@ class DB {
     }
 
     public function readBin($val) {
+        if ($val === null) {
+            return null;
+        }
         switch ($this->type) {
         case 'mysql':
             return $val;
@@ -95,10 +104,18 @@ class DB {
     }
 
     public function readDate($val) {
-        return stdtimefstr($val);
+        if ($val !== null) {
+            return stdtimefstr($val);
+        } else {
+            return null;
+        }
     }
 
     public function dateVal($val) {
-        return stdstrftime($val);
+        if ($val !== null) {
+            return stdstrftime($val);
+        } else {
+            return null;
+        }
     }
 }
