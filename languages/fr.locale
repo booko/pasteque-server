@@ -105,6 +105,9 @@
 "Customer.region": "Département",
 "Customer.country": "Pays",
 
+"DiscountProfile.label": "Désignation",
+"DiscountProfile.rate": "Taux",
+
 "CustTaxCat.label": "Désignation",
 "CustTaxCat.taxCatId": "TVA",
 

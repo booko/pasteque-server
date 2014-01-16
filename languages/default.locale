@@ -105,6 +105,9 @@
 "Customer.region": "Region",
 "Customer.country": "Country",
 
+"DiscountProfile.label": "Name",
+"DiscountProfile.rate": "Rate",
+
 "CustTaxCat.label": "Name",
 "CustTaxCat.taxCatId": "Tax",
 
