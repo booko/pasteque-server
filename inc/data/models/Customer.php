@@ -28,6 +28,7 @@ class Customer {
     public $dispName;
     public $card;
     public $custTaxId;
+    public $discountProfileId;
     public $prepaid;
     public $maxDebt;
     public $currDebt;
@@ -48,26 +49,27 @@ class Customer {
     public $visible;
 
     static function __build($id, $number, $key, $dispName, $card, $custTaxId,
-            $prepaid, $maxDebt, $currDebt, $debtDate, $firstName, $lastName,
-            $email, $phone1, $phone2, $fax, $addr1, $addr2, $zipCode, $city,
-            $region, $country, $note, $visible) {
+            $discountProfileId, $prepaid, $maxDebt, $currDebt, $debtDate,
+            $firstName, $lastName, $email, $phone1, $phone2, $fax, $addr1,
+            $addr2, $zipCode, $city, $region, $country, $note, $visible) {
         $cust = new Customer($number, $key, $dispName, $card, $custTaxId,
-                $prepaid, $maxDebt, $currDebt, $debtDate, $firstName, $lastName,
-                $email, $phone1, $phone2, $fax, $addr1, $addr2, $zipCode,
-                $city, $region, $country, $note, $visible);
+                $discountProfileId, $prepaid, $maxDebt, $currDebt, $debtDate,
+                $firstName, $lastName, $email, $phone1, $phone2, $fax, $addr1,
+                $addr2, $zipCode, $city, $region, $country, $note, $visible);
         $cust->id = $id;
         return $cust;
     }
 
-    function __construct($number, $key, $dispName, $card, $custTaxId, $prepaid,
-            $maxDebt, $currDebt, $debtDate, $firstName, $lastName, $email,
-            $phone1, $phone2, $fax, $addr1, $addr2, $zipCode, $city, $region,
-            $country, $note, $visible) {
+    function __construct($number, $key, $dispName, $card, $custTaxId,
+            $discountProfileId, $prepaid, $maxDebt, $currDebt, $debtDate,
+            $firstName, $lastName, $email, $phone1, $phone2, $fax, $addr1,
+            $addr2, $zipCode, $city, $region, $country, $note, $visible) {
         $this->number = $number;
         $this->key = $key;
         $this->dispName = $dispName;
         $this->card = $card;
         $this->custTaxId = $custTaxId;
+        $this->discountProfileId = $discountProfileId;
         $this->prepaid = $prepaid;
         $this->maxDebt = $maxDebt;
         $this->currDebt = $currDebt;

@@ -10,6 +10,7 @@
 			<file>models/FloorTest.php</file>
 			<file>models/AttributeTest.php</file>
 			<file>models/SharedTicketTest.php</file>
+			<file>models/DiscountProfile.php</file>
 		</testsuite>
 	</testsuites>
 </phpunit>

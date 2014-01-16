@@ -41,7 +41,7 @@ if (isset($_POST['id']) && isset($_POST['dispName'])) {
         $debtDate = \Pasteque\stdstrftime($debtDate);
     }
     $cust = \Pasteque\Customer::__build($_POST['id'], $_POST['number'], $_POST['key'],
-            $_POST['dispName'], $_POST['card'], $taxCatId,
+            $_POST['dispName'], $_POST['card'], $taxCatId, null,
             $_POST['prepaid'], $_POST['maxDebt'], $currDebt, $debtDate,
             $_POST['firstName'], $_POST['lastName'], $_POST['email'],
             $_POST['phone1'], $_POST['phone2'], $_POST['fax'], $_POST['addr1'],
@@ -59,7 +59,7 @@ if (isset($_POST['id']) && isset($_POST['dispName'])) {
         $taxCatId = $_POST['custTaxId'];
     }
     $cust = new \Pasteque\Customer($_POST['number'], $_POST['key'],
-            $_POST['dispName'], $_POST['card'], $taxCatId,
+            $_POST['dispName'], $_POST['card'], $taxCatId, null,
             $_POST['prepaid'], $_POST['maxDebt'], NULL, NULL,
             $_POST['firstName'], $_POST['lastName'], $_POST['email'],
             $_POST['phone1'], $_POST['phone2'], $_POST['fax'], $_POST['addr1'],

@@ -89,8 +89,8 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $this->area = $area;
         // Customer
         $srvCust = new CustomersService();
-        $cust = new Customer(1, "Cust", "It's me", "card", null, 50.0, 10.0,
-                5.0, stdtimefstr("2012-01-01 00:00:00"), "It's", "me",
+        $cust = new Customer(1, "Cust", "It's me", "card", null, null, 50.0,
+                10.0, 5.0, stdtimefstr("2012-01-01 00:00:00"), "It's", "me",
                 "itsme@me.me", "012345", "23456", "11111", "Address1",
                 "Address2", "59000", "City", "Region", "France", "Note", true);
         $cust->id = $srvCust->create($cust);

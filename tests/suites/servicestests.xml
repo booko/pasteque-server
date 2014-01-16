@@ -7,6 +7,7 @@
 			<file>services/CashesServiceTest.php</file>
 			<file>services/CashRegistersServiceTest.php</file>
 			<file>services/CustomersServiceTest.php</file>
+			<file>services/DiscountProfilesServiceTest.php</file>
 			<file>services/AttributesServiceTest.php</file>
 			<file>services/TariffAreasServiceTest.php</file>
 			<file>services/CurrenciesServiceTest.php</file>
