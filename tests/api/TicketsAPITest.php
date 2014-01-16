@@ -159,7 +159,8 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
                 || $pdo->exec("DELETE FROM PEOPLE") === false
                 //|| $pdo->exec("DELETE FROM ROLES") === false
                 || $pdo->exec("DELETE FROM CURRENCIES") === false
-                || $pdo->exec("DELETE FROM CUSTOMERS") === false) {
+                || $pdo->exec("DELETE FROM CUSTOMERS") === false
+                || $pdo->exec("DELETE FROM SHAREDTICKETS") === false) {
             echo("[ERROR] Unable to restore db\n");
         }
     }
@@ -208,5 +209,88 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
                 "Result status check failed");
         $content = $result->content;
         $this->assertTrue($content, "Content is not true");
+    }
+
+
+    private function checkSharedTktEquality($ref, $read) {
+        $this->assertEquals($ref->id, $read->id, "Id mismatch");
+        $this->assertEquals($ref->label, $read->label, "Label mismatch");
+        $this->assertEquals($ref->data, $read->data, "Data mismatch");
+    }
+
+
+    public function testShare() {
+        $tkt = new SharedTicket("Shared", 0xabcdef);
+        $json = json_encode($tkt);
+        $broker = new APIBroker(TicketsAPITest::API);
+        $result = $broker->run("share", array("ticket" => $json));
+        $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
+                "Result status check failed");
+        $content = $result->content;
+        $this->assertNotNull($content, "Content is null");
+        $tkt->id = $content;
+        $read = TicketsService::getSharedTicket($tkt->id);
+        $this->checkSharedTktEquality($tkt, $read);
+    }
+
+    public function testGetShared() {
+        $tkt = new SharedTicket("Shared", 0xabcdef);
+        $tkt->id = TicketsService::createSharedTicket($tkt);
+        $broker = new APIBroker(TicketsAPITest::API);
+        $result = $broker->run("getShared", array("id" => $tkt->id));
+        $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
+                "Result status check failed");
+        $content = $result->content;
+        $this->assertNotNull($content, "Content is null");
+        $this->checkSharedTktEquality($tkt, $content);
+    }
+
+    public function testGetAllShared() {
+        $tkt = new SharedTicket("Shared", 0xabcdef);
+        $tkt->id = TicketsService::createSharedTicket($tkt);
+        $tkt2 = new SharedTicket("Shared2" ,0xbc98d32f);
+        $tkt2->id = TicketsService::createSharedTicket($tkt2);
+        $broker = new APIBroker(TicketsAPITest::API);
+        $result = $broker->run("getAllShared", null);
+        $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
+                "Result status check failed");
+        $content = $result->content;
+        $this->assertNotNull($content, "Content is null");
+        $this->assertTrue(is_array($content), "Content is not an array");
+        $this->assertEquals(2, count($content), "Content size mismatch");
+        $toCheck = array($tkt, $tkt2);
+        $count = 0;
+        foreach ($content as $rtkt) {
+            $ref = null;
+            $count++;
+            if ($rtkt->id == $tkt->id) {
+                $ref = $tkt;
+            } else if ($rtkt->id == $tkt2->id) {
+                $ref = $tkt2;
+            }
+            $this->assertNotNull($ref, "Unknown line");
+            $this->checkSharedTktEquality($ref, $rtkt);
+            for ($i = 0; $i < count($toCheck); $i++) {
+                $t = $toCheck[$i];
+                if ($t->id == $ref->id) {
+                    array_splice($toCheck, $i, 1);
+                    break;
+                }
+            }
+        }
+        $this->assertEquals(0, count($toCheck), "Duplicated shared tickets");
+    }
+
+    public function testDelShared() {
+        $tkt = new SharedTicket("Shared", 0xabcdef);
+        $tkt->id = TicketsService::createSharedTicket($tkt);
+        $broker = new APIBroker(TicketsAPITest::API);
+        $result = $broker->run("delShared", array("id" => $tkt->id));
+        $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
+                "Result status check failed");
+        $content = $result->content;
+        $this->assertTrue($content, "Content is not true");
+        $this->assertNull(TicketsService::getSharedTicket($tkt->id),
+                "Shared ticket is still there");
     }
 }

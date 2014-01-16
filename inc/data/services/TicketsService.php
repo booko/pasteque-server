@@ -29,6 +29,12 @@ class TicketsService {
                 $dbTkt['CUSTCOUNT'], $dbTkt['TARIFFAREA']);
     }
 
+    private static function buildSharedTicket($dbRow, $pdo) {
+        $db = DB::get();
+        return SharedTicket::__build($dbRow['ID'], $dbRow['NAME'],
+                $db->readBin($dbRow['CONTENT']));
+    }
+
     static function save($ticket, $locationId = "0") {
         $pdo = PDOBuilder::getPDO();
         $db = DB::get();
@@ -253,4 +259,71 @@ class TicketsService {
             return false;
         }
     }
+
+    static function getSharedTicket($id) {
+        $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("SELECT * FROM SHAREDTICKETS "
+                . "WHERE ID = :id");
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+        if ($row = $stmt->fetch()) {
+            return TicketsService::buildSharedTicket($row, $pdo);
+        }
+        return null;
+    }
+
+    static function getAllSharedTickets() {
+        $pdo = PDOBuilder::getPDO();
+        $tkts = array();
+        $stmt = $pdo->prepare("SELECT * FROM SHAREDTICKETS");
+        $stmt->execute();
+        while ($row = $stmt->fetch()) {
+            $tkts[] = TicketsService::buildSharedTicket($row, $pdo);
+        }
+        return $tkts;
+    }
+
+    static function deleteSharedTicket($id) {
+        $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("DELETE FROM SHAREDTICKETS WHERE ID = :id");
+        $stmt->bindParam(":id", $id);
+        if ($stmt->execute() !== false) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    static function createSharedTicket($ticket) {
+        $pdo = PDOBuilder::getPDO();
+        $id = md5(time() . rand());
+        $stmt = $pdo->prepare("INSERT INTO SHAREDTICKETS (ID, NAME, CONTENT) "
+                . "VALUES (:id, :label, :data)");
+        $stmt->bindParam(":id", $id);
+        $stmt->bindParam(":label", $ticket->label);
+        $stmt->bindParam(":data", $ticket->data);
+        if ($stmt->execute() !== false) {
+            return $id;
+        } else {
+            return false;
+        }
+    }
+
+    static function updateSharedTicket($ticket) {
+        if ($ticket->id === null) {
+            return false;
+        }
+        $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("UPDATE SHAREDTICKETS SET NAME = :lbl, "
+                . "CONTENT = :content WHERE ID = :id");
+        $stmt->bindParam(":id", $ticket->id);
+        $stmt->bindParam(":lbl", $ticket->label);
+        $stmt->bindParam(":content", $ticket->data);
+        if ($stmt->execute() !== false) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

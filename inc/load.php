@@ -83,6 +83,7 @@ require_once(PT::$ABSPATH . "/inc/data/models/TariffArea.php");
 require_once(PT::$ABSPATH . "/inc/data/models/Tax.php");
 require_once(PT::$ABSPATH . "/inc/data/models/TaxAmount.php");
 require_once(PT::$ABSPATH . "/inc/data/models/TaxCat.php");
+require_once(PT::$ABSPATH . "/inc/data/models/SharedTicket.php");
 require_once(PT::$ABSPATH . "/inc/data/models/Ticket.php");
 require_once(PT::$ABSPATH . "/inc/data/models/TicketLine.php");
 require_once(PT::$ABSPATH . "/inc/data/models/Customer.php");

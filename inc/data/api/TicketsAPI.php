@@ -24,6 +24,14 @@ class TicketsAPI extends APIService {
 
     protected function check() {
         switch ($this->action) {
+        case 'getShared':
+            return isset($this->params['id']);
+        case 'getAllShared':
+            return true;
+        case 'delShared':
+            return isset($this->params['id']);
+        case 'share':
+            return isset($this->params['ticket']);
         case 'save':
             return (isset($this->params['ticket'])
                             || isset($this->params['tickets']))
@@ -34,6 +42,31 @@ class TicketsAPI extends APIService {
 
     protected function proceed() {
         switch ($this->action) {
+        case 'getShared':
+            $this->succeed(TicketsService::getSharedTicket($this->params['id']));
+            break;
+        case 'getAllShared':
+            $this->succeed(TicketsService::getAllSharedTickets());
+            break;
+        case 'delShared':
+            $this->succeed(TicketsService::deleteSharedTicket($this->params['id']));
+            break;
+        case 'share':
+            $json = json_decode($this->params['ticket']);
+            $id = null;
+            if (property_exists($json, 'id')) {
+                $id = $json->id;
+            }
+            $ticket = null;
+            if ($id !== null) {
+                $ticket = SharedTicket::__build($id, $json->label,
+                        $json->data);
+                $this->succeed(TicketsService::updateSharedTicket($ticket));
+            } else {
+                $ticket = new SharedTicket($json->label, $json->data);
+                $this->succeed(TicketsService::createSharedTicket($ticket));
+            }
+            break;
         case 'save':
             // Receive ticket data as json
             // Convert single ticket to array for consistency

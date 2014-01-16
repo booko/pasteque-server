@@ -9,6 +9,7 @@
 			<file>models/PlaceTest.php</file>
 			<file>models/FloorTest.php</file>
 			<file>models/AttributeTest.php</file>
+			<file>models/SharedTicketTest.php</file>
 		</testsuite>
 	</testsuites>
 </phpunit>

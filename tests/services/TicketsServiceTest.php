@@ -148,7 +148,8 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
                 || $pdo->exec("DELETE FROM PEOPLE") === false
                 //|| $pdo->exec("DELETE FROM ROLES") === false
                 || $pdo->exec("DELETE FROM CURRENCIES") === false
-                || $pdo->exec("DELETE FROM CUSTOMERS") === false) {
+                || $pdo->exec("DELETE FROM CUSTOMERS") === false
+                || $pdo->exec("DELETE FROM SHAREDTICKETS") === false) {
             echo("[ERROR] Unable to restore db\n");
         }
     }
@@ -544,5 +545,101 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
                 null);
         $this->assertEquals(-2, $level->qty);
         $this->markTestIncomplete("Check stock level with attribute");
+    }
+
+
+    private function checkSharedTktEquality($ref, $read) {
+        $this->assertEquals($ref->id, $read->id, "Id mismatch");
+        $this->assertEquals($ref->label, $read->label, "Label mismatch");
+        $this->assertEquals($ref->data, $read->data, "Data mismatch");
+    }
+
+    public function testCreateSharedTicket() {
+        $tkt = new SharedTicket("Label", 0x87c9bc);
+        $tkt->id = TicketsService::createSharedTicket($tkt);
+        $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
+        $stmt = $pdo->prepare("SELECT * FROM SHAREDTICKETS");
+        $this->assertNotEquals(false, $stmt->execute());
+        $row = $stmt->fetch();
+        $this->assertNotEquals(false, $row, "Nothing found");
+        $this->assertEquals($tkt->id, $row['ID'], "Id mismatch");
+        $this->assertEquals($tkt->label, $row['NAME'], "Label mismatch");
+        $this->assertEquals($tkt->data, $db->readBin($row['CONTENT']),
+                "Data mismatch");
+    }
+
+    /** @depends testCreateSharedTicket */
+    public function testGetSharedTicket() {
+        $tkt = new SharedTicket("Label", 0x87c9bc);
+        $tkt->id = TicketsService::createSharedTicket($tkt);
+        $read = TicketsService::getSharedTicket($tkt->id);
+        $this->assertNotNull($read, "Nothing found");
+        $this->checkSharedTktEquality($tkt, $read);
+    }
+
+    public function testGetInexistentSharedTicket() {
+        $this->assertNull(TicketsService::getSharedTicket("junk"),
+                "Junk id returned something");
+    }
+
+    /** @depends testCreateSharedTicket */
+    public function testGetAllSharedTickets() {
+        $tkt = new SharedTicket("Label", 0x87c9bc);
+        $tkt->id = TicketsService::createSharedTicket($tkt);
+        $tkt2 = new SharedTicket("Label2", 0xc2d9fc);
+        $tkt2->id = TicketsService::createSharedTicket($tkt2);
+        $read = TicketsService::getAllSharedTickets($tkt->id);
+        $this->assertNotNull($read, "Nothing found");
+        $this->assertTrue(is_array($read), "Content is not an array");
+        $this->assertEquals(2, count($read), "Content size mismatch");
+        $toCheck = array($tkt, $tkt2);
+        $count = 0;
+        foreach ($read as $rtkt) {
+            $ref = null;
+            $count++;
+            if ($rtkt->id == $tkt->id) {
+                $ref = $tkt;
+            } else if ($rtkt->id == $tkt2->id) {
+                $ref = $tkt2;
+            }
+            $this->assertNotNull($ref, "Unknown line");
+            $this->checkSharedTktEquality($ref, $rtkt);
+            for ($i = 0; $i < count($toCheck); $i++) {
+                $t = $toCheck[$i];
+                if ($t->id == $ref->id) {
+                    array_splice($toCheck, $i, 1);
+                    break;
+                }
+            }
+        }
+        $this->assertEquals(2, $count, "Shared tickets count mismatch");
+        $this->assertEquals(0, count($toCheck), "Duplicated shared tickets");
+    }
+
+    /** @depends testCreateSharedTicket
+     * @depends testGetInexistentSharedTicket
+     */
+    public function testDeleteSharedTicket() {
+        $tkt = new SharedTicket("Label", 0x87c9bc);
+        $tkt->id = TicketsService::createSharedTicket($tkt);
+        $this->assertTrue(TicketsService::deleteSharedTicket($tkt->id),
+                "Delete failed");
+        $this->assertNull(TicketsService::getSharedTicket($tkt->id),
+                "Shared ticket is still there");
+    }
+
+    /** @depends testCreateSharedTicket
+     * @depends testGetSharedTicket
+     */
+    public function testUpdateSharedTicket() {
+        $tkt = new SharedTicket("Label", 0x87c9bc);
+        $tkt->id = TicketsService::createSharedTicket($tkt);
+        $tkt->label = "Edited";
+        $tkt->data = 0x98bca8;
+        $this->assertTrue(TicketsService::updateSharedTicket($tkt),
+                "Update failed");
+        $read = TicketsService::getSharedTicket($tkt->id);
+        $this->checkSharedTktEquality($tkt, $read);
     }
 }
