@@ -25,20 +25,16 @@ class CashRegister {
     public $id;
     public $label;
     public $locationId;
-    public $posId;
 
-    static function __build($id, $label, $locationId, $posId) {
-        $cr = new CashRegister($label, $locationId, $posId);
+    static function __build($id, $label, $locationId) {
+        $cr = new CashRegister($label, $locationId);
         $cr->id = $id;
         return $cr;
     }
 
-    function __construct($label, $locationId, $posId) {
+    function __construct($label, $locationId) {
         $this->label = $label;
         $this->locationId = $locationId;
-        $this->posId = $posId;
     }
 
 }
-
-?>

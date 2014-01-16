@@ -51,5 +51,3 @@ class CashRegistersAPI extends APIService {
         }
     }
 }
-
-?>

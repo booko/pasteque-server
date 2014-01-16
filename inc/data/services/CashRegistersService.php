@@ -28,11 +28,10 @@ class CashRegistersService extends AbstractService {
             "ID" => "id",
             "NAME" => "label",
             "LOCATION_ID" => "locationId",
-            "POS_ID" => "posId"
     );
 
     protected function build($row, $pdo = null) {
         return CashRegister::__build($row["ID"], $row["NAME"],
-                $row["LOCATION_ID"], intval($row["POS_ID"]));
+                $row["LOCATION_ID"]);
     }
 }

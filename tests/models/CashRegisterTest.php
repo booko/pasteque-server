@@ -36,8 +36,6 @@ class CashRegisterTest extends \PHPUnit_Framework_TestCase {
         $cashReg = new CashRegister("Cash", "location", 1);
         $this->assertEquals("Cash", $cashReg->label);
         $this->assertEquals("location", $cashReg->locationId);
-        $this->assertEquals(1, $cashReg->posId);
     }
 
 }
-?>

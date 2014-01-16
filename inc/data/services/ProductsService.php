@@ -253,11 +253,10 @@ class ProductsService {
         }
         if ($prd->visible == true) {
             $catstmt = $pdo->prepare("INSERT INTO PRODUCTS_CAT (PRODUCT, "
-                    . "CATORDER, POS_ID) "
-                    . "VALUES (:id, :dispOrder, :pos)");
+                    . "CATORDER) "
+                    . "VALUES (:id, :dispOrder)");
             $catstmt->bindParam(":id", $id);
             $catstmt->bindParam(":dispOrder", $prd->dispOrder);
-            $catstmt->bindValue(":pos", 1);
             $catstmt->execute();
         }
         return $id;
