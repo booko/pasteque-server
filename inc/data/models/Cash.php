@@ -29,22 +29,29 @@ class Cash {
     public $openDate;
     /** Close date as timestamp, may be null */
     public $closeDate;
+    public $openCash;
+    public $closeCash;
     /** Optionnal tickets count */
     public $tickets;
     /** Optionnal total */
     public $total;
 
-    static function __build($id, $host, $sequence, $openDate, $closeDate) {
-        $cash = new Cash($host, $sequence, $openDate, $closeDate);
+    static function __build($id, $host, $sequence, $openDate, $closeDate,
+            $openCash, $closeCash) {
+        $cash = new Cash($host, $sequence, $openDate, $closeDate, $openCash,
+                $closeCash);
         $cash->id = $id;
         return $cash;
     }
 
-    function __construct($host, $sequence, $openDate, $closeDate) {
+    function __construct($host, $sequence, $openDate, $closeDate, $openCash,
+            $closeCash) {
         $this->host = $host;
         $this->sequence = $sequence;
         $this->openDate = $openDate;
         $this->closeDate = $closeDate;
+        $this->openCash = $openCash;
+        $this->closeCash = $closeCash;
     }
 
     function isClosed() {

@@ -38,6 +38,8 @@ class CashesAPITest extends \PHPUnit_Framework_TestCase {
         $cash = $srv->add("Host");
         $cash->openDate = stdtimefstr("2002-02-02 02:02:02");
         $cash->closeDate = stdtimefstr("2002-02-03 03:03:03");
+        $cash->openCash = 10.0;
+        $cash->closeCash = 12.0;
         $srv->update($cash);
         // Get it through API
         $result = $broker->run("get", array("id" => $cash->id));
@@ -53,6 +55,10 @@ class CashesAPITest extends \PHPUnit_Framework_TestCase {
                 "Open date mismatch");
         $this->assertEquals($cash->closeDate, $content->closeDate,
                 "Close date mismatch");
+        $this->assertEquals($cash->openCash, $content->openCash,
+                "Open cash mismatch");
+        $this->assertEquals($cash->closeCash, $content->closeCash,
+                "Close cash mismatch");
     }
 
     public function testGetOpenedByHost() {
@@ -61,6 +67,7 @@ class CashesAPITest extends \PHPUnit_Framework_TestCase {
         // Init cash
         $cash = $srv->add("Host");
         $cash->openDate = stdtimefstr("2002-02-02 02:02:02");
+        $cash->openCash = 9.0;
         $srv->update($cash);
         // Get it through API
         $result = $broker->run("get", array("host" => $cash->host));
@@ -74,6 +81,10 @@ class CashesAPITest extends \PHPUnit_Framework_TestCase {
                 "Sequence mismatch");
         $this->assertEquals($cash->openDate, $content->openDate,
                 "Open date mismatch");
+        $this->assertEquals($cash->openCash, $content->openCash,
+                "Open cash mismatch");
+        $this->assertEquals($cash->closeCash, $content->closeCash,
+                "Close cash mismatch");
     }
 
     public function testGetClosedByHost() {
@@ -83,6 +94,8 @@ class CashesAPITest extends \PHPUnit_Framework_TestCase {
         $cash = $srv->add("Host");
         $cash->openDate = stdtimefstr("2002-02-02 02:02:02");
         $cash->closeDate = stdtimefstr("2002-02-03 03:03:03");
+        $cash->openCash = 8.0;
+        $cash->closeCash = 8.2;
         $srv->update($cash);
         // Get it through API
         $result = $broker->run("get", array("host" => $cash->host));
@@ -113,7 +126,7 @@ class CashesAPITest extends \PHPUnit_Framework_TestCase {
     public function testUpdateCreate() {
         $broker = new APIBroker("CashesAPI");
         $cash = new Cash("Host", 1, stdtimefstr("2002-02-02 02:02:02"),
-                stdtimefstr("2002-02-03 03:03:03"));
+                stdtimefstr("2002-02-03 03:03:03"), 7.0, 15.0);
         $result = $broker->run("update", array("cash" => json_encode($cash)));
         $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
                 "Result status check failed");
@@ -127,14 +140,20 @@ class CashesAPITest extends \PHPUnit_Framework_TestCase {
                 "Open date mismatch");
         $this->assertEquals($cash->closeDate, $content->closeDate,
                 "Close date mismatch");
+        $this->assertEquals($cash->openCash, $content->openCash,
+                "Open cash mismatch");
+        $this->assertEquals($cash->closeCash, $content->closeCash,
+                "Close cash mismatch");
     }
 
     public function testUpdate() {
         $broker = new APIBroker("CashesAPI");
         $srv = new CashesService();
         $cash = $srv->add("Host");
-       $cash->openDate = stdtimefstr("2002-02-02 02:02:02");
+        $cash->openDate = stdtimefstr("2002-02-02 02:02:02");
         $cash->closeDate = stdtimefstr("2002-02-03 03:03:03");
+        $cash->openCash = 1.0;
+        $cash->closeCash = 13.0;
         $result = $broker->run("update", array("cash" => json_encode($cash)));
         $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
                 "Result status check failed");
@@ -148,5 +167,9 @@ class CashesAPITest extends \PHPUnit_Framework_TestCase {
                 "Open date mismatch");
         $this->assertEquals($cash->closeDate, $content->closeDate,
                 "Close date mismatch");
+        $this->assertEquals($cash->openCash, $content->openCash,
+                "Open cash mismatch");
+        $this->assertEquals($cash->closeCash, $content->closeCash,
+                "Close cash mismatch");
     }
 }

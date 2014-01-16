@@ -23,6 +23,8 @@ namespace Pasteque;
 class ZTicket {
 
     public $cashId;
+    public $openCash;
+    public $closeCash;
     public $ticketCount;
     /** Count of customers, may be null */
     public $custCount;
@@ -35,9 +37,11 @@ class ZTicket {
     /** Array of categories {id, amount} */
     public $catSales;
 
-    function __construct($cashId, $ticketCount, $cs, $paymentCount,
-            $payments, $taxes, $categories, $custCount) {
+    function __construct($cashId, $openCash, $closeCash, $ticketCount, $cs,
+            $paymentCount, $payments, $taxes, $categories, $custCount) {
         $this->cashId = $cashId;
+        $this->openCash = $openCash;
+        $this->closeCash = $closeCash;
         $this->ticketCount = $ticketCount;
         $this->cs = $cs;
         $this->paymentCount = $paymentCount;
@@ -48,5 +52,3 @@ class ZTicket {
     }
 
 }
-
-?>

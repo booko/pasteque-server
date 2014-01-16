@@ -29,19 +29,23 @@ class CashesService extends AbstractService {
             "host" => "HOST",
             "sequence" => "HOSTSEQUENCE",
             "openDate" => "DATESTART",
-            "closeDate" => "DATEEND"
+            "closeDate" => "DATEEND",
+            "openCash" => "OPENCASH",
+            "closeCash" => "CLOSECASH"
     );
 
-    protected function build($db_cash, $pdo = null) {
-        $cash = Cash::__build($db_cash['MONEY'], $db_cash['HOST'],
-                              $db_cash['HOSTSEQUENCE'],
-                              stdtimefstr($db_cash['DATESTART']),
-                              stdtimefstr($db_cash['DATEEND']));
-        if (isset($db_cash['TKTS'])) {
-            $cash->tickets = $db_cash['TKTS'];
+    protected function build($dbCash, $pdo = null) {
+        $db = DB::get();
+        $cash = Cash::__build($dbCash['MONEY'], $dbCash['HOST'],
+                $dbCash['HOSTSEQUENCE'],
+                $db->readDate($dbCash['DATESTART']),
+                $db->readDate($dbCash['DATEEND']),
+                $dbCash['OPENCASH'], $dbCash['CLOSECASH']);
+        if (isset($dbCash['TKTS'])) {
+            $cash->tickets = $dbCash['TKTS'];
         }
-        if (isset($db_cash['TOTAL'])) {
-            $cash->total = $db_cash['TOTAL'];
+        if (isset($dbCash['TOTAL'])) {
+            $cash->total = $dbCash['TOTAL'];
         }
         return $cash;
     }
@@ -63,6 +67,7 @@ class CashesService extends AbstractService {
         $sql = "SELECT CLOSEDCASH.MONEY, CLOSEDCASH.HOST, "
                 . "CLOSEDCASH.HOSTSEQUENCE, CLOSEDCASH.DATESTART, "
                 . "CLOSEDCASH.DATEEND, "
+                . "CLOSEDCASH.OPENCASH, CLOSEDCASH.CLOSECASH "
                 . "COUNT(DISTINCT(RECEIPTS.ID)) as TKTS, "
                 . "SUM(PAYMENTS.TOTAL) AS TOTAL "
                 . "FROM CLOSEDCASH "
@@ -104,19 +109,28 @@ class CashesService extends AbstractService {
     /** Update open and end date for a cash. */
     public function update($cash) {
         $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
         $pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
         $startParam = ($cash->isOpened()) ? ':start' : 'NULL';
         $endParam = ($cash->isClosed()) ? ':end' : 'NULL';
+        $openCashParam = $cash->openCash !== null ? ':openCash' : 'NULL';
+        $closeCashParam = $cash->closeCash !== null ? ':closeCash' : 'NULL';
         $stmt = $pdo->prepare("UPDATE CLOSEDCASH SET DATESTART = $startParam, "
-                              . "DATEEND = $endParam WHERE MONEY = :id");
+                . "DATEEND = $endParam, "
+                . "OPENCASH = $openCashParam, CLOSECASH = $closeCashParam "
+                . "WHERE MONEY = :id");
         $stmt->bindParam(':id', $cash->id);
         if ($cash->isOpened()) {
-            $open = stdstrftime($cash->openDate);
-            $stmt->bindParam(':start', $open, \PDO::PARAM_INT);
+            $stmt->bindParam(':start', $db->dateVal($cash->openDate));
         }
         if ($cash->isClosed()) {
-            $close = stdstrftime($cash->closeDate);
-            $stmt->bindParam(':end', $close, \PDO::PARAM_INT);
+            $stmt->bindParam(':end', $db->dateVal($cash->closeDate));
+        }
+        if ($cash->openCash !== null) {
+            $stmt->bindParam(':openCash', $cash->openCash);
+        }
+        if ($cash->closeCash !== null) {
+            $stmt->bindParam(':closeCash', $cash->closeCash);
         }
         return $stmt->execute();
     }
@@ -142,6 +156,18 @@ class CashesService extends AbstractService {
 
     public function getZTicket($cashId) {
         $pdo = PDOBuilder::getPDO();
+        // Get open/close cash fund
+        $openCash = null;
+        $closeCash = null;
+        $cashSql = "SELECT OPENCASH, CLOSECASH FROM CLOSEDCASH "
+                . "WHERE MONEY = :id";
+        $cashStmt = $pdo->prepare($cashSql);
+        $cashStmt->bindParam(":id", $cashId);
+        $cashStmt->execute();
+        if ($row = $cashStmt->fetch()) {
+            $openCash = $row['OPENCASH'];
+            $closeCash = $row['CLOSECASH'];
+        }
         // Get tickets, cs and customers
         $ticketCount = 0;
         $sales = 0;
@@ -219,9 +245,8 @@ class CashesService extends AbstractService {
         while ($row = $catStmt->fetch()) {
             $catSales[] = array("id" => $row['CATID'], "amount" => $row['SUM']);
         }
-        return new ZTicket($cashId, $ticketCount, $sales, $paymentCount,
-                $payments, $taxes, $catSales, $custCount);
+        return new ZTicket($cashId, $openCash, $closeCash, $ticketCount,
+                $sales, $paymentCount, $payments, $taxes, $catSales,
+                $custCount);
     }
 }
-
-?>
