@@ -75,8 +75,10 @@ class CashesService extends AbstractService {
                 . "LEFT JOIN PAYMENTS ON PAYMENTS.RECEIPT = RECEIPTS.ID "
                 . "GROUP BY CLOSEDCASH.MONEY "
                 . "ORDER BY DATESTART DESC";
-        foreach ($pdo->query($sql) as $db_cash) {
-            $cash = $this->build($db_cash);
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        while ($row = $stmt->fetch()) {
+            $cash = $this->build($row);
             $cashes[] = $cash;
         }
         return $cashes;
