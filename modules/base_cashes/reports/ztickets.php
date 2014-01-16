@@ -23,7 +23,8 @@ namespace BaseCashes;
 // Cash session request
 $sqls[] = "SELECT "
         . "CLOSEDCASH.HOST, CLOSEDCASH.MONEY, CLOSEDCASH.DATESTART, "
-        . "CLOSEDCASH.DATEEND, COUNT(RECEIPTS.ID) AS TICKETS, "
+        . "CLOSEDCASH.DATEEND, CLOSEDCASH.OPENCASH, CLOSEDCASH.CLOSECASH, "
+        . "COUNT(RECEIPTS.ID) AS TICKETS, "
         . "SUM(TICKETLINES.PRICE * TICKETLINES.UNITS) AS SALES "
         . "FROM CLOSEDCASH "
         . "LEFT JOIN RECEIPTS ON RECEIPTS.MONEY = CLOSEDCASH.MONEY "
@@ -56,12 +57,15 @@ $sqls[] = "SELECT "
         . "GROUP BY CLOSEDCASH.MONEY, TAXES.NAME "
         . "ORDER BY CLOSEDCASH.DATESTART DESC";
 
-$fields = array("HOST", "DATESTART", "DATEEND", "TICKETS", "SALES");
+$fields = array("HOST", "DATESTART", "DATEEND", "OPENCASH", "CLOSECASH",
+        "TICKETS", "SALES");
 $mergeFields = array("MONEY");
 $headers = array(
         \i18n("Session.host"),
         \i18n("Session.openDate"),
         \i18n("Session.closeDate"),
+        \i18n("Session.openCash"),
+        \i18n("Session.closeCash"),
         \i18n("Tickets", PLUGIN_NAME),
         \i18n("Sales", PLUGIN_NAME),
 );

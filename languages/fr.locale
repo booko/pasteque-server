@@ -75,6 +75,8 @@
 "Session.host": "Caisse",
 "Session.openDate": "Date d'ouverture",
 "Session.closeDate": "Date de clôture",
+"Session.openCash": "Fond ouverture",
+"Session.closeCash": "Fond clôture",
 "Session.tickets": "Tickets",
 "Session.total": "Total",
 
