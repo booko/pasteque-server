@@ -381,7 +381,7 @@ class TicketsService {
                 . "VALUES (:id, :label, :data)");
         $stmt->bindParam(":id", $ticket->id);
         $stmt->bindParam(":label", $ticket->label);
-        $stmt->bindParam(":data", $ticket->data);
+        $stmt->bindParam(":data", $ticket->data, \PDO::PARAM_LOB);
         if ($stmt->execute() !== false) {
             return true;
         } else {
@@ -398,7 +398,7 @@ class TicketsService {
                 . "CONTENT = :content WHERE ID = :id");
         $stmt->bindParam(":id", $ticket->id);
         $stmt->bindParam(":lbl", $ticket->label);
-        $stmt->bindParam(":content", $ticket->data);
+        $stmt->bindParam(":content", $ticket->data, \PDO::PARAM_LOB);
         if ($stmt->execute() !== false) {
             return true;
         } else {
