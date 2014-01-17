@@ -26,20 +26,23 @@ $message = NULL;
 $error = NULL;
 $currSrv = new \Pasteque\CurrenciesService();
 if (isset($_POST['id']) && isset($_POST['label'])) {
+    $isMain = isset($_POST['isMain']) && $_POST['isMain'];
+    $isActive = isset($_POST['isActive']) && $_POST['isActive'];
     $curr = \Pasteque\Currency::__build($_POST['id'], $_POST['label'],
             $_POST['symbol'], $_POST['decimalSeparator'],
             $_POST['thousandsSeparator'], $_POST['format'], $_POST['rate'],
-            $_POST['isMain'], $_POST['isActive']);
+            $isMain, $isActive);
     if ($currSrv->update($curr)) {
         $message = \i18n("Changes saved");
     } else {
         $error = \i18n("Unable to save changes");
     }
 } else if (isset($_POST['label'])) {
+    $isMain = isset($_POST['isMain']) && $_POST['isMain'];
+    $isActive = isset($_POST['isActive']) && $_POST['isActive'];
     $curr = new \Pasteque\Currency($_POST['label'], $_POST['symbol'],
             $_POST['decimalSeparator'], $_POST['thousandsSeparator'],
-            $_POST['format'], $_POST['rate'], $_POST['isMain'],
-            $_POST['isActive']);
+            $_POST['format'], $_POST['rate'], $isMain, $isActive);
     $id = $currSrv->create($curr);
     if ($id !== FALSE) {
         $message = \i18n("Currency saved. <a href=\"%s\">Go to the currecy page</a>.", PLUGIN_NAME, \Pasteque\get_module_url_action(PLUGIN_NAME, 'currency_edit', array('id' => $id)));

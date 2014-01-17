@@ -64,11 +64,11 @@ class CustTaxCatsService {
         $stmtTaxN = $pdo->prepare("UPDATE TAXES SET CUSTCATEGORY = NULL "
                 . "WHERE CUSTCATEGORY = :id");
         $ret = $stmtTaxN->execute(array(':id' => $cat->id));
-        if ($cat->tax_cat_id !== NULL) {
+        if ($cat->taxCatId !== NULL) {
             $stmtTax = $pdo->prepare("UPDATE TAXES SET CUSTCATEGORY = :id "
                     . "WHERE ID = :tid");
             $ret = $stmtTax->execute(array(':id' => $cat->id,
-                    ':tid' => $cat->tax_cat_id));
+                            ':tid' => $cat->taxCatId));
         }
         return $ret;
     }
@@ -79,11 +79,11 @@ class CustTaxCatsService {
         $stmt = $pdo->prepare("INSERT INTO TAXCUSTCATEGORIES (ID, NAME) VALUES "
                 . "(:id, :name)");
         $ret = $stmt->execute(array(':name' => $cat->label, ':id' => $id));
-        if ($cat->tax_cat_id !== NULL) {
+        if ($cat->taxCatId !== NULL) {
             $stmt = $pdo->prepare("UPDATE TAXES SET CUSTCATEGORY = :id "
                     . "WHERE ID = :tid");
             $ret = $stmt->execute(array(':id' => $id,
-                    ':tid' => $cat->tax_cat_id));
+                    ':tid' => $cat->taxCatId));
         }
         if ($ret !== FALSE) {
             return $id;

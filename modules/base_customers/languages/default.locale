@@ -14,5 +14,6 @@
 "Add a tax category": "Add a tax category",
 "Edit a customer tax": "Edit a customer tax",
 "Customer's diary": "Customer's diary",
-"Customer saved. <a href=\"%s\">Go to the customer page</a>.": "Customer saved. <a href=\"%s\">Go to the customer page</a>."
+"Customer saved. <a href=\"%s\">Go to the customer page</a>.": "Customer saved. <a href=\"%s\">Go to the customer page</a>.",
+"Tax saved. <a href=\"%s\">Go to the tax page</a>.": "Tax saved. <a href=\"%s\">Go to the tax page</a>."
 }

@@ -56,7 +56,6 @@ $txtContent = "";
 $imgContent = "";
 if (isset($_GET['id'])) {
     $resource = $resSrv->get($_GET['id']);
-
     switch ($resource->type) {
     case \Pasteque\Resource::TYPE_TEXT:
         $txtContent = $resource->content;
