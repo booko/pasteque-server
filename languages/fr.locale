@@ -94,6 +94,7 @@
 "Customer.debtDate": "Date",
 "Customer.note": "Note",
 "Customer.custTax": "Catégorie de taxe",
+"Customer.discountProfile": "Profil de remise",
 "Customer.firstName": "Prénom",
 "Customer.lastName": "Nom",
 "Customer.email": "Email",
