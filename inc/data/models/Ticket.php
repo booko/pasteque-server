@@ -47,7 +47,7 @@ class Ticket {
             $payments, $cashId, $customerId = null, $custCount = null,
             $tariffAreaId = null, $discountRate = 0.0,
             $discountProfileId = null) {
-        $tkt = new Ticket($type, $label, $userId, $date, $lines, $payments,
+        $tkt = new Ticket($type, $userId, $date, $lines, $payments,
                 $cashId, $customerId, $custCount, $tariffAreaId, $discountRate,
                 $discountProfileId);
         $tkt->id = $id;

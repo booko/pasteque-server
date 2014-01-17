@@ -22,17 +22,87 @@ namespace Pasteque;
 
 class TicketsService {
 
-    private static function buildDBTkt($dbTkt, $pdo) {
-        return Ticket::__build($dbTkt['ID'], $dbTkt['TICKETTYPE'],
-                $dbTkt['TICKETID'], $dbTkt['PERSON'], $dbTkt['DATENEW'],
-                array(), array(), $dbTkt['MONEY'], $dbTkt['CUSTOMER'],
-                $dbTkt['CUSTCOUNT'], $dbTkt['TARIFFAREA']);
+    private static function buildTicket($row, $pdo) {
+        $db = DB::get();
+        $id = $row['ID'];
+        // Get lines
+        $lines = array();
+        $lineSql = "SELECT * FROM TICKETLINES WHERE TICKET = :id "
+                . "ORDER BY LINE";
+        $lineStmt = $pdo->prepare($lineSql);
+        $lineStmt->bindParam(":id", $id);
+        $lineStmt->execute();
+        while ($rowLine = $lineStmt->fetch()) {
+            $product = ProductsService::get($rowLine['PRODUCT']);
+            $tax = TaxesService::getTax($rowLine['TAXID']);
+            $line = new TicketLine($rowLine['LINE'], $product,
+                    $rowLine['ATTRIBUTESETINSTANCE_ID'], $rowLine['UNITS'],
+                    $rowLine['PRICE'], $tax, $rowLine['DISCOUNTRATE']);
+            $lines[] = $line;
+        }
+        // Get payments
+        $payments = array();
+        $paySql = "SELECT * FROM PAYMENTS WHERE RECEIPT = :id";
+        $payStmt = $pdo->prepare($paySql);
+        $payStmt->bindParam(":id", $id);
+        $payStmt->execute();
+        while ($rowPay = $payStmt->fetch()) {
+            $pay = Payment::__build($rowPay['ID'], $rowPay['PAYMENT'],
+                    $rowPay['TOTAL'], $rowPay['CURRENCY'],
+                    $rowPay['TOTALCURRENCY']);
+            $payments[] = $pay;
+        }
+        // Build ticket
+        $tkt = Ticket::__build($row['ID'], $row['TICKETID'],
+                $row['TICKETTYPE'], $row['PERSON'],
+                $db->readDate($row['DATENEW']), $lines, $payments,
+                $row['MONEY'], $row['CUSTOMER'],
+                $row['CUSTCOUNT'], $row['TARIFFAREA'],
+                $row['DISCOUNTRATE'], $row['DISCOUNTPROFILE_ID']);
+        return $tkt;
     }
 
     private static function buildSharedTicket($dbRow, $pdo) {
         $db = DB::get();
         return SharedTicket::__build($dbRow['ID'], $dbRow['NAME'],
                 $db->readBin($dbRow['CONTENT']));
+    }
+
+    static function get($id) {
+        $pdo = PDOBuilder::getPDO();
+        $sql = "SELECT T.ID, T.TICKETID, T.TICKETTYPE, T.PERSON, T.CUSTOMER, "
+                . "T.STATUS, T.CUSTCOUNT, T.TARIFFAREA, T.DISCOUNTRATE, "
+                . "T.DISCOUNTPROFILE_ID, RECEIPTS.DATENEW, RECEIPTS.MONEY "
+                . "FROM TICKETS AS T, RECEIPTS "
+                . "WHERE RECEIPTS.ID = T.ID AND RECEIPTS.ID = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+        if ($row = $stmt->fetch()) {
+            return TicketsService::buildTicket($row, $pdo);
+        } else {
+            return null;
+        }
+    }
+
+    static function getOpen() {
+        $tickets = array();
+        $pdo = PDOBuilder::getPDO();
+        $sql = "SELECT T.ID, T.TICKETID, T.TICKETTYPE, T.PERSON, T.CUSTOMER, "
+                . "T.STATUS, T.CUSTCOUNT, T.TARIFFAREA, T.DISCOUNTRATE, "
+                . "T.DISCOUNTPROFILE_ID, RECEIPTS.DATENEW, "
+                . "CLOSEDCASH.MONEY "
+                . "FROM TICKETS AS T, RECEIPTS, CLOSEDCASH "
+                . "WHERE CLOSEDCASH.DATEEND IS NULL "
+                . "AND CLOSEDCASH.MONEY = RECEIPTS.MONEY "
+                . "AND RECEIPTS.ID = T.ID";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        while ($row = $stmt->fetch()) {
+            $ticket = TicketsService::buildTicket($row, $pdo);
+            $tickets[] = $ticket;
+        }
+        return $tickets;
     }
 
     static function save($ticket, $locationId = "0") {
@@ -102,6 +172,7 @@ class TicketsService {
         }
         //  Insert ticket
         $discountRate = $ticket->discountRate;
+        $ticket->ticketId = $nextNum;
         $stmtTkt = $pdo->prepare("INSERT INTO TICKETS (ID, TICKETID, "
                 . "TICKETTYPE, PERSON, CUSTOMER, CUSTCOUNT, TARIFFAREA, "
                 . "DISCOUNTRATE, DISCOUNTPROFILE_ID) VALUES "

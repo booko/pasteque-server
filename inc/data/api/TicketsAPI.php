@@ -36,6 +36,8 @@ class TicketsAPI extends APIService {
             return (isset($this->params['ticket'])
                             || isset($this->params['tickets']))
                     && isset($this->params['cashId']);
+        case 'getOpen':
+            return true;
         }
         return false;
     }
@@ -66,6 +68,9 @@ class TicketsAPI extends APIService {
                 $ticket = new SharedTicket($json->label, $json->data);
                 $this->succeed(TicketsService::createSharedTicket($ticket));
             }
+            break;
+        case 'getOpen':
+            $this->succeed(TicketsService::getOpen());
             break;
         case 'save':
             // Receive ticket data as json

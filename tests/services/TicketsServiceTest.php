@@ -161,6 +161,9 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         }
     }
 
+    // Checking functions
+    /////////////////////
+
     private function checkSaleEquality($tktId, $ref, $row) {
         $this->assertEquals($tktId, $row['TICKET'],
                 "Ticket id mismatch in sale line");
@@ -202,6 +205,34 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
                 "Payment currency id mismatch");
         $this->assertEquals($payment->currencyAmount, $row['TOTALCURRENCY']);
     }
+
+    private function checkTicketEquality($ref, $read) {
+        $this->assertEquals($ref->id, $read->id, "Id mismatch");
+        $this->assertEquals($ref->ticketId, $read->ticketId,
+                "Ticket id mismatch");
+        $this->assertEquals($ref->cashId, $read->cashId, "Cash id mismatch");
+        $this->assertEquals($ref->type, $read->type, "Type mismatch");
+        $this->assertEquals($ref->userId, $read->userId, "User id mismatch");
+        $this->assertEquals($ref->date, $read->date, "Date mismatch");
+        $this->assertEquals($ref->customerId, $read->customerId,
+                "Customer id mismatch");
+        $this->assertEquals($ref->tariffAreaId, $read->tariffAreaId,
+                "Tariff area id mismatch");
+        $this->assertEquals($ref->discountRate, $read->discountRate,
+                "Discount rate mismatch");
+        $this->assertEquals($ref->discountProfileId, $read->discountProfileId,
+                "Discount profile id mismatch");
+        $this->assertEquals(count($ref->lines), count($read->lines),
+                "Line count mismatch");
+        $this->assertEquals(count($ref->payments), count($read->payments),
+                "Payment count mismatch");
+        // Check lines
+        // Check payments
+        // TODO add content check
+    }
+
+    // Create ticket tests
+    //////////////////////
 
     public function testCreateAttrSetInst() {
         $attrSetInst = new AttributeSetInstance($this->attrSet->id, "Value");
@@ -585,7 +616,6 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(60, $cust->prepaid, "Prepaid amount mismatch");
     }
 
-
     function testSavePrepaid() {
         $date = stdtimefstr("2013-01-01 00:00:00");
         $line = new TicketLine(1, $this->prd, null, 1, 10, $this->tax);
@@ -736,6 +766,58 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $this->markTestIncomplete("Check stock level with attribute");
     }
 
+    // Read ticket tests
+    ////////////////////
+
+    /** @depends testSaveLine */
+    public function testGet() {
+        $date = stdtimefstr("2013-01-01 00:00:00");
+        $line = new TicketLine(1, $this->prd, null, 1, 12, $this->tax);
+        $payment = new Payment("cash", 12, $this->currency->id, 14);
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
+                $date, array($line), array($payment),
+                $this->cash->id, null, 3);
+        $ticket->id = TicketsService::save($ticket, $this->location->id);
+        $read = TicketsService::get($ticket->id);
+        $this->assertNotNull($read, "Nothing found");
+        $this->checkTicketEquality($ticket, $read);
+    }
+
+    /** @depends testGet */
+    public function testGetOpen() {
+        $date = stdtimefstr("2013-01-01 00:00:00");
+        $line = new TicketLine(1, $this->prd, null, 1, 12, $this->tax);
+        $payment = new Payment("cash", 12, $this->currency->id, 14);
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
+                $date, array($line), array($payment),
+                $this->cash->id, null, 3);
+        $ticket->id = TicketsService::save($ticket, $this->location->id);
+        $tickets = TicketsService::getOpen();
+        $this->assertNotEquals(false, $tickets, "Get open failed");
+        $this->assertTrue(is_array($tickets), "Tickets is not an array");
+        $this->assertEquals(1, count($tickets), "Tickets size mismatch");
+        $toCheck = array($ticket);
+        $count = 0;
+        foreach ($tickets as $tkt) {
+            $ref = null;
+            $count++;
+            if ($tkt->id == $ticket->id) {
+                $ref = $ticket;
+            }
+            $this->assertNotNull($ref, "Unknown ticket");
+            $this->checkTicketEquality($ref, $tkt);
+            foreach ($toCheck as $i => $t) {
+                if ($t->id == $ref->id) {
+                    array_splice($toCheck, $i, 1);
+                    break;
+                }
+            }
+        }
+        $this->assertEquals(0, count($toCheck), "Duplicated tickets");
+    }
+
+    // Shared ticket tests
+    //////////////////////
 
     private function checkSharedTktEquality($ref, $read) {
         $this->assertEquals($ref->id, $read->id, "Id mismatch");
@@ -831,4 +913,5 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $read = TicketsService::getSharedTicket($tkt->id);
         $this->checkSharedTktEquality($tkt, $read);
     }
+
 }

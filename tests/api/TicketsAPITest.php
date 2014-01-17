@@ -222,6 +222,26 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
         $this->assertTrue($content, "Content is not true");
     }
 
+    /** @depends testSaveTicket */
+    public function testGetOpen() {
+        $broker = new APIBroker(TicketsAPITest::API);
+        $broker->run("save", array("cashId" => $this->cashId, 
+                        "locationId" => $this->locationId,
+                        "ticket" => $this->jsTicket2));
+        $result = $broker->run("getOpen", null);
+        $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
+                "Result status check failed");
+        $content = $result->content;
+        $this->assertTrue(is_array($content), "Content is not an array");
+        $this->assertEquals(1, count($content), "Content size mismatch");
+        $tkt = $content[0];
+        $this->assertNotNull($tkt, "Ticket is null");
+        $this->assertEquals(1, count($tkt->lines), "Line count mismatch");
+        $this->assertEquals(1, count($tkt->payments),
+                "Payments count mismatch");
+        $this->markTestIncomplete("Check other fields");
+    }
+
 
     private function checkSharedTktEquality($ref, $read) {
         $this->assertEquals($ref->id, $read->id, "Id mismatch");
