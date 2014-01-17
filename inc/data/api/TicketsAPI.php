@@ -45,10 +45,18 @@ class TicketsAPI extends APIService {
     protected function proceed() {
         switch ($this->action) {
         case 'getShared':
-            $this->succeed(TicketsService::getSharedTicket($this->params['id']));
+            $tkt = TicketsService::getSharedTicket($this->params['id']);
+            if ($tkt !== null) {
+                $tkt->data = \base64_encode($tkt->data);
+            }
+            $this->succeed($tkt);
             break;
         case 'getAllShared':
-            $this->succeed(TicketsService::getAllSharedTickets());
+            $tkts = TicketsService::getAllSharedTickets();
+            foreach ($tkts as $tkt) {
+                $tkt->data = \base64_encode($tkt->data);
+            }
+            $this->succeed($tkts);
             break;
         case 'delShared':
             $this->succeed(TicketsService::deleteSharedTicket($this->params['id']));
@@ -62,10 +70,11 @@ class TicketsAPI extends APIService {
             $ticket = null;
             if ($id !== null) {
                 $ticket = SharedTicket::__build($id, $json->label,
-                        $json->data);
+                        \base64_decode($json->data));
                 $this->succeed(TicketsService::updateSharedTicket($ticket));
             } else {
-                $ticket = new SharedTicket($json->label, $json->data);
+                $ticket = new SharedTicket($json->label,
+                        \base64_decode($json->data));
                 $this->succeed(TicketsService::createSharedTicket($ticket));
             }
             break;

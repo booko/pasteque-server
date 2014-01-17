@@ -251,7 +251,7 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
 
 
     public function testShare() {
-        $tkt = new SharedTicket("Shared", 0xabcdef);
+        $tkt = new SharedTicket("Shared", \base64_encode(0xabcdef));
         $json = json_encode($tkt);
         $broker = new APIBroker(TicketsAPITest::API);
         $result = $broker->run("share", array("ticket" => $json));
@@ -261,6 +261,7 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
         $this->assertNotNull($content, "Content is null");
         $tkt->id = $content;
         $read = TicketsService::getSharedTicket($tkt->id);
+        $read->data = \base64_encode($read->data); // encode for equality
         $this->checkSharedTktEquality($tkt, $read);
     }
 
@@ -273,6 +274,7 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
                 "Result status check failed");
         $content = $result->content;
         $this->assertNotNull($content, "Content is null");
+        $tkt->data = \base64_encode($tkt->data); // encode for checking
         $this->checkSharedTktEquality($tkt, $content);
     }
 
@@ -300,6 +302,7 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
                 $ref = $tkt2;
             }
             $this->assertNotNull($ref, "Unknown line");
+            $ref->data = \base64_encode($ref->data); // encode for equality
             $this->checkSharedTktEquality($ref, $rtkt);
             for ($i = 0; $i < count($toCheck); $i++) {
                 $t = $toCheck[$i];
