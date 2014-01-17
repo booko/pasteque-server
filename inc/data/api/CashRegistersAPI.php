@@ -41,7 +41,7 @@ class CashRegistersAPI extends APIService {
             } else {
                 $ret = $srv->search(
                         array(array("label", "=", $this->params['label'])));
-                if (count($ret >= 1)) {
+                if (count($ret) >= 1) {
                     $this->succeed($ret[0]);
                 } else {
                     $this->succeed(null);

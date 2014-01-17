@@ -68,4 +68,30 @@ class CashRegistersAPITest extends \PHPUnit_Framework_TestCase {
         $this->assertNull($content, "Content is not null");
     }
 
+    public function getByLabel() {
+        $broker = new APIBroker("CashRegistersAPI");
+        $srv = new CashRegistersService();
+        // Init cash register
+        $cashReg = new CashRegister("Cash", $this->location->id, 1);
+        $id = $srv->create($cashReg);
+        // Get it through API
+        $result = $broker->run("get", array("label" => $cashReg->label));
+        $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
+                "Result status check failed");
+        $content = $result->content;
+        $this->assertNotNull($content, "Content is null");
+        $this->assertEquals($id, $content->id, "Id mismatch");
+        $this->assertEquals($cashReg->label, $content->label, "Label mismatch");
+        $this->assertEquals($cashReg->locationId, $content->locationId,
+                "Location id mismatch");
+    }
+
+    public function getInexistentLabel() {
+        $broker = new APIBroker("CashRegistersAPI");
+        $result = $broker->run("get", array("label" => "junk"));
+        $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
+                "Result status check failed");
+        $content = $result->content;
+        $this->assertNull($content, "Content is not null");
+    }
 }
