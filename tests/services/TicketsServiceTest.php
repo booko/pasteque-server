@@ -826,8 +826,9 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testCreateSharedTicket() {
-        $tkt = new SharedTicket("Label", 0x87c9bc);
-        $tkt->id = TicketsService::createSharedTicket($tkt);
+        $tkt = SharedTicket::__build("1", "Label", 0x87c9bc);
+        $this->assertTrue(TicketsService::createSharedTicket($tkt),
+                "Creation failed");
         $pdo = PDOBuilder::getPDO();
         $db = DB::get();
         $stmt = $pdo->prepare("SELECT * FROM SHAREDTICKETS");
@@ -842,8 +843,9 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
 
     /** @depends testCreateSharedTicket */
     public function testGetSharedTicket() {
-        $tkt = new SharedTicket("Label", 0x87c9bc);
-        $tkt->id = TicketsService::createSharedTicket($tkt);
+        $tkt = SharedTicket::__build("1", "Label", 0x87c9bc);
+        $this->assertTrue(TicketsService::createSharedTicket($tkt),
+                "Creation failed");
         $read = TicketsService::getSharedTicket($tkt->id);
         $this->assertNotNull($read, "Nothing found");
         $this->checkSharedTktEquality($tkt, $read);
@@ -856,10 +858,10 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
 
     /** @depends testCreateSharedTicket */
     public function testGetAllSharedTickets() {
-        $tkt = new SharedTicket("Label", 0x87c9bc);
-        $tkt->id = TicketsService::createSharedTicket($tkt);
-        $tkt2 = new SharedTicket("Label2", 0xc2d9fc);
-        $tkt2->id = TicketsService::createSharedTicket($tkt2);
+        $tkt = SharedTicket::__build("1", "Label", 0x87c9bc);
+        TicketsService::createSharedTicket($tkt);
+        $tkt2 = SharedTicket::__build("2", "Label2", 0xc2d9fc);
+        TicketsService::createSharedTicket($tkt2);
         $read = TicketsService::getAllSharedTickets($tkt->id);
         $this->assertNotNull($read, "Nothing found");
         $this->assertTrue(is_array($read), "Content is not an array");
@@ -892,8 +894,8 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
      * @depends testGetInexistentSharedTicket
      */
     public function testDeleteSharedTicket() {
-        $tkt = new SharedTicket("Label", 0x87c9bc);
-        $tkt->id = TicketsService::createSharedTicket($tkt);
+        $tkt = SharedTicket::__build("1", "Label", 0x87c9bc);
+        TicketsService::createSharedTicket($tkt);
         $this->assertTrue(TicketsService::deleteSharedTicket($tkt->id),
                 "Delete failed");
         $this->assertNull(TicketsService::getSharedTicket($tkt->id),
@@ -904,8 +906,8 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
      * @depends testGetSharedTicket
      */
     public function testUpdateSharedTicket() {
-        $tkt = new SharedTicket("Label", 0x87c9bc);
-        $tkt->id = TicketsService::createSharedTicket($tkt);
+        $tkt = SharedTicket::__build("1", "Label", 0x87c9bc);
+        TicketsService::createSharedTicket($tkt);
         $tkt->label = "Edited";
         $tkt->data = 0x98bca8;
         $this->assertTrue(TicketsService::updateSharedTicket($tkt),

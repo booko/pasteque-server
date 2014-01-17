@@ -374,16 +374,16 @@ class TicketsService {
         }
     }
 
+    /** Create a shared ticket, its id is always set. */
     static function createSharedTicket($ticket) {
         $pdo = PDOBuilder::getPDO();
-        $id = md5(time() . rand());
         $stmt = $pdo->prepare("INSERT INTO SHAREDTICKETS (ID, NAME, CONTENT) "
                 . "VALUES (:id, :label, :data)");
-        $stmt->bindParam(":id", $id);
+        $stmt->bindParam(":id", $ticket->id);
         $stmt->bindParam(":label", $ticket->label);
         $stmt->bindParam(":data", $ticket->data);
         if ($stmt->execute() !== false) {
-            return $id;
+            return true;
         } else {
             return false;
         }

@@ -251,7 +251,7 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
 
 
     public function testShare() {
-        $tkt = new SharedTicket("Shared", \base64_encode(0xabcdef));
+        $tkt = SharedTicket::__build("1", "Shared", \base64_encode(0xabcdef));
         $json = json_encode($tkt);
         $broker = new APIBroker(TicketsAPITest::API);
         $result = $broker->run("share", array("ticket" => $json));
@@ -259,15 +259,15 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
                 "Result status check failed");
         $content = $result->content;
         $this->assertNotNull($content, "Content is null");
-        $tkt->id = $content;
+        $this->assertTrue($content, "API call failed");
         $read = TicketsService::getSharedTicket($tkt->id);
         $read->data = \base64_encode($read->data); // encode for equality
         $this->checkSharedTktEquality($tkt, $read);
     }
 
     public function testGetShared() {
-        $tkt = new SharedTicket("Shared", 0xabcdef);
-        $tkt->id = TicketsService::createSharedTicket($tkt);
+        $tkt = SharedTicket::__build("1", "Shared", 0xabcdef);
+        TicketsService::createSharedTicket($tkt);
         $broker = new APIBroker(TicketsAPITest::API);
         $result = $broker->run("getShared", array("id" => $tkt->id));
         $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
@@ -279,10 +279,10 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testGetAllShared() {
-        $tkt = new SharedTicket("Shared", 0xabcdef);
-        $tkt->id = TicketsService::createSharedTicket($tkt);
-        $tkt2 = new SharedTicket("Shared2" ,0xbc98d32f);
-        $tkt2->id = TicketsService::createSharedTicket($tkt2);
+        $tkt = SharedTicket::__build("1", "Shared", 0xabcdef);
+        TicketsService::createSharedTicket($tkt);
+        $tkt2 = SharedTicket::__build("2", "Shared2" ,0xbc98d32f);
+        TicketsService::createSharedTicket($tkt2);
         $broker = new APIBroker(TicketsAPITest::API);
         $result = $broker->run("getAllShared", null);
         $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,

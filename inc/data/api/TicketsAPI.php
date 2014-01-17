@@ -63,19 +63,12 @@ class TicketsAPI extends APIService {
             break;
         case 'share':
             $json = json_decode($this->params['ticket']);
-            $id = null;
-            if (property_exists($json, 'id')) {
-                $id = $json->id;
-            }
-            $ticket = null;
-            if ($id !== null) {
-                $ticket = SharedTicket::__build($id, $json->label,
-                        \base64_decode($json->data));
+            $ticket = SharedTicket::__build($json->id, $json->label,
+                    \base64_decode($json->data));
+            if (TicketsService::createSharedTicket($ticket) === false) {
                 $this->succeed(TicketsService::updateSharedTicket($ticket));
             } else {
-                $ticket = new SharedTicket($json->label,
-                        \base64_decode($json->data));
-                $this->succeed(TicketsService::createSharedTicket($ticket));
+                $this->succeed(true);
             }
             break;
         case 'getOpen':
