@@ -67,7 +67,7 @@ class CashesService extends AbstractService {
         $sql = "SELECT CLOSEDCASH.MONEY, CLOSEDCASH.HOST, "
                 . "CLOSEDCASH.HOSTSEQUENCE, CLOSEDCASH.DATESTART, "
                 . "CLOSEDCASH.DATEEND, "
-                . "CLOSEDCASH.OPENCASH, CLOSEDCASH.CLOSECASH "
+                . "CLOSEDCASH.OPENCASH, CLOSEDCASH.CLOSECASH, "
                 . "COUNT(DISTINCT(RECEIPTS.ID)) as TKTS, "
                 . "SUM(PAYMENTS.TOTAL) AS TOTAL "
                 . "FROM CLOSEDCASH "
