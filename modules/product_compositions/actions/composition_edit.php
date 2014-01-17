@@ -16,7 +16,7 @@ function parseSubgroups($data) {
         $subgroup = new \Pasteque\Subgroup(null, $jsSubgroup->label,
             $jsSubgroup->dispOrder, false);
         foreach ($jsSubgroup->prodIds as $prdId) {
-            $subgroupProd = new \Pasteque\SubgroupProduct($prdId, null, null);
+            $subgroupProd = new \Pasteque\SubgroupProduct($prdId, null);
             $subgroup->addProduct($subgroupProd);
         }
         $subgroups[] = $subgroup;

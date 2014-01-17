@@ -1,0 +1,8 @@
+{
+"Locations": "Locations",
+
+"New location": "New location",
+"Edit a location": "Edit a location",
+"Location saved. <a href=\"%s\">Go to the location page</a>.": "Location saved. <a href=\"%s\">Go to the location page</a>.",
+"Unable to delete location. A location cannot be deleted when stock is assigned to it.": "Unable to delete location. A location cannot be deleted when stock is assigned to it."
+}

@@ -138,6 +138,7 @@
 "Resource.label": "Label",
 
 "Location": "Warehouse",
+"Location.label": "Name",
 
 "cash": "Cash",
 "magcard": "Magcard",

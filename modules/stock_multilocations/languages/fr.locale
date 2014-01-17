@@ -1,0 +1,7 @@
+{
+"Locations": "Entrepôts",
+
+"New location": "Nouvel entrepôt",
+"Edit a location": "Édition d'un entrepôt",
+"Location saved. <a href=\"%s\">Go to the location page</a>.": "Entrepôt enregistré. <a href=\"%s\">Aller à la page de l'entrepôt</a>.",
+"Unable to delete location. A location cannot be deleted when stock is assigned to it.": "Impossible de supprimer l'entrepôt. Un entrepôt ne peut pas être supprimé quand du stock a été défini."}
