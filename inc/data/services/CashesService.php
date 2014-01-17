@@ -222,7 +222,7 @@ class CashesService extends AbstractService {
                 . "TAXLINES.TAXID = TAXES.ID AND "
                 . "TAXES.CATEGORY = TAXCATEGORIES.ID "
                 . "AND RECEIPTS.MONEY = :id "
-                . "GROUP BY TAXES.NAME";
+                . "GROUP BY TAXES.ID";
         $taxStmt = $pdo->prepare($taxSql);
         $taxStmt->bindParam(":id", $cashId);
         $taxStmt->execute();

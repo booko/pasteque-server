@@ -93,6 +93,14 @@ abstract class AbstractService {
         foreach ($dbFields as $field) {
             if ($dbData[$field] === null) {
                 $stmt->bindValue(":" . $field, null, \PDO::PARAM_NULL);
+            } else if (is_array(static::$fieldMapping[$field])) {
+                $meta = static::$fieldMapping[$field];
+                if ($meta['type'] == DB::BIN) {
+                    $stmt->bindValue(":" . $field, $dbData[$field],
+                            \PDO::PARAM_LOB);
+                } else {
+                    $stmt->bindValue(":" . $field, $dbData[$field]);
+                }
             } else {
                 $stmt->bindValue(":" . $field, $dbData[$field]);
             }
@@ -128,6 +136,14 @@ abstract class AbstractService {
         foreach ($dbFields as $field) {
             if ($dbData[$field] === null) {
                 $stmt->bindValue(":" . $field, null, \PDO::PARAM_NULL);
+            } else if (is_array(static::$fieldMapping[$field])) {
+                $meta = static::$fieldMapping[$field];
+                if ($meta['type'] == DB::BIN) {
+                    $stmt->bindValue(":" . $field, $dbData[$field],
+                            \PDO::PARAM_LOB);
+                } else {
+                    $stmt->bindValue(":" . $field, $dbData[$field]);
+                }
             } else {
                 $stmt->bindValue(":" . $field, $dbData[$field]);
             }

@@ -36,9 +36,17 @@ if (isset($_POST['id']) && isset($_POST['dispName'])) {
     if (isset($_POST['custTaxId']) && $_POST['custTaxId'] != "") {
         $taxCatId = $_POST['custTaxId'];
     }
+    $discountProfileId = null;
+    if ($discounts && $_POST['discountProfileId'] !== "") {
+        $discountProfileId = $_POST['discountProfileId'];
+    }
     $currDebt = NULL;
     if (isset($_POST['currDebt']) && $_POST['currDebt'] != "") {
         $currDebt = $_POST['currDebt'];
+    }
+    $maxDebt = 0.0;
+    if ($_POST['maxDebt'] !== "") {
+        $maxDebt = $_POST['maxDebt'];
     }
     $debtDate = NULL;
     if (isset($_POST['debtDate']) && $_POST['debtDate'] != "") {
@@ -46,13 +54,13 @@ if (isset($_POST['id']) && isset($_POST['dispName'])) {
         $debtDate = \i18nRevDateTime($debtDate);
         $debtDate = \Pasteque\stdstrftime($debtDate);
     }
-    $discountProfileId = null;
-    if ($discounts && $_POST['discountProfileId'] !== "") {
-        $discountProfileId = $_POST['discountProfileId'];
+    $prepaid = 0.0;
+    if ($_POST['prepaid'] != "") {
+        $prepaid = $_POST['prepaid'];
     }
     $cust = \Pasteque\Customer::__build($_POST['id'], $_POST['number'], $_POST['key'],
             $_POST['dispName'], $_POST['card'], $taxCatId, $discountProfileId,
-            $_POST['prepaid'], $_POST['maxDebt'], $currDebt, $debtDate,
+            $prepaid, $maxDebt, $currDebt, $debtDate,
             $_POST['firstName'], $_POST['lastName'], $_POST['email'],
             $_POST['phone1'], $_POST['phone2'], $_POST['fax'], $_POST['addr1'],
             $_POST['addr2'], $_POST['zipCode'], $_POST['city'],
@@ -72,9 +80,17 @@ if (isset($_POST['id']) && isset($_POST['dispName'])) {
     if ($discounts && $_POST['discountProfileId'] !== "") {
         $discountProfileId = $_POST['discountProfileId'];
     }
+    $maxDebt = 0.0;
+    if ($_POST['maxDebt'] !== "") {
+        $maxDebt = $_POST['maxDebt'];
+    }
+    $prepaid = 0.0;
+    if ($_POST['prepaid'] != "") {
+        $prepaid = $_POST['prepaid'];
+    }
     $cust = new \Pasteque\Customer($_POST['number'], $_POST['key'],
             $_POST['dispName'], $_POST['card'], $taxCatId, $discountProfileId,
-            $_POST['prepaid'], $_POST['maxDebt'], null, null,
+            $prepaid, $maxDebt, null, null,
             $_POST['firstName'], $_POST['lastName'], $_POST['email'],
             $_POST['phone1'], $_POST['phone2'], $_POST['fax'], $_POST['addr1'],
             $_POST['addr2'], $_POST['zipCode'], $_POST['city'],

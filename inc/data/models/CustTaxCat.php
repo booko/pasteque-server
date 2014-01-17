@@ -24,17 +24,17 @@ class CustTaxCat {
 
     public $id;
     public $label;
-    public $tax_cat_id;
+    public $taxCatId;
     
-    static function __build($id, $label, $tax_cat_id) {
-        $taxcat = new CustTaxCat($label, $tax_cat_id);
+    static function __build($id, $label, $taxCatId) {
+        $taxcat = new CustTaxCat($label, $taxCatId);
         $taxcat->id = $id;
         return $taxcat;
     }
     
     function __construct($label, $tax_cat_id) {
         $this->label = $label;
-        $this->tax_cat_id = $tax_cat_id;
+        $this->taxCatId = $tax_cat_id;
         $this->taxes = array();
     }
 

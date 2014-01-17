@@ -111,7 +111,7 @@
 "DiscountProfile.rate": "Taux",
 
 "CustTaxCat.label": "Désignation",
-"CustTaxCat.taxCatId": "TVA",
+"CustTaxCat.taxCat": "TVA",
 
 "File empty": "Fichier vide",
 "Separator not defined": "Separateur de colone non défini",

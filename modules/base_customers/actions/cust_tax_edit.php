@@ -24,8 +24,8 @@ $message = NULL;
 $error = NULL;
 if (isset($_POST['id']) && isset($_POST['label'])) {
     $tax_cat_id = NULL;
-    if ($_POST['tax_cat_id'] !== "") {
-        $tax_cat_id = $_POST['tax_cat_id'];
+    if ($_POST['taxCatId'] !== "") {
+        $tax_cat_id = $_POST['taxCatId'];
     }
     $custTax = \Pasteque\CustTaxCat::__build($_POST['id'], $_POST['label'], $tax_cat_id);
     if (\Pasteque\CustTaxCatsService::update($custTax)) {
@@ -35,8 +35,8 @@ if (isset($_POST['id']) && isset($_POST['label'])) {
     }
 } else if (isset($_POST['label'])) {
     $tax_cat_id = NULL;
-    if ($_POST['tax_cat_id'] !== "") {
-        $tax_cat_id = $_POST['tax_cat_id'];
+    if ($_POST['taxCatId'] !== "") {
+        $tax_cat_id = $_POST['taxCatId'];
     }
     $custTax = new \Pasteque\CustTaxCat($_POST['label'], $tax_cat_id);
     $id = \Pasteque\CustTaxCatsService::create($custTax);
@@ -59,7 +59,7 @@ if (isset($_GET['id'])) {
 <form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
 	<?php \Pasteque\form_hidden("edit", $custTax, "id"); ?>
 	<?php \Pasteque\form_input("edit", "CustTaxCat", $custTax, "label", "string", array("required" => true)); ?>
-	<?php \Pasteque\form_input("edit", "CustTaxCat", $custTax, "tax_cat_id", "pick", array("model" => "Tax", "nullable" => true)); ?>
+	<?php \Pasteque\form_input("edit", "CustTaxCat", $custTax, "taxCatId", "pick", array("model" => "Tax", "nullable" => true)); ?>
 	<div class="row actions">
 		<?php \Pasteque\form_save(); ?>
 	</div>

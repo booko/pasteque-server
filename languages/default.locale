@@ -111,7 +111,7 @@
 "DiscountProfile.rate": "Rate",
 
 "CustTaxCat.label": "Name",
-"CustTaxCat.taxCatId": "Tax",
+"CustTaxCat.taxCat": "Tax",
 
 "File empty": "File empty",
 "Separator not defined": "Separator not defined",
