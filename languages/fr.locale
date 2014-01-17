@@ -133,6 +133,7 @@
 "Resource.label": "Désignation",
 
 "Location": "Entrepôt",
+"Location.label": "Désignation",
 
 "cash": "Espèces",
 "magcard": "Carte bleue",
