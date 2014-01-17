@@ -46,7 +46,7 @@ class ResourcesService extends AbstractService {
         $stmt->bindParam(":id", $id);
         $stmt->bindParam(":label", $model->label);
         $stmt->bindParam(":type", $model->type);
-        $stmt->bindParam(":content", $model->content);
+        $stmt->bindParam(":content", $model->content, \PDO::PARAM_LOB);
         if ($stmt->execute() !== false) {
             return $id;
         } else {

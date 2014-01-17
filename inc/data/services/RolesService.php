@@ -27,15 +27,14 @@ class RolesService extends AbstractService {
     protected static $fieldMapping = array(
             "ID" => "id",
             "NAME" => "name",
-            "PERMISSIONS" => "permissions",
+            "PERMISSIONS" => array("type" => DB::BIN, "attr" => "permissions"),
     );
 
-    protected function build($db_role, $pdo = null) {
-        $role = Role::__build($db_role['ID'], $db_role['NAME'],
-                $db_role['PERMISSIONS']);
+    protected function build($dbRole, $pdo = null) {
+        $db = DB::get();
+        $role = Role::__build($dbRole['ID'], $dbRole['NAME'],
+                $db->readBin($dbRole['PERMISSIONS']));
         return $role;
     }
 
 }
-
-?>

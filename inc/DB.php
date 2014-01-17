@@ -99,7 +99,11 @@ class DB {
         case 'mysql':
             return $val;
         case 'postgresql':
-            return fgets($val);
+            $data = fread($val, 2048);
+            while (!feof($val)) {
+                $data .= fread($val, 2048);
+            }
+            return $data;
         }
     }
 
