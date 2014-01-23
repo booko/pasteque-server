@@ -20,14 +20,24 @@
 
 namespace Pasteque;
 
+/** Escape data to be used inside html attribute */
+function esc_attr($value) {
+    return htmlspecialchars($value);
+}
+/** Escape data to be used in html content */
+function esc_html($value) {
+    return htmlspecialchars($value, ENT_NOQUOTES);
+}
+
 function form_hidden($form_id, $object, $field) {
     if ($object != NULL && isset($object->{$field})) {
-        echo '<input type="hidden" name="' . $field . '" value="'
-                . $object->{$field} . "\"/>\n";
+        echo '<input type="hidden" name="' . esc_attr($field) . '" value="'
+                . esc_attr($object->{$field}) . "\"/>\n";
     }
 }
 function form_value_hidden($form_id, $name, $value) {
-    echo '<input type="hidden" name="' . $name . '" value="' . $value . "\"/>\n";
+    echo '<input type="hidden" name="' . esc_attr($name)
+            . '" value="' . esc_attr($value) . "\"/>\n";
 }
 
 function form_input($form_id, $class, $object, $field, $type, $args = array()) {
@@ -44,12 +54,12 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
     }
     if ($type != "pick_multiple") {
         if (!isset($args['nolabel']) || $args['nolabel'] === false) {
-            echo '<label for="' . $form_id . '-' . $field . '">';
+            echo '<label for="' . esc_attr($form_id . '-' . $field) . '">';
             $fieldLabel = $field;
             if (substr($field, -2) == "Id") {
                 $fieldLabel = substr($field, 0, -2);
             }
-            echo \i18n($class . "." . $fieldLabel);
+            echo esc_html(\i18n($class . "." . $fieldLabel));
             echo "</label>\n";
         }
     }
@@ -59,32 +69,32 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
     }
     switch ($type) {
     case 'string':
-        echo '<input id="' . $form_id . '-' . $field . '" type="text" name="'
-                . $name . '"';
+        echo '<input id="' . esc_attr($form_id . '-' . $field)
+                . '" type="text" name="' . esc_attr($name) . '"';
         if ($object != NULL) {
-            echo ' value="' . $object->{$field} . '"';
+            echo ' value="' . esc_attr($object->{$field}) . '"';
         }
         echo "$required />\n";
         break;
     case 'text':
-        echo '<textarea id="' . $form_id . '-' . $field . '" name="' . $name
-                . '">';
+        echo '<textarea id="' . esc_attr($form_id . '-' . $field)
+                . '" name="' . esc_attr($name) . '">';
         if ($object != NULL) {
-            echo $object->{$field};
+            echo esc_html($object->{$field});
         }
         echo '</textarea>';
         break;
     case 'numeric':
-        echo '<input id="' . $form_id . '-' . $field . '" type="numeric" name="'
-                . $name . '"';
+        echo '<input id="' . esc_attr($form_id . '-' . $field)
+                . '" type="numeric" name="' . esc_attr($name) . '"';
         if ($object != NULL) {
-            echo ' value="' . $object->{$field} . '"';
+            echo ' value="' . esc_attr($object->{$field}) . '"';
         }
         echo "$required />\n";
         break;
     case 'boolean':
-        echo '<input id="' . $form_id . '-' . $field
-            . '" type="checkbox" name="' . $name . '"';
+        echo '<input id="' . esc_attr($form_id . '-' . $field)
+                . '" type="checkbox" name="' . esc_attr($name) . '"';
         if ($object != NULL) {
             if ($object->{$field}){
                 echo ' checked="checked"';
@@ -102,16 +112,17 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
         } else {
             $step = $args['step'];
         }
-        echo '<input id="' . $form_id . '-' . $field
-                . '" type="number" step="' . $step . '" min="0.00" name="' . $name . '"';
+        echo '<input id="' . esc_attr($form_id . '-' . $field)
+                . '" type="number" step="' . esc_attr($step)
+                . '" min="0.00" name="' . esc_attr($name) . '"';
         if ($object != NULL) {
-            echo ' value="' . $object->{$field} . '"';
+            echo ' value="' . esc_attr($object->{$field}) . '"';
         }
         echo "$required />\n";
         break;
     case 'date':
-        echo '<input id="' . $form_id . '-' . $field
-                . '" type="date" name="' . $name . '"';
+        echo '<input id="' . esc_attr($form_id . '-' . $field)
+                . '" type="date" name="' . esc_attr($name) . '"';
         if ($object !== null) {
             if (isset($args['dataformat'])) {
                 if ($args['dataformat'] == 'standard') {
@@ -123,7 +134,7 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
             } else {
                 $timestamp = $object->{$field};
             } 
-            echo ' value="' . \i18nDate($timestamp) . '"';
+            echo ' value="' . esc_attr(\i18nDate($timestamp)) . '"';
         }
         echo "$required />\n";
         break;    
@@ -156,7 +167,8 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
             $data = AttributesService::getAll();
             break;
         }
-        echo '<select id="' . $form_id . '-' . $field . '" name="' . $name . '">';
+        echo '<select id="' . esc_attr($form_id . '-' . $field)
+                . '" name="' . esc_attr($name) . '">';
         if (isset($args['nullable']) && $args['nullable']) {
             echo '<option value=""></option>';
         }
@@ -166,8 +178,8 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
                     || (is_object($object->{$field}) && $object->{$field}->id == $r->id))) {
                 $selected = ' selected="true"';
             }
-            echo '<option value="' . $r->id . '"' . $selected . '>'
-                    . $r->label . '</option>';
+            echo '<option value="' . esc_attr($r->id) . '"' . $selected . '>'
+                    . esc_html($r->label) . '</option>';
         }
         echo "</select>\n";
         break;
@@ -185,9 +197,10 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
                 $selected = ' checked="true"';
             }
             $id = $form_id . "-" . $field . "-" .$r->id;
-            echo '<label for="' . $id . '">' . $r->label . '</label>';
-            echo '<input id="' . $id . '" type="checkbox" name="' . $name
-                    . '[]" value="' . $r->id . '"' . $selected . "/>\n";
+            echo '<label for="' . esc_attr($id) . '">' . esc_html($r->label) . '</label>';
+            echo '<input id="' . esc_attr($id) . '" type="checkbox" name="'
+                    . esc_attr($name) . '[]" value="' . esc_attr($r->id) . '"'
+                    . $selected . "/>\n";
         }
         break;
     }
@@ -200,15 +213,15 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
  * with type pick */
 function form_select($id, $label, $values, $labels, $currentValue) {
     echo "<div class=\"row\">\n";
-    echo "<label for=\"" . $id ."\">" . $label . "</label>";
-    echo "<select id=\"" . $id . "\" name=\"" . $id . "\">>";
+    echo "<label for=\"" . esc_attr($id) ."\">" . esc_html($label) . "</label>";
+    echo "<select id=\"" . esc_attr($id) . "\" name=\"" . esc_attr($id) . "\">>";
     for ($i = 0; $i < count($values); $i++) {
         $selected = "";
         if ($values[$i] === $currentValue) {
             $selected = ' selected="true"';
         }
-        echo '<option value="' . $values[$i] . '"' . $selected . '>'
-                . $labels[$i] . '</option>';
+        echo '<option value="' . esc_attr($values[$i]) . '"' . $selected . '>'
+                . esc_html($labels[$i]) . '</option>';
     }
     echo "</select>";
     echo "</div>";
@@ -221,10 +234,13 @@ function form_save() {
     echo '<button class="btn-send" type="submit">' . \i18n('Save') . '</button>';
 }
 function form_delete($what, $id, $img_src = NULL) {
-    echo '<input type="hidden" name="delete-' . $what . '" value="' . $id . '" />';
+    echo '<input type="hidden" name="delete-' . esc_attr($what)
+            . '" value="' . esc_attr($id) . '" />';
     if ($img_src == NULL) {
         echo '<button type="submit">' . \i18n('Delete') . '</button>';
     } else {
-        echo '<button type="submit"><img src="' . $img_src . '" alt="' . \i18n('Delete') . '" title="' . \i18n('Delete') . '" /></button>';
+        echo '<button type="submit"><img src="' . esc_attr($img_src)
+                . '" alt="' . esc_attr(\i18n('Delete'))
+                . '" title="' . esc_attr(\i18n('Delete')) . '" /></button>';
     }
 }

@@ -88,8 +88,8 @@ if (isset($_GET['id'])) {
 		</div>
 	</div>
 	<div id="editor">
-		<textarea cols="80" rows="30" id="text" name="content"><?php echo $txtContent; ?></textarea>
-		<img id="preview" name="image" src="?<?php echo $imgContent; ?>" /><br />
+		<textarea cols="80" rows="30" id="text" name="content"><?php echo \Pasteque\esc_html($txtContent); ?></textarea>
+		<img id="preview" name="image" src="?<?php echo \Pasteque\esc_attr($imgContent); ?>" /><br />
 		<input type="file" name="file" />
 		<div class="row actions">
 			<?php \Pasteque\form_save(); ?>
