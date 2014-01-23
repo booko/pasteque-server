@@ -22,12 +22,26 @@ namespace BaseStocks;
 
 $message = null;
 $error = null;
+$modules = \Pasteque\get_loaded_modules(\Pasteque\get_user_id());
+$multilocations = false;
+$defaultLocationId = null;
+if (in_array("stock_multilocations", $modules)) {
+    $multilocations = true;
+} else {
+    $locSrv = new \Pasteque\LocationsService();
+    $locations = $locSrv->getAll();
+    $defaultLocationId = $locations[0]->id;
+}
 
 $dateStr = isset($_POST['date']) ? $_POST['date'] : \i18nDate(time());
 $time = \i18nRevDate($dateStr);
 if (isset($_POST['reason']) && !isset($_POST['sendCsv'])) {
     $reason = $_POST['reason'];
-    $locationId = $_POST['location'];
+    if ($multilocations) {
+        $locationId = $_POST['location'];
+    } else {
+        $locationId = $defaultLocationId;
+    }
     foreach ($_POST as $key => $value) {
         if (strpos($key, "qty-") === 0) {
             $productId = substr($key, 4);
@@ -128,8 +142,6 @@ if (isset($_POST['reason']) && !isset($_POST['sendCsv'])) {
 $categories = \Pasteque\CategoriesService::getAll();
 $products = \Pasteque\ProductsService::getAll(TRUE);
 
-$locSrv = new \Pasteque\LocationsService();
-$locations = $locSrv->getAll();
 $locNames = array();
 $locIds = array();
 foreach ($locations as $location) {
@@ -146,7 +158,10 @@ $reasonNames = array(\i18n("Buy", PLUGIN_NAME),
         \i18n("Return to supplier", PLUGIN_NAME),
         \i18n("Transfert", PLUGIN_NAME),
         \i18n("Reset", PLUGIN_NAME));
-
+if (!$multilocations) {
+    array_splice($reasonIds, 3, 1);
+    array_splice($reasonNames, 3, 1);
+}
 ?>
 <h1><?php \pi18n("Stock move", PLUGIN_NAME); ?></h1>
 
@@ -156,9 +171,9 @@ $reasonNames = array(\i18n("Buy", PLUGIN_NAME),
         \i18n('Import stock\'s moves', PLUGIN_NAME), 'img/btn_add.png');?>
 
 <form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" id="move" method="post" enctype="multipart/form-data">
-	<?php \Pasteque\form_select("location", \i18n("Location"), $locIds, $locNames, null); ?>
+	<?php if ($multilocations) { \Pasteque\form_select("location", \i18n("Location"), $locIds, $locNames, null); }?>
 	<?php \Pasteque\form_select("reason", \i18n("Operation", PLUGIN_NAME), $reasonIds, $reasonNames, null); ?>
-	<?php \Pasteque\form_select("destination", \i18n("Destination"), $locIds, $locNames, null); ?>
+	<?php if ($multilocations) { \Pasteque\form_select("destination", \i18n("Destination"), $locIds, $locNames, null); }?>
 	<div class="row">
 		<label for="date"><?php \pi18n("Date", PLUGIN_NAME); ?></label>
 		<input type="date" name="date" id="date" value="<?php echo $dateStr; ?>" />
@@ -234,6 +249,7 @@ $reasonNames = array(\i18n("Buy", PLUGIN_NAME),
 		jQuery("#line-" + productId).detach();
 	}
 
+<?php if ($multilocations) { ?>
     reasonChange = function() {
         var reason = jQuery("#reason").val();
         if (reason == <?php echo \Pasteque\StockMove::REASON_TRANSFERT; ?>) {
@@ -244,4 +260,5 @@ $reasonNames = array(\i18n("Buy", PLUGIN_NAME),
     }
     jQuery("#reason").change(function() { reasonChange(); });
     reasonChange();
+<?php } ?>
 </script>
