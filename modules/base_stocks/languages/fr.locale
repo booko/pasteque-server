@@ -3,10 +3,12 @@
 
 "Moves": "Mouvement",
 "Stock move": "Mouvement de stock",
-"Operation": "Operation",
-"Input (buy)": "Entrée (achat)",
-"Output (sell)": "Sortie (vente)",
-"Output (return to supplyer": "Sortie (retour au fournisseur)",
+"Operation": "Opération",
+"Buy": "Achat",
+"Sell": "Vente",
+"Return to supplier": "Retour au fournisseur",
+"Transfert": "Transfert",
+"Reset": "Réinitialisation",
 "Stock is below security level!": "Le stock est sous le seuil de sécurité !",
 "Stock is negative!": "Le stock est négatif !",
 "Overstock!": "Trop de stock !",
@@ -16,7 +18,8 @@
 "Maximum": "Maximum",
 
 "Send": "Envoyer",
-"File": "Fichier",
+"Load csv file": "Charger un csv",
+"Load": "Charger",
 
 "Import stock moves from csv": "Importer des mouvements de stock a partir d'un csv",
 "Import stock's moves": "Importer des mouvements de stock",
