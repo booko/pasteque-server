@@ -22,6 +22,11 @@ namespace Pasteque;
 
 class Customer {
 
+    /** Minimal size of card number */
+    const CARD_SIZE = 7;
+    /** Barcode prefix for customer cards */
+    const CARD_PREFIX = "c";
+
     public $id;
     public $number;
     public $key;

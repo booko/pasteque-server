@@ -178,12 +178,11 @@ if (isset($_GET['id'])) {
 	}
 	updateBarcode();
 	generateCard = function() {
-		var code = new Array();
-		for (var i = 0; i < 12; i++) {
-			var num = Math.floor(Math.random() * 10);
-			code.push(num);
-		}
-		var barcode = "c" + code.join("");
+	    var num = "" + jQuery("#edit-number").val();
+	    while (num.length < <?php echo \Pasteque\Customer::CARD_SIZE; ?>) {
+	        num = "0" + num;
+	    }
+		var barcode = "<?php echo \Pasteque\Customer::CARD_PREFIX; ?>" + num;
 		jQuery("#barcode").val(barcode);
 		updateBarcode();
 	}
