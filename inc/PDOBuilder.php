@@ -35,18 +35,24 @@ class PDOBuilder {
         case 'mysql':
             $dsn = "mysql:dbname=" . get_db_name($uid) . ";host="
                     . get_db_host($uid) . ";port=" . get_db_port($uid);
+            $options = array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'');
+            $attributes = array(\PDO::ATTR_CASE => \PDO::CASE_UPPER);
             break;
         case 'postgresql':
             $dsn = "pgsql:dbname=" . get_db_name($uid) . ";host="
                     . get_db_host($uid) . ";port=" . get_db_port($uid);
+            $options = array();
+            $attributes = array(\PDO::ATTR_CASE => \PDO::CASE_UPPER);
             break;
         default:
             die("Config error");
         }
         try {
-            PDOBuilder::$pdo = new \PDO($dsn, get_db_user($uid), get_db_password($uid),
-                    array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
-            PDOBuilder::$pdo->setAttribute(\PDO::ATTR_CASE, \PDO::CASE_UPPER);
+            PDOBuilder::$pdo = new \PDO($dsn, get_db_user($uid),
+                    get_db_password($uid), $options);
+            foreach ($attributes as $key => $value) {
+                PDOBuilder::$pdo->setAttribute($key, $value);
+            }
             return PDOBuilder::$pdo;
         } catch (\PDOException $e) {
             die("Connexion error " . $e);
