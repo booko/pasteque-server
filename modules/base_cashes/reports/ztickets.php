@@ -83,6 +83,8 @@ $report->addFilter("DATESTART", "\Pasteque\stdtimefstr");
 $report->addFilter("DATESTART", "\i18nDatetime");
 $report->addFilter("DATEEND", "\Pasteque\stdtimefstr");
 $report->addFilter("DATEEND", "\i18nDatetime");
+$report->addFilter("OPENCASH", "\i18nCurr");
+$report->addFilter("CLOSECASH", "\i18nCurr");
 $report->addFilter("SALES", "\i18nCurr");
 $report->addMergedFilter(0, "\i18nCurr");
 $report->addMergedHeaderFilter(0, "\i18n");
