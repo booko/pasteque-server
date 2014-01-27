@@ -123,6 +123,19 @@ class CustomersService extends AbstractService {
         } else {
             return false;
         }
+    }
 
+    public function getNextNumber() {
+        $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("SELECT TAXID FROM CUSTOMERS");
+        $stmt->execute();
+        $maxNum = 0;
+        while ($row = $stmt->fetch()) {
+            $val = intval($row["TAXID"]);
+            if ($maxNum < $val) {
+                $maxNum = $val;
+            }
+        }
+        return $maxNum + 1;
     }
 }
