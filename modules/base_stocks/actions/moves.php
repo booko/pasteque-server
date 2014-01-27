@@ -24,13 +24,11 @@ $message = null;
 $error = null;
 $modules = \Pasteque\get_loaded_modules(\Pasteque\get_user_id());
 $multilocations = false;
-$defaultLocationId = null;
+$locSrv = new \Pasteque\LocationsService();
+$locations = $locSrv->getAll();
+$defaultLocationId = $locations[0]->id;
 if (in_array("stock_multilocations", $modules)) {
     $multilocations = true;
-} else {
-    $locSrv = new \Pasteque\LocationsService();
-    $locations = $locSrv->getAll();
-    $defaultLocationId = $locations[0]->id;
 }
 
 $dateStr = isset($_POST['date']) ? $_POST['date'] : \i18nDate(time());
