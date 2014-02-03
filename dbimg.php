@@ -25,7 +25,6 @@ function generate_barcode($type, $data) {
     $font = "./lib/barcode-master/NOTTB___.TTF";
     $fontSize = 10;   // GD1 in px ; GD2 in point
     $marge    = 2;   // between barcode and hri in pixel
-    $x        = 95;  // barcode center
     $y        = 25;  // barcode center
     $height   = 50;   // barcode height in 1D ; module size in 2D
     $width    = 2;    // barcode height in 1D ; not use in 2D
@@ -33,13 +32,51 @@ function generate_barcode($type, $data) {
   
     $code     = $data;
     $type     = $type;
-    
-    $im     = imagecreatetruecolor(190, 62);
+
+    // Precompute digits to set image width
+    switch($type){
+        case 'std25':
+        case 'int25':
+            $digit = \BarcodeI25::getDigit($code, $crc, $type);
+            break;
+        case 'ean8':
+        case 'ean13':
+            $digit = \BarcodeEAN::getDigit($code, $type);
+            break;
+        case 'upc':
+            $digit = \BarcodeUPC::getDigit($code);
+            break;
+        case 'code11':
+            $digit = \Barcode11::getDigit($code);
+            break;
+        case 'code39':
+            $digit = \Barcode39::getDigit($code);
+            break;
+        case 'code93':
+            $digit = \Barcode93::getDigit($code, $crc);
+            break;
+        case 'code128':
+            $digit = \Barcode128::getDigit($code);
+            break;
+        case 'codabar':
+            $digit = \BarcodeCodabar::getDigit($code);
+            break;
+        case 'msi':
+            $digit = \BarcodeMSI::getDigit($code, $crc);
+            break;
+        case 'datamatrix':
+            $digit = \BarcodeDatamatrix::getDigit($code, $rect);
+            break;
+    }
+    $imgWidth = strlen($digit) * $width;
+    $x = $imgWidth / 2;
+
+    $im     = imagecreatetruecolor($imgWidth, 62);
     $black  = ImageColorAllocate($im,0x00,0x00,0x00);
     $white  = ImageColorAllocate($im,0xff,0xff,0xff);
     $red    = ImageColorAllocate($im,0xff,0x00,0x00);
     $blue   = ImageColorAllocate($im,0x00,0x00,0xff);
-    imagefilledrectangle($im, 0, 0, 190, 62, $white);
+    imagefilledrectangle($im, 0, 0, $imgWidth, 62, $white);
     $data = \Barcode::gd($im, $black, $x, $y, $angle, $type,
             array('code'=>$code), $width, $height);
     if (isset($font)) {

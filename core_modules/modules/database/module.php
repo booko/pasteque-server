@@ -30,7 +30,7 @@ namespace DatabaseMM {
             $stmt->bindParam(":id", $user_id, \PDO::PARAM_INT);
             $stmt->execute();
             if ($row = $stmt->fetch()) {
-                $modules = $row['modules'];
+                $modules = $row['MODULES'];
                 $data = explode(",", $modules);
             }
         }

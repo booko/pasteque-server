@@ -32,6 +32,17 @@ if (in_array("customer_discountprofiles", $modules)) {
 
 if (isset($_POST['id']) && isset($_POST['dispName'])) {
     $visible = isset($_POST['visible']) ? 1 : 0;
+    if (!isset($_POST['number']) || $_POST['number'] == "") {
+        $custSrv = new \Pasteque\CustomersService();
+        $number = $custSrv->getNextNumber();
+    } else {
+        $number = $_POST['number'];
+    }
+    if (!isset($_POST['key']) || $_POST['key'] == "") {
+        $key = $number . "-" . $_POST['dispName'];
+    } else {
+        $key = $_POST['key'];
+    }
     $taxCatId = NULL;
     if (isset($_POST['custTaxId']) && $_POST['custTaxId'] != "") {
         $taxCatId = $_POST['custTaxId'];
@@ -58,7 +69,7 @@ if (isset($_POST['id']) && isset($_POST['dispName'])) {
     if ($_POST['prepaid'] != "") {
         $prepaid = $_POST['prepaid'];
     }
-    $cust = \Pasteque\Customer::__build($_POST['id'], $_POST['number'], $_POST['key'],
+    $cust = \Pasteque\Customer::__build($_POST['id'], $number, $key,
             $_POST['dispName'], $_POST['card'], $taxCatId, $discountProfileId,
             $prepaid, $maxDebt, $currDebt, $debtDate,
             $_POST['firstName'], $_POST['lastName'], $_POST['email'],
@@ -72,6 +83,17 @@ if (isset($_POST['id']) && isset($_POST['dispName'])) {
     }
 } else if (isset($_POST['dispName'])) {
     $visible = isset($_POST['visible']) ? 1 : 0;
+    if (!isset($_POST['number']) || $_POST['number'] == "") {
+        $custSrv = new \Pasteque\CustomersService();
+        $number = $custSrv->getNextNumber();
+    } else {
+        $number = $_POST['number'];
+    }
+    if (!isset($_POST['key']) || $_POST['key'] == "") {
+        $key = $number . "-" . $_POST['dispName'];
+    } else {
+        $key = $_POST['key'];
+    }
     $taxCatId = null;
     if (isset($_POST['custTaxId']) && $_POST['custTaxId'] != "") {
         $taxCatId = $_POST['custTaxId'];
@@ -88,7 +110,7 @@ if (isset($_POST['id']) && isset($_POST['dispName'])) {
     if ($_POST['prepaid'] != "") {
         $prepaid = $_POST['prepaid'];
     }
-    $cust = new \Pasteque\Customer($_POST['number'], $_POST['key'],
+    $cust = new \Pasteque\Customer($number, $key,
             $_POST['dispName'], $_POST['card'], $taxCatId, $discountProfileId,
             $prepaid, $maxDebt, null, null,
             $_POST['firstName'], $_POST['lastName'], $_POST['email'],
@@ -127,8 +149,8 @@ if (isset($_GET['id'])) {
     <?php \Pasteque\form_hidden("edit", $cust, "id"); ?>
     <fieldset>
 	<legend><?php \pi18n("Keys", PLUGIN_NAME); ?></legend>
-	<?php \Pasteque\form_input("edit", "Customer", $cust, "number", "numeric", array("required" => true)); ?>
-	<?php \Pasteque\form_input("edit", "Customer", $cust, "key", "string", array("required" => true)); ?>
+	<?php \Pasteque\form_input("edit", "Customer", $cust, "number", "numeric"); ?>
+	<?php \Pasteque\form_input("edit", "Customer", $cust, "key", "string"); ?>
 	<?php \Pasteque\form_input("edit", "Customer", $cust, "dispName", "string", array("required" => true)); ?>
 	<div class="row">
 		<label for="card"><?php \pi18n("Customer.card"); ?></label>
@@ -193,12 +215,11 @@ if (isset($_GET['id'])) {
 	}
 	updateBarcode();
 	generateCard = function() {
-		var code = new Array();
-		for (var i = 0; i < 12; i++) {
-			var num = Math.floor(Math.random() * 10);
-			code.push(num);
-		}
-		var barcode = "c" + code.join("");
+	    var num = "" + jQuery("#edit-number").val();
+	    while (num.length < <?php echo \Pasteque\Customer::CARD_SIZE; ?>) {
+	        num = "0" + num;
+	    }
+		var barcode = "<?php echo \Pasteque\Customer::CARD_PREFIX; ?>" + num;
 		jQuery("#barcode").val(barcode);
 		updateBarcode();
 	}

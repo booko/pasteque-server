@@ -20,6 +20,13 @@
 
 namespace BaseStocks;
 
+$modules = \Pasteque\get_loaded_modules(\Pasteque\get_user_id());
+$multilocations = false;
+$defaultLocationId = null;
+if (in_array("stock_multilocations", $modules)) {
+    $multilocations = true;
+}
+
 $locSrv = new \Pasteque\LocationsService();
 $locations = $locSrv->getAll();
 $locNames = array();
@@ -39,7 +46,7 @@ $levels = \Pasteque\StocksService::getLevels($currLocation);
 ?>
 <h1><?php \pi18n("Inventory", PLUGIN_NAME); ?></h1>
 
-<?php if (count($locations) > 1) { ?>
+<?php if ($multilocations) { ?>
 <form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
 	<div class="row">
 		<?php \Pasteque\form_select("location", \i18n("Location"), $locIds, $locNames, $currLocation); ?>

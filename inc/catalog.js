@@ -56,6 +56,10 @@ Catalog.prototype.showProduct = function(productId) {
 Catalog.prototype.changeCategory = function(category) {
     jQuery("#" + this.containerId + " .catalog-products-container").html("");
     var prdCat = this.productsByCategory[category];
+    if (typeof prdCat == "undefined") {
+        // Empty cat
+        prdCat = new Array();
+    }
     for (var i = 0; i < prdCat.length; i++) {
         this.showProduct(prdCat[i]);
     }
