@@ -122,4 +122,15 @@ class DB {
             return null;
         }
     }
+
+    public function concat($a, $b) {
+        switch ($this->type) {
+        case 'mysql':
+            return "concat(" . $a . ", " . $b . ")";
+            break;
+        case 'postgresql':
+            return $a . "||" . $b;
+            break;
+        }
+    }
 }

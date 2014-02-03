@@ -267,19 +267,31 @@ class ProductsService {
     static function delete($id) {
         $pdo = PDOBuilder::getPDO();
         $db = DB::get();
+        // Delete references to the product
         $stmtcat = $pdo->prepare("DELETE FROM PRODUCTS_CAT WHERE PRODUCT = :id");
         $stmtcat->execute(array(":id" => $id));
         $stmtstk = $pdo->prepare("DELETE FROM STOCKLEVEL WHERE PRODUCT = :id");
         $stmtstk->execute(array(":id" => $id));
         $stmtstk2 = $pdo->prepare("DELETE FROM STOCKCURRENT WHERE PRODUCT = :id");
         $stmtstk2->execute(array(":id" => $id));
+        $stmtta = $pdo->prepare("DELETE FROM TARIFFAREAS_PROD "
+                . "WHERE PRODUCTID = :id");
+        $stmtta->execute(array(":id" => $id));
+        $stmtcmp = $pdo->prepare("DELETE FROM SUBGROUPS_PROD "
+                . "WHERE PRODUCT = :id");
+        $stmtcmp->execute(array(":id" => $id));
         // Update reference with garbage to break unicity constraint
         $garbage = "_deleted_" . \md5(\time());
         $stmt = $pdo->prepare("UPDATE PRODUCTS SET DELETED = " . $db->true()
-                . ", REFERENCE = concat(REFERENCE, :garbage), "
-               . "NAME = concat(NAME, :garbage) WHERE ID = :id");
+                . ", REFERENCE = " . $db->concat("REFERENCE", ":garbage") . ", "
+               . "NAME = " . $db->concat("NAME", ":garbage")
+                . " WHERE ID = :id");
         $stmt->bindParam(':id', $id);
         $stmt->bindParam(':garbage', $garbage);
-        return $stmt->execute();
+        if ($stmt->execute()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
