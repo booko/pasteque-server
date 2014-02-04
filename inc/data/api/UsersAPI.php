@@ -28,6 +28,9 @@ class UsersAPI extends APIService {
             return isset($this->params['id']);
         case 'getAll':
             return true;
+        case 'updPwd':
+            return isset($this->params['id']) && isset($this->params['oldPwd'])
+                    && isset($this->params['newPwd']);
         }
         return false;
     }
@@ -41,8 +44,10 @@ class UsersAPI extends APIService {
         case 'getAll':
             $this->succeed($srv->getAll());
             break;
+        case 'updPwd':
+            $this->succeed($srv->updatePassword($this->params['id'],
+                            $this->params['oldPwd'], $this->params['newPwd']));
+            break;
         }
     }
 }
-
-?>

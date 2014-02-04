@@ -28,7 +28,7 @@ class UsersService extends AbstractService {
             "ID" => "id",
             "NAME" => "name",
             "ROLE" => "roleId",
-            "APPPASSWORD" => "password",
+            //"APPPASSWORD" => "password", password is handled separately
             "CARD" => "card",
             "VISIBLE" => array("type" => DB::BOOL, "attr" => "visible"),
     );
@@ -41,16 +41,16 @@ class UsersService extends AbstractService {
         return $user;
     }
 
+    /** Create a new user without password (use updatePassword to set it) */
     public function create($user) {
         $pdo = PDOBuilder::getPDO();
         $db = DB::get();
-        $stmt = $pdo->prepare("INSERT INTO PEOPLE (ID, NAME, APPPASSWORD, "
+        $stmt = $pdo->prepare("INSERT INTO PEOPLE (ID, NAME, "
                 . "CARD, ROLE, VISIBLE) VALUES "
-                . "(:id, :label, :pwd, :card, :roleId, :vis)");
+                . "(:id, :label, :card, :roleId, :vis)");
         $id = md5(time() . rand());
         $stmt->bindParam(":id", $id);
         $stmt->bindParam(":label", $user->name);
-        $stmt->bindParam(":pwd", $user->password);
         $stmt->bindParam(":card", $user->card);
         $stmt->bindParam(":roleId", $user->roleId);
         $stmt->bindParam(":vis", $db->boolVal($user->visible));
@@ -58,6 +58,56 @@ class UsersService extends AbstractService {
             return $id;
         } else {
             return false;
+        }
+    }
+
+    /** Update user password
+     * @param $userId user id
+     * @param $oldPassword current password. Ignored if the user does not have
+     * a password
+     * @param $newPassword the clear new password. It will be encrypted.
+     */
+    public function updatePassword($userId, $oldPassword, $newPassword) {
+        $pdo = PDOBuilder::getPDO();
+        $user = $this->get($userId);
+        if ($user === null) {
+            return false;
+        }
+        // Check old password if any
+        if ($user->password !== null) {
+            if (!$this->authenticate($userId, $oldPassword)) {
+                return false;
+            }
+        }
+        // Update
+        $hash = "sha1:" . sha1($newPassword);
+        $stmt = $pdo->prepare("UPDATE PEOPLE SET APPPASSWORD = :pwd "
+                . "WHERE ID = :id");
+        $stmt->bindParam(":id", $userId);
+        $stmt->bindParam(":pwd", $hash);
+        if ($stmt->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function authenticate($userId, $password) {
+        $user = $this->get($userId);
+        if ($user->password === null || $user->password == ""
+                || substr($user->password, 0, 6) == "empty:") {
+            // No password
+            return true;
+        } else if (substr($user->password, 0, 5) == "sha1:") {
+            // SHA1 encryption
+            $hash = sha1($password);
+            return ($user->password == "sha1:" . $hash);
+        } else if (substr($user->password, 0, 6) == "plain:") {
+            // Clear password (legacy)
+            return ($user->password == "plain:" . $password);
+        } else {
+            // Default clear password (legacy)
+            return ($user->password == $password);
         }
     }
 }
