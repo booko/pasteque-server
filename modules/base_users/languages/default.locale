@@ -20,6 +20,7 @@
 "sales.RefundTicket": "Refund a ticket",
 "sales.PrintTicket": "Print a ticket",
 "sales.Total": "Register ticket payment",
+"sales.ChangeTaxOptions": "Change tax",
 "payment.cash": "Allow payment by cash",
 "payment.cheque": "Allow payment by cheque",
 "payment.paper": "Allow payment by paper",
@@ -33,6 +34,7 @@
 "Menu.ChangePassword": "Change user password",
 "fr.pasteque.pos.panels.JPanelPrinter": "Access customer display printer screen",
 "fr.pasteque.pos.config.JPanelConfiguration": "Access configuration screen",
+"button.print": "Print ticket preview",
 "button.opendrawer": "Open cash drawer",
 "button.openmoney": "Open cash"
 }

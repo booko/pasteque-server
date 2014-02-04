@@ -31,6 +31,7 @@ $ALL_PERMS = array(
 "sales.RefundTicket",
 "sales.PrintTicket",
 "sales.Total",
+"sales.ChangeTaxOptions",
 "payment.cash",
 "payment.cheque",
 "payment.paper",
@@ -44,6 +45,7 @@ $ALL_PERMS = array(
 "Menu.ChangePassword",
 "fr.pasteque.pos.panels.JPanelPrinter",
 "fr.pasteque.pos.config.JPanelConfiguration",
+"button.print",
 "button.opendrawer",
 "button.openmoney",
 );

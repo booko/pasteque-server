@@ -20,6 +20,7 @@
 "sales.RefundTicket": "Rembourser un ticket",
 "sales.PrintTicket": "Imprimer un ticket",
 "sales.Total": "Enregistrer le paiement d'un ticket",
+"sales.ChangeTaxOptions": "Changer de taxe",
 "payment.cash": "Autoriser le paiement en espèces",
 "payment.cheque": "Autoriser le paiement par chèque",
 "payment.paper": "Autoriser le paiement par coupon",
@@ -33,6 +34,7 @@
 "Menu.ChangePassword": "Changer le mot de passe de l'utilisateur",
 "fr.pasteque.pos.panels.JPanelPrinter": "Accéder à l'écran d'afficheur client et d'imprimante",
 "fr.pasteque.pos.config.JPanelConfiguration": "Accéder à l'écran de configuration",
+"button.print": "Imprimer un aperçu de ticket",
 "button.opendrawer": "Ouvrir le tiroir caisse",
 "button.openmoney": "Ouvrir la caisse"
 }
