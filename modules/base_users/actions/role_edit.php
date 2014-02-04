@@ -102,8 +102,8 @@ if (isset($_GET['id'])) {
     <?php foreach ($ALL_PERMS as $perm) { ?>
     <?php $checked = (isset($role) && $role->hasPermission($perm)) ? ' checked="true"' : ""; ?>
     <div class="row">
-    	<input id="perm-<?php echo $perm; ?>" type="checkbox" <?php echo $checked; ?> name="permissions[]" value="<?php echo $perm; ?>">
-		<label for="perm-<?php echo $perm; ?>"><?php echo \pi18n($perm, PLUGIN_NAME); ?></label>		
+    	<input id="perm-<?php echo \Pasteque\esc_attr($perm); ?>" type="checkbox" <?php echo $checked; ?> name="permissions[]" value="<?php echo \Pasteque\esc_attr($perm); ?>">
+		<label for="perm-<?php echo \Pasteque\esc_attr($perm); ?>"><?php echo \pi18n($perm, PLUGIN_NAME); ?></label>
 	</div>
     <?php } ?>	
     <div class="row actions">
