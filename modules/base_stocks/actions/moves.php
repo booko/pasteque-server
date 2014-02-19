@@ -109,7 +109,7 @@ if (isset($_POST['reason']) && !isset($_POST['sendCsv'])) {
 
     $csv = new \Pasteque\Csv($_FILES['csv']['tmp_name'], $key);
     if (!$csv->open()) {
-        $error = $csv->errors;
+        $error = $csv->getErrors();
     } else {
         //manage empty string
         $csv->addFilter("Quantity", "0");
