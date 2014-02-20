@@ -31,8 +31,6 @@ class ProductsAPI extends APIService {
             return true;
         case 'getCategory':
             return isset($this->params['id']);
-        case 'getAllFull':
-            return true;
         }
     }
 
@@ -51,15 +49,6 @@ class ProductsAPI extends APIService {
             break;
         case 'getAll':
             $this->succeed(ProductsService::getAll(true));
-            break;
-        case 'getAllFull':
-            $ret = ProductsService::getAll(true);
-            foreach ($ret as $r) {
-                if ($r->image !== NULL) {
-                    $r->image = base64_encode($r->image);
-                }
-            }
-            $this->succeed($ret);
             break;
         case 'getCategory':
             $this->succeed(ProductsService::getByCategory($this->params['id']));
