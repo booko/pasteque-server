@@ -123,14 +123,14 @@ class CompositionsAPITest extends \PHPUnit_Framework_TestCase {
                     "Group display order mismatch");
             $this->assertEquals($refGrp->hasImage, $group->hasImage,
                     "Group has image mismatch");
-            $this->assertTrue(is_array($group->subgroupProds),
+            $this->assertTrue(is_array($group->choices),
                     "Subgroup products is not an array");
-            $this->assertEquals(count($refGrp->subgroupProds),
-                    count($group->subgroupProds),
+            $this->assertEquals(count($refGrp->choices),
+                    count($group->choices),
                     "Subgroup products number mismatch");
-            foreach ($group->subgroupProds as $prd) {
+            foreach ($group->choices as $prd) {
                 $refPrd = null;
-                foreach ($refGrp->subgroupProds as $rprd) {
+                foreach ($refGrp->choices as $rprd) {
                     if ($prd->productId == $rprd->productId) {
                         $refPrd = $rprd;
                         break;

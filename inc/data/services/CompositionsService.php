@@ -185,7 +185,7 @@ class SubgroupsService {
         $subgroup = SubGroup::__build($row["ID"], $row["COMPOSITION"],
                 $row["NAME"], $row["DISPORDER"], $row["IMAGE"] !== null);
         $subgrpPrdSrv = new SubgroupProdsService($row['ID']);
-        $subgroup->subgroupProds = $subgrpPrdSrv->getAll();
+        $subgroup->choices = $subgrpPrdSrv->getAll();
         return $subgroup;
     }
 
@@ -232,9 +232,9 @@ class SubgroupsService {
             $id = $pdo->lastInsertId("SUBGROUPS_ID_seq");
             $group->id = $id;
             // Insert subgroup prods
-            foreach ($group->subgroupProds as $sgprd) {
+            foreach ($group->choices as $sgprd) {
                 $srv = new SubgroupProdsService($id);
-                $sgprd->subgroupId = $id;
+                $sgprd->groupId = $id;
                 if (!$srv->create($sgprd)) {
                     if ($newTransaction) {
                         $pdo->rollback();
@@ -265,10 +265,10 @@ class SubgroupsService {
 /** Service to manage SubgroupProds. Use only with CompositionsService. */
 class SubgroupProdsService {
 
-    private $subgroupId;
+    private $groupId;
 
-    public function __construct($subgroupId) {
-        $this->subgroupId = $subgroupId;
+    public function __construct($groupId) {
+        $this->groupId = $groupId;
     }
 
     protected function build($row) {
@@ -281,7 +281,7 @@ class SubgroupProdsService {
         $sql = "INSERT INTO SUBGROUPS_PROD (SUBGROUP, PRODUCT, DISPORDER) "
                 . "VALUES (:grp, :prd, :dispOrder)";
         $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(":grp", $model->subgroupId);
+        $stmt->bindParam(":grp", $model->groupId);
         $stmt->bindParam(":prd", $model->productId);
         $stmt->bindParam(":dispOrder", $model->dispOrder);
         if ($stmt->execute() !== false) {
@@ -300,7 +300,7 @@ class SubgroupProdsService {
         $stmt = $pdo->prepare("SELECT * FROM SUBGROUPS_PROD WHERE "
                 . "SUBGROUP = :id ORDER BY DISPORDER ASC, PRODUCT ASC"
         );
-        $stmt->bindParam(":id", $this->subgroupId);
+        $stmt->bindParam(":id", $this->groupId);
         $stmt->execute();
         while ($row = $stmt->fetch()) {
             $product = $this->build($row);
@@ -313,7 +313,7 @@ class SubgroupProdsService {
         $pdo = PDOBuilder::getPDO();
         $stmt = $pdo->prepare("DELETE FROM SUBGROUPS_PROD WHERE "
                 . "SUBGROUP = :id");
-        $stmt->bindParam(":id", $this->subgroupId);
+        $stmt->bindParam(":id", $this->groupId);
         if ($stmt->execute() !== false) {
             return true;
         } else {

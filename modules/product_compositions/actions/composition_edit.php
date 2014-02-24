@@ -343,7 +343,7 @@ foreach ($products as $product) {
 if ($composition !== null) {
     foreach($composition->groups as $group) {
         echo "var id = addSubgroup(\"" . $group->label . "\", " . $group->dispOrder . ");\n";
-        foreach($group->subgroupProds as $prod) {
+        foreach($group->choices as $prod) {
             echo "addProduct(id, \"" . $prod->productId . "\");";
         }
     }
