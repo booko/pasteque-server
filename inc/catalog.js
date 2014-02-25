@@ -25,11 +25,22 @@ Catalog = function(containerId, selectCallback) {
     this.selectCallback = selectCallback;
     this.currentCategoryId = null;
 }
+/** Get label class according to its length */
+Catalog.prototype.getLabelClass = function(label) {
+    var className = "catalog-label";
+    if (label.length > 16) {
+        className += " catalog-label-verylong";
+    } else if (label.length > 8) {
+        className += " catalog-label-long";
+    }
+    return className;
+}
 
 Catalog.prototype.createCategory = function(catVar, id, label) {
     var html = "<a class=\"category-" + id + " catalog-category\" onClick=\"javascript:" + catVar + ".changeCategory('" + id + "');return false;\">";
     html += "<img src=\"?p=img&w=category&id=" + id + "\" onload=\"javascript:centerImage('.category-" + id + "');\" />";
-    html += "<p>" + label + "</p></a>";
+    var className = this.getLabelClass(label);
+    html += "<p class=\"" + className + "\">" + label + "</p></a>";
     jQuery("#" + this.containerId + " .catalog-categories-container").append(html);
 }
 /** Add a product to the catalog. Use full product object. */
@@ -47,7 +58,8 @@ Catalog.prototype.showProduct = function(productId) {
     var product = this.products[productId];
     html = "<div id=\"product-" + productId + "\"class=\"catalog-product\" onClick=\"javascript:" + this.selectCallback + "('" + product['id'] + "');\">";
     html += "<img src=\"" + product["img"] + "\" onload=\"javascript:centerImage('#product-" + productId + "');\" />";
-    html += "<p>" + product['label'] + "</p>";
+    var className = this.getLabelClass(product['label']);
+    html += "<p class=\"" + className + "\">" + product['label'] + "</p>";
     html += "</div>";
     jQuery("#" + this.containerId + " .catalog-products-container").append(html);
     centerImage("#" + this.containerId + " .product-" + productId);
