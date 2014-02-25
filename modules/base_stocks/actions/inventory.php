@@ -73,10 +73,16 @@ foreach ($levels as $level) {
 $par = !$par;
 $prdRef = "";
 $prdLabel = "";
+$imgSrc = "";
 foreach ($products as $product) {
     if ($product->id == $level->productId) {
         $prdLabel = $product->label;
         $prdRef = $product->reference;
+        if ($product->hasImage) {
+            $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=product&id=" . $product->id;
+        } else {
+            $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=product";
+        }
         break;
     }
 }
@@ -98,7 +104,7 @@ if ($qty < 0) {
 }
 ?>
 	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
-	    <td><img class="thumbnail" src="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=product&id=<?php echo $level->productId; ?>" />
+	    <td><img class="thumbnail" src="?<?php echo $imgSrc ?>" />
 		<td><?php echo $prdRef; ?></td>
 		<td><?php echo $prdLabel; ?></td>
 		<td class="numeric<?php echo $class; ?>"<?php echo $help; ?>><?php echo $qty; ?></td>

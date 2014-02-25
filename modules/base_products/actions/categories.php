@@ -60,9 +60,14 @@ $categories = \Pasteque\CategoriesService::getAll();
 $par = FALSE;
 foreach ($categories as $category) {
 $par = !$par;
+if ($category->hasImage) {
+    $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=category&id=" . $category->id;
+} else {
+    $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=category";
+}
 ?>
 	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
-		<td><img class="thumbnail" src="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=category&id=<?php echo $category->id; ?>" />
+		<td><img class="thumbnail" src="?<?php echo $imgSrc ?>" />
 		<td><?php echo $category->label; ?></td>
 		<td class="edition">
             <?php \Pasteque\tpl_btn("edition", \Pasteque\get_module_url_action(PLUGIN_NAME,

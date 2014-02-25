@@ -36,9 +36,14 @@ $compositions = \Pasteque\CompositionsService::getAll();
 $par = FALSE;
 foreach ($compositions as $composition) {
 $par = !$par;
+if ($composition->hasImage) {
+    $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=product&id=" . $composition->id;
+} else {
+    $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=product";
+}
 ?>
 	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
-		<td><img class="thumbnail" src="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=product&id=<?php echo $composition->id; ?>" />
+		<td><img class="thumbnail" src="?<?php echo $imgSrc ?>" />
 		<td><?php echo $composition->label; ?></td>
 		<td class="edition">
             <?php \Pasteque\tpl_btn("edition", \Pasteque\get_module_url_action(PLUGIN_NAME,
