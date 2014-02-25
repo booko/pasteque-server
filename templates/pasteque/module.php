@@ -39,17 +39,12 @@ function tpl_open() {
 			$( "#start" ).datepicker({ dateFormat: "dd/mm/yy", buttonImage: "<?php echo get_template_url(); ?>/img/calendar.png", showOn: "both" });
 			$( "#stop" ).datepicker({ dateFormat: "dd/mm/yy", buttonImage: "<?php echo get_template_url(); ?>/img/calendar.png", showOn: "both" });
 		});
-		$(document).ready(function(){
-			$('a#menu-toggler').click(function(){
-				$("#menu-container").toggle();
-			});
-		});
 	</script>
 </head>
 <body>
 <?php tpl_menu(); ?>
 <div id="header">
-	<div id="toggle-menu"><a id="menu-toggler"><?php echo \i18n("Toogle menu"); ?></a></div>
+	<div id="toggle-menu"><a id="menu-toggler" href="" onclick="$('#menu-container').toggle();return false;"><?php echo \i18n("Toogle menu"); ?></a></div>
 	<div id="version"><a href="" onclick="showAbout();return false;"><?php echo \i18n("About"); ?></a></div>
 </div>
 
