@@ -93,20 +93,24 @@ function generate_barcode($type, $data) {
 
 switch($_GET['w']) {
 case 'product':
-    $prd = ProductsService::get($_GET['id']);
-    if ($prd->hasImage !== false) {
-        echo ProductsService::getImage($prd->id);
-    } else {
-        echo file_get_contents(PT::$ABSPATH . "/templates/" . $config['template'] . "/img/default_product.png");
+    if (isset($_GET['id'])) {
+        $prd = ProductsService::get($_GET['id']);
+        if ($prd !== null && $prd->hasImage !== false) {
+            echo ProductsService::getImage($prd->id);
+            break;
+        }
     }
+    echo file_get_contents(PT::$ABSPATH . "/templates/" . $config['template'] . "/img/default_product.png");
     break;
 case 'category':
-    $cat = CategoriesService::get($_GET['id']);
-    if ($cat->hasImage !== false) {
-        echo CategoriesService::getImage($cat->id);
-    } else {
-        echo file_get_contents(PT::$ABSPATH . "/templates/" . $config['template'] . "/img/default_category.png");
+    if (isset($_GET['id'])) {
+        $cat = CategoriesService::get($_GET['id']);
+        if ($cat->hasImage !== false) {
+            echo CategoriesService::getImage($cat->id);
+            break;
+        }
     }
+    echo file_get_contents(PT::$ABSPATH . "/templates/" . $config['template'] . "/img/default_category.png");
     break;
 case 'resource':
     $res = ResourcesService::get($_GET['id']);
