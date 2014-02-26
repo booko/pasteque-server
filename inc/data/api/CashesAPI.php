@@ -83,7 +83,10 @@ class CashesAPI extends APIService {
                 $close = $json->closeDate;
             }
             $host = $json->host;
-            $sequence = $json->sequence;
+            $sequenc = null;
+            if (property_exists($json, 'sequence')) {
+                $sequence = $json->sequence;
+            }
             if ($id !== null) {
                 // Update an existing cash
                 $cash = Cash::__build($id, $host, $sequence, $open, $close);
@@ -111,5 +114,3 @@ class CashesAPI extends APIService {
         }
     }
 }
-
-?>
