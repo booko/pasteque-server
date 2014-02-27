@@ -34,31 +34,23 @@ function tpl_open() {
 	<script type="text/javascript" src="<?php echo get_template_url(); ?>/js/jquery-1.9.1.min.js"></script>
 	<script type="text/javascript" src="<?php echo get_template_url(); ?>/js/jquery-ui-1.10.4.custom.min.js"></script>
 	<script type="text/javascript" src="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=js&id=js/pasteque.js.php"></script>
-	<script>
-		$(function() {
-			$( "#start" ).datepicker({ dateFormat: "dd/mm/yy", buttonImage: "<?php echo get_template_url(); ?>/img/calendar.png", showOn: "both" });
-			$( "#stop" ).datepicker({ dateFormat: "dd/mm/yy", buttonImage: "<?php echo get_template_url(); ?>/img/calendar.png", showOn: "both" });
-		});
-	</script>
 </head>
 <body>
 <?php tpl_menu(); ?>
 <div id="header">
-	<div id="toggle-menu"><a id="menu-toggler" href="" onclick="$('#menu-container').toggle();return false;"><?php echo \i18n("Toogle menu"); ?></a></div>
+	<div id="toggle-menu"><a id="menu-toggler" href="" onclick="javascript:toggleMenu();return false;"><?php echo \i18n("Toogle menu"); ?></a></div>
 	<div id="version"><a href="" onclick="showAbout();return false;"><?php echo \i18n("About"); ?></a></div>
 </div>
 
 <div id="content">
-	<div class="content">
 <?php
 }
 
 function tpl_close() {
 ?>
-	</div>
-	<div style="clear:both" />
-	<div id="footer"></div>
+	<div style="clear:both"></div>
 </div>
+<div id="footer"></div>
 </body>
 </html><?php
 }

@@ -38,22 +38,22 @@ body {
 #menu-container {
 	float: left;
 	font-family: Titillium;
+	width: 200px;
 	height: 100%;
 	padding: 0px 10px 0 0;
 	background-color: #21435C;
 }
 #content {
-	float: left;
-	background-color: #21435C;
-}
-#footer {
-}
-.content {
 	background-color: #FFF;
 	border-top-left-radius: 10px;
 	padding-left: 40px;
+	padding-right: 10px;
 	padding-bottom: 10px;
+	margin-left: 210px;
 }
+#footer {
+}
+
 .menu-section {
 	border-radius: 10px;
 	width: auto;
