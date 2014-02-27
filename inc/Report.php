@@ -411,16 +411,16 @@ class MergedReport extends Report {
                 }
             }
             $this->headers[] = $header;
-        }
-        if (isset($this->mergedTotals[$sqlIndex])) {
-            $this->addTotal($field, $this->mergedTotals[$sqlIndex]);
-        }
-        if (isset($this->mergedSubtotals[$sqlIndex])) {
-            $this->addSubtotal($field, $this->mergedTotals[$sqlIndex]);
-        }
-        if (isset($this->mergedFilters[$sqlIndex])) {
-            foreach ($this->mergedFilters[$sqlIndex] as $function) {
-                $this->addFilter($field, $function);
+            if (isset($this->mergedTotals[$sqlIndex])) {
+                $this->addTotal($field, $this->mergedTotals[$sqlIndex]);
+            }
+            if (isset($this->mergedSubtotals[$sqlIndex])) {
+                $this->addSubtotal($field, $this->mergedTotals[$sqlIndex]);
+            }
+            if (isset($this->mergedFilters[$sqlIndex])) {
+                foreach ($this->mergedFilters[$sqlIndex] as $function) {
+                    $this->addFilter($field, $function);
+                }
             }
         }
     }
