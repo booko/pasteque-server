@@ -64,7 +64,10 @@ class TicketsAPI extends APIService {
             $ticketsCount = count($json);
             $successes = 0;
             $pdo = PDOBuilder::getPDO();
-            $pdo->beginTransaction();
+            if (!$pdo->beginTransaction()) {
+                $this->fail(APIError::$ERR_GENERIC);
+                break;
+            }
             foreach ($json as $jsonTkt) {
                 if ($jsonTkt === null) {
                     break;
@@ -145,15 +148,17 @@ class TicketsAPI extends APIService {
                 if (TicketsService::save($ticket, $locationId)) {
                     $successes++;
                 } else {
-                    var_dump("ave");
                     break;
                 }
             }
             // Check if all tickets were saved, if not rollback and error
             $ret = ($successes == $ticketsCount);
             if ($ret === true) {
-                $pdo->commit();
-                $this->succeed($ret);
+                if ($pdo->commit()) {
+                    $this->succeed(array("saved" => $ticketsCount));
+                } else {
+                    $this->fail(APIError::$ERR_GENERIC);
+                }
             } else {
                 $pdo->rollback();
                 $this->fail(APIError::$ERR_GENERIC);
