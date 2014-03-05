@@ -105,6 +105,73 @@ class TicketsService {
         return $tickets;
     }
 
+    static function search($ticketId, $ticketType, $cashId, $dateStart,
+            $dateStop, $customerId, $userId) {
+        $tickets = array();
+        $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
+        $sql = "SELECT T.ID, T.TICKETID, T.TICKETTYPE, T.PERSON, T.CUSTOMER, "
+                . "T.STATUS, T.CUSTCOUNT, T.TARIFFAREA, T.DISCOUNTRATE, "
+                . "T.DISCOUNTPROFILE_ID, RECEIPTS.DATENEW, "
+                . "CLOSEDCASH.MONEY "
+                . "FROM TICKETS AS T, RECEIPTS, CLOSEDCASH "
+                . "WHERE CLOSEDCASH.MONEY = RECEIPTS.MONEY "
+                . "AND RECEIPTS.ID = T.ID";
+        $conds = array();
+        if ($ticketId !== null) {
+            $conds[] = "TICKETID = :ticketId";
+        }
+        if ($ticketType !== null) {
+            $conds[] = "TICKETTYPE = :ticketType";
+        }
+        if ($cashId !== null) {
+            $conds[] = "MONEY = :cashId";
+        }
+        if ($dateStart !== null) {
+            $conds[] = "DATESTART >= :dateStart";
+        }
+        if ($dateStop !== null) {
+            $conds[] = "DATEEND <= :dateStop";
+        }
+        if ($customerId !== null) {
+            $conds[] = "CUSTOMER = :custId";
+        }
+        if ($userId !== null) {
+            $conds[] = "PERSON = :userId";
+        }
+        if (count($conds) > 0) {
+            $sql .= " AND " . implode(" AND ", $conds);
+        }
+        $stmt = $pdo->prepare($sql);
+        if ($ticketId !== null) {
+            $stmt->bindParam(":ticketId", $ticketId);
+        }
+        if ($ticketType !== null) {
+            $stmt->bindParam(":ticketType", $ticketType);
+        }
+        if ($cashId !== null) {
+            $stmt->bindParam(":cashId", $cashId);
+        }
+        if ($dateStart !== null) {
+            $stmt->bindParam(":dateStart", $db->dateVal($dateStart));
+        }
+        if ($dateStop !== null) {
+            $stmt->bindParam(":dateStop", $db->dateVal($dateStop));
+        }
+        if ($customerId !== null) {
+            $stmt->bindParam(":custId", $customerId);
+        }
+        if ($userId !== null) {
+            $stmt->bindParam(":userId", $userId);
+        }
+        $stmt->execute();
+        while ($row = $stmt->fetch()) {
+            $ticket = TicketsService::buildTicket($row, $pdo);
+            $tickets[] = $ticket;
+        }
+        return $tickets;
+    }
+
     static function save($ticket, $locationId = "0") {
         $pdo = PDOBuilder::getPDO();
         $db = DB::get();

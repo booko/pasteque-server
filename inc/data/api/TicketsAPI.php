@@ -38,6 +38,14 @@ class TicketsAPI extends APIService {
                     && isset($this->params['cashId']);
         case 'getOpen':
             return true;
+        case 'search':
+            return ($this->isParamSet("ticketId")
+                    || $this->isParamSet("ticketType")
+                    || $this->isParamSet("cashId")
+                    || $this->isParamSet("dateStart")
+                    || $this->isParamSet("dateStop")
+                    || $this->isParamSet("customerId")
+                    || $this->isParamSet("userId"));
         }
         return false;
     }
@@ -73,6 +81,12 @@ class TicketsAPI extends APIService {
             break;
         case 'getOpen':
             $this->succeed(TicketsService::getOpen());
+            break;
+        case 'search':
+            $this->succeed(TicketsService::search($this->getParam("ticketId"),
+                    $this->getParam("ticketType"), $this->getParam("cashId"),
+                    $this->getParam("dateStart"), $this->getParam("dateStop"),
+                    $this->getParam("customerId"), $this->getParam("userId")));
             break;
         case 'save':
             // Receive ticket data as json
