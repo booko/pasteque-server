@@ -102,14 +102,16 @@ class TicketsAPI extends APIService {
             if (isset($this->params['locationId'])) {
                 $location = $locSrv->get($this->params['locationId']);
                 if ($location === null) {
-                    $this->fail(APIError::$ERR_GENERIC);
+                    $err = new APIError("Unknown location",
+                            array("locationId" => $this->params['locationId']));
+                    $this->fail($error);
                     break;
                 }
                 $locationId = $this->params['locationId'];
             } else {                
                 $locations = $locSrv->getAll();
                 if (count($locations) === 0) {
-                    $this->fail(APIError::$ERR_GENERIC);
+                    $this->fail(new APIError("No location defined"));
                     break;
                 }
                 $locationId = $locations[0]->id;
@@ -198,10 +200,35 @@ class TicketsAPI extends APIService {
                 $ticket = new Ticket($tktType, $userId, $date, $lines,
                         $payments, $cashId, $customerId, $custCount,
                         $tariffAreaId, $discountRate, $discountProfileId);
-                if (TicketsService::save($ticket, $locationId)) {
-                    $successes++;
+                if (isset($jsonTkt->id)) {
+                    // Ticket edit
+                    $id = $jsonTkt->id;
+                    //Check if cash is still opened
+                    $oldTicket = TicketsService::get($id);
+                    $cashSrv = new CashesService();
+                    $cash = $cashSrv->get($oldTicket->cashId);
+                    if ($cash->isClosed()) {
+                        $this->fail(new APIError("Cannot edit a ticket from "
+                                        . "a closed cash"));
+                        break;
+                    }
+                    // Merge some data from old ticket
+                    $ticket->id = $id;
+                    $ticket->ticketId = $oldTicket->ticketId;
+                    // Delete the old ticket and recreate
+                    if (TicketsService::delete($oldTicket, $locationId)
+                            && TicketsService::save($ticket, $locationId)) {
+                        $successes++;
+                    } else {
+                        break;
+                    }
                 } else {
-                    break;
+                    // New ticket
+                    if (TicketsService::save($ticket, $locationId)) {
+                        $successes++;
+                    } else {
+                        break;
+                    }
                 }
             }
             // Check if all tickets were saved, if not rollback and error
@@ -211,7 +238,9 @@ class TicketsAPI extends APIService {
                 $this->succeed($ret);
             } else {
                 $pdo->rollback();
-                $this->fail(APIError::$ERR_GENERIC);
+                if ($this->result === null) {
+                    $this->fail(APIError::$ERR_GENERIC);
+                }
             }
             break;
         }

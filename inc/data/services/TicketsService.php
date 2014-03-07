@@ -74,7 +74,7 @@ class TicketsService {
                 . "T.STATUS, T.CUSTCOUNT, T.TARIFFAREA, T.DISCOUNTRATE, "
                 . "T.DISCOUNTPROFILE_ID, RECEIPTS.DATENEW, RECEIPTS.MONEY "
                 . "FROM TICKETS AS T, RECEIPTS "
-                . "WHERE RECEIPTS.ID = T.ID AND RECEIPTS.ID = :id";
+                . "WHERE RECEIPTS.ID = T.ID AND T.ID = :id";
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(":id", $id);
         $stmt->execute();
@@ -192,61 +192,63 @@ class TicketsService {
             return false;
         }
         // Get next ticket number
-        switch ($ticket->type) {
-        case Ticket::TYPE_REFUND:
-            $ticketNumTable = "TICKETSNUM_REFUND";
-            break;
-        case Ticket::TYPE_PAYMENT:
-            $ticketNumTable = "TICKETSNUM_PAYMENT";
-        case Ticket::TYPE_SELL:
-        default:
-            $ticketNumTable = "TICKETSNUM";
-            break;
-        }
-        switch ($db->getType()) {
-        case 'mysql':
-            // Get ticket number
-            $stmtNum = $pdo->prepare("SELECT ID FROM " . $ticketNumTable);
-            if ($stmtNum->execute() === false) {
-                if ($newTransaction) {
-                    $pdo->rollback();
-                }
-                return false;
+        if ($ticket->ticketId === null) {
+            switch ($ticket->type) {
+            case Ticket::TYPE_REFUND:
+                $ticketNumTable = "TICKETSNUM_REFUND";
+                break;
+            case Ticket::TYPE_PAYMENT:
+                $ticketNumTable = "TICKETSNUM_PAYMENT";
+            case Ticket::TYPE_SELL:
+            default:
+                $ticketNumTable = "TICKETSNUM";
+                break;
             }
-            $nextNum = $stmtNum->fetchColumn(0);
-            // Increment next ticket number
-            $stmtNumInc = $pdo->prepare("UPDATE " . $ticketNumTable
-                    . " SET ID = :id");
-            $stmtNumInc->bindValue(":id", $nextNum + 1);
-            if ($stmtNumInc->execute() === false) {
-                if ($newTransaction) {
-                    $pdo->rollback();
+            switch ($db->getType()) {
+            case 'mysql':
+                // Get ticket number
+                $stmtNum = $pdo->prepare("SELECT ID FROM " . $ticketNumTable);
+                if ($stmtNum->execute() === false) {
+                    if ($newTransaction) {
+                        $pdo->rollback();
+                    }
+                    return false;
                 }
-                return false;
-            }
-            break;
-        case 'postgresql':
-            $stmtNum = $pdo->prepare("SELECT nextval('"
-                    . $ticketNumTable . "')");
-            if ($stmtNum->execute() === false) {
-                if ($newTransaction) {
-                    $pdo->rollback();
+                $nextNum = $stmtNum->fetchColumn(0);
+                // Increment next ticket number
+                $stmtNumInc = $pdo->prepare("UPDATE " . $ticketNumTable
+                        . " SET ID = :id");
+                $stmtNumInc->bindValue(":id", $nextNum + 1);
+                if ($stmtNumInc->execute() === false) {
+                    if ($newTransaction) {
+                        $pdo->rollback();
+                    }
+                    return false;
                 }
-                return false;
+                break;
+            case 'postgresql':
+                $stmtNum = $pdo->prepare("SELECT nextval('"
+                        . $ticketNumTable . "')");
+                if ($stmtNum->execute() === false) {
+                    if ($newTransaction) {
+                        $pdo->rollback();
+                    }
+                    return false;
+                }
+                $nextNum = $stmtNum->fetchColumn(0);
+                break;
             }
-            $nextNum = $stmtNum->fetchColumn(0);
-            break;
+            $ticket->ticketId = $nextNum;
         }
         //  Insert ticket
         $discountRate = $ticket->discountRate;
-        $ticket->ticketId = $nextNum;
         $stmtTkt = $pdo->prepare("INSERT INTO TICKETS (ID, TICKETID, "
                 . "TICKETTYPE, PERSON, CUSTOMER, CUSTCOUNT, TARIFFAREA, "
                 . "DISCOUNTRATE, DISCOUNTPROFILE_ID) VALUES "
                 . "(:id, :tktId, :tktType, :person, :cust, :custcount, :taId, "
                 . ":discRate, :discProfId)");
         $stmtTkt->bindParam(':id', $id, \PDO::PARAM_STR);
-        $stmtTkt->bindParam(':tktId', $nextNum, \PDO::PARAM_INT);
+        $stmtTkt->bindParam(':tktId', $ticket->ticketId, \PDO::PARAM_INT);
         $stmtTkt->bindParam(":tktType", $ticket->type);
         $stmtTkt->bindParam(':person', $ticket->userId);
         $stmtTkt->bindParam(':cust', $ticket->customerId);
@@ -363,6 +365,111 @@ class TicketsService {
             $pdo->commit();
         }
         return $id;
+    }
+
+    static function delete($ticket, $locationId = "0") {
+        $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
+        $newTransaction = !$pdo->inTransaction();
+        if ($newTransaction) {
+            $pdo->beginTransaction();
+        }
+        // Delete ticket lines
+        // Also check for prepayments refill
+        $stmtLines = $pdo->prepare("DELETE FROM TICKETLINES "
+                . "WHERE TICKET = :id");
+        $stmtLines->bindParam(":id", $ticket->id);
+        foreach ($ticket->lines as $line) {
+            // Update stock
+            $discountRate = $ticket->discountRate;
+            $fullDiscount = $discountRate + $line->discountRate;
+            $discountPrice = $line->price * (1.0 - $fullDiscount);
+            $move = new StockMove($ticket->date, StockMove::REASON_IN_REFUND,
+                    $line->productId, $locationId, $line->attrSetInstId,
+                    $line->quantity, $discountPrice);
+            if (StocksService::addMove($move) === false) {
+                if ($newTransaction) {
+                    $pdo->rollback();
+                }
+                return false;
+            }
+            // Check prepayment refill
+            // Refill is not affected by discount
+            $prepaidIds = ProductsService::getPrepaidIds();
+            if ($ticket->customerId !== null
+                    && in_array($line->productId, $prepaidIds)) {
+                $custSrv = new CustomersService();
+                $ok = $custSrv->addPrepaid($ticket->customerId,
+                        -$line->price * $line->quantity);
+                if ($ok === false) {
+                    if ($newTransaction) {
+                        $pdo->rollback();
+                    }
+                    return false;
+                }
+            }
+        }
+        if ($stmtLines->execute() === false) {
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
+            return false;
+        }
+        // Delete payments
+        // Also check for prepayment debit
+        $stmtPay = $pdo->prepare("DELETE FROM PAYMENTS WHERE RECEIPT = :id");
+        $stmtPay->bindParam(":id", $ticket->id);
+        foreach ($ticket->payments as $payment) {
+            if ($payment->type == 'prepaid') {
+                $custSrv = new CustomersService();
+                $ok = $custSrv->addPrepaid($ticket->customerId,
+                        $payment->amount);
+                if ($ok === false) {
+                    if ($newTransaction) {
+                        $pdo->rollback();
+                    }
+                    return false;
+                }
+            }
+        }
+        if ($stmtPay->execute() === false) {
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
+            return false;
+        }
+        // Delete taxlines
+        $stmtTax = $pdo->prepare("DELETE FROM TAXLINES WHERE RECEIPT = :id");
+        $stmtTax->bindParam(":id", $ticket->id);
+        if ($stmtTax->execute() === false) {
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
+            return false;
+        }
+        //  Delete ticket
+        $discountRate = $ticket->discountRate;
+        $stmtTkt = $pdo->prepare("DELETE FROM TICKETS WHERE ID = :id");
+        $stmtTkt->bindParam(':id', $ticket->id);
+        if ($stmtTkt->execute() === false) {
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
+            return false;
+        }
+        // Delete receipt
+        $stmtRcpt = $pdo->prepare("DELETE FROM RECEIPTS WHERE ID = :id");
+        $stmtRcpt->bindParam(":id", $ticket->id);
+        if ($stmtRcpt->execute() === false) {
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
+            return false;
+        }
+        if ($newTransaction) {
+            $pdo->commit();
+        }
+        return true;
     }
 
     static function createAttrSetInst($attrs) {
