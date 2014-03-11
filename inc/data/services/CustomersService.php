@@ -83,6 +83,29 @@ class CustomersService extends AbstractService {
         return $customers;
     }
 
+    function getTop($limit = 10) {
+        if ($limit === null) {
+            $limit = 10;
+        }
+        $custIds = array();
+        $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
+        $sql = "SELECT C.ID, COUNT(TICKETS.CUSTOMER) AS Top10 "
+                . "FROM CUSTOMERS AS C "
+                . "LEFT JOIN TICKETS ON TICKETS.CUSTOMER = C.ID "
+                . "WHERE C.VISIBLE = " . $db->true() . " "
+                . "GROUP BY C.ID "
+                . "ORDER BY Top10 DESC, C.NAME ASC "
+                . "LIMIT :limit";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(":limit", $limit);
+        $stmt->execute();
+        while ($row = $stmt->fetch()) {
+            $custIds[] = $row['ID'];
+        }
+        return $custIds;
+    }
+
     function addPrepaid($custId, $amount) {
         $cust = $this->get($custId);
         if ($cust !== null) {
