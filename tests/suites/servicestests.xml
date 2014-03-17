@@ -13,6 +13,7 @@
 			<file>services/CurrenciesServiceTest.php</file>
 			<file>services/StocksServiceTest.php</file>
 			<file>services/TicketsServiceTest.php</file>
+			<file>services/CashMovementsServiceTest.php</file>
 			<file>clear.php</file>
 		</testsuite>
 	</testsuites>
