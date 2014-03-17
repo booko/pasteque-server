@@ -59,7 +59,7 @@ class SubGroup {
     public $label;
     public $hasImage;
     public $dispOrder;
-    public $subgroupProds;
+    public $choices;
 
     static function __build($id, $compositionId, $label,
             $dispOrder = null, $hasImage = false) {
@@ -74,16 +74,16 @@ class SubGroup {
         $this->label = $label;
         $this->hasImage = $hasImage;
         $this->dispOrder = $dispOrder;
-        $this->subgroupProds = array();
+        $this->choices = array();
     }
 
     function addProduct($subgroupProd) {
-        $this->subgroupProds[] = $subgroupProd;
+        $this->choices[] = $subgroupProd;
     }
 }
 
 class SubGroupProduct {
-    public $subgroupId;
+    public $groupId;
     public $productId;
     public $dispOrder;
 
@@ -94,7 +94,7 @@ class SubGroupProduct {
 
     function __construct($productId, $groupId, $dispOrder = 0) {
         $this->productId = $productId;
-        $this->subgroupId = $groupId;
+        $this->groupId = $groupId;
         $this->dispOrder = $dispOrder;
     }
 }

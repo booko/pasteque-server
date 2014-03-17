@@ -29,3 +29,22 @@ function closePopup() {
 function showAbout() {
     showPopup('<p><img id="about-icon" src="<?php echo get_template_url() . "img/icon.png"; ?>" /> Pastèque <?php echo \i18n("Version.Codename"); ?> <?php echo PT::VERSION ?></p>');
 }
+
+$(function() {
+    $( "#start" ).datepicker({ dateFormat: "dd/mm/yy", buttonImage: "<?php echo get_template_url(); ?>/img/calendar.png", showOn: "both" });
+    $( "#stop" ).datepicker({ dateFormat: "dd/mm/yy", buttonImage: "<?php echo get_template_url(); ?>/img/calendar.png", showOn: "both" });
+});
+
+var menuHidden = false;
+var menuWidth = "";
+function toggleMenu() {
+    if (menuHidden) {
+        $("#menu-container").show();
+        $("#content").css("margin-left", menuWidth + "px");
+    } else {
+        menuWidth = $("#menu-container").outerWidth(true);
+        $("#menu-container").hide();
+        $("#content").css("margin-left", "0px");
+    }
+    menuHidden = !menuHidden;
+}

@@ -59,7 +59,19 @@ namespace Pasteque {
     	return \WordPressID\logged_in();
     }
     function api_user_login() {
-        return \WordPressID\log($_GET['login'], $_GET['password']);
+        $user = null;
+        $pwd = null;
+        if (isset($_POST['login'])) {
+            $user = $_POST['login'];
+        } else if (isset($_GET['login'])) {
+            $user = $_GET['login'];
+        }
+        if (isset($_POST['password'])) {
+            $pwd = $_POST['password'];
+        } else if (isset($_GET['password'])) {
+            $pwd = $_GET['password'];
+        }
+        return \WordPressID\log($user, $pwd);
     }
     function show_login_page() {
         return \WordPressID\show_login();
@@ -69,5 +81,3 @@ namespace Pasteque {
         return \WordPressID\get_user_id();
     }
 }
-
-?>

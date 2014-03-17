@@ -120,7 +120,10 @@ class TicketsAPI extends APIService {
             $ticketsCount = count($json);
             $successes = 0;
             $pdo = PDOBuilder::getPDO();
-            $pdo->beginTransaction();
+            if (!$pdo->beginTransaction()) {
+                $this->fail(APIError::$ERR_GENERIC);
+                break;
+            }
             foreach ($json as $jsonTkt) {
                 if ($jsonTkt === null) {
                     break;
@@ -185,7 +188,8 @@ class TicketsAPI extends APIService {
                 foreach ($jsonTkt->payments as $jspay) {
                     $type = $jspay->type;
                     $amount = $jspay->amount;
-                    if (!isset($jspay->currencyId)) {
+                    if (!property_exists($jspay, "currencyId")
+                            || $jspay->currencyId === null) {
                         $currSrv = new CurrenciesService();
                         $currencyId = $currSrv->getDefault()->id;
                         $currencyAmount = $amount;
@@ -234,8 +238,11 @@ class TicketsAPI extends APIService {
             // Check if all tickets were saved, if not rollback and error
             $ret = ($successes == $ticketsCount);
             if ($ret === true) {
-                $pdo->commit();
-                $this->succeed($ret);
+                if ($pdo->commit()) {
+                    $this->succeed(array("saved" => $ticketsCount));
+                } else {
+                    $this->fail(APIError::$ERR_GENERIC);
+                }
             } else {
                 $pdo->rollback();
                 if ($this->result === null) {

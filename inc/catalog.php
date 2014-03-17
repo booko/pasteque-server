@@ -26,6 +26,12 @@ function jsonify($key, $value) {
         return '"' . $key . '": "' . $value . '"';
     } else if ($value === null) {
         return '"' . $key . '": null';
+    } else if (\is_bool($value)) {
+        if ($value) {
+            return '"' . $key . '": true';
+        } else {
+            return '"' . $key . '": false';
+        }
     } else {
         return '"' . $key . '": ' . $value;
     }
@@ -42,7 +48,8 @@ function init_catalog($jsName, $containerId, $selectCallback,
     echo "jQuery(\"#$containerId\").html(html);\n";
     foreach ($categories as $cat) {
         echo $jsName . ".createCategory(\"" . $jsName . "\", \"" . $cat->id . "\""
-                . ", \"" . $cat->label . "\");\n";
+                . ", \"" . $cat->label . "\", "
+                . ($cat->hasImage ? "true" : "false") . ");\n";
     }
     foreach ($products as $product) {
         $taxCat = TaxesService::get($product->taxCatId);
@@ -51,7 +58,7 @@ function init_catalog($jsName, $containerId, $selectCallback,
         $prd = '{' . jsonify("id", $product->id) . ', '
                 . jsonify("label", $product->label) . ', '
                 . jsonify("reference", $product->reference) . ', '
-                . jsonify("img", "?" . PT::URL_ACTION_PARAM . "=img&w=product&id=" . $product->id) . ', '
+                . jsonify("hasImage", $product->hasImage) . ', '
                 . jsonify("buy", $product->priceBuy) . ', '
                 . jsonify("sell", $product->priceSell) . ', '
                 . jsonify("vatSell", $vatPrice)

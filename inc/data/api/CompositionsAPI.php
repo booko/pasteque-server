@@ -43,5 +43,3 @@ class CompositionsAPI extends APIService {
         }
     }
 }
-
-?>

@@ -65,9 +65,14 @@ $archive = FALSE;
 foreach ($products as $product) {
 if ($product->visible) {
 $par = !$par;
+if ($product->hasImage) {
+    $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=product&id=" . $product->id;
+} else {
+    $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=product";
+}
 ?>
 	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
-	    <td><img class="thumbnail" src="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=product&id=<?php echo $product->id; ?>" />
+	    <td><img class="thumbnail" src="?<?php echo $imgSrc ?>" />
 		<td><?php echo $product->reference; ?></td>
 		<td><?php echo $product->label; ?></td>
 		<td class="edition">

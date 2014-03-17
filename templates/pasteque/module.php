@@ -26,26 +26,31 @@ function tpl_open() {
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title><?php \pi18n("Pastèque"); ?></title>
-	<link rel="stylesheet" type="text/css" href="templates/pasteque/style.css" />
-	<link rel="stylesheet" type="text/css" href="templates/pasteque/catalog.css" />
-	<link rel="stylesheet" type="text/css" href="templates/pasteque/stock.css" />	
-	<script type="text/javascript" src="templates/pasteque/js/jquery-1.9.1.min.js"></script>
+	<link rel="icon" type="image/png" href="templates/pt2.0/img/icon.png" />
+	<link rel="stylesheet" type="text/css" href="<?php echo get_template_url(); ?>/style.css" />
+	<link rel="stylesheet" type="text/css" href="<?php echo get_template_url(); ?>/catalog.css" />
+	<link rel="stylesheet" type="text/css" href="<?php echo get_template_url(); ?>/stock.css" />
+	<link rel="stylesheet" type="text/css" href="<?php echo get_template_url(); ?>/js/pepper-grinder/jquery-ui-1.10.4.custom.css" />
+	<script type="text/javascript" src="<?php echo get_template_url(); ?>/js/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="<?php echo get_template_url(); ?>/js/jquery-ui-1.10.4.custom.min.js"></script>
 	<script type="text/javascript" src="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=js&id=js/pasteque.js.php"></script>
 </head>
 <body>
-<?php tpl_menu(); ?>	<div id="header">
-		
-    	<div id="version"><a href="" onclick="showAbout();return false;"><?php echo \i18n("About"); ?></a></div>
-	</div>
+<?php tpl_menu(); ?>
+<div id="header">
+	<div id="toggle-menu"><a id="menu-toggler" href="" onclick="javascript:toggleMenu();return false;"><?php echo \i18n("Toogle menu"); ?></a></div>
+	<div id="version"><a href="" onclick="showAbout();return false;"><?php echo \i18n("About"); ?></a></div>
+</div>
 
-<div class="content">
+<div id="content">
 <?php
 }
 
 function tpl_close() {
 ?>
-<div style="clear:both" />
+	<div style="clear:both"></div>
 </div>
+<div id="footer"></div>
 </body>
 </html><?php
 }
@@ -123,12 +128,12 @@ function __tpl_report_title($report) {
 
 function __tpl_report_input($report, $values) {
     // Export button
-    echo "<p><a class=\"btn\" href=\""
+    echo "<div id=\"btn\"><a class=\"btn\" href=\""
             . \Pasteque\get_report_url($report->domain, $report->id);
     foreach($report->getParams() as $param) {
         echo "&" . $param['param'] . "=" . $values[$param['param']];
     }
-    echo "\">" . \i18n("Export") . "</a></p>\n";
+    echo "\">" . \i18n("Export") . "</a></div>\n";
     // Input form
     echo "<form class=\"edit\" action=\"" . \Pasteque\get_current_url() . "\" "
             . "method=\"post\">";
@@ -275,7 +280,7 @@ function tpl_report($report) {
     $run = $report->run($values);
     $par = FALSE;
     if ($run->isEmpty()) {
-        echo "<p>" . \i18n("No result") . "</p>";
+        echo "<div class=\"information\">" . \i18n("No result") . "</div>";
         return;
     }
     if (!$report->isGrouping()) {
