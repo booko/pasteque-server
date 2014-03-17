@@ -63,7 +63,7 @@ $categories = \Pasteque\CategoriesService::getAll();
 $par = FALSE;
 $archive = FALSE;
 foreach ($products as $product) {
-if ($product->visible) {
+if ($product->visible && $product->categoryId != \Pasteque\CompositionsService::CAT_ID) {
 $par = !$par;
 if ($product->hasImage) {
     $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=product&id=" . $product->id;
@@ -84,7 +84,9 @@ if ($product->hasImage) {
 		</td>
 	</tr>
 <?php
-} else { $archive = TRUE; }
+} else if ($product->categoryId != \Pasteque\CompositionsService::CAT_ID) {
+    $archive = true;
+}
 }
 ?>
 	</tbody>
