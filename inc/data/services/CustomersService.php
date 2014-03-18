@@ -98,7 +98,7 @@ class CustomersService extends AbstractService {
                 . "ORDER BY Top10 DESC, C.NAME ASC "
                 . "LIMIT :limit";
         $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(":limit", $limit);
+        $stmt->bindParam(":limit", $limit, \PDO::PARAM_INT);
         $stmt->execute();
         while ($row = $stmt->fetch()) {
             $custIds[] = $row['ID'];
