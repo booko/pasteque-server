@@ -71,6 +71,9 @@
 "User.name": "Name",
 "User.role": "Role",
 
+"CashRegister.label": "Cash register",
+"CashRegister.location": "Location",
+
 "Session": "Cash session",
 "Session.host": "Host",
 "Session.openDate": "Open date",

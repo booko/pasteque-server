@@ -71,6 +71,9 @@
 "User.name": "Nom",
 "User.role": "Rôle",
 
+"CashRegister.label": "Caisse",
+"CashRegister.location": "Entrepôt",
+
 "Session": "Session de caisse",
 "Session.host": "Caisse",
 "Session.openDate": "Date d'ouverture",
