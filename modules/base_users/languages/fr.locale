@@ -31,6 +31,7 @@
 "refund.cheque": "Autoriser le remboursement par chèque",
 "refund.paper": "Autoriser le remboursement par coupon",
 "refund.magcard": "Autoriser le remboursement par carte bleue",
+"Menu.BackOffice": "Ouvrir l'interface de gestion",
 "Menu.ChangePassword": "Changer le mot de passe de l'utilisateur",
 "fr.pasteque.pos.panels.JPanelPrinter": "Accéder à l'écran d'afficheur client et d'imprimante",
 "fr.pasteque.pos.config.JPanelConfiguration": "Accéder à l'écran de configuration",

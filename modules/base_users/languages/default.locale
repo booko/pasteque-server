@@ -31,6 +31,7 @@
 "refund.cheque": "Allow refund by cheque",
 "refund.paper": "Allow refund by paper",
 "refund.magcard": "Allow refund by magcard",
+"Menu.BackOffice": "Open back office",
 "Menu.ChangePassword": "Change user password",
 "fr.pasteque.pos.panels.JPanelPrinter": "Access customer display printer screen",
 "fr.pasteque.pos.config.JPanelConfiguration": "Access configuration screen",

@@ -43,6 +43,7 @@ $ALL_PERMS = array(
 "refund.paper",
 "refund.magcard",
 "Menu.ChangePassword",
+"Menu.BackOffice",
 "fr.pasteque.pos.panels.JPanelPrinter",
 "fr.pasteque.pos.config.JPanelConfiguration",
 "button.print",
