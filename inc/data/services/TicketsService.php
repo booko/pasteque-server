@@ -95,7 +95,8 @@ class TicketsService {
                 . "FROM TICKETS AS T, RECEIPTS, CLOSEDCASH "
                 . "WHERE CLOSEDCASH.DATEEND IS NULL "
                 . "AND CLOSEDCASH.MONEY = RECEIPTS.MONEY "
-                . "AND RECEIPTS.ID = T.ID";
+                . "AND RECEIPTS.ID = T.ID "
+                . "ORDER BY T.TICKETID DESC";
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
         while ($row = $stmt->fetch()) {
@@ -142,6 +143,7 @@ class TicketsService {
         if (count($conds) > 0) {
             $sql .= " AND " . implode(" AND ", $conds);
         }
+        $sql .= " ORDER BY T.TICKETID DESC";
         $stmt = $pdo->prepare($sql);
         if ($ticketId !== null) {
             $stmt->bindParam(":ticketId", $ticketId);
