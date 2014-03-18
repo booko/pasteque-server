@@ -34,6 +34,14 @@ if (isset($_POST['delete-product'])) {
 
 $products = \Pasteque\ProductsService::getAll(true);
 $categories = \Pasteque\CategoriesService::getAll();
+$prdCat = array();
+$archivesCat = array();
+foreach ($products as $product) {
+    if ($product->categoryId !== \Pasteque\CompositionsService::CAT_ID) {
+        $prdCat[$product->categoryId][] = $product;
+    }
+    // Archive will be filled on display loop
+}
 ?>
 <h1><?php \pi18n("Products", PLUGIN_NAME); ?></h1>
 
@@ -49,6 +57,12 @@ $categories = \Pasteque\CategoriesService::getAll();
 
 <h2><?php \pi18n("Catalog", PLUGIN_NAME); ?></h2>
 
+<?php
+$par = false;
+$archive = false;
+foreach ($categories as $category) {
+    if (isset($prdCat[$category->id])) { ?>
+<h3><?php echo \Pasteque\esc_html($category->label); ?></h3>
 <table cellpadding="0" cellspacing="0">
 	<thead>
 		<tr>
@@ -60,16 +74,14 @@ $categories = \Pasteque\CategoriesService::getAll();
 	</thead>
 	<tbody>
 <?php
-$par = FALSE;
-$archive = FALSE;
-foreach ($products as $product) {
-if ($product->visible && $product->categoryId != \Pasteque\CompositionsService::CAT_ID) {
-$par = !$par;
-if ($product->hasImage) {
-    $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=product&id=" . $product->id;
-} else {
-    $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=product";
-}
+        foreach ($prdCat[$category->id] as $product) {
+            if ($product->visible) {
+                $par = !$par;
+                if ($product->hasImage) {
+                    $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=product&id=" . $product->id;
+                } else {
+                    $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=product";
+                }
 ?>
 	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
 	    <td><img class="thumbnail" src="?<?php echo $imgSrc ?>" />
@@ -84,16 +96,25 @@ if ($product->hasImage) {
 		</td>
 	</tr>
 <?php
-} else if ($product->categoryId != \Pasteque\CompositionsService::CAT_ID) {
-    $archive = true;
-}
-}
+            } else {
+                $archive = true;
+                $archivesCat[$category->id][] = $product;
+            }
+        }
 ?>
 	</tbody>
 </table>
-
+<?php
+    }
+}
+?>
 <?php if ($archive) { ?>
 <h2><?php \pi18n("Archived", PLUGIN_NAME); ?></h2>
+<?php
+foreach ($categories as $category) {
+    if (isset($archivesCat[$category->id])) {
+?>
+<h3><?php echo \Pasteque\esc_html($category->label); ?></h3>
 <table cellpadding="0" cellspacing="0">
 	<thead>
 		<tr>
@@ -105,10 +126,10 @@ if ($product->hasImage) {
 	</thead>
 	<tbody>
 <?php
-$par = FALSE;
-foreach ($products as $product) {
-if (!$product->visible) {
-$par = !$par;
+        $par = false;
+        foreach ($archivesCat[$category->id] as $product) {
+            if (!$product->visible) {
+                $par = !$par;
 ?>
 	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
 	    <td><img class="thumbnail" src="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=product&id=<?php echo $product->id; ?>" />
@@ -119,12 +140,15 @@ $par = !$par;
 		</td>
 	</tr>
 <?php
-}
-}
+            }
+        }
 ?>
 	</tbody>
 </table>
-<?php } // archive end ?>
+<?php
+    }
+}
+} // archive end ?>
 
 <?php
 if (count($products) == 0) {
