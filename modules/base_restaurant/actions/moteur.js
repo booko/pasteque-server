@@ -60,13 +60,19 @@ function getCurrentFloor() {
 
 function selectPlace(id) {
     if (id == null) {
+        // Unselect place
         if (selectedPlace != null) {
+            updatePlaceLabel();
             jQuery("#place-" + selectedPlace.id).css({"background-color": "#fff"});
         }
         selectedPlace = null;
         jQuery("#placeLabel").val("");
         jQuery("#placeLabel").prop("disabled", true);
         return;
+    }
+    if (selectedPlace != null) {
+        // Set place label before switching
+        updatePlaceLabel();
     }
     var floor = getCurrentFloor();
     for (var i = 0; i < floor.places.length; i++) {
