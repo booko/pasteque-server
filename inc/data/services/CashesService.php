@@ -25,13 +25,13 @@ class CashesService extends AbstractService {
     protected static $dbTable = "CLOSEDCASH";
     protected static $dbIdField = "MONEY";
     protected static $fieldMapping = array(
-            "id" => "MONEY",
-            "host" => "HOST",
-            "sequence" => "HOSTSEQUENCE",
-            "openDate" => "DATESTART",
-            "closeDate" => "DATEEND",
-            "openCash" => "OPENCASH",
-            "closeCash" => "CLOSECASH"
+            "MONEY" => "id",
+            "HOST" => "host",
+            "HOSTSEQUENCE" => "sequence",
+            "DATESTART" => "openDate",
+            "DATEEND" => "closeDate",
+            "OPENCASH" => "openCash",
+            "CLOSECASH" => "closeCash"
     );
 
     protected function build($dbCash, $pdo = null) {

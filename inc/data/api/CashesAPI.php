@@ -43,6 +43,9 @@ class CashesAPI extends APIService {
             return isset($this->params['host']) || isset($this->params['id']);
         case 'update':
             return isset($this->params['cash']);
+        case 'search':
+            return ($this->isParamSet("host") || $this->isParamSet("dateStart")
+                    || $this->isParamSet("dateStop"));
         case 'zticket':
             return isset($this->params['id']);
         }
@@ -52,6 +55,7 @@ class CashesAPI extends APIService {
     /** Run the service and set result. */
     protected function proceed() {
         $srv = new CashesService();
+        $db = DB::get();
         switch ($this->action) {
         case 'get':
             if (isset($this->params['id'])) {
@@ -67,6 +71,24 @@ class CashesAPI extends APIService {
         case 'zticket':
             $ret = $srv->getZTicket($this->params['id']);
             $this->succeed($ret);
+            break;
+        case 'search':
+            $host = $this->getParam("host");
+            $dateStart = $this->getParam("dateStart");
+            $dateStop = $this->getParam("dateStop");
+            $conditions = array();
+            if ($host !== null) {
+                $conditions[] = array("host", "=", $host);
+            }
+            if ($dateStart !== null) {
+                $conditions[] = array("openDate", ">=",
+                        $db->dateVal($dateStart));
+            }
+            if ($dateStop !== null) {
+                $conditions[] = array("closeDate", "<=",
+                        $db->dateVal($dateStop));
+            }
+            $this->succeed($srv->search($conditions));
             break;
         case 'update':
             $json = json_decode($this->params['cash']);
