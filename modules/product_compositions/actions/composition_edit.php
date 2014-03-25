@@ -189,7 +189,7 @@ $taxes = \Pasteque\TaxesService::getAll();
         </div>
         <div class="row">
             <label for="edit-sgOrder"><?php \pi18n('Subgroup.dispOrder'); ?></label>
-            <input id="edit-sgOrder" type="numeric" name="dispOrder" onchange="javascript:editSubgroup();">
+            <input id="edit-sgOrder" type="numeric" onchange="javascript:editSubgroup();">
         </div>
         <div class="row actions">
             <?php \Pasteque\tpl_js_btn("btn", "newSubgroup()", \i18n("Add subgroup", PLUGIN_NAME));?>
