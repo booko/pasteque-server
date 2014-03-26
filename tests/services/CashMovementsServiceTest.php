@@ -27,9 +27,15 @@ class CashMovementsServiceTest extends \PHPUnit_Framework_TestCase {
     private $currencyId;
 
     protected function setUp() {
+        $locSrv = new LocationsService();
+        $location = new Location("Location");
+        $location->id = $locSrv->create($location);
+        $cashRegSrv = new CashRegistersService();
+        $cashReg = new CashRegister("CashReg", $location->id, 1);
+        $cashRegId = $cashRegSrv->create($cashReg);
         // Create a cash session
         $srv = new CashesService();
-        $cash = $srv->add("Host");
+        $cash = $srv->add($cashRegId);
         $this->cashId = $cash->id;
         $srv = new CurrenciesService();
         $eur = new Currency("Eur", "€", ",", ".", "#,##0.00$", 1, true, false);
@@ -42,6 +48,8 @@ class CashMovementsServiceTest extends \PHPUnit_Framework_TestCase {
         if ($pdo->exec("DELETE FROM PAYMENTS") === false
                 || $pdo->exec("DELETE FROM RECEIPTS") === false
                 || $pdo->exec("DELETE FROM CLOSEDCASH") === false
+                || $pdo->exec("DELETE FROM CASHREGISTERS") === false
+                || $pdo->exec("DELETE FROM LOCATIONS") === false
                 || $pdo->exec("DELETE FROM CURRENCIES") === false) {
             echo("[ERROR] Unable to restore db\n");
         }

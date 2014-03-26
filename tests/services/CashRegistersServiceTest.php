@@ -43,7 +43,7 @@ class CashRegistersServiceTest extends \PHPUnit_Framework_TestCase {
 
     public function testCreate() {
         $srv = new CashRegistersService();
-        $cashReg = new CashRegister("CashReg", $this->location->id);
+        $cashReg = new CashRegister("CashReg", $this->location->id, 3);
         $id = $srv->create($cashReg);
         $this->assertNotEquals(false, $id, "Insertion failed");
         $pdo = PDOBuilder::getPDO();
@@ -56,18 +56,22 @@ class CashRegistersServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($cashReg->label, $row['NAME'], "Label mismatch");
         $this->assertEquals($cashReg->locationId, $row['LOCATION_ID'],
                 "Location id mismatch");
+        $this->assertEquals($cashReg->nextTicketId, $row['NEXTTICKETID'],
+                "Next ticket id mismatch");
     }
 
     /** @depends testCreate */
     public function testGet() {
         $srv = new CashRegistersService();
-        $cashReg = new CashRegister("CashReg", $this->location->id, 1);
+        $cashReg = new CashRegister("CashReg", $this->location->id, 3);
         $id = $srv->create($cashReg);
         $read = $srv->get($id);
         $this->assertEquals($id, $read->id, "Id mismatch");
         $this->assertEquals($cashReg->label, $read->label, "Label mismatch");
         $this->assertEquals($cashReg->locationId, $read->locationId,
                 "Location id mismatch");
+        $this->assertEquals($cashReg->nextTicketId, $read->nextTicketId,
+                "Next ticket id mismatch");
     }
 
     public function testGetInexistent() {

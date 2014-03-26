@@ -22,9 +22,9 @@ namespace Pasteque;
 
 /* Cash API specification
 
-GET(host)
+GET(cashRegisterId)
 When client request a new cash, the server check for an active cash for
-requested host. If found return it. Otherwise return NULL.
+requested cash register. If found return it. Otherwise return NULL.
 
 GET(id)
 Get cash by id, no matter it's state.
@@ -40,14 +40,16 @@ class CashesAPI extends APIService {
     protected function check() {
         switch ($this->action) {
         case 'get':
-            return isset($this->params['host']) || isset($this->params['id']);
+            return $this->isParamSet('cashRegisterId')
+                    || $this->isParamSet('id');
         case 'update':
-            return isset($this->params['cash']);
+            return $this->isParamSet('cash');
         case 'search':
-            return ($this->isParamSet("host") || $this->isParamSet("dateStart")
+            return ($this->isParamSet("cashRegisterId")
+                    || $this->isParamSet("dateStart")
                     || $this->isParamSet("dateStop"));
         case 'zticket':
-            return isset($this->params['id']);
+            return $this->isParamSet('id');
         }
         return false;
     }
@@ -61,7 +63,7 @@ class CashesAPI extends APIService {
             if (isset($this->params['id'])) {
                 $ret = $srv->get($this->params['id']);
             } else {
-                $ret = $srv->getHost($this->params['host']);
+                $ret = $srv->getCashRegister($this->params['cashRegisterId']);
                 if ($ret === null || $ret->isClosed()) {
                     $ret = null;
                 }
@@ -73,12 +75,12 @@ class CashesAPI extends APIService {
             $this->succeed($ret);
             break;
         case 'search':
-            $host = $this->getParam("host");
+            $cashRegisterId = $this->getParam("cashRegisterId");
             $dateStart = $this->getParam("dateStart");
             $dateStop = $this->getParam("dateStop");
             $conditions = array();
-            if ($host !== null) {
-                $conditions[] = array("host", "=", $host);
+            if ($cashRegisterId !== null) {
+                $conditions[] = array("cashRegisterId", "=", $cashRegisterId);
             }
             if ($dateStart !== null) {
                 $conditions[] = array("openDate", ">=",
@@ -112,15 +114,15 @@ class CashesAPI extends APIService {
             if (property_exists($json, 'closeCash')) {
                 $closeCash = $json->closeCash;
             }
-            $host = $json->host;
-            $sequenc = null;
+            $cashRegisterId = $json->cashRegisterId;
+            $sequence = null;
             if (property_exists($json, 'sequence')) {
                 $sequence = $json->sequence;
             }
             if ($id !== null) {
                 // Update an existing cash
-                $cash = Cash::__build($id, $host, $sequence, $open, $close,
-                        $openCash, $closeCash);
+                $cash = Cash::__build($id, $cashRegisterId, $sequence, $open,
+                        $close, $openCash, $closeCash);
                 if ($srv->update($cash)) {
                     $this->succeed($cash);
                 } else {
@@ -128,8 +130,8 @@ class CashesAPI extends APIService {
                 }
             } else {
                 // Create a cash and update with given data
-                if ($srv->add($host)) {
-                    $cash = $srv->getHost($host);
+                if ($srv->add($cashRegisterId)) {
+                    $cash = $srv->getCashRegister($cashRegisterId);
                     $cash->openDate = $open;
                     $cash->closeDate = $close;
                     $cash->openCash = $openCash;

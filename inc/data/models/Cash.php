@@ -20,10 +20,11 @@
 
 namespace Pasteque;
 
+/** Cash session */
 class Cash {
 
     public $id;
-    public $host;
+    public $cashRegisterId;
     public $sequence;
     /** Open date as timestamp */
     public $openDate;
@@ -36,17 +37,17 @@ class Cash {
     /** Optionnal total */
     public $total;
 
-    static function __build($id, $host, $sequence, $openDate, $closeDate,
-            $openCash, $closeCash) {
-        $cash = new Cash($host, $sequence, $openDate, $closeDate, $openCash,
-                $closeCash);
+    static function __build($id, $cashRegisterId, $sequence, $openDate,
+            $closeDate, $openCash, $closeCash) {
+        $cash = new Cash($cashRegisterId, $sequence, $openDate, $closeDate,
+                $openCash, $closeCash);
         $cash->id = $id;
         return $cash;
     }
 
-    function __construct($host, $sequence, $openDate, $closeDate, $openCash,
-            $closeCash) {
-        $this->host = $host;
+    function __construct($cashRegisterId, $sequence, $openDate, $closeDate,
+            $openCash, $closeCash) {
+        $this->cashRegisterId = $cashRegisterId;
         $this->sequence = $sequence;
         $this->openDate = $openDate;
         $this->closeDate = $closeDate;
@@ -62,5 +63,3 @@ class Cash {
         return $this->openDate != null;
     }
 }
-
-?>

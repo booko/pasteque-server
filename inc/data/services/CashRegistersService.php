@@ -28,10 +28,35 @@ class CashRegistersService extends AbstractService {
             "ID" => "id",
             "NAME" => "label",
             "LOCATION_ID" => "locationId",
+            "NEXTTICKETID" => "nextTicketId"
     );
 
     protected function build($row, $pdo = null) {
         return CashRegister::__build($row["ID"], $row["NAME"],
-                $row["LOCATION_ID"]);
+                $row["LOCATION_ID"], $row["NEXTTICKETID"]);
+    }
+
+    public function getFromCashId($cashId) {
+        $pdo = PDOBuilder::getPDO();
+        $sql = "SELECT CR.ID, CR.NAME, CR.LOCATION_ID, CR.NEXTTICKETID "
+                . "FROM CASHREGISTERS AS CR, CLOSEDCASH "
+                . "WHERE CLOSEDCASH.CASHREGISTER_ID = CR.ID "
+                . "AND CLOSEDCASH.MONEY = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(":id", $cashId);
+        $stmt->execute();
+        $row = $stmt->fetch();
+        if ($row !== false) {
+            return $this->build($row, $pdo);
+        }
+    }
+
+    public function incrementNextTicketId($cashId) {
+        $pdo = PDOBuilder::getPDO();
+        $sql = "UPDATE CASHREGISTERS SET NEXTTICKETID = (NEXTTICKETID + 1) "
+                . "WHERE ID = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(":id", $cashId);
+        $stmt->execute();
     }
 }

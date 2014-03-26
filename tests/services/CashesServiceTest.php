@@ -23,38 +23,57 @@ require_once(dirname(dirname(__FILE__)) . "/common_load.php");
 
 class CashesServiceTest extends \PHPUnit_Framework_TestCase {
 
+    private $cashRegisterId;
+    private $cashRegisterId2;
+
+    protected function setUp() {
+        $srv = new LocationsService();
+        $location = new Location("Location");
+        $location->id = $srv->create($location);
+        $srv = new CashRegistersService();
+        $cashReg = new CashRegister("CashReg", $location->id, 1);
+        $this->cashRegisterId = $srv->create($cashReg);
+        $cashReg2 = new CashRegister("CashReg2", $location->id, 1);
+        $this->cashRegisterId2 = $srv->create($cashReg2);
+    }
+
     protected function tearDown() {
         // Restore database in its empty state
         $pdo = PDOBuilder::getPDO();
-        if ($pdo->exec("DELETE FROM CLOSEDCASH") === false) {
+        if ($pdo->exec("DELETE FROM CLOSEDCASH") === false
+                || $pdo->exec("DELETE FROM CASHREGISTERS") === false
+                || $pdo->exec("DELETE FROM LOCATIONS") === false) {
             echo("[ERROR] Unable to restore db\n");
         }
     }
 
     public function testAdd() {
         $srv = new CashesService();
-        $cash = $srv->add("Host");
+        $cash = $srv->add($this->cashRegisterId);
         $this->assertNotNull($cash, "Created cash is null");
         $this->assertNotNull($cash->id, "Id not set");
-        $this->assertEquals("Host", $cash->host, "Host mismatch");
+        $this->assertEquals($this->cashRegisterId, $cash->cashRegisterId,
+                "Cash register id mismatch");
         $this->assertEquals(1, $cash->sequence, "Sequence doesn't start at 1");
         $this->assertNull($cash->openDate, "Created cash is opened");
         $this->assertNull($cash->closeDate, "Created cash is closed");
         $this->assertNull($cash->openCash, "Open cash mismatch");
         $this->assertNull($cash->closeCash, "Close cash mismatch");
-        $cash2 = $srv->add("Host");
+        $cash2 = $srv->add($this->cashRegisterId);
         $this->assertNotNull($cash2, "Created cash is null");
         $this->assertNotNull($cash2->id, "Id not set");
-        $this->assertEquals("Host", $cash2->host, "Host mismatch");
+        $this->assertEquals($this->cashRegisterId, $cash2->cashRegisterId,
+                "Cash register id mismatch");
         $this->assertEquals(2, $cash2->sequence, "Sequence increment failed");
         $this->assertNull($cash2->openDate, "Created cash is opened");
         $this->assertNull($cash2->closeDate, "Created cash is closed");
         $this->assertNull($cash2->openCash, "Open cash mismatch");
         $this->assertNull($cash2->closeCash, "Close cash mismatch");
-        $cash3 = $srv->add("Host2");
+        $cash3 = $srv->add($this->cashRegisterId2);
         $this->assertNotNull($cash3, "Created cash is null");
         $this->assertNotNull($cash3->id, "Id not set");
-        $this->assertEquals("Host2", $cash3->host, "Host mismatch");
+        $this->assertEquals($this->cashRegisterId2, $cash3->cashRegisterId,
+                "Cash register id 2 mismatch");
         $this->assertEquals(1, $cash3->sequence, "Bad sequence");
         $this->assertNull($cash3->openDate, "Created cash is opened");
         $this->assertNull($cash3->closeDate, "Created cash is closed");
@@ -64,17 +83,18 @@ class CashesServiceTest extends \PHPUnit_Framework_TestCase {
 
     public function testGetHostEmpty() {
         $srv = new CashesService();
-        $cash = $srv->getHost("UnknownHost");
+        $cash = $srv->getCashRegister(1293819);
         $this->assertNull($cash, "Cash shouldn't exist");
     }
 
     /** @depends testAdd */
     public function testGetHostCreated() {
         $srv = new CashesService();
-        $cash = $srv->add("Host");
-        $read = $srv->getHost("Host");
+        $cash = $srv->add($this->cashRegisterId);
+        $read = $srv->getCashRegister($this->cashRegisterId);
         $this->assertNotNull($read, "Created cash not found");
-        $this->assertEquals($cash->host, $read->host, "Host was modified");
+        $this->assertEquals($cash->cashRegisterId, $read->cashRegisterId,
+                "Cash register id was modified");
         $this->assertEquals($cash->sequence, $read->sequence,
                 "Sequence was modified");
         $this->assertEquals($cash->openDate, $read->openDate,
@@ -98,10 +118,11 @@ class CashesServiceTest extends \PHPUnit_Framework_TestCase {
     /** @depends testAdd */
     public function testGet() {
         $srv = new CashesService();
-        $cash = $srv->add("Host");
+        $cash = $srv->add($this->cashRegisterId);
         $read = $srv->get($cash->id);
         $this->assertNotNull($read, "Created cash not found");
-        $this->assertEquals($cash->host, $read->host, "Host was modified");
+        $this->assertEquals($cash->cashRegisterId, $read->cashRegisterId,
+                "Cash register id was modified");
         $this->assertEquals($cash->sequence, $read->sequence,
                 "Sequence was modified");
         $this->assertEquals($cash->openDate, $read->openDate,
@@ -119,7 +140,7 @@ class CashesServiceTest extends \PHPUnit_Framework_TestCase {
      */
     public function testUpdate() {
         $srv = new CashesService();
-        $cash = $srv->add("Host");
+        $cash = $srv->add($this->cashRegisterId);
         // Edit open date
         $cash->openDate = stdtimefstr("2000-02-02 02:02:02");
         $cash->openCash = 10.0;
@@ -127,7 +148,8 @@ class CashesServiceTest extends \PHPUnit_Framework_TestCase {
         $read = $srv->get($cash->id);
         $this->assertNotNull($read, "Created cash not found");
         $this->assertEquals($cash->id, $read->id, "Id was modified");
-        $this->assertEquals($cash->host, $read->host, "Host was modified");
+        $this->assertEquals($cash->cashRegisterId, $read->cashRegisterId,
+                "Cash register id was modified");
         $this->assertEquals($cash->sequence, $read->sequence,
                 "Sequence was modified");
         $this->assertEquals($cash->openDate, $read->openDate,
@@ -145,7 +167,8 @@ class CashesServiceTest extends \PHPUnit_Framework_TestCase {
         $read = $srv->get($cash->id);
         $this->assertNotNull($read, "Created cash not found");
         $this->assertEquals($cash->id, $read->id, "Id was modified");
-        $this->assertEquals($cash->host, $read->host, "Host was modified");
+        $this->assertEquals($cash->cashRegisterId, $read->cashRegisterId,
+                "Cash register id was modified");
         $this->assertEquals($cash->sequence, $read->sequence,
                 "Sequence was modified");
         $this->assertEquals($cash->openDate, $read->openDate,
@@ -165,7 +188,8 @@ class CashesServiceTest extends \PHPUnit_Framework_TestCase {
         $read = $srv->get($cash->id);
         $this->assertNotNull($read, "Created cash not found");
         $this->assertEquals($cash->id, $read->id, "Id was modified");
-        $this->assertEquals($cash->host, $read->host, "Host was modified");
+        $this->assertEquals($cash->cashRegisterId, $read->cashRegisterId,
+                "Cash register id was modified");
         $this->assertEquals($cash->sequence, $read->sequence,
                 "Sequence was modified");
         $this->assertEquals($cash->openDate, $read->openDate,

@@ -78,9 +78,18 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
                 "itsme@me.me", "012345", "23456", "11111", "Address1",
                 "Address2", "59000", "City", "Region", "France", "Note", true);
         $cust->id = $srvCust->create($cust);
+        // Location
+        $locSrv = new LocationsService();
+        $loc = new Location("Location");
+        $loc->id = $locSrv->create($loc);
+        $this->locationId = $loc->id;
+        // Cash register
+        $srvCashReg = new CashRegistersService();
+        $cashReg = new CashRegister("Cash", $loc->id, 1);
+        $cashReg->id = $srvCashReg->create($cashReg);
         // Cash
         $srvCash = new CashesService();
-        $cash = $srvCash->add("Host");
+        $cash = $srvCash->add($cashReg->id);
         $cash->openDate = stdtimefstr("2000-02-02 02:02:02");
         $srvCash->update($cash);
         $this->cashId = $cash->id;
@@ -92,11 +101,6 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
         $curr = new Currency("Eur", "€", ",", ".", "#,##0.00$", 1, true, false);
         $srvCurr = new CurrenciesService();
         $curr->id = $srvCurr->create($curr);
-        // Location
-        $locSrv = new LocationsService();
-        $loc = new Location("Location");
-        $loc->id = $locSrv->create($loc);
-        $this->locationId = $loc->id;
         // Discount profile
         $profSrv = new DiscountProfilesService();
         $prof = new DiscountProfile("Profile", 0.1);
@@ -149,6 +153,7 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
                 || $pdo->exec("DELETE FROM TICKETS") === false
                 || $pdo->exec("DELETE FROM RECEIPTS") === false
                 || $pdo->exec("DELETE FROM CLOSEDCASH") === false
+                || $pdo->exec("DELETE FROM CASHREGISTERS") === false
                 || $pdo->exec("DELETE FROM TARIFFAREAS_PROD") === false
                 || $pdo->exec("DELETE FROM TARIFFAREAS") === false
                 || $pdo->exec("DELETE FROM STOCKDIARY") === false
@@ -184,7 +189,7 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
                 "Result status check failed");
         $content = $result->content;
-        $this->assertTrue($content, "Content is not true");
+        $this->assertEquals(1, $content['saved'], "Content is not correct");
     }
 
     public function testSaveDefaultLocation() {
@@ -194,7 +199,7 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
                 "Result status check failed");
         $content = $result->content;
-        $this->assertTrue($content, "Content is not true");
+        $this->assertEquals(1, $content['saved'], "Content is not correct");
     }
 
     /** @depends testSaveTicket */
@@ -206,7 +211,7 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
                 "Result status check failed");
         $content = $result->content;
-        $this->assertTrue($content, "Content is not true");
+        $this->assertEquals(1, $content['saved'], "Content is not correct");
     }
 
     /** @depends testSaveTicketAttr */
@@ -219,7 +224,7 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
                 "Result status check failed");
         $content = $result->content;
-        $this->assertTrue($content, "Content is not true");
+        $this->assertEquals(2, $content['saved'], "Content is not correct");
     }
 
     /** @depends testSaveTicket */

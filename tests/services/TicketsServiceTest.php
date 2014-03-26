@@ -101,9 +101,17 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
                 "Address2", "59000", "City", "Region", "France", "Note", true);
         $cust->id = $srvCust->create($cust);
         $this->customer = $cust;
+        // Location
+        $locSrv = new LocationsService();
+        $loc = new Location("Location");
+        $loc->id = $locSrv->create($loc);
+        $this->location = $loc;
         // Cash
+        $srvCashReg = new CashRegistersService();
+        $cashReg = new CashRegister("CashReg", $loc->id, 1);
+        $cashReg->id = $srvCashReg->create($cashReg);
         $srvCash = new CashesService();
-        $cash = $srvCash->add("Host");
+        $cash = $srvCash->add($cashReg->id);
         $cash->openDate = stdtimefstr("2000-02-02 02:02:02");
         $srvCash->update($cash);
         $this->cash = $cash;
@@ -117,11 +125,6 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $srvCurr = new CurrenciesService();
         $curr->id = $srvCurr->create($curr);
         $this->currency = $curr;
-        // Location
-        $locSrv = new LocationsService();
-        $loc = new Location("Location");
-        $loc->id = $locSrv->create($loc);
-        $this->location = $loc;
     }
 
 
@@ -134,6 +137,7 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
                 || $pdo->exec("DELETE FROM TICKETS") === false
                 || $pdo->exec("DELETE FROM RECEIPTS") === false
                 || $pdo->exec("DELETE FROM CLOSEDCASH") === false
+                || $pdo->exec("DELETE FROM CASHREGISTERS") === false
                 || $pdo->exec("DELETE FROM TARIFFAREAS_PROD") === false
                 || $pdo->exec("DELETE FROM TARIFFAREAS") === false
                 || $pdo->exec("DELETE FROM STOCKDIARY") === false

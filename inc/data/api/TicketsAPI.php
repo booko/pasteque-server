@@ -96,25 +96,24 @@ class TicketsAPI extends APIService {
             } else {
                 $json = array(json_decode($this->params['ticket']));
             }
+            // Get location from cash register
             $cashId = $this->params['cashId'];
-            // Check location existence if there is one
-            $locSrv = new LocationsService();
-            if (isset($this->params['locationId'])) {
-                $location = $locSrv->get($this->params['locationId']);
-                if ($location === null) {
-                    $err = new APIError("Unknown location",
-                            array("locationId" => $this->params['locationId']));
-                    $this->fail($error);
-                    break;
-                }
-                $locationId = $this->params['locationId'];
-            } else {                
-                $locations = $locSrv->getAll();
-                if (count($locations) === 0) {
-                    $this->fail(new APIError("No location defined"));
-                    break;
-                }
-                $locationId = $locations[0]->id;
+            $cashSrv = new CashesService();
+            $cash = $cashSrv->get($cashId);
+            if ($cash === null) {
+                $this->fail(new APIError("Unknown cash session"));
+                break;
+            }
+            $cashRegSrv = new CashRegistersService();
+            $cashReg = $cashRegSrv->get($cash->cashRegisterId);
+            if ($cashReg === null) {
+                $this->fail(new APIError("Cash register not found"));
+                break;
+            }
+            $locationId = $cashReg->locationId;
+            if ($locationId === null) {
+                $this->fail(new APIError("Location not set"));
+                break;
             }
             // Register tickets
             $ticketsCount = count($json);

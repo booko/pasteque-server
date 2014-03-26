@@ -33,8 +33,9 @@ class CashTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testConstructEmpty() {
-        $cash = new Cash("Host", 2, null, null, null, null);
-        $this->assertEquals("Host", $cash->host, "Host assignment failed");
+        $cash = new Cash(1, 2, null, null, null, null);
+        $this->assertEquals(1, $cash->cashRegisterId,
+                "Cash register id assignment failed");
         $this->assertEquals(2, $cash->sequence, "Sequence assignment failed");
         $this->assertNull($cash->openDate, "Open date assignment failed");
         $this->assertNull($cash->closeDate, "Close date assignment failed");
@@ -46,7 +47,7 @@ class CashTest extends \PHPUnit_Framework_TestCase {
 
     /** @depends testConstructEmpty */
     public function testConstructOpened() {
-        $cash = new Cash("Host", 2, stdtimefstr("1900-01-01 00:00:00"), null,
+        $cash = new Cash(1, 2, stdtimefstr("1900-01-01 00:00:00"), null,
                 10.0, null);
         $this->assertTrue($cash->isOpened(), "Open state check failed");
         $this->assertFalse($cash->isClosed(), "Close state check failed");
@@ -56,7 +57,7 @@ class CashTest extends \PHPUnit_Framework_TestCase {
 
     /** @depends testConstructEmpty */
     public function testConstructClosed() {
-        $cash = new Cash("Host", 2, stdtimefstr("1900-01-01 00:00:00"),
+        $cash = new Cash(1, 2, stdtimefstr("1900-01-01 00:00:00"),
                 stdtimefstr("1900-01-02 00:00:00"), 10.0, 12.0);
         $this->assertTrue($cash->isOpened(), "Open state check failed");
         $this->assertTrue($cash->isClosed(), "Close state check failed");

@@ -174,9 +174,15 @@ class TicketsService {
         return $tickets;
     }
 
-    static function save($ticket, $locationId = "0") {
+    static function save($ticket) {
         $pdo = PDOBuilder::getPDO();
         $db = DB::get();
+        $cashRegSrv = new CashRegistersService();
+        $cashReg = $cashRegSrv->getFromCashId($ticket->cashId);
+        if ($cashReg === null) {
+            return false;
+        }
+        $locationId = $cashReg->locationId;
         $newTransaction = !$pdo->inTransaction();
         if ($newTransaction) {
             $pdo->beginTransaction();
@@ -195,51 +201,8 @@ class TicketsService {
         }
         // Get next ticket number
         if ($ticket->ticketId === null) {
-            switch ($ticket->type) {
-            case Ticket::TYPE_REFUND:
-                $ticketNumTable = "TICKETSNUM_REFUND";
-                break;
-            case Ticket::TYPE_PAYMENT:
-                $ticketNumTable = "TICKETSNUM_PAYMENT";
-            case Ticket::TYPE_SELL:
-            default:
-                $ticketNumTable = "TICKETSNUM";
-                break;
-            }
-            switch ($db->getType()) {
-            case 'mysql':
-                // Get ticket number
-                $stmtNum = $pdo->prepare("SELECT ID FROM " . $ticketNumTable);
-                if ($stmtNum->execute() === false) {
-                    if ($newTransaction) {
-                        $pdo->rollback();
-                    }
-                    return false;
-                }
-                $nextNum = $stmtNum->fetchColumn(0);
-                // Increment next ticket number
-                $stmtNumInc = $pdo->prepare("UPDATE " . $ticketNumTable
-                        . " SET ID = :id");
-                $stmtNumInc->bindValue(":id", $nextNum + 1);
-                if ($stmtNumInc->execute() === false) {
-                    if ($newTransaction) {
-                        $pdo->rollback();
-                    }
-                    return false;
-                }
-                break;
-            case 'postgresql':
-                $stmtNum = $pdo->prepare("SELECT nextval('"
-                        . $ticketNumTable . "')");
-                if ($stmtNum->execute() === false) {
-                    if ($newTransaction) {
-                        $pdo->rollback();
-                    }
-                    return false;
-                }
-                $nextNum = $stmtNum->fetchColumn(0);
-                break;
-            }
+            $nextNum = $cashReg->nextTicketId;
+            $cashRegSrv->incrementNextTicketId($cashReg->id);
             $ticket->ticketId = $nextNum;
         }
         //  Insert ticket
