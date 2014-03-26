@@ -34,6 +34,9 @@
 "Total": "Total",
 "Subtotal": "Sous-total",
 
+"Start date": "Date de début",
+"Stop date": "Date de fin",
+
 "Product.label": "Désignation",
 "Product.reference": "Référence",
 "Product.category": "Categorie",

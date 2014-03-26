@@ -73,9 +73,9 @@ $report = new \Pasteque\MergedReport(PLUGIN_NAME, "ztickets",
         \i18n("Z tickets", PLUGIN_NAME),
         $sqls, $headers, $fields, $mergeFields);
 
-$report->addInput("start", \i18n("Session.openDate"), \Pasteque\DB::DATE);
-$report->setDefaultInput("start", time() - 86400);
-$report->addInput("stop", \i18n("Session.closeDate"), \Pasteque\DB::DATE);
+$report->addInput("start", \i18n("Start date"), \Pasteque\DB::DATE);
+$report->setDefaultInput("start", time() - (time() % 86400) - 86400);
+$report->addInput("stop", \i18n("Stop date"), \Pasteque\DB::DATE);
 $report->setDefaultinput("stop", time());
 
 $report->addFilter("DATESTART", "\Pasteque\stdtimefstr");

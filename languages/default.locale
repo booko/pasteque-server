@@ -34,6 +34,9 @@
 "Total": "Total",
 "Subtotal": "Subtotal",
 
+"Start date": "Start date",
+"Stop date": "Stop date",
+
 "Product.label": "Name",
 "Product.reference": "Reference",
 "Product.category": "Category",
