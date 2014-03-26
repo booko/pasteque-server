@@ -170,11 +170,11 @@ function delSubgroup() {
 function showSgPrd(idPrd) {
     var div = jQuery('#product-sub-container');
     var prd = products[idPrd];
-    var res = "<a id='productSg-" + idPrd + "' class='catalog-product'>"
-            + "<img src=\"?p=img&w=product&id=" + idPrd + "\">"
-            + "<p>" + prd.label + "</p>"
+    var res = "<div id='productSg-" + idPrd + "' class='catalog-product'>"
+            + "<img src=\"?p=img&w=product&id=" + idPrd + "\" onload=\"javascript:centerImage('#productSg-" + idPrd + "');\">"
+            + "<p class=\"catalog-label\">" + prd.label + "</p>"
             + "<input type='button' onclick='delProduct(\"" + idPrd + "\")'/>";
-            + "</a>";
+            + "</div>";
     div.append(res);
     jQuery("#productSg-" + idPrd)
         .children("img").css({'left': '16px', 'top': '16px'});
