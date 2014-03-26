@@ -118,8 +118,7 @@ if (isset($_GET['id'])) {
     $cust = \Pasteque\CustomersService::get($_GET['id']);
     $currDebt = $cust->currDebt;
     if ($cust->debtDate !== NULL) {
-        $str_debtDate = \Pasteque\stdtimefstr($cust->debtDate);
-        $str_debtDate = \i18nDatetime($str_debtDate);
+        $str_debtDate = \i18nDatetime($cust->debtDate);
     }
 }
 ?>
