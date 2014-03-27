@@ -113,10 +113,12 @@ if (isset($_POST['id']) && isset($_POST['dispName'])) {
 
 $cust = NULL;
 $currDebt = "";
+$prepaid = 0;
 $str_debtDate = "";
 if (isset($_GET['id'])) {
     $cust = \Pasteque\CustomersService::get($_GET['id']);
     $currDebt = $cust->currDebt;
+    $prepaid = $cust->prepaid;
     if ($cust->debtDate !== NULL) {
         $str_debtDate = \i18nDatetime($cust->debtDate);
     }
@@ -149,7 +151,10 @@ if (isset($_GET['id'])) {
 	</fieldset>
 	<fieldset>
 	<legend><?php \pi18n("Debt", PLUGIN_NAME); ?></legend>
-	<?php \Pasteque\form_input("edit", "Customer", $cust, "prepaid", "numeric"); ?>
+	<div class="row">
+		<label for="prepaid"><?php \pi18n("Customer.prepaid"); ?></label>
+		<input id="prepaid" name="prepaid" type="numeric" readonly="true" value="<?php echo $prepaid; ?>" />
+	</div>
 	<?php \Pasteque\form_input("edit", "Customer", $cust, "maxDebt", "numeric"); ?>
 	<div class="row">
 		<label for="currDebt"><?php \pi18n("Customer.currDebt"); ?></label>
