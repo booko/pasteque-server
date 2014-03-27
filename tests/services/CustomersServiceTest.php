@@ -117,6 +117,21 @@ class CustomersServiceTest extends \PHPUnit_Framework_TestCase {
         $this->markTestIncomplete();
     }
 
+    /** @depends testUpdate */
+    public function testAddPrepaid() {
+        $this->markTestIncomplete();
+    }
+
+    /** @depends testUpdate */
+    public function testAddDebt() {
+        $this->markTestIncomplete();
+    }
+
+    /** @depends testUpdate */
+    public function testRecoverDebt() {
+        $this->markTestIncomplete();
+    }
+
     /** @depends testCreate
      * @depends testReadInexistent
      */

@@ -93,6 +93,31 @@ class CustomersService extends AbstractService {
         return false;
     }
 
+    /** Add debt and update debt date */
+    function addDebt($custId, $amount, $date) {
+        $cust = $this->get($custId);
+        if ($cust !== null) {
+            $cust->currDebt += $amount;
+            $cust->debtDate = $date;
+            $ret = $this->update($cust);
+            return $ret;
+        }
+        return false;
+    }
+    /** Pay debt (use positive amount), if debt is 0 date is deleted. */
+    function recoverDebt($custId, $amount) {
+        $cust = $this->get($custId);
+        if ($cust !== null) {
+            $cust->currDebt -= $amount;
+            if ($cust->currDebt == 0) {
+                $cust->debtDate = null;
+            }
+            $ret = $this->update($cust);
+            return $ret;
+        }
+        return false;
+    }
+
     public function create($model) {
         // This is a copy of AbstractService->create but with explicit id
         $model->id = md5(time() . rand());
