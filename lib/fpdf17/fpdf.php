@@ -7,10 +7,13 @@
 * Author:  Olivier PLATHEY                                                     *
 *******************************************************************************/
 
-define('FPDF_PT::VERSION','1.7');
+// this had some bug when integrating with everything
+//define('FPDF_PT::VERSION','1.7');
 
 class FPDF
 {
+    // FPDF_PT::VERSION was migrated here
+    const VERSION = '1.7';
 var $page;               // current page number
 var $n;                  // current object number
 var $offsets;            // array of object offsets
@@ -1711,7 +1714,7 @@ function _putresources()
 
 function _putinfo()
 {
-	$this->_out('/Producer '.$this->_textstring('FPDF '.FPDF_PT::VERSION));
+	$this->_out('/Producer '.$this->_textstring('FPDF '.FPDF::VERSION));
 	if(!empty($this->title))
 		$this->_out('/Title '.$this->_textstring($this->title));
 	if(!empty($this->subject))

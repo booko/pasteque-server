@@ -37,7 +37,9 @@ $categories = \Pasteque\CategoriesService::getAll();
 $prdCat = array();
 $archivesCat = array();
 foreach ($products as $product) {
-    $prdCat[$product->categoryId][] = $product;
+    if ($product->categoryId !== \Pasteque\CompositionsService::CAT_ID) {
+        $prdCat[$product->categoryId][] = $product;
+    }
     // Archive will be filled on display loop
 }
 ?>

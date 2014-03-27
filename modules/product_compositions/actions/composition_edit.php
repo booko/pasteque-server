@@ -9,14 +9,25 @@ if (in_array("product_discounts", $modules)) {
     $discounts = true;
 }
 
-function parseSubgroups($data) {
+$categories = \Pasteque\CategoriesService::getAll();
+$products = \Pasteque\ProductsService::getAll(true);
+$taxes = \Pasteque\TaxesService::getAll();
+
+function parseSubgroups($data, $products) {
     $jsSubgroups = json_decode($data);
     $subgroups = array();
     foreach ($jsSubgroups as $jsSubgroup) {
         $subgroup = new \Pasteque\Subgroup(null, $jsSubgroup->label,
             $jsSubgroup->dispOrder, false);
         foreach ($jsSubgroup->prodIds as $prdId) {
-            $subgroupProd = new \Pasteque\SubgroupProduct($prdId, null);
+            $dispOrder = 0;
+            foreach ($products as $product) {
+                if ($product->id == $prdId) {
+                    $dispOrder = $product->dispOrder;
+                    break;
+                }
+            }
+            $subgroupProd = new \Pasteque\SubgroupProduct($prdId, null, $dispOrder);
             $subgroup->addProduct($subgroupProd);
         }
         $subgroups[] = $subgroup;
@@ -49,7 +60,7 @@ if (isset($_POST['id'])) {
             $taxCatId, $visible, $scaled, $_POST['priceBuy'], null,
             $_POST['barcode'], $img != null,
             $discountEnabled, $discountRate);
-    $cmp->groups = parseSubgroups($_POST['subgroupData']);
+    $cmp->groups = parseSubgroups($_POST['subgroupData'], $products);
     if (\Pasteque\CompositionsService::update($cmp, $img, null)) {
         $message = \i18n("Changes saved", PLUGIN_NAME);
     } else {
@@ -77,7 +88,7 @@ if (isset($_POST['id'])) {
             $_POST['realsell'], $catId, $dispOrder, $taxCatId,
             $visible, $scaled, $_POST['priceBuy'], null, $_POST['barcode'],
             $img !== null, $discountEnabled, $discountRate);
-    $cmp->groups = parseSubgroups($_POST['subgroupData']);
+    $cmp->groups = parseSubgroups($_POST['subgroupData'], $products);
     if (\Pasteque\CompositionsService::create($cmp, $img, null)) {
         $message = \i18n("Changes saved", PLUGIN_NAME);
     } else {
@@ -96,10 +107,6 @@ if (isset($_GET['productId'])) {
     $price = "";
     $composition = NULL;
 }
-
-$categories = \Pasteque\CategoriesService::getAll();
-$products = \Pasteque\ProductsService::getAll(true);
-$taxes = \Pasteque\TaxesService::getAll();
 
 ?>
 
@@ -189,7 +196,7 @@ $taxes = \Pasteque\TaxesService::getAll();
         </div>
         <div class="row">
             <label for="edit-sgOrder"><?php \pi18n('Subgroup.dispOrder'); ?></label>
-            <input id="edit-sgOrder" type="numeric" name="dispOrder" onchange="javascript:editSubgroup();">
+            <input id="edit-sgOrder" type="numeric" onchange="javascript:editSubgroup();">
         </div>
         <div class="row actions">
             <?php \Pasteque\tpl_js_btn("btn", "newSubgroup()", \i18n("Add subgroup", PLUGIN_NAME));?>

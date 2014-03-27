@@ -31,7 +31,7 @@ const H_PADDING = 2.8;
 const BARCODE_WIDTH = 30;
 const BARCODE_HEIGHT = 10;
 
-require_once(PT::$ABSPATH . "/lib/barcode-master/php-barcode.php");
+require_once(\Pasteque\PT::$ABSPATH . "/lib/barcode-master/php-barcode.php");
 $font = "./lib/barcode-master/NOTTB___.TTF";
 
 $pdf = new \FPDF("P", "mm", "A4");

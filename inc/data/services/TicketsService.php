@@ -278,7 +278,7 @@ class TicketsService {
             }
         }
         // Insert payments
-        // Also check for prepayment debit
+        // Also check for prepayment debit and debt recovery
         $stmtPay = $pdo->prepare("INSERT INTO PAYMENTS (ID, RECEIPT, PAYMENT, "
                 . "TOTAL, CURRENCY, TOTALCURRENCY) VALUES (:id, :rcptId, "
                 . ":type, :amount, :currId, :currAmount)");
@@ -299,6 +299,28 @@ class TicketsService {
             if ($payment->type == 'prepaid') {
                 $custSrv = new CustomersService();
                 $ok = $custSrv->addPrepaid($ticket->customerId,
+                        $payment->amount * -1);
+                if ($ok === false) {
+                    if ($newTransaction) {
+                        $pdo->rollback();
+                    }
+                    return false;
+                }
+            } else if ($payment->type == "debt") {
+                // Debtpaid is a negative total of all payments
+                $custSrv = new CustomersService();
+                $ok = $custSrv->addDebt($ticket->customerId,
+                        $payment->amount, $ticket->date);
+                if ($ok === false) {
+                    if ($newTransaction) {
+                        $pdo->rollback();
+                    }
+                    return false;
+                }
+            } else if ($payment->type == "debtpaid") {
+                // Debtpaid is a negative total of all payments
+                $custSrv = new CustomersService();
+                $ok = $custSrv->recoverDebt($ticket->customerId,
                         $payment->amount * -1);
                 if ($ok === false) {
                     if ($newTransaction) {

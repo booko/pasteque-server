@@ -29,7 +29,8 @@ $sqls[] = "SELECT "
         . "FROM CLOSEDCASH "
         . "LEFT JOIN RECEIPTS ON RECEIPTS.MONEY = CLOSEDCASH.MONEY "
         . "LEFT JOIN TICKETLINES ON TICKETLINES.TICKET = RECEIPTS.ID "
-        . "WHERE CLOSEDCASH.DATESTART > :start AND CLOSEDCASH.DATEEND <= :stop "
+        . "WHERE CLOSEDCASH.DATESTART > :start "
+        . "AND CLOSEDCASH.DATESTART <= :stop "
         . "GROUP BY CLOSEDCASH.MONEY, HOST, DATESTART, DATEEND "
         . "ORDER BY CLOSEDCASH.DATESTART DESC";
 
@@ -41,7 +42,8 @@ $sqls[] = "SELECT "
         . "CLOSEDCASH "
         . "LEFT JOIN RECEIPTS ON RECEIPTS.MONEY = CLOSEDCASH.MONEY "
         . "LEFT JOIN PAYMENTS ON PAYMENTS.RECEIPT = RECEIPTS.ID "
-        . "WHERE CLOSEDCASH.DATESTART > :start AND CLOSEDCASH.DATEEND <= :stop "
+        . "WHERE CLOSEDCASH.DATESTART > :start "
+        . "AND CLOSEDCASH.DATESTART <= :stop "
         . "GROUP BY CLOSEDCASH.MONEY, __KEY__ "
         . "ORDER BY CLOSEDCASH.DATESTART DESC";
 
@@ -53,7 +55,8 @@ $sqls[] = "SELECT "
         . "LEFT JOIN RECEIPTS ON RECEIPTS.MONEY = CLOSEDCASH.MONEY "
         . "LEFT JOIN TAXLINES ON TAXLINES.RECEIPT = RECEIPTS.ID "
         . "LEFT JOIN TAXES ON TAXLINES.TAXID = TAXES.ID "
-        . "WHERE CLOSEDCASH.DATESTART > :start AND CLOSEDCASH.DATEEND < :stop "
+        . "WHERE CLOSEDCASH.DATESTART > :start "
+        . "AND CLOSEDCASH.DATESTART < :stop "
         . "GROUP BY CLOSEDCASH.MONEY, TAXES.NAME "
         . "ORDER BY CLOSEDCASH.DATESTART DESC";
 
@@ -74,9 +77,9 @@ $report = new \Pasteque\MergedReport(PLUGIN_NAME, "ztickets",
         \i18n("Z tickets", PLUGIN_NAME),
         $sqls, $headers, $fields, $mergeFields);
 
-$report->addInput("start", \i18n("Session.openDate"), \Pasteque\DB::DATE);
-$report->setDefaultInput("start", time() - 86400);
-$report->addInput("stop", \i18n("Session.closeDate"), \Pasteque\DB::DATE);
+$report->addInput("start", \i18n("Start date"), \Pasteque\DB::DATE);
+$report->setDefaultInput("start", time() - (time() % 86400) - 86400);
+$report->addInput("stop", \i18n("Stop date"), \Pasteque\DB::DATE);
 $report->setDefaultinput("stop", time());
 
 $report->addFilter("DATESTART", "\Pasteque\stdtimefstr");
