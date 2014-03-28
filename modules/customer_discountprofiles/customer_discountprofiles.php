@@ -25,6 +25,8 @@ function init() {
     $MENU->addSection("customers", "Customers", PLUGIN_NAME);
     $MENU->registerModuleEntry("customers", PLUGIN_NAME, "menu_discountprofile.png",
             "Discount profiles", "discountprofiles");
+    $MENU->registerModuleReport("sales", PLUGIN_NAME, "menu_discount_by_profile.png", "Discounts by profile", "discountprofiles_report");
+
     \Pasteque\register_i18n(PLUGIN_NAME);
 }
 \Pasteque\hook("module_load", __NAMESPACE__ . "\init");

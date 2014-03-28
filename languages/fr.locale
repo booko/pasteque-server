@@ -114,6 +114,7 @@
 "Customer.region": "Département",
 "Customer.country": "Pays",
 
+"DiscountProfile": "Profil de remise",
 "DiscountProfile.label": "Désignation",
 "DiscountProfile.rate": "Taux",
 

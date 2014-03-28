@@ -3,5 +3,12 @@
 
 "New discount profile": "Nouveau profil de remises",
 "Edit a profile": "Édition d'un profil",
-"Discount profile saved. <a href=\"%s\">Go to the profile page</a>.": "Profil de remise enregistré. <a href=\"%s\">Aller à la page du profil</a>."
+"Discount profile saved. <a href=\"%s\">Go to the profile page</a>.": "Profil de remise enregistré. <a href=\"%s\">Aller à la page du profil</a>.",
+
+"Discounts by profile": "Remises par profils",
+"Base": "Base",
+"Tickets count": "Nombre de tickets",
+"Taxed base": "Base TTC",
+"Amount": "Remises",
+"Taxed amount": "Remises TTC"
 }

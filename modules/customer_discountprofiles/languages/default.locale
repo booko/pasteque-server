@@ -3,5 +3,12 @@
 
 "New discount profile": "New discount profile",
 "Edit a profile": "Edit a profile",
-"Discount profile saved. <a href=\"%s\">Go to the profile page</a>.": "Discount profile saved. <a href=\"%s\">Go to the profile page</a>."
+"Discount profile saved. <a href=\"%s\">Go to the profile page</a>.": "Discount profile saved. <a href=\"%s\">Go to the profile page</a>.",
+
+"Discounts by profile": "Discounts by profile",
+"Base": "Base",
+"Tickets count": "Tickets count",
+"Taxed base": "Taxed base",
+"Amount": "Amount",
+"Taxed amount": "Taxed amount"
 }
