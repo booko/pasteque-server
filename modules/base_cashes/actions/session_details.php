@@ -29,6 +29,8 @@ $sessId = $_GET['id'];
 $session = \Pasteque\CashesService::get($sessId);
 $zticket = \Pasteque\CashesService::getZTicket($sessId);
 
+$crSrv = new \Pasteque\CashRegistersService();
+$cashRegister = $crSrv->get($session->cashRegisterId);
 
 if ($session->isClosed()) {
     $title = \i18n("Closed session", PLUGIN_NAME);
@@ -45,8 +47,8 @@ if ($session->isClosed()) {
 	</thead>
 	<tbody>
 		<tr>
-			<td><?php \pi18n("Session.host"); ?></td>
-			<td><?php echo($session->host); ?></td>
+			<td><?php \pi18n("CashRegister.label"); ?></td>
+			<td><?php echo($cashRegister->label); ?></td>
 		</tr>
 		<tr>
 			<td><?php \pi18n("Session.openDate"); ?></td>

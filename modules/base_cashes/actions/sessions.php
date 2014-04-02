@@ -25,6 +25,7 @@ $error = null;
 
 $srv = new \Pasteque\CashesService();
 $sessions = $srv->getAll();
+$crSrv = new \Pasteque\CashRegistersService();
 ?>
 <h1><?php \pi18n("Sessions", PLUGIN_NAME); ?></h1>
 
@@ -32,7 +33,7 @@ $sessions = $srv->getAll();
 <table cellpadding="0" cellspacing="0">
 	<thead>
 		<tr>
-			<th><?php \pi18n("Session.host"); ?></th>
+			<th><?php \pi18n("CashRegister.label"); ?></th>
 			<th><?php \pi18n("Session.openDate"); ?></th>
 			<th><?php \pi18n("Session.tickets"); ?></th>
 			<th><?php \pi18n("Session.total"); ?></th>
@@ -41,9 +42,10 @@ $sessions = $srv->getAll();
 	</thead>
 	<tbody>
 <?php foreach ($sessions as $session) {
+    $cashRegister = $crSrv->get($session->cashRegisterId);
     if (!$session->isClosed()) { ?>
 		<tr>
-			<td><?php echo $session->host; ?></td>
+			<td><?php echo $cashRegister->label; ?></td>
 			<td><?php \pi18nDatetime($session->openDate); ?></td>
 			<td class="numeric"><?php echo $session->tickets; ?></td>
 			<td class="numeric"><?php \pi18nCurr($session->total); ?></td>

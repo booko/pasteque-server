@@ -78,7 +78,6 @@
 "CashRegister.location": "Entrepôt",
 
 "Session": "Session de caisse",
-"Session.host": "Caisse",
 "Session.openDate": "Date d'ouverture",
 "Session.closeDate": "Date de clôture",
 "Session.openCash": "Fond ouverture",

@@ -78,7 +78,6 @@
 "CashRegister.location": "Location",
 
 "Session": "Cash session",
-"Session.host": "Host",
 "Session.openDate": "Open date",
 "Session.closeDate": "Close date",
 "Session.openCash": "Open cash",
