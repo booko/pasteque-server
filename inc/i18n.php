@@ -48,9 +48,17 @@ class I18N {
     public function get($label, $module = NULL, $args = array()) {
         if ($module == NULL) {
             if (isset($this->entries[$label])) {
-                return vsprintf($this->entries[$label], $args);
+                if (count($args) > 0) {
+                    return vsprintf($this->entries[$label], $args);
+                } else {
+                    return $this->entries[$label];
+                }
             } else {
-                return vsprintf($label, $args);
+                if (count($args) > 0) {
+                    return vsprintf($label, $args);
+                } else {
+                    return $label;
+                }
             }
         } else {
             if (isset($this->module_entries[$module])

@@ -25,10 +25,13 @@ $sqls[] = "SELECT "
         . "CLOSEDCASH.HOST, CLOSEDCASH.MONEY, CLOSEDCASH.DATESTART, "
         . "CLOSEDCASH.DATEEND, CLOSEDCASH.OPENCASH, CLOSEDCASH.CLOSECASH, "
         . "COUNT(RECEIPTS.ID) AS TICKETS, "
-        . "SUM(TICKETLINES.PRICE * TICKETLINES.UNITS) AS SALES "
+        . "SUM(TICKETLINES.PRICE * TICKETLINES.UNITS) AS SALES, "
+        . "SUM(TICKETLINES.PRICE * TICKETLINES.UNITS * (1 + TAXES.RATE)) "
+        . "AS SALESVAT "
         . "FROM CLOSEDCASH "
         . "LEFT JOIN RECEIPTS ON RECEIPTS.MONEY = CLOSEDCASH.MONEY "
         . "LEFT JOIN TICKETLINES ON TICKETLINES.TICKET = RECEIPTS.ID "
+        . "LEFT JOIN TAXES ON TICKETLINES.TAXID = TAXES.ID "
         . "WHERE CLOSEDCASH.DATESTART > :start "
         . "AND CLOSEDCASH.DATESTART <= :stop "
         . "GROUP BY CLOSEDCASH.MONEY, HOST, DATESTART, DATEEND "
@@ -61,7 +64,7 @@ $sqls[] = "SELECT "
         . "ORDER BY CLOSEDCASH.DATESTART DESC";
 
 $fields = array("HOST", "DATESTART", "DATEEND", "OPENCASH", "CLOSECASH",
-        "TICKETS", "SALES");
+        "TICKETS", "SALES", "SALESVAT");
 $mergeFields = array("MONEY");
 $headers = array(
         \i18n("Session.host"),
@@ -71,6 +74,7 @@ $headers = array(
         \i18n("Session.closeCash"),
         \i18n("Tickets", PLUGIN_NAME),
         \i18n("Sales", PLUGIN_NAME),
+        \i18n("Sales with VAT", PLUGIN_NAME)
 );
 
 $report = new \Pasteque\MergedReport(PLUGIN_NAME, "ztickets",
@@ -89,6 +93,7 @@ $report->addFilter("DATEEND", "\i18nDatetime");
 $report->addFilter("OPENCASH", "\i18nCurr");
 $report->addFilter("CLOSECASH", "\i18nCurr");
 $report->addFilter("SALES", "\i18nCurr");
+$report->addFilter("SALESVAT", "\i18nCurr");
 $report->addMergedFilter(0, "\i18nCurr");
 $report->addMergedHeaderFilter(0, "\i18n");
 $report->addMergedFilter(1, "\i18nCurr");
