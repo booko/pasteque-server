@@ -92,6 +92,13 @@ $report->setDefaultInput("start", time() - (time() % 86400) - 86400);
 $report->addInput("stop", \i18n("Stop date"), \Pasteque\DB::DATE);
 $report->setDefaultinput("stop", time());
 
+function cashMatch($val, $values) {
+    if ($val != $values['CLOSECASH']) {
+        return "<span style=\"color:#b00;\">" . $val . "</span>";
+    }
+    return $val;
+}
+
 $report->addFilter("DATESTART", "\Pasteque\stdtimefstr");
 $report->addFilter("DATESTART", "\i18nDatetime");
 $report->addFilter("DATEEND", "\Pasteque\stdtimefstr");
@@ -104,5 +111,7 @@ $report->addFilter("SALESVAT", "\i18nCurr");
 $report->addMergedFilter(0, "\i18nCurr");
 $report->addMergedHeaderFilter(0, "\i18n");
 $report->addMergedFilter(1, "\i18nCurr");
+
+$report->setVisualFilter("EXPECTEDCASH", "\BaseCashes\cashMatch");
 
 \Pasteque\register_report($report);

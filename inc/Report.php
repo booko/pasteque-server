@@ -34,8 +34,15 @@ class Report {
     public $headers; //array
     public $fields; //array
     protected $params;//array
-    //key fields contain in $this->field: values functions
-    protected $filters; //associatif array of array
+    /** Associative array of array of function name. Function takes the value
+     * as first parameter and an optionnal associative array of all values
+     * as second parameter. */
+    protected $filters;
+    /** Visual filters are applyed after all other
+     * and are called from renderer. Function takes the value as first
+     * parameter and optionnal associative array of all values as second
+     * parameter. */
+    protected $visualFilters;
     protected $grouping; //string
     protected $subtotals; //array
     protected $totals; //array
@@ -49,6 +56,7 @@ class Report {
         $this->fields = $fields;
         $this->params = array();
         $this->filters = array();
+        $this->visualFilters = array();
         $this->grouping = NULL;
         $this->subtotals = array();
         $this->totals = array();
@@ -98,6 +106,9 @@ class Report {
             $this->filters[$field] = array();
         }
         $this->filters[$field][] = $function;
+    }
+    public function setVisualFilter($field, $function) {
+        $this->visualFilters[$field] = $function;
     }
 
     public function getFilters() {
@@ -157,8 +168,21 @@ class Report {
         return isset($this->ponderate[$field]);
     }
     /** return the field ponderate doesn't check if field exist */
-        public function getPonderate($field) {
+    public function getPonderate($field) {
         return $this->ponderate[$field];
+    }
+
+    /** Apply visual filters on a field, given all the values of the row. */
+    public function applyVisualFilter($field, $values) {
+        if (!is_array($values)) {
+            return $values;
+        }
+        $ret = $values[$field];
+        if (isset($this->visualFilters[$field])) {
+            $filter = $this->visualFilters[$field];
+            $ret = $filter($ret, $values);
+        }
+        return $ret;
     }
 
 }
@@ -278,7 +302,7 @@ class ReportRun {
         foreach ($this->report->getFilters() as $field => $filters) {
             if (isset($ret[$field])) {
                 foreach ($filters as $filter) {
-                    $val = $filter($ret[$field]);
+                    $val = $filter($ret[$field], $values);
                     $ret[$field] = $val;
                 }
             }

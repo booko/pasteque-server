@@ -179,7 +179,8 @@ function __tpl_report_line($report, $line, $par) {
     echo "\t\t<tr class=\"row-" . ($par ? 'par' : 'odd') . "\">\n";
     foreach ($report->fields as $field) {
         if (isset($line[$field])) {
-            echo "\t\t\t<td>" . $line[$field] . "</td>\n";
+            echo "\t\t\t<td>" . $report->applyVisualFilter($field, $line)
+                    . "</td>\n";
         } else {
             echo "\t\t\t<td></td>\n";
         }
