@@ -24,7 +24,7 @@ namespace BaseCashes;
 $sqls[] = "SELECT "
         . "CASHREGISTERS.NAME, CLOSEDCASH.HOSTSEQUENCE, CLOSEDCASH.MONEY, "
         . "CLOSEDCASH.DATESTART, CLOSEDCASH.DATEEND, "
-        . "CLOSEDCASH.OPENCASH, CLOSEDCASH.CLOSECASH, "
+        . "CLOSEDCASH.OPENCASH, CLOSEDCASH.CLOSECASH, CLOSEDCASH.EXPECTEDCASH, "
         . "COUNT(RECEIPTS.ID) AS TICKETS, "
         . "SUM(TICKETLINES.PRICE * TICKETLINES.UNITS) AS SALES, "
         . "SUM(TICKETLINES.PRICE * TICKETLINES.UNITS * (1 + TAXES.RATE)) "
@@ -68,7 +68,7 @@ $sqls[] = "SELECT "
         . "ORDER BY CLOSEDCASH.DATESTART DESC";
 
 $fields = array("NAME", "HOSTSEQUENCE", "DATESTART", "DATEEND", "OPENCASH",
-        "CLOSECASH", "TICKETS", "SALES", "SALESVAT");
+        "CLOSECASH", "EXPECTEDCASH", "TICKETS", "SALES", "SALESVAT");
 $mergeFields = array("MONEY");
 $headers = array(
         \i18n("CashRegister.label"),
@@ -77,6 +77,7 @@ $headers = array(
         \i18n("Session.closeDate"),
         \i18n("Session.openCash"),
         \i18n("Session.closeCash"),
+        \i18n("Session.expectedCash"),
         \i18n("Tickets", PLUGIN_NAME),
         \i18n("Sales", PLUGIN_NAME),
         \i18n("Sales with VAT", PLUGIN_NAME)
@@ -97,6 +98,7 @@ $report->addFilter("DATEEND", "\Pasteque\stdtimefstr");
 $report->addFilter("DATEEND", "\i18nDatetime");
 $report->addFilter("OPENCASH", "\i18nCurr");
 $report->addFilter("CLOSECASH", "\i18nCurr");
+$report->addFilter("EXPECTEDCASH", "\i18nCurr");
 $report->addFilter("SALES", "\i18nCurr");
 $report->addFilter("SALESVAT", "\i18nCurr");
 $report->addMergedFilter(0, "\i18nCurr");

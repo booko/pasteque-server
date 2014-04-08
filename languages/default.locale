@@ -82,6 +82,7 @@
 "Session.closeDate": "Close date",
 "Session.openCash": "Open cash",
 "Session.closeCash": "Close cash",
+"Session.expectedCash": "Expected cash",
 "Session.tickets": "Tickets",
 "Session.total": "Total",
 
