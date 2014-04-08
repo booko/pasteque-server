@@ -59,6 +59,7 @@ class CashesServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertNull($cash->closeDate, "Created cash is closed");
         $this->assertNull($cash->openCash, "Open cash mismatch");
         $this->assertNull($cash->closeCash, "Close cash mismatch");
+        $this->assertNull($cash->expectedCash, "Expected cash mismatch");
         $cash2 = $srv->add($this->cashRegisterId);
         $this->assertNotNull($cash2, "Created cash is null");
         $this->assertNotNull($cash2->id, "Id not set");
@@ -69,6 +70,7 @@ class CashesServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertNull($cash2->closeDate, "Created cash is closed");
         $this->assertNull($cash2->openCash, "Open cash mismatch");
         $this->assertNull($cash2->closeCash, "Close cash mismatch");
+        $this->assertNull($cash2->expectedCash, "Expected cash mismatch");
         $cash3 = $srv->add($this->cashRegisterId2);
         $this->assertNotNull($cash3, "Created cash is null");
         $this->assertNotNull($cash3->id, "Id not set");
@@ -79,6 +81,7 @@ class CashesServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertNull($cash3->closeDate, "Created cash is closed");
         $this->assertNull($cash3->openCash, "Open cash mismatch");
         $this->assertNull($cash3->closeCash, "Close cash mismatch");
+        $this->assertNull($cash3->expectedCash, "Expected cash mismatch");
     }
 
     public function testGetHostEmpty() {
@@ -105,6 +108,8 @@ class CashesServiceTest extends \PHPUnit_Framework_TestCase {
                 "Open cash was modified");
         $this->assertEquals($cash->closeCash, $read->closeCash,
                 "Close cash was modified");
+        $this->assertEquals($cash->expectedCash, $read->expectedCash,
+                "Expected cash was modified");
     }
 
     public function testGetEmpty() {
@@ -133,6 +138,8 @@ class CashesServiceTest extends \PHPUnit_Framework_TestCase {
                 "Open cash was modified");
         $this->assertEquals($cash->closeCash, $read->closeCash,
                 "Close cash was modified");
+        $this->assertEquals($cash->expectedCash, $read->expectedCash,
+                "Expected cash was modified");
     }
 
     /** @depends testAdd
@@ -160,9 +167,12 @@ class CashesServiceTest extends \PHPUnit_Framework_TestCase {
                 "Open cash mismatch");
         $this->assertEquals($cash->closeCash, $read->closeCash,
                 "Close cash was modified");
+        $this->assertEquals($cash->expectedCash, $read->expectedCash,
+                "Expected cash was modified");
         // Edit close date
         $cash->closeDate = stdtimefstr("2000-02-03 02:02:02");
         $cash->closeCash = 12.0;
+        $cash->expectedCash = 25.0;
         $srv->update($cash);
         $read = $srv->get($cash->id);
         $this->assertNotNull($read, "Created cash not found");
@@ -179,11 +189,14 @@ class CashesServiceTest extends \PHPUnit_Framework_TestCase {
                 "Open cash was modified");
         $this->assertEquals($cash->closeCash, $read->closeCash,
                 "Close cash mismatch");
+        $this->assertEquals($cash->expectedCash, $read->expectedCash,
+                "Expected cash was modified");
         // Edit open and close date
         $cash->openDate = stdtimefstr("2001-02-02 03:03:03");
         $cash->closeDate = stdtimefstr("2001-02-03 03:03:03");
         $cash->openCash = 9.0;
         $cash->closeCash = 9.1;
+        $cash->expectedCash = 9.2;
         $srv->update($cash);
         $read = $srv->get($cash->id);
         $this->assertNotNull($read, "Created cash not found");
@@ -200,6 +213,8 @@ class CashesServiceTest extends \PHPUnit_Framework_TestCase {
                 "Open cash mismatch");
         $this->assertEquals($cash->closeCash, $read->closeCash,
                 "Close cash mismatch");
+        $this->assertEquals($cash->expectedCash, $read->expectedCash,
+                "Expected cash was modified");
     }
 
 }

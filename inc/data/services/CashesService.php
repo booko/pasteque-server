@@ -31,7 +31,8 @@ class CashesService extends AbstractService {
             "DATESTART" => "openDate",
             "DATEEND" => "closeDate",
             "OPENCASH" => "openCash",
-            "CLOSECASH" => "closeCash"
+            "CLOSECASH" => "closeCash",
+            "EXPECTEDCASH" => "expectedCash"
     );
 
     protected function build($dbCash, $pdo = null) {
@@ -40,7 +41,8 @@ class CashesService extends AbstractService {
                 $dbCash['HOSTSEQUENCE'],
                 $db->readDate($dbCash['DATESTART']),
                 $db->readDate($dbCash['DATEEND']),
-                $dbCash['OPENCASH'], $dbCash['CLOSECASH']);
+                $dbCash['OPENCASH'], $dbCash['CLOSECASH'],
+                $dbCash['EXPECTEDCASH']);
         if (isset($dbCash['TKTS'])) {
             $cash->tickets = $dbCash['TKTS'];
         }
@@ -68,6 +70,7 @@ class CashesService extends AbstractService {
                 . "CLOSEDCASH.HOSTSEQUENCE, CLOSEDCASH.DATESTART, "
                 . "CLOSEDCASH.DATEEND, "
                 . "CLOSEDCASH.OPENCASH, CLOSEDCASH.CLOSECASH, "
+                . "CLOSEDCASH.EXPECTEDCASH, "
                 . "COUNT(DISTINCT(RECEIPTS.ID)) as TKTS, "
                 . "SUM(PAYMENTS.TOTAL) AS TOTAL "
                 . "FROM CLOSEDCASH "
@@ -118,9 +121,11 @@ class CashesService extends AbstractService {
         $endParam = ($cash->isClosed()) ? ':end' : 'NULL';
         $openCashParam = $cash->openCash !== null ? ':openCash' : 'NULL';
         $closeCashParam = $cash->closeCash !== null ? ':closeCash' : 'NULL';
+        $exptCashParam = $cash->expectedCash !== null ? ':exptCash' : 'NULL';
         $stmt = $pdo->prepare("UPDATE CLOSEDCASH SET DATESTART = $startParam, "
                 . "DATEEND = $endParam, "
-                . "OPENCASH = $openCashParam, CLOSECASH = $closeCashParam "
+                . "OPENCASH = $openCashParam, CLOSECASH = $closeCashParam, "
+                . "EXPECTEDCASH = $exptCashParam "
                 . "WHERE MONEY = :id");
         $stmt->bindParam(':id', $cash->id);
         if ($cash->isOpened()) {
@@ -134,6 +139,9 @@ class CashesService extends AbstractService {
         }
         if ($cash->closeCash !== null) {
             $stmt->bindParam(':closeCash', $cash->closeCash);
+        }
+        if ($cash->expectedCash !== null) {
+            $stmt->bindParam(':exptCash', $cash->expectedCash);
         }
         return $stmt->execute();
     }

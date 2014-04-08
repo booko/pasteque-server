@@ -114,6 +114,10 @@ class CashesAPI extends APIService {
             if (property_exists($json, 'closeCash')) {
                 $closeCash = $json->closeCash;
             }
+            $expectedCash = null;
+            if (property_exists($json, 'expectedCash')) {
+                $expectedCash = $json->expectedCash;
+            }
             $cashRegisterId = $json->cashRegisterId;
             $sequence = null;
             if (property_exists($json, 'sequence')) {
@@ -122,7 +126,7 @@ class CashesAPI extends APIService {
             if ($id !== null) {
                 // Update an existing cash
                 $cash = Cash::__build($id, $cashRegisterId, $sequence, $open,
-                        $close, $openCash, $closeCash);
+                        $close, $openCash, $closeCash, $expectedCash);
                 if ($srv->update($cash)) {
                     $this->succeed($cash);
                 } else {
@@ -136,6 +140,7 @@ class CashesAPI extends APIService {
                     $cash->closeDate = $close;
                     $cash->openCash = $openCash;
                     $cash->closeCash = $closeCash;
+                    $cash->expectedCash = $expectedCash;
                     if ($srv->update($cash)) {
                         $this->succeed($cash);
                     } else {

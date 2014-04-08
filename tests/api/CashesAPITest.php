@@ -53,6 +53,7 @@ class CashesAPITest extends \PHPUnit_Framework_TestCase {
         $cash->closeDate = stdtimefstr("2002-02-03 03:03:03");
         $cash->openCash = 10.0;
         $cash->closeCash = 12.0;
+        $cash->expectedCash = 25.0;
         $srv->update($cash);
         // Get it through API
         $result = $broker->run("get", array("id" => $cash->id));
@@ -73,6 +74,8 @@ class CashesAPITest extends \PHPUnit_Framework_TestCase {
                 "Open cash mismatch");
         $this->assertEquals($cash->closeCash, $content->closeCash,
                 "Close cash mismatch");
+        $this->assertEquals($cash->expectedCash, $content->expectedCash,
+                "Expected cash mismatch");
     }
 
     public function testGetOpenedByCashRegister() {
@@ -101,6 +104,8 @@ class CashesAPITest extends \PHPUnit_Framework_TestCase {
                 "Open cash mismatch");
         $this->assertEquals($cash->closeCash, $content->closeCash,
                 "Close cash mismatch");
+        $this->assertEquals($cash->expectedCash, $content->expectedCash,
+                "Expected cash mismatch");
     }
 
     public function testGetClosedByCashRegister() {
@@ -144,7 +149,7 @@ class CashesAPITest extends \PHPUnit_Framework_TestCase {
         $broker = new APIBroker("CashesAPI");
         $cash = new Cash($this->cashRegisterId, 1,
                 stdtimefstr("2002-02-02 02:02:02"),
-                stdtimefstr("2002-02-03 03:03:03"), 7.0, 15.0);
+                stdtimefstr("2002-02-03 03:03:03"), 7.0, 15.0, 17.0);
         $result = $broker->run("update", array("cash" => json_encode($cash)));
         $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
                 "Result status check failed");
@@ -163,6 +168,8 @@ class CashesAPITest extends \PHPUnit_Framework_TestCase {
                 "Open cash mismatch");
         $this->assertEquals($cash->closeCash, $content->closeCash,
                 "Close cash mismatch");
+        $this->assertEquals($cash->expectedCash, $content->expectedCash,
+                "Expected cash mismatch");
     }
 
     public function testUpdate() {
@@ -173,6 +180,7 @@ class CashesAPITest extends \PHPUnit_Framework_TestCase {
         $cash->closeDate = stdtimefstr("2002-02-03 03:03:03");
         $cash->openCash = 1.0;
         $cash->closeCash = 13.0;
+        $cash->expectedCash = 15.0;
         $result = $broker->run("update", array("cash" => json_encode($cash)));
         $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
                 "Result status check failed");
@@ -191,5 +199,7 @@ class CashesAPITest extends \PHPUnit_Framework_TestCase {
                 "Open cash mismatch");
         $this->assertEquals($cash->closeCash, $content->closeCash,
                 "Close cash mismatch");
+        $this->assertEquals($cash->expectedCash, $content->expectedCash,
+                "Expected cash mismatch");
     }
 }
