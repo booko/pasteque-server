@@ -22,7 +22,6 @@
 "Load": "Charger",
 
 "Import stock moves from csv": "Importer des mouvements de stock a partir d'un csv",
-"Import stock's moves": "Importer des mouvements de stock",
 "%d move(s), %d error(s)": "%d mouvement(s), %d erreurs",
 "On line $d: exeptionnal error": "À la ligne %d: erreur exceptionnelle",
 "On line %d: Location not define or invalid": "À la ligne %d: Localisation non définie ou invalide",

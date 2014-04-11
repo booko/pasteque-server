@@ -165,9 +165,6 @@ if (!$multilocations) {
 
 <?php \Pasteque\tpl_msg_box($message, $error); ?>
 
-<?php \Pasteque\tpl_btn('btn', \Pasteque\get_module_url_action(PLUGIN_NAME, "stocksManagement"),
-        \i18n('Import stock\'s moves', PLUGIN_NAME), 'img/btn_add.png');?>
-
 <form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" id="move" method="post" enctype="multipart/form-data">
 	<?php if ($multilocations) { \Pasteque\form_select("location", \i18n("Location"), $locIds, $locNames, null); }?>
 	<?php \Pasteque\form_select("reason", \i18n("Operation", PLUGIN_NAME), $reasonIds, $reasonNames, null); ?>
