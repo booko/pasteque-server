@@ -21,10 +21,6 @@
 "Load csv file": "Charger un csv",
 "Load": "Charger",
 
-"Import stock moves from csv": "Importer des mouvements de stock a partir d'un csv",
-"%d move(s), %d error(s)": "%d mouvement(s), %d erreurs",
-"On line $d: exeptionnal error": "À la ligne %d: erreur exceptionnelle",
-"On line %d: Location not define or invalid": "À la ligne %d: Localisation non définie ou invalide",
-"On line %d: Quantity not define or invalid": "À la ligne %d: Quantitée non définie ou invalide",
-"On line %d: Product not define or invalid": "À la ligne %d: Produit non défini ou invalide"
+"Unable to find product %s": "Impossible de trouver le produit %s",
+"Undefined quantity for product %s": "Quantité non définie pour le produit %s"
 }

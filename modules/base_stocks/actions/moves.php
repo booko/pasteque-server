@@ -121,9 +121,19 @@ if (isset($_POST['reason']) && !isset($_POST['sendCsv'])) {
             $product = \Pasteque\ProductsService::getByRef($tab['Reference']);
             if ($product !== null) {
                 $productOk = true;
+            } else {
+                if ($error === null) {
+                    $error = array();
+                }
+                $error[] = \i18n("Unable to find product %s", PLUGIN_NAME, $tab['Reference']);
             }
             if ($tab['Quantity'] === "0" || intval($tab['Quantity']) !== 0) {
                 $quantityOk = true;
+            } else {
+                if ($error === null) {
+                    $error = array();
+                }
+                $error[] = \i18n("Undefined quantity for product %s", PLUGIN_NAME, $tab['Reference']);
             }
             if ($productOk && $quantityOk) {
                 echo "setProduct(\"" . $product->id . "\", \""
