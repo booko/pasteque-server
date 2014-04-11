@@ -22,5 +22,11 @@
 "Load": "Load",
 
 "Unable to find product %s": "Unable to find product %s",
-"Undefined quantity for product %s": "Undefined quantity for product %s"
+"Undefined quantity for product %s": "Undefined quantity for product %s",
+
+"Check": "Check",
+"Stock check": "Stock check",
+"Counted stock": "Counted stock",
+"Actual stock": "Actual stock",
+"Difference": "Difference"
 }

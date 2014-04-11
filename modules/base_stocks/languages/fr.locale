@@ -22,5 +22,11 @@
 "Load": "Charger",
 
 "Unable to find product %s": "Impossible de trouver le produit %s",
-"Undefined quantity for product %s": "Quantité non définie pour le produit %s"
+"Undefined quantity for product %s": "Quantité non définie pour le produit %s",
+
+"Check": "Contrôle",
+"Stock check": "Contrôle du stock",
+"Counted stock": "Stock compté",
+"Actual stock": "Stock actuel",
+"Difference": "Différence"
 }
