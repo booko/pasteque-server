@@ -110,6 +110,12 @@ if ($countedStock !== null) {
 
 <?php \Pasteque\tpl_msg_box($message, $error); ?>
 
+<?php // Mimic report export button ?>
+<div id="btn"><a class="btn" href="<?php echo \Pasteque\get_report_url(PLUGIN_NAME, "check");
+    foreach($_POST as $key => $value) {
+        echo "&" . $key . "=" . $value;
+    } ?>"><?php \pi18n("Export"); ?></a></div>
+
 <form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" id="move" method="post" enctype="multipart/form-data">
 	<input type="hidden" name="send" value="true" />
 	<?php if ($multilocations) { \Pasteque\form_select("location", \i18n("Location"), $locIds, $locNames, null); }?>
