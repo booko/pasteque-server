@@ -194,9 +194,10 @@ function __tpl_group_footer($report, $run) {
     echo "\t\t\t<td colspan=\"" . count($report->getHeaders()) . "\">" . \i18n("Subtotal") . "</td>\n";
     echo "\t\t</tr>\n";
     echo "\t\t<tr class=\"row-par\">\n";
+    $subtotals = $run->getSubtotals();
     foreach ($report->getFields() as $field) {
-        if (isset($run->getSubtotals()[$field])) {
-            echo "\t\t\t<td>" . $run->getSubtotals()[$field] . "</td>\n";
+        if (isset($subtotals[$field])) {
+            echo "\t\t\t<td>" . $subtotals[$field] . "</td>\n";
         } else {
             echo "\t\t\t<td></td>\n";
         }
@@ -209,14 +210,15 @@ function __tpl_total_header($report, $run) {
     echo "\t<thead>\n";
     echo "\t\t<tr>\n";
     $totals = $report->getTotals();
+    $headers = $report->getHeaders();
     $cmp = 0;
     foreach ($report->getFields() as $field) {
-        if (isset($run->getTotals()[$field])) {
+        if (isset($totals[$field])) {
             echo "\t\t\t<td>";
             if ($totals[$field] === \Pasteque\Report::TOTAL_AVG) {
                  echo \i18n("Average") . "<br/>";
             }
-            echo $report->getHeaders()[$cmp]. "</td>\n";
+            echo $headers[$cmp]. "</td>\n";
         } else {
             echo "\t\t\t<td></td>\n";
         }
@@ -231,9 +233,10 @@ function __tpl_report_totals($report, $run) {
     echo "<h2>" . \i18n("Total") . "</h2>\n";
     __tpl_total_header($report, $run);
     echo "\t\t<tr class=\"row-par\">\n";
+    $totals = $run->getTotals();
     foreach ($report->getFields() as $field) {
-        if (isset($run->getTotals()[$field])) {
-            echo "\t\t\t<td>" . $run->getTotals()[$field] . "</td>\n";
+        if (isset($totals[$field])) {
+            echo "\t\t\t<td>" . $totals[$field] . "</td>\n";
         } else {
             echo "\t\t\t<td></td>\n";
         }

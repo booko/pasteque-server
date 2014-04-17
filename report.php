@@ -94,6 +94,7 @@ function write_subtotals($output, $report, $run) {
 
 function totalHeader($report, $run) {
     $totals = $report->getTotals();
+    $headers = $report->getHeaders();
     $cmp = 0;
     $data = array();
     foreach ($report->getFields() as $field) {
@@ -102,7 +103,7 @@ function totalHeader($report, $run) {
             if ($totals[$field] === \Pasteque\Report::TOTAL_AVG) {
                  $txt = \i18n("Average");
             }
-            $txt .= " " . $report->getHeaders()[$cmp];
+            $txt .= " " . $headers[$cmp];
         }
         $data[] = $txt;
         $cmp++;
