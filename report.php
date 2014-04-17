@@ -30,11 +30,11 @@ function report_csv($module, $name, $values) {
     $output = fopen("php://output", "rb+");
 
     if (!$report->isGrouping()) {
-        $line = $report->headers;
+        $line = $report->getHeaders();
         fputcsv($output, $line);
         while ($line = $reportRun->fetch() ) {
             $data = array();
-            foreach ($report->fields as $field) {
+            foreach ($report->getFields() as $field) {
                 $data = init_data($data, $line, $field);
             }
             fputcsv($output, $data);
@@ -51,10 +51,10 @@ function report_csv($module, $name, $values) {
 
             if ($reportRun->isGroupStart()) {
                 fputcsv($output, array($reportRun->getCurrentGroup()));
-                fputcsv($output, $report->headers);
+                fputcsv($output, $report->getHeaders());
             }
 
-            foreach ($report->fields as $field) {
+            foreach ($report->getFields() as $field) {
                 $data = init_data($data, $line, $field);
             }
             fputcsv($output, $data);
@@ -84,7 +84,7 @@ function init_data($data, $line, $field) {
 
 function write_subtotals($output, $report, $run) {
     $data = array();
-    foreach ($report->fields as $field) {
+    foreach ($report->getFields() as $field) {
         $data = init_data($data, $run->subtotals, $field);
     }
     fputcsv($output, array(\i18n("Subtotal")));
@@ -96,13 +96,13 @@ function totalHeader($report, $run) {
     $totals = $report->getTotals();
     $cmp = 0;
     $data = array();
-    foreach ($report->fields as $field) {
+    foreach ($report->getFields() as $field) {
         $txt = "";
-        if (isset($run->totals[$field])) {
+        if (isset($totals[$field])) {
             if ($totals[$field] === \Pasteque\Report::TOTAL_AVG) {
                  $txt = \i18n("Average");
             }
-            $txt .= " " . $report->headers[$cmp];
+            $txt .= " " . $report->getHeaders()[$cmp];
         }
         $data[] = $txt;
         $cmp++;
@@ -112,8 +112,8 @@ function totalHeader($report, $run) {
 
 function totals($report, $run) {
     $data = array();
-    foreach ($report->fields as $field) {
-        $data = init_data($data, $run->totals, $field);
+    foreach ($report->getFields() as $field) {
+        $data = init_data($data, $run->getTotals(), $field);
     }
     return $data;
 }
