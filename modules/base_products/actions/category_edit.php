@@ -36,7 +36,7 @@ if (isset($_POST['id']) && isset($_POST['label'])) {
     if ($_POST['parentId'] !== "") {
         $parent_id = $_POST['parentId'];
     }
-    $dispOrder = null;
+    $dispOrder = 0;
     if ($_POST['dispOrder'] !== "") {
         $dispOrder = intval($_POST['dispOrder']);
     }
@@ -57,7 +57,7 @@ if (isset($_POST['id']) && isset($_POST['label'])) {
     if ($_POST['parentId'] !== "") {
         $parent_id = $_POST['parentId'];
     }
-    $dispOrder = null;
+    $dispOrder = 0;
     if ($_POST['dispOrder'] !== "") {
         $dispOrder = intval($_POST['dispOrder']);
     }
