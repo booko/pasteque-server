@@ -51,6 +51,24 @@ class CashRegistersService extends AbstractService {
         }
     }
 
+    public function updateCat($cashReg) {
+        if ($cashReg->id == null) {
+            return false;
+        }
+        $pdo = PDOBuilder::getPDO();
+        $sql = "UPDATE CASHREGISTERS SET NAME = :name, LOCATION_ID = :locId "
+                . "WHERE ID = :id"; // Don't update nextTicketId
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(":name", $cashReg->label);
+        $stmt->bindParam(":locId", $cashReg->locationId);
+        $stmt->bindParam(":id", $cashReg->id);
+        if ($stmt->execute() !== false) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function incrementNextTicketId($cashId) {
         $pdo = PDOBuilder::getPDO();
         $sql = "UPDATE CASHREGISTERS SET NEXTTICKETID = (NEXTTICKETID + 1) "
