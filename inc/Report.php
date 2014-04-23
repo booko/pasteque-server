@@ -20,7 +20,50 @@
 
 namespace Pasteque;
 
-class Report {
+interface ReportInterface {
+    /** Run the report and return a ReportRunInterface instance.
+     * @param $values associative array of input => value.
+     */
+    public function run($values);
+    /** Returns true if the reports has groups of result. */
+    public function isGrouping();
+    /** Get the array of column headers (i.e. translated field names). */
+    public function getHeaders();
+    /** Get the array of field names. */
+    public function getFields();
+    /** Check if the report count totals for groups. */
+    public function hasSubtotals();
+    /** Get subtotal fields in an associative array field => method. */
+    public function getSubtotals();
+    /** Check if the report count totals. */
+    public function hasTotals();
+    /** Get total fields in an associative array field => method. */
+    public function getTotals();
+    public function getTitle();
+    public function getDomain();
+    public function getId();
+}
+
+interface ReportRunInterface {
+    /** Fetch a line of data and return them as an associative array
+     * field => value. Returns false when finished.
+     */
+    public function fetch();
+    /** Check if the fetched line started a new group (i.e. first line of
+     * a new group). */
+    public function isGroupStart();
+    /** Check if the fetched line ended a group. (i.e. end of data or first
+     * line of the next group). */
+    public function isGroupEnd();
+    /** Get the name of current group. */
+    public function getCurrentGroup();
+    /** Get subtotal values in an associative array field => value. */
+    public function getSubtotals();
+    /** Get total values in an associative array field => value. */
+    public function getTotals();
+}
+
+class Report implements ReportInterface {
 
     const TOTAL_SUM = "sum";
     const TOTAL_AVG = "average";
@@ -28,11 +71,11 @@ class Report {
     /* array use for ponderate the average */
     protected $ponderate;
     private $sql; //string
-    public $domain; // plugin name
-    public $id; // report id
-    public $title;
-    public $headers; //array
-    public $fields; //array
+    protected $domain; // plugin name
+    protected $id; // report id
+    protected $title;
+    protected $headers; //array
+    protected $fields; //array
     protected $params;//array
     /** Associative array of array of function name. Function takes the value
      * as first parameter and an optionnal associative array of all values
@@ -60,6 +103,25 @@ class Report {
         $this->grouping = NULL;
         $this->subtotals = array();
         $this->totals = array();
+    }
+
+    public function getId() {
+        return $this->id;
+    }
+    public function getDomain() {
+        return $this->domain;
+    }
+
+    public function getTitle() {
+        return $this->title;
+    }
+
+    public function getHeaders() {
+        return $this->headers;
+    }
+
+    public function getFields() {
+        return $this->fields;
     }
 
     public function addInput($param, $label, $type) {
@@ -187,7 +249,7 @@ class Report {
 
 }
 
-class ReportRun {
+class ReportRun implements ReportRunInterface {
 
     protected $report;
     protected $values;
@@ -387,6 +449,14 @@ class ReportRun {
     }
     public function getCurrentGroup() {
         return $this->currentGroup;
+    }
+
+    public function getSubTotals() {
+        return $this->subtotals;
+    }
+
+    public function getTotals() {
+        return $this->totals;
     }
 }
 
@@ -599,7 +669,7 @@ $REPORTS = array();
 
 function register_report($report) {
     global $REPORTS;
-    $REPORTS[$report->domain . ":" . $report->id] = $report;
+    $REPORTS[$report->getDomain() . ":" . $report->getId()] = $report;
 }
 function get_report($module, $name) {
     report_content($module, $name);

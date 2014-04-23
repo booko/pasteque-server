@@ -21,15 +21,16 @@ function init_csv() {
     $optionKey = array('price_buy', 'visible', 'scaled', 'disp_order',
             'discount_rate', 'discount_enabled', 'stock_min', 'stock_max');
 
-    $csv = new \Pasteque\Csv($_FILES['csv']['tmp_name'], $key, $optionKey);
+    $csv = new \Pasteque\Csv($_FILES['csv']['tmp_name'], $key, $optionKey,
+            PLUGIN_NAME);
     if (!$csv->open()) {
         return $csv;
     }
 
     //manage empty string
-    $csv->addFilter("visible", true);
-    $csv->addFilter("scaled", false);
-    $csv->addFilter("disp_order", null);
+    $csv->setEmptyStringValue("visible", true);
+    $csv->setEmptyStringValue("scaled", false);
+    $csv->setEmptyStringValue("disp_order", null);
     return $csv;
 }
 
@@ -54,7 +55,7 @@ function import_csv($csv) {
 
     while ($tab = $csv->readLine()) {
         //init optionnal values
-        $AllKeyPossible = array_merge($csv->getKey(), $csv->getOptionalKey());
+        $AllKeyPossible = array_merge($csv->getKeys(), $csv->getOptionalKeys());
         $tab = initArray($AllKeyPossible, $tab);
 
         //check

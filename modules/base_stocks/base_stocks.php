@@ -25,6 +25,7 @@ function init() {
     $MENU->addSection("stock", "Stocks", PLUGIN_NAME);
     $MENU->registerModuleEntry("stock", PLUGIN_NAME, "menu_stock_move.png", "Moves", "moves");
     $MENU->registerModuleEntry("stock", PLUGIN_NAME, "menu_stock_inventory.png", "Inventory", "inventory");
+    $MENU->registerModuleEntry("stock", PLUGIN_NAME, "menu_stock_check.png", "Check", "check");
     \Pasteque\register_i18n(PLUGIN_NAME);
 }
 \Pasteque\hook("module_load", __NAMESPACE__ . "\init");

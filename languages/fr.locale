@@ -126,6 +126,7 @@
 "Technical error: file not open": "Erreur technique: fichier non ouvert",
 "Header doesn't contain : %s": "L'entête ne contient pas : %s",
 "Header default": "Defaut d'entête",
+"Unknown header %s": "Entête %s non reconnue",
 
 "Floor.label": "Désignation",
 "Place.label": "Désignation",

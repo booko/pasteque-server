@@ -4,25 +4,36 @@ namespace Pasteque;
 
 class Csv {
 
-    protected $header;
+    /** Array of keys. Index is column number. */
+    protected $columnMapping;
     /** filter for empty string */
-    public $filter;
+    public $emptyStringFilters;
     /** containt keys must be in header */
-    protected $key;
+    protected $keys;
     protected $path;
     protected $sep;
     /** null if file not open */
     protected $fd;
     protected $currentLineNumber;
-    protected $optionKey;
+    protected $optionKeys;
     protected $errors;
+    /** i18n domain to check for more translations */
+    protected $extraDomain;
+    protected $sourceEncoding;
 
-    public function __construct($path, $key, $optionKey = array()) {
-        $this->header = null;
+    public function __construct($path, $keys, $optionKeys = array(),
+            $extraDomain = null) {
+        $this->columnMapping = array();
         $this->path = $path;
-        $this->key = $key;
-        $this->optionKey = $optionKey;
+        $this->keys = $keys;
+        if ($optionKeys == null) {
+            $this->optionKeys = array();
+        } else {
+            $this->optionKeys = $optionKeys;
+        }
         $this->error = array();
+        $this->emptyStringFilters = array();
+        $this->extraDomain = $extraDomain;
     }
 
     /** open file and init attributs if file is correctly open 
@@ -36,46 +47,124 @@ class Csv {
         $this->currentLineNumber = 0;
         return $this->init();
     }
-
     public function isOpen() {
-        return $this->fd !== NULL;
+        return $this->fd !== null;
     }
-
     public function close() {
         $this->currentLineNumber = -1;
         fclose($this->fd);
         $this->fd = null;
     }
 
-    /** add a filter to the field for empty string */
-    public function addFilter($field, $value) {
-        if (in_array($field, $this->header) !== false) {
-            $this->filter[$field] = $value;
-            return true;
-        }
-        return false;
-    }
-
-    /** set attribut sep return false if file empty
-     * or if separator not defined' */
-    protected function getSep() {
-        //get the first line 
+    /** Initialize csv reading */
+    protected function init() {
+        // Read magic first line to detect encoding and separator
+        // First line contains only one cell with the word "Pastèque" in it
+        // Other cells are empty
         $this->line = fgets($this->fd, 4048);
         if (!$this->line) {
             $this->errors[] = "File empty";
+            $this->close();
             return false;
         }
         $this->currentLineNumber++;
+        if (substr($this->line, 0, 9) == "Pastèque") {
+            $this->sourceEncoding = "UTF-8"; // Cool, no need to convert
+        } else {
+            foreach (mb_list_encodings() as $encoding) {
+                $test = mb_convert_encoding($this->line, "UTF-8", $encoding);
+                if (substr($test, 0, 9) == "Pastèque") {
+                    $this->sourceEncoding = $encoding;
+                    break;
+                }
+            }
+        }
+        if ($this->sourceEncoding == null) {
+            $this->errors[] = \i18n("Unidentified character set");
+        }
+        // Get separator
         $this->sep = substr($this->line, -2, 1);
         if (!$this->sep || $this->sep === " ") {
             $this->errors[] = \i18n("Separator not defined");
+            $this->close();
+            return false;
+        }
+        // Get headers (second line)
+        $headers = fgetcsv($this->fd, 4048, $this->sep);
+        $headers = $this->utf8_encode_array($headers);
+        if (!$headers) {
+            $this->errors[] = i18n("Header default");
+            $this->close();
+            return false;
+        }
+        $this->currentLineNumber++;
+        $fatalError = false;
+        // Parse all headers and check mapping
+        for ($i = 0; $i < count($headers); $i++) {
+            $title = $headers[$i];
+            $found = false;
+            // Search in mandatory keys
+            foreach ($this->keys as $key) {
+                if ($title == $key || $title == i18n($key)
+                        || $title == i18n($key, $this->extraDomain)) {
+                    $this->columnMapping[$i] = $key;
+                    $found = true;
+                    break;
+                }
+            }
+            // Search in optionnal keys
+            if (!$found) {
+                foreach ($this->optionKeys as $key) {
+                    if ($title == $key || $title == i18n($key)) {
+                        $this->columnMapping[$i] = $key;
+                        $found = true;
+                        break;
+                    }
+                }
+                if (!$found) {
+                    // Unidentified column
+                    $this->errors[] = i18n("Unknown header %s", null, $title);
+                }
+            }
+        }
+        // Check if all mandatory keys are mapped
+        foreach ($this->keys as $key) {
+            $found = false;
+            foreach ($this->columnMapping as $mapping) {
+                if ($key == $mapping) {
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                $i18nKey = $key;
+                if (i18n($key) != $key) {
+                    $i18nKey = i18n($key);
+                }
+                if ($this->extraDomain !== null
+                        && i18n($key, $this->extraDomain) != $key) {
+                    $i18nKey = i18n($key, $this->extraDomain);
+                }
+                $this->errors[] = i18n("Header doesn't contain : %s",
+                        null, $i18nKey);
+                $fatalError = true;
+            }
+        }
+        if ($fatalError) {
+            $this->close();
             return false;
         }
         return true;
     }
 
+    /** Set the value to use if it is an empty string for the field.*
+     * Default is set to null.
+     */
+    public function setEmptyStringValue($field, $value) {
+        $this->emptyStringFilters[$field] = $value;
+    }
+
     public function readLine () {
-        //file closed
         if ($this->fd == NULL) {
             $this->errors[] = \i18n("Technical error: file not open");
             return false;
@@ -85,71 +174,23 @@ class Csv {
             return false;
         }
         $this->currentLineNumber++;
-
-        $tab = array_fill_keys($this->header, NULL);
-        $cmp = 0;
-
-        foreach ($this->header as $field){
-            $tab[$field] = $this->line[$cmp];
-            $cmp++;
+        // Map line data
+        $ret = array();
+        foreach ($this->columnMapping as $i => $key){
+            $ret[$key] = $this->line[$i];
         }
-
-        // manage content
-        $tab = $this->utf8_encode_array($tab);
-        $tab = $this->filter($tab);
-        return $tab;
+        // Apply filters
+        $ret = $this->utf8_encode_array($ret);
+        $ret = $this->filterEmptyStrings($ret);
+        return $ret;
     }
 
-    /** read line from csv and init header
-     * if faillure return false */
-    protected function setHeader() {
-        if ($this->fd === NULL) {
-            $this->errors[] = i18n("Technical error: file not open");
-            return false;
-        }
-        $this->header = fgetcsv($this->fd, 4048, $this->sep);
-        if (!$this->header) {
-            $this->errors[] = i18n("Header default");
-            return false;
-        }
-
-        $this->currentLineNumber++;
-        $b_error = true;
-        // test if all values of key are in header
-        for ($cmp = 0; $cmp < count($this->key); $cmp++) {
-            if (!in_array($this->key[$cmp], $this->header)) {
-                $b_error = false;
-                $this->errors[] = i18n("Header doesn't contain : %s", NULL, $this->key[$cmp]);
-            }
-        }
-        return $b_error;
+    public function getKeys() {
+        return $this->keys;
     }
 
-    // initialize attributs
-    protected function init() {
-        //return value
-        $sepOk = $this->getSep();
-
-        if($sepOk) {
-            $headerOk = $this->setHeader();
-        }
-        if (!$sepOk || !$headerOk) {
-            $this->close();
-        }
-
-        return $sepOk && $headerOk;
-    }
-
-    public function getHeader() {
-        return $this->header;
-    }
-
-    public function getKey() {
-        return $this->key;
-    }
-
-    public function getOptionalKey() {
-        return $this->optionKey;
+    public function getOptionalKeys() {
+        return $this->optionKeys;
     }
 
     public function getCurrentLineNumber() {
@@ -157,24 +198,30 @@ class Csv {
     }
 
     protected function utf8_encode_array($array){
+        if ($this->sourceEncoding == "UTF-8") {
+            return $array;
+        }
         foreach ($array as $field => $value) {
-            if (!mb_check_encoding($value, "UTF-8")) {
+            if ($this->sourceEncoding !== null) {
+                $array[$field] = mb_convert_encoding($value, "UTF-8",
+                        $this->sourceEncoding);
+            } else {
                 $array[$field] = mb_convert_encoding($value, "UTF-8");
             }
         }
         return $array;
     }
 
-    /** Edit value of array by the value of filter associated
-     * if the value is an empty string
-     * if field is not set on filter: change empty string in NULL on array field */
-    public function filter($tab) {
+    /** Apply filters on an array. If no filter is defined and the value is
+     * an empty string, it is converted to null.
+     */
+    protected function filterEmptyStrings($tab) {
         foreach ($tab as $key => $value ) {
             if ($tab[$key] === "") {
-                if (!isset($this->filter[$key])) {
-                    $tab[$key] = NULL;
+                if (!isset($this->emptyStringFilters[$key])) {
+                    $tab[$key] = null;
                 } else {
-                    $tab[$key] = $this->filter[$key];
+                    $tab[$key] = $this->emptyStringFilters[$key];
                 }
             }
         }
@@ -186,4 +233,3 @@ class Csv {
         return $this->errors;
     }
 }
-?>

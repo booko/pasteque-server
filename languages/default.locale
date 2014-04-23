@@ -126,6 +126,7 @@
 "Technical error: file not open": "Technical error: file not open",
 "Header doesn't contain : %s": "Header doesn't contain : %s",
 "Header default": "Header default",
+"Unknown header %s": "Unknown header %s",
 
 "Floor.label": "Name",
 "Place.label": "Name",

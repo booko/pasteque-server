@@ -31,11 +31,11 @@ if (in_array("stock_multilocations", $modules)) {
     $multilocations = true;
 }
 
-$dateStr = isset($_POST['date']) ? $_POST['date'] : \i18nDate(time());
-$time = \i18nRevDate($dateStr);
-if (isset($_POST['reason']) && !isset($_POST['sendCsv'])) {
-    $reason = $_POST['reason'];
-    if ($multilocations) {
+$countedStock = null;
+$locationId = null;
+if (isset($_POST['send']) && !isset($_POST['sendCsv'])) {
+    $countedStock = array();
+    if (isset($_POST['location'])) {
         $locationId = $_POST['location'];
     } else {
         $locationId = $defaultLocationId;
@@ -43,67 +43,10 @@ if (isset($_POST['reason']) && !isset($_POST['sendCsv'])) {
     foreach ($_POST as $key => $value) {
         if (strpos($key, "qty-") === 0) {
             $productId = substr($key, 4);
-            $product = \Pasteque\ProductsService::get($productId);
-            switch ($reason) {
-            case \Pasteque\StockMove::REASON_OUT_SELL:
-            case \Pasteque\StockMove::REASON_IN_REFUND:
-                $price = $product->priceSell;
-                break;
-            case \Pasteque\StockMove::REASON_IN_BUY:
-            case \Pasteque\StockMove::REASON_OUT_BACK:
-            case \Pasteque\StockMove::REASON_IN_MOVEMENT:
-            case \Pasteque\StockMove::REASON_OUT_REFUND:
-           	case \Pasteque\StockMove::REASON_OUT_MOVEMENT:
-           	case \Pasteque\StockMove::REASON_RESET:
-                if ($product->priceBuy !== null) {
-                    $price = $product->priceBuy;
-                } else {
-                    $price = 0.0;
-                }
-                break;
-            case \Pasteque\StockMove::REASON_TRANSFERT:
-                $price = 0.0;
-                break;
-            }
             $qty = $value;
-            if ($reason == \Pasteque\StockMove::REASON_TRANSFERT) {
-                $destId = $_POST['destination'];
-                $move = new \Pasteque\StockMove($time,
-                        \Pasteque\StockMove::REASON_OUT_MOVEMENT, $productId,
-                        $locationId, null, $qty, $price);
-                $move2 = new \Pasteque\StockMove($time,
-                        \Pasteque\StockMove::REASON_IN_MOVEMENT, $productId,
-                        $destId, null, $qty, $price);
-                if (\Pasteque\StocksService::addMove($move)
-                        && \Pasteque\StocksService::addMove($move2)) {
-                    $message = \i18n("Changes saved");
-                } else {
-                    $error = \i18n("Unable to save changes");
-                }
-            } else if ($reason == \Pasteque\StockMove::REASON_RESET) {
-                $level = \Pasteque\StocksService::getLevel($productId,
-                        $locationId, null);
-                $move = new \Pasteque\StockMove($time, $reason, $productId,
-                    $locationId, null, -$level->qty, $price);
-                $move2 = new \Pasteque\StockMove($time, $reason, $productId,
-                    $locationId, null, $qty, $price);
-                if (\Pasteque\StocksService::addMove($move)
-                        && \Pasteque\StocksService::addMove($move2)) {
-                    $message = \i18n("Changes saved");
-                } else {
-                    $error = \i18n("Unable to save changes");
-                }
-            } else {
-                $move = new \Pasteque\StockMove($time, $reason, $productId,
-                        $locationId, null, $qty, $price);
-                if (\Pasteque\StocksService::addMove($move)) {
-                    $message = \i18n("Changes saved");
-                } else {
-                    $error = \i18n("Unable to save changes");
-                }
-            }
+            $countedStock[$productId] = $qty;
         }
-    }
+   }
 } else if (isset($_POST['sendCsv'])) {
     $key = array('Quantity', 'Reference');
 
@@ -126,7 +69,9 @@ if (isset($_POST['reason']) && !isset($_POST['sendCsv'])) {
                 if ($error === null) {
                     $error = array();
                 }
-                $error[] = \i18n("Unable to find product %s", PLUGIN_NAME, $tab['Reference']);
+                $error[] = \i18n("Unable to find product %s", PLUGIN_NAME,
+                        $tab['Reference']);
+                continue;
             }
             if ($tab['Quantity'] === "0" || intval($tab['Quantity']) !== 0) {
                 $quantityOk = true;
@@ -134,7 +79,9 @@ if (isset($_POST['reason']) && !isset($_POST['sendCsv'])) {
                 if ($error === null) {
                     $error = array();
                 }
-                $error[] = \i18n("Undefined quantity for product %s", PLUGIN_NAME, $tab['Reference']);
+                $error[] = \i18n("Undefined quantity for product %s",
+                        PLUGIN_NAME, $tab['Reference']);
+                continue;
             }
             if ($productOk && $quantityOk) {
                 echo "setProduct(\"" . $product->id . "\", \""
@@ -157,33 +104,36 @@ foreach ($locations as $location) {
     $locNames[] = $location->label;
     $locIds[] = $location->id;
 }
-$reasonIds = array(\Pasteque\StockMove::REASON_IN_BUY,
-        \Pasteque\StockMove::REASON_OUT_SELL,
-        \Pasteque\StockMove::REASON_OUT_BACK,
-        \Pasteque\StockMove::REASON_TRANSFERT,
-        \Pasteque\StockMove::REASON_RESET);
-$reasonNames = array(\i18n("Buy", PLUGIN_NAME),
-        \i18n("Sell", PLUGIN_NAME),
-        \i18n("Return to supplier", PLUGIN_NAME),
-        \i18n("Transfert", PLUGIN_NAME),
-        \i18n("Reset", PLUGIN_NAME));
-if (!$multilocations) {
-    array_splice($reasonIds, 3, 1);
-    array_splice($reasonNames, 3, 1);
+
+$prdCat = array();
+$levels = array();
+if ($countedStock !== null) {
+    // Build listing by categories
+    foreach ($products as $product) {
+        if ($product->categoryId !== \Pasteque\CompositionsService::CAT_ID) {
+            $prdCat[$product->categoryId][] = $product;
+        }
+    }
+    // Get stock to compare with counted stock
+    $rawLevels = \Pasteque\StocksService::getLevels($locationId);
+    foreach ($rawLevels as $level) {
+        $levels[$level->productId] = $level;
+    }
 }
 ?>
-<h1><?php \pi18n("Stock move", PLUGIN_NAME); ?></h1>
+<h1><?php \pi18n("Stock check", PLUGIN_NAME); ?></h1>
 
 <?php \Pasteque\tpl_msg_box($message, $error); ?>
 
+<?php // Mimic report export button ?>
+<div id="btn"><a class="btn" href="<?php echo \Pasteque\get_report_url(PLUGIN_NAME, "check");
+    foreach($_POST as $key => $value) {
+        echo "&" . $key . "=" . $value;
+    } ?>"><?php \pi18n("Export"); ?></a></div>
+
 <form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" id="move" method="post" enctype="multipart/form-data">
+	<input type="hidden" name="send" value="true" />
 	<?php if ($multilocations) { \Pasteque\form_select("location", \i18n("Location"), $locIds, $locNames, null); }?>
-	<?php \Pasteque\form_select("reason", \i18n("Operation", PLUGIN_NAME), $reasonIds, $reasonNames, null); ?>
-	<?php if ($multilocations) { \Pasteque\form_select("destination", \i18n("Destination"), $locIds, $locNames, null); }?>
-	<div class="row">
-		<label for="date"><?php \pi18n("Date", PLUGIN_NAME); ?></label>
-		<input type="date" name="date" id="date" value="<?php echo $dateStr; ?>" />
-	</div>
 
 	<div id="catalog-picker"></div>
 
@@ -214,6 +164,68 @@ if (!$multilocations) {
 	</div>
 
 </form>
+
+<?php if ($countedStock !== null) { ?>
+<?php foreach ($categories as $category) {
+    $printed = false;
+    $par = false;
+    if (isset($prdCat[$category->id])) {
+        foreach ($prdCat[$category->id] as $product) {
+            $counted = 0;
+            if (isset($countedStock[$product->id])) {
+                $counted = $countedStock[$product->id];
+            }
+            $actual = 0;
+            if (isset($levels[$product->id])) {
+                $actual = $levels[$product->id]->qty;
+            }
+            if ($counted !== $actual) {
+                $par = !$par;
+                if ($product->hasImage) {
+                    $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=product&id=" . $product->id;
+                } else {
+                    $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=product";
+                }
+                if (!$printed) {
+                    $printed = true;
+?>
+<h3><?php echo \Pasteque\esc_html($category->label); ?></h3>
+<table cellpadding="0" cellspacing="0">
+	<thead>
+		<tr>
+			<th></th>
+			<th><?php \pi18n("Product.reference"); ?></th>
+			<th><?php \pi18n("Product.label"); ?></th>
+			<th><?php \pi18n("Counted stock", PLUGIN_NAME); ?></th>
+			<th><?php \pi18n("Actual stock", PLUGIN_NAME); ?></th>
+			<th><?php \pi18n("Difference", PLUGIN_NAME); ?></th>
+		</tr>
+	</thead>
+	<tbody>
+<?php
+                }
+?>
+	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
+	    <td><img class="thumbnail" src="?<?php echo $imgSrc ?>" />
+		<td><?php echo $product->reference; ?></td>
+		<td><?php echo $product->label; ?></td>
+		<td><?php echo $counted ?></td>
+		<td><?php echo $actual; ?></td>
+		<td><?php echo $counted - $actual; ?></td>
+	</tr>
+<?php
+
+            }
+        }
+?>
+	</tbody>
+</table>
+<?php
+
+    }
+}?>
+<?php } // end of stock comparison ?>
+
 
 <?php \Pasteque\init_catalog("catalog", "catalog-picker", "addProduct",
         $categories, $products); ?>
@@ -255,16 +267,4 @@ if (!$multilocations) {
 		jQuery("#line-" + productId).detach();
 	}
 
-<?php if ($multilocations) { ?>
-    reasonChange = function() {
-        var reason = jQuery("#reason").val();
-        if (reason == <?php echo \Pasteque\StockMove::REASON_TRANSFERT; ?>) {
-            jQuery("#destination").prop("disabled", false);
-        } else {
-            jQuery("#destination").prop("disabled", true);
-        }
-    }
-    jQuery("#reason").change(function() { reasonChange(); });
-    reasonChange();
-<?php } ?>
 </script>
