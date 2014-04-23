@@ -107,12 +107,13 @@ if (isset($_POST['reason']) && !isset($_POST['sendCsv'])) {
 } else if (isset($_POST['sendCsv'])) {
     $key = array('Quantity', 'Reference');
 
-    $csv = new \Pasteque\Csv($_FILES['csv']['tmp_name'], $key);
+    $csv = new \Pasteque\Csv($_FILES['csv']['tmp_name'], $key, array(),
+            PLUGIN_NAME);
     if (!$csv->open()) {
         $error = $csv->getErrors();
     } else {
         //manage empty string
-        $csv->addFilter("Quantity", "0");
+        $csv->setEmptyStringValue("Quantity", "0");
         echo "<script type=\"text/javascript\">\n";
         echo "jQuery(document).ready(function() {\n";
         while ($tab = $csv->readLine()) {

@@ -21,6 +21,7 @@
 "Load csv file": "Charger un csv",
 "Load": "Charger",
 
+"Reference": "Référence",
 "Unable to find product %s": "Impossible de trouver le produit %s",
 "Undefined quantity for product %s": "Quantité non définie pour le produit %s",
 

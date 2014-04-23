@@ -48,5 +48,8 @@
 "On line %d: Cannot create product: '%s'": "À la ligne %d: Impossible de créer le produit: '%s'",
 "On line %d: Cannot update update: '%s'": "À la ligne %d: Impossible de mettre a jour le produit: '%s'",
 "On line %d: Category parent doesn't exist": "À la ligne %d: La categorie parent n'existe pas",
-"On line %d: Tax category: '%s' doesn't exist": "À la ligne %d: La categorie de taxe: '%s' n'existe pas"
+"On line %d: Tax category: '%s' doesn't exist": "À la ligne %d: La categorie de taxe: '%s' n'existe pas",
+
+"Reference": "Référence",
+"Quantity": "Quantité"
 }

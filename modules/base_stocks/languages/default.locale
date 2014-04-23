@@ -21,6 +21,7 @@
 "Load csv file": "Load csv file",
 "Load": "Load",
 
+"Reference": "Reference",
 "Unable to find product %s": "Unable to find product %s",
 "Undefined quantity for product %s": "Undefined quantity for product %s",
 

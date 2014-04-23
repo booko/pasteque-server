@@ -50,5 +50,8 @@
 "On line %d: Cannot create product: '%s'": "On line %d: Cannot create product: '%s'",
 "On line %d: Cannot update update: '%s'": "On line %d: Cannot update update: '%s'",
 "On line %d: Tax category: '%s' doesn't exist": "On line %d: Tax category: '%s' doesn't exist",
-"On line %d category: '%s' doesn't exist": "On line %d category: '%s' doesn't exist"
+"On line %d category: '%s' doesn't exist": "On line %d category: '%s' doesn't exist",
+
+"Reference": "Reference",
+"Quantity": "Quantity"
 }
