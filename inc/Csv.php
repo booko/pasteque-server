@@ -67,6 +67,10 @@ class Csv {
             $this->close();
             return false;
         }
+        while (substr($this->line, -1, 1) == "\r"
+                || substr($this->line, -1, 1) == "\n") {
+            $this->line = substr($this->line, 0, -1);
+        }
         $this->currentLineNumber++;
         $finfo = new \finfo(FILEINFO_MIME_ENCODING);
         $info = $finfo->file($this->path);
@@ -78,7 +82,7 @@ class Csv {
             return false;
         }
         // Get separator
-        $this->sep = substr($this->line, -2, 1);
+        $this->sep = substr($this->line, -1, 1);
         if (!$this->sep || $this->sep === " ") {
             $this->errors[] = \i18n("Separator not defined");
             $this->close();
