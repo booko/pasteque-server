@@ -68,19 +68,14 @@ class Csv {
             return false;
         }
         $this->currentLineNumber++;
-        if (substr($this->line, 0, 9) == "Pastèque") {
-            $this->sourceEncoding = "UTF-8"; // Cool, no need to convert
-        } else {
-            foreach (mb_list_encodings() as $encoding) {
-                $test = mb_convert_encoding($this->line, "UTF-8", $encoding);
-                if (substr($test, 0, 9) == "Pastèque") {
-                    $this->sourceEncoding = $encoding;
-                    break;
-                }
-            }
-        }
-        if ($this->sourceEncoding == null) {
+        $finfo = new \finfo(FILEINFO_MIME_ENCODING);
+        $info = $finfo->file($this->path);
+        $this->sourceEncoding = strtoupper($info);
+        $check = mb_convert_encoding($this->line, "UTF-8",
+                $this->sourceEncoding);
+        if (!substr($check, 0, 9) == "Pastèque") {
             $this->errors[] = \i18n("Unidentified character set");
+            return false;
         }
         // Get separator
         $this->sep = substr($this->line, -2, 1);
