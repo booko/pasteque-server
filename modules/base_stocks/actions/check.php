@@ -86,7 +86,8 @@ if (isset($_POST['send']) && !isset($_POST['sendCsv'])) {
             if ($productOk && $quantityOk) {
                 echo "setProduct(\"" . $product->id . "\", \""
                         . $product->reference . "\", \"" . $product->label
-                        . "\", " . $tab['Quantity'] . ");\n";
+                        . "\", " . ($product->hasImage ? "1":"0") . ", "
+                        . $tab['Quantity'] . ");\n";
             }
         }
         echo "});\n";
@@ -239,8 +240,12 @@ if ($countedStock !== null) {
 			qty.val(parseInt(currVal) + 1);
 		} else {
 			// Add line
+			var src = "?p=img&w=product";
+			if (product['hasImage']) {
+			    src += "&id=" + product['id'];
+			}
 			var html = "<tr id=\"line-" + product['id'] + "\">\n";
-			html += "<td><img class=\"thumbnail\" src=\"" + product['img'] + "\" /></td>\n";
+			html += "<td><img class=\"thumbnail\" src=\"" + src + "\" /></td>\n";
 			html += "<td>" + product['reference'] + "</td>\n";
 			html += "<td>" + product['label'] + "</td>\n";
 			html += "<td class=\"qty-cell\"><input class=\"qty\" id=\"line-" + product['id'] + "-qty\" type=\"numeric\" name=\"qty-" + product['id'] + "\" value=\"1\" />\n";
@@ -251,10 +256,13 @@ if ($countedStock !== null) {
 	}
 
 	/** Set a new line with given quantity. Use only at start. */
-	setProduct = function(productId, productRef, productLabel, qty) {
-		var product = catalog.getProduct(productId);
+	setProduct = function(productId, productRef, hasImage, productLabel, qty) {
+		var src = "?p=img&w=product";
+		if (hasImage == 1) {
+		    src += "&id=" + productId;
+		}
 		var html = "<tr id=\"line-" + productId + "\">\n";
-		html += "<td><img class=\"thumbnail\" src=\"?p=img&w=product&id=" + productId + "\" /></td>\n";
+		html += "<td><img class=\"thumbnail\" src=\"" + src + "\" /></td>\n";
 		html += "<td>" + productRef + "</td>\n";
 		html += "<td>" + productLabel + "</td>\n";
 		html += "<td class=\"qty-cell\"><input class=\"qty\" id=\"line-" + productId + "-qty\" type=\"numeric\" name=\"qty-" + productId + "\" value=\"" + qty + "\" />\n";
