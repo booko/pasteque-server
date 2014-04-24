@@ -23,7 +23,7 @@ namespace Pasteque;
 class PT {
     public static $ABSPATH;
     const DB_LEVEL = "4";
-    const VERSION = "1.0 beta 10";
+    const VERSION = "1.0 beta 11";
 
     const URL_ACTION_PARAM = "p";
     const URL_REPORT_PARAM = "r";
