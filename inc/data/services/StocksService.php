@@ -193,9 +193,6 @@ class StocksService {
     }
 
     static function addMove($move) {
-        if ($move->qty == 0) {
-            return;
-        }
         $pdo = PDOBuilder::getPDO();
         $db = DB::get();
         $newTransaction = !$pdo->inTransaction();
@@ -230,13 +227,12 @@ class StocksService {
             $stockStmt->bindParam(":loc", $move->locationId);
             $stockStmt->bindParam(":prd", $move->productId);
             $stockStmt->bindParam(":attrSetInstId", $move->attrSetInstId);
-            $stockStmt->execute();
-        }
-        if ($stockStmt->rowcount() === 0) {
-            if ($newTransaction) {
-                $pdo->rollback();
+            if ($stockStmt->execute() === false) {
+                if ($newTransaction) {
+                    $pdo->rollback();
+                }
+                return false;
             }
-            return false;
         }
         // Update STOCKDIARY
         $id = md5(time() . rand());

@@ -67,23 +67,22 @@ class Csv {
             $this->close();
             return false;
         }
-        $this->currentLineNumber++;
-        if (substr($this->line, 0, 9) == "Pastèque") {
-            $this->sourceEncoding = "UTF-8"; // Cool, no need to convert
-        } else {
-            foreach (mb_list_encodings() as $encoding) {
-                $test = mb_convert_encoding($this->line, "UTF-8", $encoding);
-                if (substr($test, 0, 9) == "Pastèque") {
-                    $this->sourceEncoding = $encoding;
-                    break;
-                }
-            }
+        while (substr($this->line, -1, 1) == "\r"
+                || substr($this->line, -1, 1) == "\n") {
+            $this->line = substr($this->line, 0, -1);
         }
-        if ($this->sourceEncoding == null) {
+        $this->currentLineNumber++;
+        $finfo = new \finfo(FILEINFO_MIME_ENCODING);
+        $info = $finfo->file($this->path);
+        $this->sourceEncoding = strtoupper($info);
+        $check = mb_convert_encoding($this->line, "UTF-8",
+                $this->sourceEncoding);
+        if (!substr($check, 0, 9) == "Pastèque") {
             $this->errors[] = \i18n("Unidentified character set");
+            return false;
         }
         // Get separator
-        $this->sep = substr($this->line, -2, 1);
+        $this->sep = substr($this->line, -1, 1);
         if (!$this->sep || $this->sep === " ") {
             $this->errors[] = \i18n("Separator not defined");
             $this->close();
