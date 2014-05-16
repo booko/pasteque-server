@@ -354,9 +354,22 @@ class TicketsService {
         return $id;
     }
 
-    static function delete($ticket, $locationId = "0") {
+    static function delete($id) {
         $pdo = PDOBuilder::getPDO();
         $db = DB::get();
+        $ticket = TicketsService::get($id);
+        if ($ticket === null) {
+            return false;
+        }
+        $cashSrv = new CashesService();
+        $cash = $cashSrv->get($ticket->cashId);
+        if ($cash === null || $cash->isClosed()) {
+            return false;
+        }
+        $cashRegSrv = new CashRegistersService();
+        $cashReg = $cashRegSrv->getFromCashId($cash->id);
+        // As cash must be opened, cashregister location is considered accurate
+        $locationId = $cashReg->locationId;
         $newTransaction = !$pdo->inTransaction();
         if ($newTransaction) {
             $pdo->beginTransaction();
@@ -403,14 +416,19 @@ class TicketsService {
             return false;
         }
         // Delete payments
-        // Also check for prepayment debit
+        // Also check for prepayment debit and debt
         $stmtPay = $pdo->prepare("DELETE FROM PAYMENTS WHERE RECEIPT = :id");
         $stmtPay->bindParam(":id", $ticket->id);
         foreach ($ticket->payments as $payment) {
-            if ($payment->type == 'prepaid') {
+            if ($payment->type == 'prepaid' || $payment->type == 'debt') {
                 $custSrv = new CustomersService();
-                $ok = $custSrv->addPrepaid($ticket->customerId,
-                        $payment->amount);
+                if ($payment->type == 'prepaid') {
+                    $ok = $custSrv->addPrepaid($ticket->customerId,
+                            $payment->amount);
+                } else {
+                    $ok = $custSrv->recoverDebt($ticket->customerId,
+                            $payment->amount);
+                }
                 if ($ok === false) {
                     if ($newTransaction) {
                         $pdo->rollback();

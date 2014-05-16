@@ -634,6 +634,20 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(38, $cust->prepaid, "Prepaid amount mismatch");
     }
 
+    function testSaveDebt() {
+        $date = stdtimefstr("2013-01-01 00:00:00");
+        $line = new TicketLine(1, $this->prd, null, 1, 10, $this->tax);
+        $payment = new Payment("debt", 3, $this->currency->id, 3);
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
+                $date, array($line), array($payment),
+                $this->cash->id,  $this->customer->id);
+        $id = TicketsService::save($ticket, $this->location->id);
+        $this->assertNotEquals(false, $id, "Creation failed");
+        $custSrv = new CustomersService();
+        $cust = $custSrv->get($this->customer->id);
+        $this->assertEquals(8, $cust->currDebt, "Debt amount mismatch");
+    }
+
     /** @depends testSaveLine
      * @depends testCreateAttrSetInst
      */
@@ -818,6 +832,96 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
             }
         }
         $this->assertEquals(0, count($toCheck), "Duplicated tickets");
+    }
+
+    // Delete ticket tests
+    //////////////////////
+
+    /** @depends testGet */
+    public function testDelete() {
+        $date = stdtimefstr("2013-01-01 00:00:00");
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
+                $date, array(), array(),
+                $this->cash->id);
+        $id = TicketsService::save($ticket, $this->location->id);
+        $this->assertTrue(TicketsService::delete($id), "Delete failed");
+        $this->assertNull(TicketsService::get($id),
+                "Ticket is still there after deletion");
+    }
+
+    /** @depends testGet
+     * @depends testSavePrepaid
+     */
+    public function testDeletePrepaid() {
+        $date = stdtimefstr("2013-01-01 00:00:00");
+        $line = new TicketLine(1, $this->prd, null, 1, 10, $this->tax);
+        $payment = new Payment("prepaid", 12, $this->currency->id, 14);
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
+                $date, array($line), array($payment),
+                $this->cash->id,  $this->customer->id);
+        $id = TicketsService::save($ticket, $this->location->id);
+        $this->assertTrue(TicketsService::delete($id), "Delete failed");
+        $this->assertNull(TicketsService::get($id),
+                "Ticket is still there after deletion");
+        $custSrv = new CustomersService();
+        $cust = $custSrv->get($this->customer->id);
+        $this->assertEquals($this->customer->prepaid, $cust->prepaid,
+                "Prepaid payment is not cleared after ticket is deleted");
+    }
+
+    /** @depends testGet
+     * @depends testSaveRefill
+     */
+    public function testDeleteRefill() {
+        $date = stdtimefstr("2013-01-01 00:00:00");
+        $line = new TicketLine(1, $this->prdRefill, null, 1, 10, $this->tax);
+        $payment = new Payment("cash", 12, $this->currency->id, 14);
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
+                $date, array($line), array($payment),
+                $this->cash->id,  $this->customer->id);
+        $id = TicketsService::save($ticket, $this->location->id);
+        $this->assertTrue(TicketsService::delete($id), "Delete failed");
+        $this->assertNull(TicketsService::get($id),
+                "Ticket is still there after deletion");
+        $custSrv = new CustomersService();
+        $cust = $custSrv->get($this->customer->id);
+        $this->assertEquals($this->customer->prepaid, $cust->prepaid,
+                "Prepaid refill is not cleared after ticket is deleted");
+    }
+
+    /** @depends testGet */
+    public function testDeleteClosed() {
+        $date = stdtimefstr("2013-01-01 00:00:00");
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
+                $date, array(), array(),
+                $this->cash->id);
+        $id = TicketsService::save($ticket, $this->location->id);
+        $this->cash->closeDate = stdtimefstr("2013-01-01 12:00:00");
+        $cashSrv = new CashesService();
+        $cashSrv->update($this->cash);
+        $this->assertFalse(TicketsService::delete($id),
+                "Closed ticket should not be deleted");
+        $this->assertNotNull(TicketsService::get($id),
+                "Ticket is not there anymore");
+    }
+
+    /** @depends testGet
+     * @depends testSaveDebt
+     */
+    public function testDeleteDebt() {
+        $currDebt = $this->customer->currDebt;
+        $date = stdtimefstr("2013-01-01 00:00:00");
+        $line = new TicketLine(1, $this->prd, null, 1, 10, $this->tax);
+        $payment = new Payment("debt", 3, $this->currency->id, 3);
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
+                $date, array($line), array($payment),
+                $this->cash->id,  $this->customer->id);
+        $id = TicketsService::save($ticket, $this->location->id);
+        $this->assertTrue(TicketsService::delete($id), "Delete failed");
+        $custSrv = new CustomersService();
+        $cust = $custSrv->get($this->customer->id);
+        $this->assertEquals($currDebt, $cust->currDebt,
+                "Debt not cleared after ticket is deleted");
     }
 
     // Shared ticket tests

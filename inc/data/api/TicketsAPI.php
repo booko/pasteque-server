@@ -46,6 +46,8 @@ class TicketsAPI extends APIService {
                     || $this->isParamSet("dateStop")
                     || $this->isParamSet("customerId")
                     || $this->isParamSet("userId"));
+        case 'delete':
+            return $this->isParamSet("id");
         }
         return false;
     }
@@ -87,6 +89,13 @@ class TicketsAPI extends APIService {
                     $this->getParam("ticketType"), $this->getParam("cashId"),
                     $this->getParam("dateStart"), $this->getParam("dateStop"),
                     $this->getParam("customerId"), $this->getParam("userId")));
+            break;
+        case 'delete':
+            if (!TicketsService::delete($this->getParam("id"))) {
+                $this->fail(APIError::$ERR_GENERIC);
+            } else {
+                $this->succeed(true);
+            }
             break;
         case 'save':
             // Receive ticket data as json
@@ -219,7 +228,7 @@ class TicketsAPI extends APIService {
                     $ticket->id = $id;
                     $ticket->ticketId = $oldTicket->ticketId;
                     // Delete the old ticket and recreate
-                    if (TicketsService::delete($oldTicket, $locationId)
+                    if (TicketsService::delete($oldTicket->id)
                             && TicketsService::save($ticket, $locationId)) {
                         $successes++;
                     } else {
