@@ -20,9 +20,6 @@
 
 namespace Pasteque;
 
-// readBinaire in DB
-//$db->readBin($dbRow[''])
-
 class TicketsService {
 
     private static function buildTicket($row, $pdo) {
@@ -68,24 +65,25 @@ class TicketsService {
     private static function buildSharedTicket($dbRow, $pdo) {
         $db = DB::get();
         $tkt = SharedTicket::__build($dbRow['ID'], $dbRow['NAME'],
-				     $dbRow['CUSTOMER_ID'], $dbRow['TARIFFAREA_ID'],
-				     $dbRow['DISCOUNT_PROFIL_ID'], $dbRow['DISCOUNT_RATE']);
-	$id = $dbRow['ID'];
-	// Get lines
-	$lines = array();
-        $lineSql = "SELECT * FROM SHAREDTICKETLINES WHERE SHAREDTICKET_ID = :id "
-                . "ORDER BY LINE";
+                $dbRow['CUSTOMER_ID'], $dbRow['TARIFFAREA_ID'],
+                $dbRow['DISCOUNT_PROFIL_ID'], $dbRow['DISCOUNT_RATE']);
+        $id = $dbRow['ID'];
+        // Get lines
+        $lines = array();
+        $lineSql = "SELECT * FROM SHAREDTICKETLINES WHERE "
+                . "SHAREDTICKET_ID = :id ORDER BY LINE";
         $lineStmt = $pdo->prepare($lineSql);
         $lineStmt->bindParam(":id", $id);
         $lineStmt->execute();
         while ($rowLine = $lineStmt->fetch()) {
-	  $line = SharedTicketLines::__build($rowLine['ID'], $rowLine['SHAREDTICKET_ID'],
-					     $rowLine['LINE'], $rowLine['PRODUCT_ID'],
-					     $rowLine['QUANTITY'], $rowLine['DISCOUNT_RATE'],
-					     $rowLine['PRICE'], $db->readBin($rowLine['ATTRIBUTES']));
-	  $tkt->addProduct($line);
+            $line = SharedTicketLines::__build($rowLine['ID'],
+                    $rowLine['SHAREDTICKET_ID'], $rowLine['LINE'],
+                    $rowLine['PRODUCT_ID'], $rowLine['QUANTITY'],
+                    $rowLine['DISCOUNT_RATE'], $rowLine['PRICE'],
+                    $db->readBin($rowLine['ATTRIBUTES']));
+            $tkt->addProduct($line);
         }
-	return $tkt;
+        return $tkt;
     }
 
     static function get($id) {
@@ -573,11 +571,16 @@ class TicketsService {
         }
     }
 
-    /** Function to manage insert of shared ticket lines relatives to shared ticket*/
+    /** Function to manage insert of shared ticket lines
+     * relatives to shared ticket
+     */
     static function createSharedTicketLine($sharedTicketId, $line) {
         $pdo = PDOBuilder::getPDO();
-        $stmt = $pdo->prepare("INSERT INTO SHAREDTICKETLINES (ID, SHAREDTICKET_ID, LINE, PRODUCT_ID, QUANTITY, DISCOUNT_RATE, PRICE, ATTRIBUTES) "
-                . "VALUES (:id, :sharedticket_id, :line, :product_id, :quantity, :discount_rate, :price, :attributes)");
+        $stmt = $pdo->prepare("INSERT INTO SHAREDTICKETLINES (ID, "
+                . "SHAREDTICKET_ID, LINE, PRODUCT_ID, QUANTITY, DISCOUNT_RATE, "
+                . "PRICE, ATTRIBUTES) "
+                . "VALUES (:id, :sharedticket_id, :line, :product_id, "
+                . ":quantity, :discount_rate, :price, :attributes)");
         $stmt->bindParam(":id", $line->id);
         $stmt->bindParam(":sharedticket_id", $sharedTicketId);
         $stmt->bindParam(":line", $line->line);
@@ -589,66 +592,40 @@ class TicketsService {
         if ($stmt->execute() !== false) {
             return true;
         } else {
-	  return false;
-        }
-    }
-
-    /**  Function created but no used, normaly, */
-    /**  Never should be used => every ticketlines are deleted before insert */
-    static function updateSharedTicketLine($sharedTicketId, $line) {
-      if ($line->id === null) {
             return false;
-        }
-        $pdo = PDOBuilder::getPDO();
-        $stmt = $pdo->prepare("UPDATE SHAREDTICKETLINES SET SHAREDTICKET_ID = :sharedticket_id, "
-			      ." LINE = :line, "
-			      ." PRODUCT_ID = :product_id, "
-			      ." QUANTITY = :quantity, "
-			      ." DISCOUNT_RATE = :discount_rate, "
-			      ." PRICE = :price, "
-			      ." ATTRIBUTES = :attributes "
-			      ." WHERE ID = :id");
-        $stmt->bindParam(":id", $line->id);
-        $stmt->bindParam(":sharedticket_id", $sharedTicketId);
-        $stmt->bindParam(":line", $line->line);
-        $stmt->bindParam(":product_id", $line->product_id);
-        $stmt->bindParam(":quantity", $line->quantity);
-        $stmt->bindParam(":discount_rate", $line->discount_rate);
-        $stmt->bindParam(":price", $line->price);
-        $stmt->bindParam(":attributes", $line->attributes);
-        if ($stmt->execute() !== false) {
-            return true;
-        } else {
-	  var_dump($stmt->errorInfo());
-	  return false;
         }
     }
 
     static function manageSharedTicketLines($sharedTicketId, $lines) {
-      $pdo = PDOBuilder::getPDO();
-      $stmt = $pdo->prepare("DELETE FROM SHAREDTICKETLINES WHERE SHAREDTICKET_ID = :id");
-      $stmt->bindParam(":id", $sharedTicketId);
-      if ($stmt->execute() !== false) {
-	foreach ($lines as $line) {
-	  $tktline = SharedTicketLines::__build($line->id, $line->sharedticket_id,
+        $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("DELETE FROM SHAREDTICKETLINES "
+                . "WHERE SHAREDTICKET_ID = :id");
+        $stmt->bindParam(":id", $sharedTicketId);
+        if ($stmt->execute() !== false) {
+            foreach ($lines as $line) {
+                $tktline = SharedTicketLines::__build($line->id,
+                        $line->sharedticket_id,
 						$line->line, $line->product_id,
 						$line->quantity, $line->discount_rate,
 						$line->price, $line->attributes);
-	  if (TicketsService::createSharedTicketLine($sharedTicketId, $line) === false) {
-	    return false;
-	  }
-	}
-	return true;
-      } else {
-	return false;
-      }
+                if (TicketsService::createSharedTicketLine($sharedTicketId, $line) === false) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /** Create a shared ticket, its id is always set. */
     static function createSharedTicket($ticket, $lines) {
         $pdo = PDOBuilder::getPDO();
-        $stmt = $pdo->prepare("INSERT INTO SHAREDTICKETS (ID, NAME, CUSTOMER_ID, TARIFFAREA_ID, DISCOUNT_PROFIL_ID, DISCOUNT_RATE) "
-                . "VALUES (:id, :label, :customer_id, :tariffarea_id, :discount_profil_id, :discount_rate)");
+        $stmt = $pdo->prepare("INSERT INTO SHAREDTICKETS (ID, NAME, "
+                . "CUSTOMER_ID, TARIFFAREA_ID, DISCOUNT_PROFIL_ID, "
+                . "DISCOUNT_RATE) "
+                . "VALUES (:id, :label, :customer_id, :tariffarea_id, "
+                . ":discount_profil_id, :discount_rate)");
         $stmt->bindParam(":id", $ticket->id);
         $stmt->bindParam(":label", $ticket->label);
         $stmt->bindParam(":customer_id", $ticket->customer_id);
@@ -658,7 +635,6 @@ class TicketsService {
         if ($stmt->execute() !== false) {
             return true;
         } else {
-	  var_dump($stmt->errorInfo());
             return false;
         }
     }
@@ -669,11 +645,11 @@ class TicketsService {
         }
         $pdo = PDOBuilder::getPDO();
         $stmt = $pdo->prepare("UPDATE SHAREDTICKETS SET NAME = :label, "
-			      ." CUSTOMER_ID = :customer_id, "
-			      ." TARIFFAREA_ID = :tariffarea_id, "
-			      ." DISCOUNT_PROFIL_ID = :discount_profil_id, "
-			      ." DISCOUNT_RATE = :discount_rate "
-			      ." WHERE ID = :id");
+                ." CUSTOMER_ID = :customer_id, "
+                ." TARIFFAREA_ID = :tariffarea_id, "
+                ." DISCOUNT_PROFIL_ID = :discount_profil_id, "
+                ." DISCOUNT_RATE = :discount_rate "
+                ." WHERE ID = :id");
         $stmt->bindParam(":id", $ticket->id);
         $stmt->bindParam(":label", $ticket->label);
         $stmt->bindParam(":customer_id", $ticket->customer_id);
@@ -681,10 +657,10 @@ class TicketsService {
         $stmt->bindParam(":discount_profil_id", $ticket->discount_profil_id);
         $stmt->bindParam(":discount_rate", $ticket->discount_rate);
         if ($stmt->execute() !== false) {
-	  return TicketsService::manageSharedTicketLines($ticket->id, $lines);
+            return TicketsService::manageSharedTicketLines($ticket->id, $lines);
         } else {
-	  var_dump($stmt->errorInfo());
-	  return false;
+            var_dump($stmt->errorInfo());
+            return false;
         }
     }
 
