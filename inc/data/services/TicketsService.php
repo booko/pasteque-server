@@ -620,6 +620,9 @@ class TicketsService {
 
     /** Create a shared ticket, its id is always set. */
     static function createSharedTicket($ticket, $lines) {
+      if ($ticket->id === null) {
+	return false;
+      }
         $pdo = PDOBuilder::getPDO();
         $stmt = $pdo->prepare("INSERT INTO SHAREDTICKETS (ID, NAME, "
                 . "CUSTOMER_ID, TARIFFAREA_ID, DISCOUNT_PROFIL_ID, "
@@ -633,9 +636,20 @@ class TicketsService {
         $stmt->bindParam(":discount_profil_id", $ticket->discount_profil_id);
         $stmt->bindParam(":discount_rate", $ticket->discount_rate);
         if ($stmt->execute() !== false) {
-            return true;
+	  $succeed = TicketsService::manageSharedTicketLines($ticket->id, $lines);
+	  if ($newTransaction) {
+	    if ($succeed == true) {
+	      $pdo->commit();
+	    } else {
+	      $pdo->rollback();
+	    }
+	    return $succeed;
+	  }
         } else {
-            return false;
+	  if ($newTransaction) {
+	    $pdo->rollback();
+	  }
+	  return false;
         }
     }
 
@@ -644,6 +658,10 @@ class TicketsService {
             return false;
         }
         $pdo = PDOBuilder::getPDO();
+        $newTransaction = !$pdo->inTransaction();
+        if ($newTransaction) {
+	  $pdo->beginTransaction();
+        }
         $stmt = $pdo->prepare("UPDATE SHAREDTICKETS SET NAME = :label, "
                 ." CUSTOMER_ID = :customer_id, "
                 ." TARIFFAREA_ID = :tariffarea_id, "
@@ -657,11 +675,20 @@ class TicketsService {
         $stmt->bindParam(":discount_profil_id", $ticket->discount_profil_id);
         $stmt->bindParam(":discount_rate", $ticket->discount_rate);
         if ($stmt->execute() !== false) {
-            return TicketsService::manageSharedTicketLines($ticket->id, $lines);
+	  $succeed = TicketsService::manageSharedTicketLines($ticket->id, $lines);
+	  if ($newTransaction) {
+	    if ($succeed == true) {
+	      $pdo->commit();
+	    } else {
+	      $pdo->rollback();
+	    }
+	    return $succeed;
+	  }
         } else {
-            var_dump($stmt->errorInfo());
-            return false;
+	  if ($newTransaction) {
+	    $pdo->rollback();
+	  }
+	  return false;
         }
     }
-
 }

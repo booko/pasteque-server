@@ -72,9 +72,9 @@ class TicketsAPI extends APIService {
                     $json->discount_profil_id, $json->discount_rate);
             $lines = $json->lines;
             if (TicketsService::createSharedTicket($ticket, $lines) === false) {
-                return (TicketsService::updateSharedTicket($ticket, $lines) === true);
+	      $this->succeed(TicketsService::updateSharedTicket($ticket, $lines));
             } else {
-                $this->succeed(true);
+	      $this->succeed(true);
             }
             break;
         case 'getOpen':
