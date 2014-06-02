@@ -959,8 +959,8 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($tkt->tariffAreaId, $row['TARIFFAREA_ID'],
                 "Tariff area id mismatch");
         $this->assertEquals($tkt->discountProfileId,
-                $row['DISCOUNT_PROFIL_ID'], "Discount profile id mismatch");
-        $this->assertEquals($tkt->discountRate, $row['DISCOUNT_RATE'],
+                $row['DISCOUNTPROFILE_ID'], "Discount profile id mismatch");
+        $this->assertEquals($tkt->discountRate, $row['DISCOUNTRATE'],
                 "Discount rate mismatch");
     }
 
@@ -993,8 +993,8 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($tkt->tariffAreaId, $row['TARIFFAREA_ID'],
                 "Tariff area id mismatch");
         $this->assertEquals($tkt->discountProfileId,
-                $row['DISCOUNT_PROFIL_ID'], "Discount profile id mismatch");
-        $this->assertEquals($tkt->discountRate, $row['DISCOUNT_RATE'],
+                $row['DISCOUNTPROFILE_ID'], "Discount profile id mismatch");
+        $this->assertEquals($tkt->discountRate, $row['DISCOUNTRATE'],
                 "Discount rate mismatch");
     }
 

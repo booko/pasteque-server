@@ -66,7 +66,7 @@ class TicketsService {
         $db = DB::get();
         $tkt = SharedTicket::__build($dbRow['ID'], $dbRow['NAME'],
                 $dbRow['CUSTOMER_ID'], $dbRow['TARIFFAREA_ID'],
-                $dbRow['DISCOUNT_PROFIL_ID'], $dbRow['DISCOUNT_RATE']);
+                $dbRow['DISCOUNTPROFILE_ID'], $dbRow['DISCOUNTRATE']);
         $id = $dbRow['ID'];
         // Get lines
         $lines = array();
@@ -79,7 +79,7 @@ class TicketsService {
             $line = SharedTicketLines::__build($rowLine['ID'],
                     $rowLine['SHAREDTICKET_ID'], $rowLine['LINE'],
                     $rowLine['PRODUCT_ID'], $rowLine['QUANTITY'],
-                    $rowLine['DISCOUNT_RATE'], $rowLine['PRICE'],
+                    $rowLine['DISCOUNTRATE'], $rowLine['PRICE'],
                     $db->readBin($rowLine['ATTRIBUTES']));
             $tkt->addProduct($line);
         }
@@ -597,7 +597,7 @@ class TicketsService {
     private static function createSharedTicketLine($sharedTicketId, $line) {
         $pdo = PDOBuilder::getPDO();
         $stmt = $pdo->prepare("INSERT INTO SHAREDTICKETLINES (ID, "
-                . "SHAREDTICKET_ID, LINE, PRODUCT_ID, QUANTITY, DISCOUNT_RATE, "
+                . "SHAREDTICKET_ID, LINE, PRODUCT_ID, QUANTITY, DISCOUNTRATE, "
                 . "PRICE, ATTRIBUTES) "
                 . "VALUES (:id, :sharedTicketId, :line, :productId, "
                 . ":quantity, :discountRate, :price, :attributes)");
@@ -653,8 +653,8 @@ class TicketsService {
             $pdo->beginTransaction();
         }
         $stmt = $pdo->prepare("INSERT INTO SHAREDTICKETS (ID, NAME, "
-                . "CUSTOMER_ID, TARIFFAREA_ID, DISCOUNT_PROFIL_ID, "
-                . "DISCOUNT_RATE) "
+                . "CUSTOMER_ID, TARIFFAREA_ID, DISCOUNTPROFILE_ID, "
+                . "DISCOUNTRATE) "
                 . "VALUES (:id, :label, :customerId, :tariffAreaId, "
                 . ":discountProfileId, :discountRate)");
         $stmt->bindParam(":id", $ticket->id);
@@ -695,8 +695,8 @@ class TicketsService {
         $stmt = $pdo->prepare("UPDATE SHAREDTICKETS SET NAME = :label, "
                 ." CUSTOMER_ID = :customerId, "
                 ." TARIFFAREA_ID = :tariffAreaId, "
-                ." DISCOUNT_PROFIL_ID = :discountProfileId, "
-                ." DISCOUNT_RATE = :discountRate "
+                ." DISCOUNTPROFILE_ID = :discountProfileId, "
+                ." DISCOUNTRATE = :discountRate "
                 ." WHERE ID = :id");
         $stmt->bindParam(":id", $ticket->id);
         $stmt->bindParam(":label", $ticket->label);
