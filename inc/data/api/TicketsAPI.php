@@ -34,7 +34,7 @@ class TicketsAPI extends APIService {
             return isset($this->params['ticket']);
         case 'save':
             return (isset($this->params['ticket'])
-                            || isset($this->params['tickets']))
+                    || isset($this->params['tickets']))
                     && isset($this->params['cashId']);
         case 'getOpen':
             return true;
@@ -72,9 +72,10 @@ class TicketsAPI extends APIService {
                     $json->discount_profil_id, $json->discount_rate);
             $lines = $json->lines;
             if (TicketsService::createSharedTicket($ticket, $lines) === false) {
-	      $this->succeed(TicketsService::updateSharedTicket($ticket, $lines));
+                $this->succeed(TicketsService::updateSharedTicket($ticket,
+                                $lines));
             } else {
-	      $this->succeed(true);
+                $this->succeed(true);
             }
             break;
         case 'getOpen':
@@ -166,7 +167,7 @@ class TicketsAPI extends APIService {
                             $attrs->addAttrInst($attrVal);
                         }
                         $attrsId = TicketsService::createAttrSetInst($attrs);
-                        
+
                         if ($attrsId === false) {
                             // Fail, will check line count to continue
                             break;
