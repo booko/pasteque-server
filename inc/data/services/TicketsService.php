@@ -574,7 +574,7 @@ class TicketsService {
     /** Function to manage insert of shared ticket lines
      * relatives to shared ticket
      */
-    static function createSharedTicketLine($sharedTicketId, $line) {
+    private static function createSharedTicketLine($sharedTicketId, $line) {
         $pdo = PDOBuilder::getPDO();
         $stmt = $pdo->prepare("INSERT INTO SHAREDTICKETLINES (ID, "
                 . "SHAREDTICKET_ID, LINE, PRODUCT_ID, QUANTITY, DISCOUNT_RATE, "
@@ -596,7 +596,10 @@ class TicketsService {
         }
     }
 
-    static function manageSharedTicketLines($sharedTicketId, $lines) {
+    /** Replace shared ticket lines by new ones.
+     * Should be called in transaction.
+     */
+    private static function manageSharedTicketLines($sharedTicketId, $lines) {
         $pdo = PDOBuilder::getPDO();
         $stmt = $pdo->prepare("DELETE FROM SHAREDTICKETLINES "
                 . "WHERE SHAREDTICKET_ID = :id");
@@ -608,7 +611,8 @@ class TicketsService {
 						$line->line, $line->product_id,
 						$line->quantity, $line->discount_rate,
 						$line->price, $line->attributes);
-                if (TicketsService::createSharedTicketLine($sharedTicketId, $line) === false) {
+                if (TicketsService::createSharedTicketLine($sharedTicketId,
+                                $line) === false) {
                     return false;
                 }
             }
@@ -624,6 +628,10 @@ class TicketsService {
             return false;
         }
         $pdo = PDOBuilder::getPDO();
+        $newTransaction = !$pdo->inTransaction();
+        if ($newTransaction) {
+            $pdo->beginTransaction();
+        }
         $stmt = $pdo->prepare("INSERT INTO SHAREDTICKETS (ID, NAME, "
                 . "CUSTOMER_ID, TARIFFAREA_ID, DISCOUNT_PROFIL_ID, "
                 . "DISCOUNT_RATE) "
@@ -635,23 +643,24 @@ class TicketsService {
         $stmt->bindParam(":tariffarea_id", $ticket->tariffarea_id);
         $stmt->bindParam(":discount_profil_id", $ticket->discount_profil_id);
         $stmt->bindParam(":discount_rate", $ticket->discount_rate);
-        if ($stmt->execute() !== false) {
-            $succeed = TicketsService::manageSharedTicketLines($ticket->id,
-                    $lines);
-            if ($newTransaction) {
-                if ($succeed == true) {
-                    $pdo->commit();
-                } else {
-                    $pdo->rollback();
-                }
-                return $succeed;
-            }
-        } else {
+        if ($stmt->execute() === false) {
             if ($newTransaction) {
                 $pdo->rollback();
             }
             return false;
         }
+        // Insert lines
+        $ok = TicketsService::manageSharedTicketLines($ticket->id, $lines);
+        if ($ok === false) {
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
+            return false;
+        }
+        if ($newTransaction) {
+            $pdo->commit();
+        }
+        return true;
     }
 
     static function updateSharedTicket($ticket, $lines) {
@@ -675,22 +684,23 @@ class TicketsService {
         $stmt->bindParam(":tariffarea_id", $ticket->tariffarea_id);
         $stmt->bindParam(":discount_profil_id", $ticket->discount_profil_id);
         $stmt->bindParam(":discount_rate", $ticket->discount_rate);
-        if ($stmt->execute() !== false) {
-            $succeed = TicketsService::manageSharedTicketLines($ticket->id,
-                    $lines);
-            if ($newTransaction) {
-                if ($succeed == true) {
-                    $pdo->commit();
-                } else {
-                    $pdo->rollback();
-                }
-                return $succeed;
-            }
-        } else {
+        if ($stmt->execute() === false) {
             if ($newTransaction) {
                 $pdo->rollback();
             }
             return false;
         }
+        // Update lines
+        $ok = TicketsService::manageSharedTicketLines($ticket->id, $lines);
+        if ($ok === false) {
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
+            return false;
+        }
+        if ($newTransaction) {
+            $pdo->commit();
+        }
+        return true;
     }
 }
