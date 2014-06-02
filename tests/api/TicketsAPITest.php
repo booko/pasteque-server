@@ -258,14 +258,14 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
     private function checkSharedTktEquality($ref, $read) {
         $this->assertEquals($ref->id, $read->id, "Id mismatch");
         $this->assertEquals($ref->label, $read->label, "Label mismatch");
-        $this->assertEquals($ref->customer_id, $read->customer_id,
-                "CustomerId mismatch");
-        $this->assertEquals($ref->tariffarea_id, $read->tariffarea_id,
-                "TariffAreaId mismatch");
-        $this->assertEquals($ref->discount_profil_id,
-                $read->discount_profil_id, "DiscountProfilId mismatch");
-        $this->assertEquals($ref->discount_rate, $read->discount_rate,
-                "DiscountRateId mismatch");
+        $this->assertEquals($ref->customerId, $read->customerId,
+                "Customer id mismatch");
+        $this->assertEquals($ref->tariffAreaId, $read->tariffAreaId,
+                "Tariff area id mismatch");
+        $this->assertEquals($ref->discountProfileId,
+                $read->discountProfileId, "Discount profile id mismatch");
+        $this->assertEquals($ref->discountRate, $read->discountRate,
+                "Discount rate id mismatch");
     }
 
 

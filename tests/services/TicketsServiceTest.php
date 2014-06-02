@@ -931,10 +931,14 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
     private function checkSharedTktEquality($ref, $read) {
         $this->assertEquals($ref->id, $read->id, "Id mismatch");
         $this->assertEquals($ref->label, $read->label, "Label mismatch");
-        $this->assertEquals($ref->customer_id, $read->customer_id, "CustomerId mismatch");
-        $this->assertEquals($ref->tariffarea_id, $read->tariffarea_id, "TariffAreaId mismatch");
-        $this->assertEquals($ref->discount_profil_id, $read->discount_profil_id, "DiscountProfilId mismatch");
-        $this->assertEquals($ref->discount_rate, $read->discount_rate, "DiscountRateId mismatch");
+        $this->assertEquals($ref->customerId, $read->customerId,
+                "Customer id mismatch");
+        $this->assertEquals($ref->tariffAreaId, $read->tariffAreaId,
+                "Tariff area id mismatch");
+        $this->assertEquals($ref->discountProfileId, $read->discountProfileId,
+                "Discount profile id mismatch");
+        $this->assertEquals($ref->discountRate, $read->discountRate,
+                "Discount rate id mismatch");
     }
 
     public function testCreateSharedTicket() {
@@ -950,14 +954,14 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertNotEquals(false, $row, "Nothing found");
         $this->assertEquals($tkt->id, $row['ID'], "Id mismatch");
         $this->assertEquals($tkt->label, $row['NAME'], "Label mismatch");
-        $this->assertEquals($tkt->customer_id, $row['CUSTOMER_ID'],
-                "CustomerId mismatch");
-        $this->assertEquals($tkt->tariffarea_id, $row['TARIFFAREA_ID'],
-                "TariffAreaId mismatch");
-        $this->assertEquals($tkt->discount_profil_id,
-                $row['DISCOUNT_PROFIL_ID'], "DiscountProfilId mismatch");
-        $this->assertEquals($tkt->discount_rate, $row['DISCOUNT_RATE'],
-                "DiscountRateId mismatch");
+        $this->assertEquals($tkt->customerId, $row['CUSTOMER_ID'],
+                "Customer id mismatch");
+        $this->assertEquals($tkt->tariffAreaId, $row['TARIFFAREA_ID'],
+                "Tariff area id mismatch");
+        $this->assertEquals($tkt->discountProfileId,
+                $row['DISCOUNT_PROFIL_ID'], "Discount profile id mismatch");
+        $this->assertEquals($tkt->discountRate, $row['DISCOUNT_RATE'],
+                "Discount rate mismatch");
     }
 
     private function createSharedTicketLines($sharedTicketId) {
@@ -984,14 +988,14 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertNotEquals(false, $row, "Nothing found");
         $this->assertEquals($tkt->id, $row['ID'], "Id mismatch");
         $this->assertEquals($tkt->label, $row['NAME'], "Label mismatch");
-        $this->assertEquals($tkt->customer_id, $row['CUSTOMER_ID'],
-                "CustomerId mismatch");
-        $this->assertEquals($tkt->tariffarea_id, $row['TARIFFAREA_ID'],
-                "TariffAreaId mismatch");
-        $this->assertEquals($tkt->discount_profil_id,
-                $row['DISCOUNT_PROFIL_ID'], "DiscountProfilId mismatch");
-        $this->assertEquals($tkt->discount_rate, $row['DISCOUNT_RATE'],
-                "DiscountRateId mismatch");
+        $this->assertEquals($tkt->customerId, $row['CUSTOMER_ID'],
+                "Customer id mismatch");
+        $this->assertEquals($tkt->tariffAreaId, $row['TARIFFAREA_ID'],
+                "Tariff area id mismatch");
+        $this->assertEquals($tkt->discountProfileId,
+                $row['DISCOUNT_PROFIL_ID'], "Discount profile id mismatch");
+        $this->assertEquals($tkt->discountRate, $row['DISCOUNT_RATE'],
+                "Discount rate mismatch");
     }
 
     /** @depends testCreateSharedTicket */

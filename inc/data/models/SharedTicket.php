@@ -24,27 +24,27 @@ class SharedTicket {
 
     public $id;
     public $label;
-    public $customer_id;
-    public $tariffarea_id;
-    public $discount_profil_id;
-    public $discount_rate;
+    public $customerId;
+    public $tariffAreaId;
+    public $discountProfileId;
+    public $discountRate;
     public $lines;
 
-    static function __build($id, $label, $customer_id, $tariffarea_id,
-            $discount_profil_id, $discount_rate) {
-        $ticket = new SharedTicket($label, $customer_id, $tariffarea_id,
-                $discount_profil_id, $discount_rate);
+    static function __build($id, $label, $customerId, $tariffAreaId,
+            $discountProfileId, $discountRate) {
+        $ticket = new SharedTicket($label, $customerId, $tariffAreaId,
+                $discountProfileId, $discountRate);
         $ticket->id = $id;
         return $ticket;
     }
 
-    public function __construct($label, $customer_id, $tariffarea_id,
-            $discount_profil_id, $discount_rate) {
+    public function __construct($label, $customerId, $tariffAreaId,
+            $discountProfileId, $discountRate) {
         $this->label = $label;
-        $this->customer_id = $customer_id;
-        $this->tariffarea_id = $tariffarea_id;
-        $this->discount_profil_id = $discount_profil_id;
-        $this->discount_rate = $discount_rate;
+        $this->customerId = $customerId;
+        $this->tariffAreaId = $tariffAreaId;
+        $this->discountProfileId = $discountProfileId;
+        $this->discountRate = $discountRate;
         $this->lines = array();
     }
 
@@ -56,29 +56,29 @@ class SharedTicket {
 class SharedTicketLines {
 
     public $id;
-    public $shared_ticket_id;
+    public $sharedTicketId;
     public $line;
-    public $product_id;
+    public $productId;
     public $quantity;
-    public $discount_rate;
+    public $discountRate;
     public $price;
     public $attributes;
 
-    public function __build($id, $shared_ticket_id, $line, $product_id,
-            $quantity, $discount_rate, $price, $attributes) {
-        $ticketLine = new SharedTicketLines($shared_ticket_id, $line,
-                $product_id, $quantity, $discount_rate, $price, $attributes);
+    public function __build($id, $sharedTicketId, $line, $productId,
+            $quantity, $discountRate, $price, $attributes) {
+        $ticketLine = new SharedTicketLines($sharedTicketId, $line,
+                $productId, $quantity, $discountRate, $price, $attributes);
         $ticketLine->id = $id;
         return $ticketLine;
     }
 
-    public function __construct($shared_ticket_id, $line, $product_id,
-            $quantity, $discount_rate, $price, $attributes) {
-        $this->shared_ticket_id = $shared_ticket_id;
+    public function __construct($sharedTicketId, $line, $productId,
+            $quantity, $discountRate, $price, $attributes) {
+        $this->sharedTicketId = $sharedTicketId;
         $this->line = $line;
-        $this->product_id = $product_id;
+        $this->productId = $productId;
         $this->quantity = $quantity;
-        $this->discount_rate = $discount_rate;
+        $this->discountRate = $discountRate;
         $this->price = $price;
         $this->attributes = $attributes;
     }

@@ -35,19 +35,19 @@ class SharedTicketTest extends \PHPUnit_Framework_TestCase {
     public function testConstruct() {
         $tkt = new SharedTicket("Label", 1, 2, 3, 0.5);
         $this->assertEquals("Label", $tkt->label);
-        $this->assertEquals(1, $tkt->customer_id);
-        $this->assertEquals(2, $tkt->tariffarea_id);
-        $this->assertEquals(3, $tkt->discount_profil_id);
-        $this->assertEquals(0.5, $tkt->discount_rate);
+        $this->assertEquals(1, $tkt->customerId);
+        $this->assertEquals(2, $tkt->tariffAreaId);
+        $this->assertEquals(3, $tkt->discountProfileId);
+        $this->assertEquals(0.5, $tkt->discountRate);
     }
 
     public function testBuild() {
         $tkt = SharedTicket::__build(2, "Label", 1, 12, 3, 0.5);
         $this->assertEquals(2, $tkt->id);
         $this->assertEquals("Label", $tkt->label);
-        $this->assertEquals(1, $tkt->customer_id);
-        $this->assertEquals(12, $tkt->tariffarea_id);
-        $this->assertEquals(3, $tkt->discount_profil_id);
-        $this->assertEquals(0.5, $tkt->discount_rate);
+        $this->assertEquals(1, $tkt->customerId);
+        $this->assertEquals(12, $tkt->tariffAreaId);
+        $this->assertEquals(3, $tkt->discountProfileId);
+        $this->assertEquals(0.5, $tkt->discountRate);
     }
 }

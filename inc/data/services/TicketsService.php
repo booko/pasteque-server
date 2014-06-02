@@ -599,14 +599,14 @@ class TicketsService {
         $stmt = $pdo->prepare("INSERT INTO SHAREDTICKETLINES (ID, "
                 . "SHAREDTICKET_ID, LINE, PRODUCT_ID, QUANTITY, DISCOUNT_RATE, "
                 . "PRICE, ATTRIBUTES) "
-                . "VALUES (:id, :sharedticket_id, :line, :product_id, "
-                . ":quantity, :discount_rate, :price, :attributes)");
+                . "VALUES (:id, :sharedTicketId, :line, :productId, "
+                . ":quantity, :discountRate, :price, :attributes)");
         $stmt->bindParam(":id", $line->id);
-        $stmt->bindParam(":sharedticket_id", $sharedTicketId);
+        $stmt->bindParam(":sharedTicketId", $sharedTicketId);
         $stmt->bindParam(":line", $line->line);
-        $stmt->bindParam(":product_id", $line->product_id);
+        $stmt->bindParam(":productId", $line->productId);
         $stmt->bindParam(":quantity", $line->quantity);
-        $stmt->bindParam(":discount_rate", $line->discount_rate);
+        $stmt->bindParam(":discountRate", $line->discountRate);
         $stmt->bindParam(":price", $line->price);
         $stmt->bindParam(":attributes", $line->attributes, \PDO::PARAM_LOB);
         if ($stmt->execute() !== false) {
@@ -627,9 +627,9 @@ class TicketsService {
         if ($stmt->execute() !== false) {
             foreach ($lines as $line) {
                 $tktline = SharedTicketLines::__build($line->id,
-                        $line->sharedticket_id,
-						$line->line, $line->product_id,
-						$line->quantity, $line->discount_rate,
+                        $line->sharedTicketId,
+						$line->line, $line->productId,
+						$line->quantity, $line->discountRate,
 						$line->price, $line->attributes);
                 if (TicketsService::createSharedTicketLine($sharedTicketId,
                                 $line) === false) {
@@ -655,14 +655,14 @@ class TicketsService {
         $stmt = $pdo->prepare("INSERT INTO SHAREDTICKETS (ID, NAME, "
                 . "CUSTOMER_ID, TARIFFAREA_ID, DISCOUNT_PROFIL_ID, "
                 . "DISCOUNT_RATE) "
-                . "VALUES (:id, :label, :customer_id, :tariffarea_id, "
-                . ":discount_profil_id, :discount_rate)");
+                . "VALUES (:id, :label, :customerId, :tariffAreaId, "
+                . ":discountProfileId, :discountRate)");
         $stmt->bindParam(":id", $ticket->id);
         $stmt->bindParam(":label", $ticket->label);
-        $stmt->bindParam(":customer_id", $ticket->customer_id);
-        $stmt->bindParam(":tariffarea_id", $ticket->tariffarea_id);
-        $stmt->bindParam(":discount_profil_id", $ticket->discount_profil_id);
-        $stmt->bindParam(":discount_rate", $ticket->discount_rate);
+        $stmt->bindParam(":customerId", $ticket->customerId);
+        $stmt->bindParam(":tariffAreaId", $ticket->tariffAreaId);
+        $stmt->bindParam(":discountProfileId", $ticket->discountProfileId);
+        $stmt->bindParam(":discountRate", $ticket->discountRate);
         if ($stmt->execute() === false) {
             if ($newTransaction) {
                 $pdo->rollback();
@@ -693,17 +693,17 @@ class TicketsService {
             $pdo->beginTransaction();
         }
         $stmt = $pdo->prepare("UPDATE SHAREDTICKETS SET NAME = :label, "
-                ." CUSTOMER_ID = :customer_id, "
-                ." TARIFFAREA_ID = :tariffarea_id, "
-                ." DISCOUNT_PROFIL_ID = :discount_profil_id, "
-                ." DISCOUNT_RATE = :discount_rate "
+                ." CUSTOMER_ID = :customerId, "
+                ." TARIFFAREA_ID = :tariffAreaId, "
+                ." DISCOUNT_PROFIL_ID = :discountProfileId, "
+                ." DISCOUNT_RATE = :discountRate "
                 ." WHERE ID = :id");
         $stmt->bindParam(":id", $ticket->id);
         $stmt->bindParam(":label", $ticket->label);
-        $stmt->bindParam(":customer_id", $ticket->customer_id);
-        $stmt->bindParam(":tariffarea_id", $ticket->tariffarea_id);
-        $stmt->bindParam(":discount_profil_id", $ticket->discount_profil_id);
-        $stmt->bindParam(":discount_rate", $ticket->discount_rate);
+        $stmt->bindParam(":customerId", $ticket->customerId);
+        $stmt->bindParam(":tariffAreaId", $ticket->tariffAreaId);
+        $stmt->bindParam(":discountProfileId", $ticket->discountProfileId);
+        $stmt->bindParam(":discountRate", $ticket->discountRate);
         if ($stmt->execute() === false) {
             if ($newTransaction) {
                 $pdo->rollback();
