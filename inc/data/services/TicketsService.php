@@ -562,13 +562,33 @@ class TicketsService {
 
     static function deleteSharedTicket($id) {
         $pdo = PDOBuilder::getPDO();
-        $stmt = $pdo->prepare("DELETE FROM SHAREDTICKETS WHERE ID = :id");
-        $stmt->bindParam(":id", $id);
-        if ($stmt->execute() !== false) {
-            return true;
-        } else {
+        $newTransaction = !$pdo->inTransaction();
+        if ($newTransaction) {
+            $pdo->beginTransaction();
+        }
+        // Delete lines
+        $stmtLines = $pdo->prepare("DELETE FROM SHAREDTICKETLINES "
+                . "WHERE SHAREDTICKET_ID = :id");
+        $stmtLines->bindParam(":id", $id);
+        if ($stmtLines->execute() === false) {
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
             return false;
         }
+        // Delete ticket
+        $stmt = $pdo->prepare("DELETE FROM SHAREDTICKETS WHERE ID = :id");
+        $stmt->bindParam(":id", $id);
+        if ($stmt->execute() === false) {
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
+            return false;
+        }
+        if ($newTransaction) {
+            $pdo->commit();
+        }
+        return true;
     }
 
     /** Function to manage insert of shared ticket lines
