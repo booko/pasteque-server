@@ -83,7 +83,8 @@ function dropDatabase() {
                 "DROP TABLE PAYMENTS;", "DROP TABLE TAXLINES;",
                 "DROP TABLE FLOORS;", "DROP TABLE PLACES;",
                 "DROP TABLE RESERVATIONS;", "DROP TABLE RESERVATION_CUSTOMERS;",
-                "DROP TABLE THIRDPARTIES;", "DROP TABLE SHAREDTICKETS;");
+                "DROP TABLE THIRDPARTIES;", "DROP TABLE SHAREDTICKETS;",
+                "DROP TABLE SHAREDTICKETLINES;");
     }
     for ($i = count($sqls) - 1; $i >= 0; $i--) {
         if ($pdo->exec($sqls[$i]) === false) {
