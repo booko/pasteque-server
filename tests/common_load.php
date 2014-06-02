@@ -34,7 +34,7 @@ function dropDatabase() {
     $pdo = PDOBuilder::getPdo();
     if ($config['db_type'] == "mysql") {
         $sqls = array("DROP TABLE APPLICATIONS;", "DROP TABLE ROLES;",
-                "DROP TABLE PEOPLE;", "DROP TABLE RESOURCES;",
+               "DROP TABLE PEOPLE;", "DROP TABLE RESOURCES;",
                 "DROP TABLE DISCOUNTPROFILES;",
                 "DROP TABLE TAXCUSTCATEGORIES;", "DROP TABLE CUSTOMERS;",
                 "DROP TABLE CATEGORIES;", "DROP TABLE TAXCATEGORIES;",
@@ -54,7 +54,8 @@ function dropDatabase() {
                 "DROP TABLE PAYMENTS;", "DROP TABLE TAXLINES;",
                 "DROP TABLE FLOORS;", "DROP TABLE PLACES;",
                 "DROP TABLE RESERVATIONS;", "DROP TABLE RESERVATION_CUSTOMERS;",
-                "DROP TABLE THIRDPARTIES;", "DROP TABLE SHAREDTICKETS;");
+		      "DROP TABLE THIRDPARTIES;", "DROP TABLE SHAREDTICKETS;",
+		      "DROP TABLE SHAREDTICKETLINES;");
     } else if ($config['db_type'] == "postgresql") {
         $sqls = array("DROP TABLE APPLICATIONS;", "DROP TABLE ROLES;",
                 "DROP TABLE PEOPLE;", "DROP TABLE RESOURCES;",

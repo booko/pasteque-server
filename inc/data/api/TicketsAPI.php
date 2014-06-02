@@ -56,16 +56,10 @@ class TicketsAPI extends APIService {
         switch ($this->action) {
         case 'getShared':
             $tkt = TicketsService::getSharedTicket($this->params['id']);
-            if ($tkt !== null) {
-                $tkt->data = \base64_encode($tkt->data);
-            }
             $this->succeed($tkt);
             break;
         case 'getAllShared':
             $tkts = TicketsService::getAllSharedTickets();
-            foreach ($tkts as $tkt) {
-                $tkt->data = \base64_encode($tkt->data);
-            }
             $this->succeed($tkts);
             break;
         case 'delShared':
@@ -74,11 +68,13 @@ class TicketsAPI extends APIService {
         case 'share':
             $json = json_decode($this->params['ticket']);
             $ticket = SharedTicket::__build($json->id, $json->label,
-                    \base64_decode($json->data));
-            if (TicketsService::createSharedTicket($ticket) === false) {
-                $this->succeed(TicketsService::updateSharedTicket($ticket));
-            } else {
-                $this->succeed(true);
+					    $json->customer_id, $json->tariffarea_id,
+					    $json->discount_profil_id, $json->discount_rate);
+	    $lines = $json->lines;
+            if (TicketsService::createSharedTicket($ticket, $lines) === false) {
+	      return (TicketsService::updateSharedTicket($ticket, $lines) === true);
+	    } else {
+	      $this->succeed(true);
             }
             break;
         case 'getOpen':
