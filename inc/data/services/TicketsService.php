@@ -596,12 +596,13 @@ class TicketsService {
      */
     private static function createSharedTicketLine($sharedTicketId, $line) {
         $pdo = PDOBuilder::getPDO();
+        $id = md5(time() . rand());
         $stmt = $pdo->prepare("INSERT INTO SHAREDTICKETLINES (ID, "
                 . "SHAREDTICKET_ID, LINE, PRODUCT_ID, QUANTITY, DISCOUNTRATE, "
                 . "PRICE, ATTRIBUTES) "
                 . "VALUES (:id, :sharedTicketId, :line, :productId, "
                 . ":quantity, :discountRate, :price, :attributes)");
-        $stmt->bindParam(":id", $line->id);
+        $stmt->bindParam(":id", $id);
         $stmt->bindParam(":sharedTicketId", $sharedTicketId);
         $stmt->bindParam(":line", $line->line);
         $stmt->bindParam(":productId", $line->productId);
