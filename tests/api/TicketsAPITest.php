@@ -260,6 +260,8 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($ref->label, $read->label, "Label mismatch");
         $this->assertEquals($ref->customerId, $read->customerId,
                 "Customer id mismatch");
+        $this->assertEquals($ref->custCount, $read->custCount,
+                "Customer count mismatch");
         $this->assertEquals($ref->tariffAreaId, $read->tariffAreaId,
                 "Tariff area id mismatch");
         $this->assertEquals($ref->discountProfileId,
@@ -270,7 +272,7 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
 
 
     public function testGetShared() {
-        $tkt = SharedTicket::__build("1", "Label", $this->custId,
+        $tkt = SharedTicket::__build("1", "Label", $this->custId, 2,
                 $this->areaId, $this->discountProfileId, 13.37);
         TicketsService::createSharedTicket($tkt, array());
         $broker = new APIBroker(TicketsAPITest::API);
@@ -283,8 +285,8 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
     }
 
     /** @depends testGetShared */
-    public function testShare() {
-        $tkt = SharedTicket::__build("1", "Label", $this->custId,
+    public function testShareNewEmpty() {
+        $tkt = SharedTicket::__build("1", "Label", $this->custId, 1,
                 $this->areaId, $this->discountProfileId, 13.37);
         $json = json_encode($tkt);
         $broker = new APIBroker(TicketsAPITest::API);
@@ -298,11 +300,23 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
         $this->checkSharedTktEquality($tkt, $read);
     }
 
+    public function testShareUpdateEmpty() {
+        $this->markTestIncomplete();
+    }
+
+    public function testShareNewLines() {
+        $this->markTestIncomplete();
+    }
+
+    public function testShareUpdateLines() {
+        $this->markTestIncomplete();
+    }
+
     public function testGetAllShared() {
-        $tkt = SharedTicket::__build("1", "Label", $this->custId,
+        $tkt = SharedTicket::__build("1", "Label", $this->custId, 1,
                 $this->areaId, $this->discountProfileId, 13.37);
         TicketsService::createSharedTicket($tkt, array());
-        $tkt2 = SharedTicket::__build("2", "Label2", $this->custId,
+        $tkt2 = SharedTicket::__build("2", "Label2", $this->custId, 2,
                 $this->areaId, $this->discountProfileId, 13.37);
         TicketsService::createSharedTicket($tkt2, array());
         $broker = new APIBroker(TicketsAPITest::API);
@@ -337,7 +351,7 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testDelShared() {
-        $tkt = new SharedTicket("Shared", $this->custId, $this->areaId,
+        $tkt = new SharedTicket("Shared", $this->custId, 1, $this->areaId,
 				$this->discountProfileId, 13.37);
         $tkt->id = TicketsService::createSharedTicket($tkt, array());
         $broker = new APIBroker(TicketsAPITest::API);
