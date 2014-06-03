@@ -68,9 +68,17 @@ class TicketsAPI extends APIService {
         case 'share':
             $json = json_decode($this->params['ticket']);
             $ticket = SharedTicket::__build($json->id, $json->label,
-                    $json->customerId, $json->tariffAreaId,
+                    $json->customerId, $json->custCount, $json->tariffAreaId,
                     $json->discountProfileId, $json->discountRate);
-            $lines = $json->lines;
+            $lines = array();
+            foreach ($json->lines as $jsLine) {
+                // Get line info
+                $tktLine = new SharedTicketLines($ticket->id,
+						$jsLine->dispOrder, $jsLine->productId, $jsLine->taxId,
+						$jsLine->quantity, $jsLine->discountRate,
+						$jsLine->price, $jsLine->attributes);
+                $lines[] = $tktLine;
+            }
             if (TicketsService::createSharedTicket($ticket, $lines) === false) {
                 $this->succeed(TicketsService::updateSharedTicket($ticket,
                                 $lines));

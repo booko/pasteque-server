@@ -65,7 +65,8 @@ class TicketsService {
     private static function buildSharedTicket($dbRow, $pdo) {
         $db = DB::get();
         $tkt = SharedTicket::__build($dbRow['ID'], $dbRow['NAME'],
-                $dbRow['CUSTOMER_ID'], $dbRow['TARIFFAREA_ID'],
+                $dbRow['CUSTOMER_ID'], $dbRow['CUSTCOUNT'],
+                $dbRow['TARIFFAREA_ID'],
                 $dbRow['DISCOUNTPROFILE_ID'], $dbRow['DISCOUNTRATE']);
         $id = $dbRow['ID'];
         // Get lines
@@ -78,9 +79,9 @@ class TicketsService {
         while ($rowLine = $lineStmt->fetch()) {
             $line = SharedTicketLines::__build($rowLine['ID'],
                     $rowLine['SHAREDTICKET_ID'], $rowLine['LINE'],
-                    $rowLine['PRODUCT_ID'], $rowLine['QUANTITY'],
-                    $rowLine['DISCOUNTRATE'], $rowLine['PRICE'],
-                    $db->readBin($rowLine['ATTRIBUTES']));
+                    $rowLine['PRODUCT_ID'], $rowLine['TAX_ID'],
+                    $rowLine['QUANTITY'], $rowLine['DISCOUNTRATE'],
+                    $rowLine['PRICE'], $db->readBin($rowLine['ATTRIBUTES']));
             $tkt->addProduct($line);
         }
         return $tkt;
@@ -598,14 +599,15 @@ class TicketsService {
         $pdo = PDOBuilder::getPDO();
         $id = md5(time() . rand());
         $stmt = $pdo->prepare("INSERT INTO SHAREDTICKETLINES (ID, "
-                . "SHAREDTICKET_ID, LINE, PRODUCT_ID, QUANTITY, DISCOUNTRATE, "
-                . "PRICE, ATTRIBUTES) "
-                . "VALUES (:id, :sharedTicketId, :line, :productId, "
+                . "SHAREDTICKET_ID, LINE, PRODUCT_ID, TAX_ID, QUANTITY, "
+                . "DISCOUNTRATE, PRICE, ATTRIBUTES) "
+                . "VALUES (:id, :sharedTicketId, :line, :productId, :taxId, "
                 . ":quantity, :discountRate, :price, :attributes)");
         $stmt->bindParam(":id", $id);
         $stmt->bindParam(":sharedTicketId", $sharedTicketId);
-        $stmt->bindParam(":line", $line->line);
+        $stmt->bindParam(":line", $line->dispOrder);
         $stmt->bindParam(":productId", $line->productId);
+        $stmt->bindParam(":taxId", $line->taxId);
         $stmt->bindParam(":quantity", $line->quantity);
         $stmt->bindParam(":discountRate", $line->discountRate);
         $stmt->bindParam(":price", $line->price);
@@ -627,11 +629,6 @@ class TicketsService {
         $stmt->bindParam(":id", $sharedTicketId);
         if ($stmt->execute() !== false) {
             foreach ($lines as $line) {
-                $tktline = SharedTicketLines::__build($line->id,
-                        $line->sharedTicketId,
-						$line->line, $line->productId,
-						$line->quantity, $line->discountRate,
-						$line->price, $line->attributes);
                 if (TicketsService::createSharedTicketLine($sharedTicketId,
                                 $line) === false) {
                     return false;
@@ -654,13 +651,14 @@ class TicketsService {
             $pdo->beginTransaction();
         }
         $stmt = $pdo->prepare("INSERT INTO SHAREDTICKETS (ID, NAME, "
-                . "CUSTOMER_ID, TARIFFAREA_ID, DISCOUNTPROFILE_ID, "
+                . "CUSTOMER_ID, CUSTCOUNT, TARIFFAREA_ID, DISCOUNTPROFILE_ID, "
                 . "DISCOUNTRATE) "
-                . "VALUES (:id, :label, :customerId, :tariffAreaId, "
-                . ":discountProfileId, :discountRate)");
+                . "VALUES (:id, :label, :customerId, :custCount, "
+                . ":tariffAreaId, :discountProfileId, :discountRate)");
         $stmt->bindParam(":id", $ticket->id);
         $stmt->bindParam(":label", $ticket->label);
         $stmt->bindParam(":customerId", $ticket->customerId);
+        $stmt->bindParam(":custCount", $ticket->custCount);
         $stmt->bindParam(":tariffAreaId", $ticket->tariffAreaId);
         $stmt->bindParam(":discountProfileId", $ticket->discountProfileId);
         $stmt->bindParam(":discountRate", $ticket->discountRate);
@@ -695,6 +693,7 @@ class TicketsService {
         }
         $stmt = $pdo->prepare("UPDATE SHAREDTICKETS SET NAME = :label, "
                 ." CUSTOMER_ID = :customerId, "
+                . " CUSTCOUNT = :custCount, "
                 ." TARIFFAREA_ID = :tariffAreaId, "
                 ." DISCOUNTPROFILE_ID = :discountProfileId, "
                 ." DISCOUNTRATE = :discountRate "
@@ -702,6 +701,7 @@ class TicketsService {
         $stmt->bindParam(":id", $ticket->id);
         $stmt->bindParam(":label", $ticket->label);
         $stmt->bindParam(":customerId", $ticket->customerId);
+        $stmt->bindParam(":custCount", $ticket->custCount);
         $stmt->bindParam(":tariffAreaId", $ticket->tariffAreaId);
         $stmt->bindParam(":discountProfileId", $ticket->discountProfileId);
         $stmt->bindParam(":discountRate", $ticket->discountRate);
