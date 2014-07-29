@@ -21,19 +21,21 @@
 namespace Pasteque;
 
 function jsonify($key, $value) {
-    // TODO: escape data
+    $escKey = str_replace('"', '\"', $key);
     if (\is_string($value)) {
-        return '"' . $key . '": "' . $value . '"';
+        $escVal = str_replace('"', '\"', $value);
+        return '"' . $escKey . '": "' . $escVal . '"';
     } else if ($value === null) {
-        return '"' . $key . '": null';
+        return '"' . $escKey . '": null';
     } else if (\is_bool($value)) {
         if ($value) {
-            return '"' . $key . '": true';
+            return '"' . $escKey . '": true';
         } else {
-            return '"' . $key . '": false';
+            return '"' . $escKey . '": false';
         }
     } else {
-        return '"' . $key . '": ' . $value;
+        $escVal = str_replace('"', '\"', $value);
+        return '"' . $escKey . '": ' . $escVal;
     }
 }
 
@@ -47,9 +49,9 @@ function init_catalog($jsName, $containerId, $selectCallback,
     echo "html += \"<div class=\\\"catalog-products-container\\\"></div>\";\n";
     echo "jQuery(\"#$containerId\").html(html);\n";
     foreach ($categories as $cat) {
-        echo $jsName . ".createCategory(\"" . $jsName . "\", \"" . $cat->id . "\""
-                . ", \"" . $cat->label . "\", "
-                . ($cat->hasImage ? "true" : "false") . ");\n";
+        echo $jsName . ".createCategory(\"" . esc_js($jsName) . "\", \""
+                . esc_js($cat->id) . "\", \"" . esc_js($cat->label) . "\", \""
+                . ($cat->hasImage ? "true" : "false") . "\");\n";
     }
     foreach ($products as $product) {
         $taxCat = TaxesService::get($product->taxCatId);
@@ -63,8 +65,9 @@ function init_catalog($jsName, $containerId, $selectCallback,
                 . jsonify("sell", $product->priceSell) . ', '
                 . jsonify("vatSell", $vatPrice)
                 . '}';
-        echo $jsName . ".addProductToCat(\"" . $product->id . "\", \"" . $product->categoryId . "\");\n";
-        echo $jsName . ".addProduct(" . $prd .");\n";
+        echo $jsName . ".addProductToCat(\"" . esc_js($product->id) . "\", \""
+                . $product->categoryId . "\");\n";
+        echo $jsName . ".addProduct(" . $prd  . ");\n";
     }
     if (count($categories) > 0) {
         echo $jsName . ".changeCategory(\"" . $categories[0]->id . "\");\n";

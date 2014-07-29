@@ -233,7 +233,7 @@ if (isset($_GET['productId'])) {
 
 	var tax_rates = new Array();
 <?php foreach ($taxes as $tax) {
-	echo "\ttax_rates['" . $tax->id . "'] = " . $tax->getCurrentTax()->rate . ",\n";
+    echo "\ttax_rates[\"" . esc_js($tax->id) . "\"] = " . $tax->getCurrentTax()->rate . ";\n";
 } ?>
 
 
@@ -345,13 +345,13 @@ updateMargin = function() {
 <script type="text/javascript">
 <?php
 foreach ($products as $product) {
-    echo("registerProduct(\"" . $product->id . "\", \"" . $product->label . "\");\n");
+    echo "registerProduct(\"" . esc_js($product->id) . "\", \"" . esc_js($product->label) . "\");\n";
 }
 if ($composition !== null) {
     foreach($composition->groups as $group) {
-        echo "var id = addSubgroup(\"" . $group->label . "\", " . $group->dispOrder . ");\n";
+        echo "var id = addSubgroup(\"" . esc_js($group->label) . "\", " . esc_js($group->dispOrder) . ");\n";
         foreach($group->choices as $prod) {
-            echo "addProduct(id, \"" . $prod->productId . "\");";
+            echo "addProduct(id, \"" . esc_js($prod->productId) . "\");";
         }
     }
     echo("showSubgroup();\n");

@@ -28,6 +28,10 @@ function esc_attr($value) {
 function esc_html($value) {
     return htmlspecialchars($value, ENT_NOQUOTES);
 }
+/** Escape a JS variable to be enclosed in double quotes */
+function esc_js($value) {
+    return addslashes($value);
+}
 
 function form_hidden($form_id, $object, $field) {
     if ($object != NULL && isset($object->{$field})) {
