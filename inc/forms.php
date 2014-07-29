@@ -125,8 +125,9 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
         echo "$required />\n";
         break;
     case 'date':
+        // Class dateinput will be catched to show js date picker
         echo '<input id="' . esc_attr($form_id . '-' . $field)
-                . '" type="date" name="' . esc_attr($name) . '"';
+                . '" type="text" class="dateinput" name="' . esc_attr($name) . '"';
         if ($object !== null) {
             if (isset($args['dataformat'])) {
                 if ($args['dataformat'] == 'standard') {

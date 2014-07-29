@@ -184,7 +184,7 @@ if (!$multilocations) {
 	<?php if ($multilocations) { \Pasteque\form_select("destination", \i18n("Destination"), $locIds, $locNames, null); }?>
 	<div class="row">
 		<label for="date"><?php \pi18n("Date", PLUGIN_NAME); ?></label>
-		<input type="date" name="date" id="date" value="<?php echo $dateStr; ?>" />
+		<input type="text" class="dateinput" name="date" id="date" value="<?php echo $dateStr; ?>" />
 	</div>
 
 	<div id="catalog-picker"></div>

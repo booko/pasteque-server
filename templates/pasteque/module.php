@@ -144,8 +144,8 @@ function __tpl_report_input($report, $values) {
         switch ($param['type']) {
         case DB::DATE:
             $value = \i18nDate($values[$id]);
-            echo "<input type=\"date\" name=\"" . $id . "\" id=\"" . $id
-                    . "\" value=\"" . $value . "\" />";
+            echo "<input type=\"text\" name=\"" . $id . "\" id=\"" . $id
+                    . "\" class=\"dateinput\" value=\"" . $value . "\" />";
             break;
         default:
             $value = $values[$param['param']];
