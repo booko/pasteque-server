@@ -172,7 +172,7 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
                 "Result status check failed");
         $content = $result->content;
-        $this->assertTrue($content, "Content is not true");
+        $this->assertEquals(array("saved" => 1), $content, "Content mismatch");
     }
 
     public function testSaveDefaultLocation() {
@@ -182,7 +182,7 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
                 "Result status check failed");
         $content = $result->content;
-        $this->assertTrue($content, "Content is not true");
+        $this->assertEquals(array("saved" => 1), $content, "Content mismatch");
     }
 
     /** @depends testSaveTicket */
@@ -194,7 +194,7 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
                 "Result status check failed");
         $content = $result->content;
-        $this->assertTrue($content, "Content is not true");
+        $this->assertEquals(array("saved" => 1), $content, "Content mismatch");
     }
 
     /** @depends testSaveTicketAttr */
@@ -207,6 +207,6 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
                 "Result status check failed");
         $content = $result->content;
-        $this->assertTrue($content, "Content is not true");
+        $this->assertEquals(array("saved" => 2), $content, "Content mismatch");
     }
 }
