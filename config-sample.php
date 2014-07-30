@@ -32,3 +32,7 @@ $config['core_modules'] = "static";
 // Template
 // Must match a directory in templates/
 $config['template'] = "pasteque";
+
+// Thumbnail size in pixels
+$config['thumb_width'] = 128;
+$config['thumb_height'] = 128;

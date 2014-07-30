@@ -47,10 +47,11 @@ function img_thumbnail($fileName, $outputFileName,
     // Read input
     switch ($imgType) {
     case IMG_JPG:
-    case IMG_JPEG:
+    case IMAGETYPE_JPEG:
         $src = imagecreatefromjpeg($fileName);
         break;
     case IMG_PNG:
+    case IMAGETYPE_PNG:
         $src = imagecreatefrompng($fileName);
         break;
     case IMG_GIF:
@@ -65,11 +66,38 @@ function img_thumbnail($fileName, $outputFileName,
     }
     // Create thumbnail
     $dst = imagecreatetruecolor($destWidth, $destHeight);
+    if ($imgType == IMG_PNG || $imgType == IMAGETYPE_PNG) {
+        // Handle png transparency
+        imagealphablending($dst, true);
+        imagesavealpha($dst, true);
+        $color = imagecolorallocatealpha($dst, 0, 0, 0, 127);
+        imagefill($dst, 0, 0, $color);
+    }
+    // Copy image
     imagecopyresampled($dst, $src, 0, 0, 0, 0, $destWidth, $destHeight,
             $imgWidth, $imgHeight);
+    // Handle jpg rotation
+    if ($imgType == IMG_JPG || $imgType == IMAGETYPE_JPG) {
+        $exif = exif_read_data($fileName);
+        if ($exif !== false && isset($exif['Orientation'])) {
+            $orientation = $exif['Orientation'];
+            switch($orientation) {
+            case 3:
+                $dst = imagerotate($dst, 180, 0);
+                break;
+            case 6:
+                $dst = imagerotate($dst, -90, 0);
+                break;
+            case 8:
+                $dst = imagerotate($dst, 90, 0);
+                break;
+            }
+        }
+    }
     // Write output
     switch ($imgType) {
     case IMG_PNG:
+    case IMAGETYPE_PNG:
         return imagepng($dst, $outputFileName);
     case IMG_JPG:
     case IMG_JPEG:
