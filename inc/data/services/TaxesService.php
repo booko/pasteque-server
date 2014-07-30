@@ -77,26 +77,84 @@ class TaxesService {
         return null;
     }
 
+    /** Update an existing category. Taxes must be set, if they have no id
+     * they are added to the category, otherwise updated (no way to delete).
+     */
     static function updateCat($cat) {
-        if ($cat->getId() == null) {
+        if ($cat->getId() == null || count($cat->taxes) == 0) {
             return false;
         }
         $pdo = PDOBuilder::getPDO();
+        $newTransaction = !$pdo->inTransaction();
+        if ($newTransaction) {
+            $pdo->beginTransaction();
+        }
         $stmt = $pdo->prepare('UPDATE TAXCATEGORIES SET NAME = :name '
                               . 'WHERE ID = :id');
-        return $stmt->execute(array(':name' => $cat->label, ':id' => $cat->id));
+        if (!$stmt->execute(array(':name' => $cat->label, ':id' => $cat->id))) {
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
+            return false;
+        }
+        foreach ($cat->taxes as $tax) {
+            if ($tax->id !== null) {
+                if (TaxesService::updateTax($tax) === false) {
+                    if ($newTransaction) {
+                        $pdo->rollback();
+                    }
+                    return false;
+                }
+            } else {
+                $taxId = TaxesService::createTax($tax) === false;
+                if ($taxId === false) {
+                    if ($newTransaction) {
+                        $pdo->rollback();
+                    }
+                    return false;
+                }
+                $tax->id = $taxId;
+            }
+        }
+        if ($newTransaction) {
+            $pdo->commit();
+        }
+        return $id;
+
     }
 
+    /** Create a new tax category. It must have taxes defined. */
     static function createCat($cat) {
+        if (count($cat->taxes) == 0) {
+            return false;
+        }
         $pdo = PDOBuilder::getPDO();
+        $newTransaction = !$pdo->inTransaction();
+        if ($newTransaction) {
+            $pdo->beginTransaction();
+        }
         $id = md5(time() . rand());
         $stmt = $pdo->prepare('INSERT INTO TAXCATEGORIES (ID, NAME) VALUES '
                 . '(:id, :name)');
         $stmt->bindParam(':id', $id);
         $stmt->bindParam(':name', $cat->label);
         if (!$stmt->execute()) {
-            return FALSE;
+            return false;
         } else {
+            foreach ($cat->taxes as $tax) {
+                $tax->taxCatId = $id;
+                $taxId = TaxesService::createTax($tax);
+                if ($taxId === false) {
+                    if ($newTransaction) {
+                        $pdo->rollback();
+                    }
+                    return false;
+                }
+                $tax->id = $taxId;
+            }
+            if ($newTransaction) {
+                $pdo->commit();
+            }
             return $id;
         }
     }
@@ -140,7 +198,7 @@ class TaxesService {
         return null;
     }
 
-    static function updateTax($tax) {
+    private static function updateTax($tax) {
         if ($tax->id == null) {
             return false;
         }
@@ -156,7 +214,7 @@ class TaxesService {
                                     ':id' => $tax->id));
     }
 
-    static function createTax($tax) {
+    private static function createTax($tax) {
         $pdo = PDOBuilder::getPDO();
         $id = md5(time() . rand());
         $stmt = $pdo->prepare('INSERT INTO TAXES (ID, NAME, VALIDFROM, '
@@ -175,11 +233,9 @@ class TaxesService {
         }
     }
 
-    static function deleteTax($id) {
+    private static function deleteTax($id) {
         $pdo = PDOBuilder::getPDO();
         $stmt = $pdo->prepare("DELETE FROM TAXES WHERE ID = :id");
         return $stmt->execute(array(':id' => $id));
     }
 }
-
-?>

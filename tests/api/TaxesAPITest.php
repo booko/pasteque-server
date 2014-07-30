@@ -29,21 +29,18 @@ class TaxesAPITest extends \PHPUnit_Framework_TestCase {
     protected function setUp() {
         $this->taxes = array();
         $taxCat1 = new TaxCat("Standard");
+        $tax1 = new Tax(null, "20%", stdtimefstr("2014-01-01 00:00:00"),
+                0.2);
+        $taxCat1->addTax($tax1);
+        $tax3 = new Tax(null, "Old", stdtimefstr("2000-01-01 00:00:00"),
+                0.22);
+        $taxCat1->addTax($tax3);
         $taxCat1->id = TaxesService::createCat($taxCat1);
         $taxCat2 = new TaxCat("Reduced");
-        $taxCat2->id = TaxesService::createCat($taxCat2);
-        $tax1 = new Tax($taxCat1->id, "20%", stdtimefstr("2014-01-01 00:00:00"),
-                0.2);
-        $tax1->id = TaxesService::createTax($tax1);
-        $taxCat1->addTax($tax1);
-        $tax2 = new Tax($taxCat2->id, "10%", stdtimefstr("2014-01-01 00:00:00"),
+        $tax2 = new Tax(null, "10%", stdtimefstr("2014-01-01 00:00:00"),
                 0.1);
-        $tax2->id = TaxesService::createTax($tax2);
         $taxCat2->addTax($tax2);
-        $tax3 = new Tax($taxCat1->id, "Old", stdtimefstr("2000-01-01 00:00:00"),
-                0.22);
-        $tax3->id = TaxesService::createTax($tax3);
-        $taxCat1->addTax($tax3);
+        $taxCat2->id = TaxesService::createCat($taxCat2);
         $this->taxes[] = $taxCat1;
         $this->taxes[] = $taxCat2;
     }

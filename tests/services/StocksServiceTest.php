@@ -26,6 +26,9 @@ class StocksServiceTest extends \PHPUnit_Framework_TestCase {
     protected function setUp() {
         // Products
         $taxCat = new TaxCat("Tax");
+        $tax = new Tax(null, "Tax", stdtimefstr("2001-01-01 00:00:00"),
+                0.1);
+        $taxCat->addTax($tax);
         $taxCat->id = TaxesService::createCat($taxCat);
         $cat = new Category(null, "Category", false, 1);
         $cat->id = CategoriesService::createCat($cat);
@@ -56,6 +59,7 @@ class StocksServiceTest extends \PHPUnit_Framework_TestCase {
                 || $pdo->exec("DELETE FROM PRODUCTS_CAT") === false
                 || $pdo->exec("DELETE FROM PRODUCTS") === false
                 || $pdo->exec("DELETE FROM CATEGORIES") === false
+                || $pdo->exec("DELETE FROM TAXES") === false
                 || $pdo->exec("DELETE FROM TAXCATEGORIES") === false) {
             echo("[ERROR] Unable to restore db\n");
         }
