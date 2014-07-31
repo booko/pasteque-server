@@ -51,6 +51,9 @@ if (!is_user_logged_in()) {
         case "print":
             require_once(PT::$ABSPATH . "/print.php");
             break;
+        case "logout":
+            logout();
+            break;
         default:
             index_run();
             break;

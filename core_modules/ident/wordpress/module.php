@@ -52,6 +52,10 @@ namespace WordPressID {
             return get_current_user_id();
         }
     }
+
+    function logout() {
+        wp_logout();
+    }
 }
 
 namespace Pasteque {
@@ -79,5 +83,13 @@ namespace Pasteque {
 
     function get_user_id() {
         return \WordPressID\get_user_id();
+    }
+
+    function can_logout() {
+        return true;
+    }
+    function logout() {
+        \WordPressID\logout();
+        header('Location: ' . get_site_url());
     }
 }

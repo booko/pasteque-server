@@ -55,7 +55,6 @@ require_once(PT::$ABSPATH . "/inc/date_utils.php");
 require_once(PT::$ABSPATH . "/inc/url_broker.php");
 require_once(PT::$ABSPATH . "/inc/i18n.php");
 require_once(PT::$ABSPATH . "/inc/i18n_aliases.php");
-require_once(PT::$ABSPATH . "/inc/Menu.php");
 require_once(PT::$ABSPATH . "/inc/Report.php");
 require_once(PT::$ABSPATH . "/inc/hooks.php");
 require_once(PT::$ABSPATH . "/inc/forms.php");
@@ -68,6 +67,8 @@ require_once(PT::$ABSPATH . "/inc/images.php");
 require_once(_check_core_module('ident'));
 require_once(_check_core_module('database'));
 require_once(_check_core_module('modules'));
+
+require_once(PT::$ABSPATH . "/inc/Menu.php"); // Menu requires login module
 
 // Load data
 require_once(PT::$ABSPATH . "/inc/data/models/Attribute.php");
