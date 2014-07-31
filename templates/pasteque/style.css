@@ -11,8 +11,9 @@ body {
 #logo {
 	border-bottom-right-radius: 30px;
 	background-color: #FFF;
-	width: 200px;
-	height: 95px;
+	width: 180px;
+        padding-left: 20px;
+	height: 150px;
 }
 #version {
 	font-size: xx-small;
