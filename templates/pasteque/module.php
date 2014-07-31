@@ -161,7 +161,7 @@ function __tpl_report_input($report, $values) {
 }
 
 function __tpl_report_header($report) {
-    echo "<table cellspacing=\"0\" cellpadding=\"0\">\n";
+    echo "<table class=\"report\" cellspacing=\"0\" cellpadding=\"0\">\n";
     echo "\t<thead>\n";
     echo "\t\t<tr>\n";
     foreach ($report->getHeaders() as $header) {
@@ -206,7 +206,7 @@ function __tpl_group_footer($report, $run) {
 }
 
 function __tpl_total_header($report, $run) {
-    echo "<table cellspacing=\"0\" cellpadding=\"0\">\n";
+    echo "<table class=\"report report-total\" cellspacing=\"0\" cellpadding=\"0\">\n";
     echo "\t<thead>\n";
     echo "\t\t<tr>\n";
     $totals = $report->getTotals();
