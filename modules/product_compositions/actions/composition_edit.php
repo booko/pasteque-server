@@ -155,7 +155,7 @@ if (isset($_GET['productId'])) {
         <div class="row">
             <label for="sell"><?php \pi18n("Product.priceSell"); ?></label>
             <input type="hidden" id="realsell" name="realsell" <?php if ($composition != NULL) echo 'value="' . $composition->priceSell. '"'; ?> />
-            <input id="sell" type="numeric" name="sell" value="<?php echo $price; ?>" />
+            <input id="sell" type="numeric" name="sell" value="<?php echo $price; ?>" readonly="true" />
         </div>
         <?php \Pasteque\form_input("edit", "Product", $composition, "priceBuy", "numeric"); ?>
         <div class="row">

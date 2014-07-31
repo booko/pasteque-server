@@ -167,7 +167,7 @@ if ($stocks === TRUE && $product != NULL) {
 	<div class="row">
 		<label for="sell"><?php \pi18n("Product.priceSell"); ?></label>
 		<input type="hidden" id="realsell" name="realsell" <?php if ($product != NULL) echo 'value="' . $product->priceSell. '"'; ?> />
-		<input id="sell" type="numeric" name="sell" value="<?php echo $price; ?>" />
+		<input id="sell" type="numeric" name="sell" value="<?php echo $price; ?>" readonly="true" />
 	</div>
 	<?php \Pasteque\form_input("edit", "Product", $product, "priceBuy", "numeric"); ?>
 	<div class="row">
