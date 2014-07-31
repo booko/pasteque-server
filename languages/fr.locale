@@ -80,7 +80,7 @@
 "Session.openDate": "Date d'ouverture",
 "Session.closeDate": "Date de clôture",
 "Session.tickets": "Tickets",
-"Session.total": "Total",
+"Session.total": "Total HT",
 
 "Ticket.number": "Ticket n°",
 "Ticket.date": "Date",

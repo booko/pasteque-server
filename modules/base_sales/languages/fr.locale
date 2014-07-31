@@ -18,6 +18,8 @@
 "Tax base": "Base",
 "Tax amount": "TVA collectée",
 
+"Total w/o VAT": "Total HT",
+
 "CS report": "Synthèse",
 "Consolidated sales report": "Rapport de chiffre d'affaire",
 "Tickets": "Tickets",

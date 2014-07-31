@@ -38,7 +38,7 @@ $sql = "SELECT "
 $fields = array("REFERENCE", "NAME", "UNITS", "TOTAL");
 $headers = array(\i18n("Product.reference"),
         \i18n("Product.label"),
-        \i18n("Quantity"), \i18n("Total"));
+        \i18n("Quantity"), \i18n("Total w/o VAT", PLUGIN_NAME));
 
 $report = new \Pasteque\Report(PLUGIN_NAME, "sales_by_product_report",
         \i18n("Sales by product", PLUGIN_NAME),
