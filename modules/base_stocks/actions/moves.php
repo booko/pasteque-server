@@ -137,10 +137,10 @@ if (isset($_POST['reason']) && !isset($_POST['sendCsv'])) {
                 $error[] = \i18n("Undefined quantity for product %s", PLUGIN_NAME, $tab['Reference']);
             }
             if ($productOk && $quantityOk) {
-                echo "setProduct(\"" . esc_js($product->id) . "\", \""
-                        . esc_js($product->reference) . "\", \""
-                        . esc_js($product->label) . "\", "
-                        . $product->hasImage ? "1" : "0" . ", "
+                echo "setProduct(\"" . \Pasteque\esc_js($product->id) . "\", \""
+                        . \Pasteque\esc_js($product->reference) . "\", "
+                        . ($product->hasImage ? "1" : "0") . ", \""
+                        . \Pasteque\esc_js($product->label) . "\", "
                         . $tab['Quantity'] . ");\n";
             }
         }
