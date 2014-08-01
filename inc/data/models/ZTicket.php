@@ -42,7 +42,7 @@ class ZTicket {
         $this->cashId = $cashId;
         $this->openCash = $openCash;
         $this->closeCash = $closeCash;
-        $this->ticketCount = $ticketCount;
+        $this->ticketCount = (int) $ticketCount;
         $this->cs = $cs;
         $this->paymentCount = $paymentCount;
         $this->payments = $payments;

@@ -37,8 +37,8 @@ class Category {
     function __construct($parentId, $label, $hasImage, $order) {
         $this->parentId = $parentId;
         $this->label = $label;
-        $this->hasImage = $hasImage;
-        $this->dispOrder = $order;
+        $this->hasImage = (bool) $hasImage;
+        $this->dispOrder = (int) $order;
     }
 
 }

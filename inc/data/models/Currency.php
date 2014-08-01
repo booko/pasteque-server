@@ -36,7 +36,7 @@ class Currency {
             $thousandsSeparator, $format, $rate, $main, $active) {
         $currency = new Currency($label, $symbol, $decimalSeparator,
                 $thousandsSeparator, $format, $rate, $main, $active);
-        $currency->id = $id;
+        $currency->id = (int) $id;
         return $currency;
     }
 
@@ -47,9 +47,9 @@ class Currency {
         $this->decimalSeparator = $decimalSeparator;
         $this->thousandsSeparator = $thousandsSeparator;
         $this->format = $format;
-        $this->rate = $rate;
-        $this->isMain = $main;
-        $this->isActive = $active;
+        $this->rate = (double) $rate;
+        $this->isMain = (bool) $main;
+        $this->isActive = (bool) $active;
     }
 
     public function format($amount) {
@@ -82,5 +82,3 @@ class Currency {
     }
 
 }
-
-?>
