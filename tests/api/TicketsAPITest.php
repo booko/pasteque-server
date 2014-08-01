@@ -73,14 +73,23 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
         $area->id = $srvArea->create($area);
         // Customer
         $srvCust = new CustomersService();
-        $cust = new Customer(1, "Cust", "It's me", "card", null, 50.0, 10.0,
-                5.0, stdtimefstr("2012-01-01 00:00:00"), "It's", "me",
+        $cust = new Customer(1, "Cust", "It's me", "card", null, null, 50.0,
+                10.0, 5.0, stdtimefstr("2012-01-01 00:00:00"), "It's", "me",
                 "itsme@me.me", "012345", "23456", "11111", "Address1",
                 "Address2", "59000", "City", "Region", "France", "Note", true);
         $cust->id = $srvCust->create($cust);
+        // Location
+        $locSrv = new LocationsService();
+        $loc = new Location("Location");
+        $loc->id = $locSrv->create($loc);
+        $this->locationId = $loc->id;
+        // Cash register
+        $srvCashReg = new CashRegistersService();
+        $cashReg = new CashRegister("Cash", $loc->id, 1);
+        $cashReg->id = $srvCashReg->create($cashReg);
         // Cash
         $srvCash = new CashesService();
-        $cash = $srvCash->add("Host");
+        $cash = $srvCash->add($cashReg->id);
         $cash->openDate = stdtimefstr("2000-02-02 02:02:02");
         $srvCash->update($cash);
         $this->cashId = $cash->id;
@@ -92,15 +101,16 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
         $curr = new Currency("Eur", "€", ",", ".", "#,##0.00$", 1, true, false);
         $srvCurr = new CurrenciesService();
         $curr->id = $srvCurr->create($curr);
-        // Location
-        $locSrv = new LocationsService();
-        $loc = new Location("Location");
-        $loc->id = $locSrv->create($loc);
-        $this->locationId = $loc->id;
+        // Discount profile
+        $profSrv = new DiscountProfilesService();
+        $prof = new DiscountProfile("Profile", 0.1);
+        $prof->id = $profSrv->create($prof);
         // Ticket
         $tkt1 = array("date" => stdtimefstr("2012-01-01 00:00:00"),
                 "userId" => $user->id, "customerId" => null,
                 "type" => Ticket::TYPE_SELL, "custCount" => 3,
+                "tariffAreaId" => null, "discountRate" => 0.0,
+                "discountProfileId" => null,
                 "payments" => array(array("type" => "cash", "amount" => 10,
                                 "currencyId" => $curr->id,
                                 "currencyAmount" => 12)),
@@ -109,13 +119,16 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
                                 "taxId" => $tax->id,
                                 "attributes" => null,
                                 "quantity" => 1.0,
-                                "price" => 10.0)));
+                                "price" => 10.0,
+                                "discountRate" => 0.0)));
         $jsAttr = array("attributeSetId" => $set->id,
                 "values" => array(array("id" => $attr->id,
                                 "value" => "value")));
         $tkt2 = array("date" => stdtimefstr("2012-01-01 00:00:00"),
                 "userId" => $user->id, "customerId" => null,
                 "type" => Ticket::TYPE_SELL, "custCount" => 3,
+                "tariffAreaId" => null, "discountRate" => 0.25,
+                "discountProfileId" => $prof->id,
                 "payments" => array(array("type" => "cash", "amount" => 10,
                                 "currencyId" => $curr->id,
                                 "currencyAmount" => 12)),
@@ -124,7 +137,8 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
                                 "taxId" => $tax->id,
                                 "attributes" => $jsAttr,
                                 "quantity" => 1.0,
-                                "price" => 10.0)));
+                                "price" => 10.0,
+                                "discountRate" => 0.25)));
         $this->jsTicket1 = json_encode($tkt1);
         $this->jsTicket2 = json_encode($tkt2);
     }
@@ -139,6 +153,7 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
                 || $pdo->exec("DELETE FROM TICKETS") === false
                 || $pdo->exec("DELETE FROM RECEIPTS") === false
                 || $pdo->exec("DELETE FROM CLOSEDCASH") === false
+                || $pdo->exec("DELETE FROM CASHREGISTERS") === false
                 || $pdo->exec("DELETE FROM TARIFFAREAS_PROD") === false
                 || $pdo->exec("DELETE FROM TARIFFAREAS") === false
                 || $pdo->exec("DELETE FROM STOCKDIARY") === false
@@ -159,7 +174,9 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
                 || $pdo->exec("DELETE FROM PEOPLE") === false
                 //|| $pdo->exec("DELETE FROM ROLES") === false
                 || $pdo->exec("DELETE FROM CURRENCIES") === false
-                || $pdo->exec("DELETE FROM CUSTOMERS") === false) {
+                || $pdo->exec("DELETE FROM CUSTOMERS") === false
+                || $pdo->exec("DELETE FROM SHAREDTICKETS") === false
+                || $pdo->exec("DELETE FROM DISCOUNTPROFILES") === false) {
             echo("[ERROR] Unable to restore db\n");
         }
     }
@@ -208,5 +225,111 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
                 "Result status check failed");
         $content = $result->content;
         $this->assertEquals(array("saved" => 2), $content, "Content mismatch");
+    }
+
+    /** @depends testSaveTicket */
+    public function testGetOpen() {
+        $broker = new APIBroker(TicketsAPITest::API);
+        $broker->run("save", array("cashId" => $this->cashId, 
+                        "locationId" => $this->locationId,
+                        "ticket" => $this->jsTicket2));
+        $result = $broker->run("getOpen", null);
+        $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
+                "Result status check failed");
+        $content = $result->content;
+        $this->assertTrue(is_array($content), "Content is not an array");
+        $this->assertEquals(1, count($content), "Content size mismatch");
+        $tkt = $content[0];
+        $this->assertNotNull($tkt, "Ticket is null");
+        $this->assertEquals(1, count($tkt->lines), "Line count mismatch");
+        $this->assertEquals(1, count($tkt->payments),
+                "Payments count mismatch");
+        $this->markTestIncomplete("Check other fields");
+    }
+
+
+    private function checkSharedTktEquality($ref, $read) {
+        $this->assertEquals($ref->id, $read->id, "Id mismatch");
+        $this->assertEquals($ref->label, $read->label, "Label mismatch");
+        $this->assertEquals($ref->data, $read->data, "Data mismatch");
+    }
+
+
+    public function testShare() {
+        $tkt = SharedTicket::__build("1", "Shared", \base64_encode(0xabcdef));
+        $json = json_encode($tkt);
+        $broker = new APIBroker(TicketsAPITest::API);
+        $result = $broker->run("share", array("ticket" => $json));
+        $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
+                "Result status check failed");
+        $content = $result->content;
+        $this->assertNotNull($content, "Content is null");
+        $this->assertTrue($content, "API call failed");
+        $read = TicketsService::getSharedTicket($tkt->id);
+        $read->data = \base64_encode($read->data); // encode for equality
+        $this->checkSharedTktEquality($tkt, $read);
+    }
+
+    public function testGetShared() {
+        $tkt = SharedTicket::__build("1", "Shared", 0xabcdef);
+        TicketsService::createSharedTicket($tkt);
+        $broker = new APIBroker(TicketsAPITest::API);
+        $result = $broker->run("getShared", array("id" => $tkt->id));
+        $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
+                "Result status check failed");
+        $content = $result->content;
+        $this->assertNotNull($content, "Content is null");
+        $tkt->data = \base64_encode($tkt->data); // encode for checking
+        $this->checkSharedTktEquality($tkt, $content);
+    }
+
+    public function testGetAllShared() {
+        $tkt = SharedTicket::__build("1", "Shared", 0xabcdef);
+        TicketsService::createSharedTicket($tkt);
+        $tkt2 = SharedTicket::__build("2", "Shared2" ,0xbc98d32f);
+        TicketsService::createSharedTicket($tkt2);
+        $broker = new APIBroker(TicketsAPITest::API);
+        $result = $broker->run("getAllShared", null);
+        $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
+                "Result status check failed");
+        $content = $result->content;
+        $this->assertNotNull($content, "Content is null");
+        $this->assertTrue(is_array($content), "Content is not an array");
+        $this->assertEquals(2, count($content), "Content size mismatch");
+        $toCheck = array($tkt, $tkt2);
+        $count = 0;
+        foreach ($content as $rtkt) {
+            $ref = null;
+            $count++;
+            if ($rtkt->id == $tkt->id) {
+                $ref = $tkt;
+            } else if ($rtkt->id == $tkt2->id) {
+                $ref = $tkt2;
+            }
+            $this->assertNotNull($ref, "Unknown line");
+            $ref->data = \base64_encode($ref->data); // encode for equality
+            $this->checkSharedTktEquality($ref, $rtkt);
+            for ($i = 0; $i < count($toCheck); $i++) {
+                $t = $toCheck[$i];
+                if ($t->id == $ref->id) {
+                    array_splice($toCheck, $i, 1);
+                    break;
+                }
+            }
+        }
+        $this->assertEquals(0, count($toCheck), "Duplicated shared tickets");
+    }
+
+    public function testDelShared() {
+        $tkt = new SharedTicket("Shared", 0xabcdef);
+        $tkt->id = TicketsService::createSharedTicket($tkt);
+        $broker = new APIBroker(TicketsAPITest::API);
+        $result = $broker->run("delShared", array("id" => $tkt->id));
+        $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
+                "Result status check failed");
+        $content = $result->content;
+        $this->assertTrue($content, "Content is not true");
+        $this->assertNull(TicketsService::getSharedTicket($tkt->id),
+                "Shared ticket is still there");
     }
 }

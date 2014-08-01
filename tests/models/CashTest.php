@@ -33,29 +33,40 @@ class CashTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testConstructEmpty() {
-        $cash = new Cash("Host", 2, null, null);
-        $this->assertEquals("Host", $cash->host, "Host assignment failed");
+        $cash = new Cash(1, 2, null, null, null, null, null);
+        $this->assertEquals(1, $cash->cashRegisterId,
+                "Cash register id assignment failed");
         $this->assertEquals(2, $cash->sequence, "Sequence assignment failed");
         $this->assertNull($cash->openDate, "Open date assignment failed");
         $this->assertNull($cash->closeDate, "Close date assignment failed");
+        $this->assertNull($cash->openCash, "Open cash assignment failed");
+        $this->assertNull($cash->closeCash, "Close cash assignment failed");
+        $this->assertNull($cash->expectedCash, "Expected cash assignment failed");
         $this->assertFalse($cash->isOpened(), "Open state check failed");
         $this->assertFalse($cash->isClosed(), "Close state check failed");
     }
 
     /** @depends testConstructEmpty */
     public function testConstructOpened() {
-        $cash = new Cash("Host", 2, stdtimefstr("1900-01-01 00:00:00"), null);
+        $cash = new Cash(1, 2, stdtimefstr("1900-01-01 00:00:00"), null,
+                10.0, null, null);
         $this->assertTrue($cash->isOpened(), "Open state check failed");
         $this->assertFalse($cash->isClosed(), "Close state check failed");
+        $this->assertEquals(10.0, $cash->openCash, "Open cash mismatch");
+        $this->assertNull($cash->closeCash, "Close cash mismatch");
+        $this->assertNull($cash->expectedCash, "Expected cash mismatch");
     }
 
     /** @depends testConstructEmpty */
     public function testConstructClosed() {
-        $cash = new Cash("Host", 2, stdtimefstr("1900-01-01 00:00:00"),
-                stdtimefstr("1900-01-02 00:00:00"));
+        $cash = new Cash(1, 2, stdtimefstr("1900-01-01 00:00:00"),
+                stdtimefstr("1900-01-02 00:00:00"), 10.0, 12.0, 25.0);
         $this->assertTrue($cash->isOpened(), "Open state check failed");
         $this->assertTrue($cash->isClosed(), "Close state check failed");
+        $this->assertEquals(10.0, $cash->openCash, "Open cash mismatch");
+        $this->assertEquals(12.0, $cash->closeCash, "Close cash mismatch");
+        $this->assertEquals(25.0, $cash->expectedCash,
+                "Expected cash mismatch");
     }
 
 }
-?>

@@ -31,6 +31,7 @@ class CustomersService extends AbstractService {
             "NAME" => "dispName",
             "CARD" => "card",
             "TAXCATEGORY" => "custTaxId",
+            "DISCOUNTPROFILE_ID" => "discountProfileId",
             "PREPAID" => "prepaid",
             "MAXDEBT" => "maxDebt",
             "CURDEBT" => "currDebt",
@@ -55,9 +56,8 @@ class CustomersService extends AbstractService {
         $db = DB::get();
         $cust = Customer::__build($row['ID'], $row['TAXID'], $row['SEARCHKEY'],
                 $row['NAME'], $row['CARD'], $row['TAXCATEGORY'],
-                $row['PREPAID'],
-                $row['MAXDEBT'], $row['CURDEBT'],
-                $db->readDate($row['CURDATE']),
+                $row['DISCOUNTPROFILE_ID'], $row['PREPAID'], $row['MAXDEBT'],
+                $row['CURDEBT'], $db->readDate($row['CURDATE']),
                 $row['FIRSTNAME'], $row['LASTNAME'], $row['EMAIL'],
                 $row['PHONE'], $row['PHONE2'], $row['FAX'],
                 $row['ADDRESS'], $row['ADDRESS2'], $row['POSTAL'],
@@ -81,6 +81,29 @@ class CustomersService extends AbstractService {
             $customers[] = $cust;
         }
         return $customers;
+    }
+
+    function getTop($limit = 10) {
+        if ($limit === null) {
+            $limit = 10;
+        }
+        $custIds = array();
+        $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
+        $sql = "SELECT C.ID, COUNT(TICKETS.CUSTOMER) AS Top10 "
+                . "FROM CUSTOMERS AS C "
+                . "LEFT JOIN TICKETS ON TICKETS.CUSTOMER = C.ID "
+                . "WHERE C.VISIBLE = " . $db->true() . " "
+                . "GROUP BY C.ID "
+                . "ORDER BY Top10 DESC, C.NAME ASC "
+                . "LIMIT :limit";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(":limit", $limit, \PDO::PARAM_INT);
+        $stmt->execute();
+        while ($row = $stmt->fetch()) {
+            $custIds[] = $row['ID'];
+        }
+        return $custIds;
     }
 
     function addPrepaid($custId, $amount) {

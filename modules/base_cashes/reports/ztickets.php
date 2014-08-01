@@ -24,18 +24,23 @@ $db = \Pasteque\DB::get();
 
 // Cash session request
 $sqls[] = "SELECT "
-        . "CLOSEDCASH.HOST, CLOSEDCASH.MONEY, CLOSEDCASH.DATESTART, "
-        . "CLOSEDCASH.DATEEND, COUNT(DISTINCT(RECEIPTS.ID)) AS TICKETS, "
+        . "CASHREGISTERS.NAME, CLOSEDCASH.HOSTSEQUENCE, CLOSEDCASH.MONEY, "
+        . "CLOSEDCASH.DATESTART, CLOSEDCASH.DATEEND, "
+        . "CLOSEDCASH.OPENCASH, CLOSEDCASH.CLOSECASH, CLOSEDCASH.EXPECTEDCASH, "
+        . "COUNT(DISTINCT(RECEIPTS.ID)) AS TICKETS, "
         . "SUM(TICKETLINES.PRICE * TICKETLINES.UNITS) AS SALES, "
         . "SUM(TICKETLINES.PRICE * TICKETLINES.UNITS * (1 + TAXES.RATE)) "
         . "AS SALESVAT "
         . "FROM CLOSEDCASH "
+        . "LEFT JOIN CASHREGISTERS ON "
+        . "CLOSEDCASH.CASHREGISTER_ID = CASHREGISTERS.ID "
         . "LEFT JOIN RECEIPTS ON RECEIPTS.MONEY = CLOSEDCASH.MONEY "
         . "LEFT JOIN TICKETLINES ON TICKETLINES.TICKET = RECEIPTS.ID "
         . "LEFT JOIN TAXES ON TICKETLINES.TAXID = TAXES.ID "
         . "WHERE CLOSEDCASH.DATESTART > :start "
         . "AND CLOSEDCASH.DATESTART <= :stop "
-        . "GROUP BY CLOSEDCASH.MONEY, HOST, DATESTART, DATEEND "
+        . "GROUP BY CLOSEDCASH.MONEY, CASHREGISTERS.NAME, HOSTSEQUENCE, "
+        . "DATESTART, DATEEND, OPENCASH, CLOSECASH "
         . "ORDER BY CLOSEDCASH.DATESTART DESC";
 
 // Payments request
@@ -64,13 +69,17 @@ $sqls[] = "SELECT "
         . "GROUP BY CLOSEDCASH.MONEY, TAXES.NAME "
         . "ORDER BY CLOSEDCASH.DATESTART DESC";
 
-
-$fields = array("HOST", "DATESTART", "DATEEND", "TICKETS", "SALES", "SALESVAT");
+$fields = array("NAME", "HOSTSEQUENCE", "DATESTART", "DATEEND", "OPENCASH",
+        "CLOSECASH", "EXPECTEDCASH", "TICKETS", "SALES", "SALESVAT");
 $mergeFields = array("MONEY");
 $headers = array(
-        \i18n("Session.host"),
+        \i18n("CashRegister.label"),
+        \i18n("Session"),
         \i18n("Session.openDate"),
         \i18n("Session.closeDate"),
+        \i18n("Session.openCash"),
+        \i18n("Session.closeCash"),
+        \i18n("Session.expectedCash"),
         \i18n("Tickets", PLUGIN_NAME),
         \i18n("Sales", PLUGIN_NAME),
         \i18n("Sales with VAT", PLUGIN_NAME)
@@ -85,10 +94,20 @@ $report->setDefaultInput("start", time() - (time() % 86400) - 86400);
 $report->addInput("stop", \i18n("Stop date"), \Pasteque\DB::DATE);
 $report->setDefaultinput("stop", time());
 
+function cashMatch($val, $values) {
+    if ($val != $values['CLOSECASH']) {
+        return "<span style=\"color:#b00;\">" . $val . "</span>";
+    }
+    return $val;
+}
+
 $report->addFilter("DATESTART", "\Pasteque\stdtimefstr");
 $report->addFilter("DATESTART", "\i18nDatetime");
 $report->addFilter("DATEEND", "\Pasteque\stdtimefstr");
 $report->addFilter("DATEEND", "\i18nDatetime");
+$report->addFilter("OPENCASH", "\i18nCurr");
+$report->addFilter("CLOSECASH", "\i18nCurr");
+$report->addFilter("EXPECTEDCASH", "\i18nCurr");
 $report->addFilter("SALES", "\i18nCurr");
 $report->addFilter("SALESVAT", "\i18nCurr");
 $report->addMergedFilter(0, "\i18nCurr");
@@ -99,5 +118,7 @@ function vatI18nCurr($input) {
     $amounts = explode("/", $input);
     return \i18nCurr($amounts[0]) . " / " . \i18nCurr($amounts[1]);
 }
+
+$report->setVisualFilter("EXPECTEDCASH", "\BaseCashes\cashMatch");
 
 \Pasteque\register_report($report);

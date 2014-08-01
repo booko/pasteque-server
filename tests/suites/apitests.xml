@@ -6,6 +6,8 @@
 			<file>api/VersionAPITest.php</file>
 			<file>api/CashesAPITest.php</file>
 			<file>api/CategoriesAPITest.php</file>
+			<file>api/CashRegistersAPITest.php</file>
+			<file>api/DiscountProfilesAPITest.php</file>
 			<file>api/CustomersAPITest.php</file>
 			<file>api/AttributesAPITest.php</file>
 			<file>api/UsersAPITest.php</file>

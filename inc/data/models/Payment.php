@@ -31,6 +31,7 @@ class Payment {
     static function __build($id, $type, $amount, $currencyId, $currencyAmount) {
         $payment = new Payment($type, $amount, $currencyId, $currencyAmount);
         $payment->id = $id;
+        return $payment;
     }
 
     function __construct($type, $amount, $currencyId, $currencyAmount) {

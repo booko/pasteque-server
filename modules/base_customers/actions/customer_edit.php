@@ -22,8 +22,14 @@
 
 namespace BaseCustomers;
 
-$message = NULL;
-$error = NULL;
+$message = null;
+$error = null;
+$discounts = false;
+$modules = \Pasteque\get_loaded_modules(\Pasteque\get_user_id());
+if (in_array("customer_discountprofiles", $modules)) {
+    $discounts = true;
+}
+
 if (isset($_POST['id']) && isset($_POST['dispName'])) {
     $visible = isset($_POST['visible']) ? 1 : 0;
     if (!isset($_POST['number']) || $_POST['number'] == "") {
@@ -40,6 +46,10 @@ if (isset($_POST['id']) && isset($_POST['dispName'])) {
     $taxCatId = NULL;
     if (isset($_POST['custTaxId']) && $_POST['custTaxId'] != "") {
         $taxCatId = $_POST['custTaxId'];
+    }
+    $discountProfileId = null;
+    if ($discounts && $_POST['discountProfileId'] !== "") {
+        $discountProfileId = $_POST['discountProfileId'];
     }
     $currDebt = NULL;
     if (isset($_POST['currDebt']) && $_POST['currDebt'] != "") {
@@ -60,7 +70,7 @@ if (isset($_POST['id']) && isset($_POST['dispName'])) {
         $prepaid = $_POST['prepaid'];
     }
     $cust = \Pasteque\Customer::__build($_POST['id'], $number, $key,
-            $_POST['dispName'], $_POST['card'], $taxCatId,
+            $_POST['dispName'], $_POST['card'], $taxCatId, $discountProfileId,
             $prepaid, $maxDebt, $currDebt, $debtDate,
             $_POST['firstName'], $_POST['lastName'], $_POST['email'],
             $_POST['phone1'], $_POST['phone2'], $_POST['fax'], $_POST['addr1'],
@@ -84,9 +94,13 @@ if (isset($_POST['id']) && isset($_POST['dispName'])) {
     } else {
         $key = $_POST['key'];
     }
-    $taxCatId = NULL;
+    $taxCatId = null;
     if (isset($_POST['custTaxId']) && $_POST['custTaxId'] != "") {
         $taxCatId = $_POST['custTaxId'];
+    }
+    $discountProfileId = null;
+    if ($discounts && $_POST['discountProfileId'] !== "") {
+        $discountProfileId = $_POST['discountProfileId'];
     }
     $maxDebt = 0.0;
     if ($_POST['maxDebt'] !== "") {
@@ -97,21 +111,21 @@ if (isset($_POST['id']) && isset($_POST['dispName'])) {
         $prepaid = $_POST['prepaid'];
     }
     $cust = new \Pasteque\Customer($number, $key,
-            $_POST['dispName'], $_POST['card'], $taxCatId,
+            $_POST['dispName'], $_POST['card'], $taxCatId, $discountProfileId,
             $prepaid, $maxDebt, null, null,
             $_POST['firstName'], $_POST['lastName'], $_POST['email'],
             $_POST['phone1'], $_POST['phone2'], $_POST['fax'], $_POST['addr1'],
             $_POST['addr2'], $_POST['zipCode'], $_POST['city'],
             $_POST['region'], $_POST['country'], $_POST['note'], $visible);
     $id = \Pasteque\CustomersService::create($cust);
-    if ($id !== FALSE) {
+    if ($id !== false) {
         $message = \i18n("Customer saved. <a href=\"%s\">Go to the customer page</a>.", PLUGIN_NAME, \Pasteque\get_module_url_action(PLUGIN_NAME, 'customer_edit', array('id' => $id)));
     } else {
         $error = \i18n("Unable to save changes");
     }
 }
 
-$cust = NULL;
+$cust = null;
 $currDebt = "";
 $prepaid = 0;
 $str_debtDate = "";
@@ -128,7 +142,7 @@ if (isset($_GET['id'])) {
 
 <?php \Pasteque\tpl_msg_box($message, $error); ?>
 
-<?php if ($cust !== NULL) { ?>
+<?php if ($cust !== null) { ?>
 <p><a class="btn" href="<?php echo \Pasteque\get_report_url(PLUGIN_NAME, 'customers_diary', 'display'); ?>&id=<?php echo $cust->id; ?>"><?php \pi18n("Customer's diary", PLUGIN_NAME); ?></a></p>
 <?php } ?>
 
@@ -168,7 +182,8 @@ if (isset($_GET['id'])) {
 	<fieldset>
 	<legend><?php \pi18n("Miscellaneous", PLUGIN_NAME); ?></legend>
 	<?php \Pasteque\form_input("edit", "Customer", $cust, "note", "text"); ?>
-    <?php \Pasteque\form_input("edit", "Customer", $cust, "custTaxId", "pick", array("model" => "CustTaxCat", "nullable" => TRUE)); ?>
+    <?php \Pasteque\form_input("edit", "Customer", $cust, "custTaxId", "pick", array("model" => "CustTaxCat", "nullable" => true)); ?>
+    <?php if ($discounts) { \Pasteque\form_input("edit", "Customer", $cust, "discountProfileId", "pick", array("model" => "DiscountProfile", "nullable" => true)); } ?>
 	</fieldset>
 	<fieldset>
 	<legend><?php \pi18n("Personnal data", PLUGIN_NAME); ?></legend>

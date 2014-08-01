@@ -26,6 +26,8 @@ class CashRegistersAPI extends APIService {
         switch ($this->action) {
         case 'get':
             return isset($this->params['id']) || isset($this->params['label']);
+        case 'getAll':
+            return true;
         }
         return false;
     }
@@ -41,15 +43,16 @@ class CashRegistersAPI extends APIService {
             } else {
                 $ret = $srv->search(
                         array(array("label", "=", $this->params['label'])));
-                if (count($ret >= 1)) {
+                if (count($ret) >= 1) {
                     $this->succeed($ret[0]);
                 } else {
                     $this->succeed(null);
                 }
             }
             break;
+        case 'getAll':
+            $this->succeed($srv->getAll());
+            break;
         }
     }
 }
-
-?>

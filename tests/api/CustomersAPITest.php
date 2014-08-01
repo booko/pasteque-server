@@ -47,6 +47,8 @@ class CustomersAPITest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($expected->card, $read->card, "Card mismatch");
         $this->assertEquals($expected->custTaxId, $read->custTaxId,
                 "Tax cat mismatch");
+        $this->assertEquals($expected->discountProfileId,
+                $read->discountProfileId, "Discount profile id mismatch");
         $this->assertEquals($expected->prepaid, $read->prepaid,
                 "Prepaid mismatch");
         $this->assertEquals($expected->maxDebt, $read->maxDebt,
@@ -93,8 +95,8 @@ class CustomersAPITest extends \PHPUnit_Framework_TestCase {
     public function testGet() {
         $broker = new APIBroker(CustomersAPITest::API);
         $srv = new CustomersService();
-        $cust = new Customer(1, "Cust", "It's me", "card", null, 12.0, 10.0,
-                5.0, stdtimefstr("2012-01-01 00:00:00"), "It's", "me",
+        $cust = new Customer(1, "Cust", "It's me", "card", null, null, 12.0,
+                10.0, 5.0, stdtimefstr("2012-01-01 00:00:00"), "It's", "me",
                 "itsme@me.me", "012345", "23456", "11111", "Address1",
                 "Address2", "59000", "City", "Region", "France", "Note", true);
         $id = $srv->create($cust);

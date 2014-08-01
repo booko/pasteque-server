@@ -31,6 +31,20 @@ abstract class APIService {
         $this->params = $params;
     }
 
+    /** Check if a param is defined and not null */
+    protected function isParamSet($name) {
+        return (isset($this->params[$name]) && $this->params[$name] !== null);
+    }
+
+    /** Get param value. Return null if not defined. */
+    protected function getParam($name) {
+        if (isset($this->params[$name])) {
+            return $this->params[$name];
+        } else {
+            return null;
+        }
+    }
+
     /** Set the result to a reject (should be called in check()). */
     protected function reject($reason) {
         $this->result = APIResult::reject($reason);

@@ -5,12 +5,15 @@
 			<file>services/ResourcesServiceTest.php</file>
 		    <file>services/CategoriesServiceTest.php</file>
 			<file>services/CashesServiceTest.php</file>
+			<file>services/CashRegistersServiceTest.php</file>
 			<file>services/CustomersServiceTest.php</file>
+			<file>services/DiscountProfilesServiceTest.php</file>
 			<file>services/AttributesServiceTest.php</file>
 			<file>services/TariffAreasServiceTest.php</file>
 			<file>services/CurrenciesServiceTest.php</file>
 			<file>services/StocksServiceTest.php</file>
 			<file>services/TicketsServiceTest.php</file>
+			<file>services/CashMovementsServiceTest.php</file>
 			<file>clear.php</file>
 		</testsuite>
 	</testsuites>

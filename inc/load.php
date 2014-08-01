@@ -72,6 +72,7 @@ require_once(PT::$ABSPATH . "/inc/Menu.php"); // Menu requires login module
 
 // Load data
 require_once(PT::$ABSPATH . "/inc/data/models/Attribute.php");
+require_once(PT::$ABSPATH . "/inc/data/models/CashRegister.php");
 require_once(PT::$ABSPATH . "/inc/data/models/Cash.php");
 require_once(PT::$ABSPATH . "/inc/data/models/ZTicket.php");
 require_once(PT::$ABSPATH . "/inc/data/models/Category.php");
@@ -84,8 +85,11 @@ require_once(PT::$ABSPATH . "/inc/data/models/TariffArea.php");
 require_once(PT::$ABSPATH . "/inc/data/models/Tax.php");
 require_once(PT::$ABSPATH . "/inc/data/models/TaxAmount.php");
 require_once(PT::$ABSPATH . "/inc/data/models/TaxCat.php");
+require_once(PT::$ABSPATH . "/inc/data/models/SharedTicket.php");
 require_once(PT::$ABSPATH . "/inc/data/models/Ticket.php");
 require_once(PT::$ABSPATH . "/inc/data/models/TicketLine.php");
+require_once(PT::$ABSPATH . "/inc/data/models/CashMovement.php");
+require_once(PT::$ABSPATH . "/inc/data/models/DiscountProfile.php");
 require_once(PT::$ABSPATH . "/inc/data/models/Customer.php");
 require_once(PT::$ABSPATH . "/inc/data/models/CustTaxCat.php");
 require_once(PT::$ABSPATH . "/inc/data/models/User.php");
@@ -104,6 +108,8 @@ require_once(PT::$ABSPATH . "/inc/data/services/CompositionsService.php");
 require_once(PT::$ABSPATH . "/inc/data/services/TariffAreasService.php");
 require_once(PT::$ABSPATH . "/inc/data/services/TaxesService.php");
 require_once(PT::$ABSPATH . "/inc/data/services/TicketsService.php");
+require_once(PT::$ABSPATH . "/inc/data/services/CashMovementsService.php");
+require_once(PT::$ABSPATH . "/inc/data/services/DiscountProfilesService.php");
 require_once(PT::$ABSPATH . "/inc/data/services/CustomersService.php");
 require_once(PT::$ABSPATH . "/inc/data/services/CustTaxCatsService.php");
 require_once(PT::$ABSPATH . "/inc/data/services/UsersService.php");
@@ -112,6 +118,7 @@ require_once(PT::$ABSPATH . "/inc/data/services/LocationsService.php");
 require_once(PT::$ABSPATH . "/inc/data/services/StocksService.php");
 require_once(PT::$ABSPATH . "/inc/data/services/ResourcesService.php");
 require_once(PT::$ABSPATH . "/inc/data/services/CurrenciesService.php");
+require_once(PT::$ABSPATH . "/inc/data/services/CashRegistersService.php");
 require_once(PT::$ABSPATH . "/inc/Csv.php");
 require_once(PT::$ABSPATH . "/inc/catalog.php");
 

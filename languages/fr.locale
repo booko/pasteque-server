@@ -5,7 +5,7 @@
 "Thousands sep": ".",
 "Dec point": ",",
 
-"Version.Codename": "Datte",
+"Version.Codename": "Etrog",
 "Update": "Mise à jour",
 "Update notice": "Cliquez sur le bouton ci-dessous pour mettre à jour votre base de données",
 
@@ -75,10 +75,15 @@
 "User.name": "Nom",
 "User.role": "Rôle",
 
+"CashRegister.label": "Caisse",
+"CashRegister.location": "Entrepôt",
+
 "Session": "Session de caisse",
-"Session.host": "Caisse",
 "Session.openDate": "Date d'ouverture",
 "Session.closeDate": "Date de clôture",
+"Session.openCash": "Fond ouverture",
+"Session.closeCash": "Fond clôture",
+"Session.expectedCash": "Fond attendu",
 "Session.tickets": "Tickets",
 "Session.total": "Total HT",
 
@@ -96,6 +101,7 @@
 "Customer.debtDate": "Date",
 "Customer.note": "Note",
 "Customer.custTax": "Catégorie de taxe",
+"Customer.discountProfile": "Profil de remise",
 "Customer.firstName": "Prénom",
 "Customer.lastName": "Nom",
 "Customer.email": "Email",
@@ -108,6 +114,10 @@
 "Customer.city": "Ville",
 "Customer.region": "Département",
 "Customer.country": "Pays",
+
+"DiscountProfile": "Profil de remise",
+"DiscountProfile.label": "Désignation",
+"DiscountProfile.rate": "Taux",
 
 "CustTaxCat.label": "Désignation",
 "CustTaxCat.taxCat": "TVA",

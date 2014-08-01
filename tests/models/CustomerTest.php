@@ -33,15 +33,16 @@ class CustomerTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testConstructEmpty() {
-        $cust = new Customer(1, "Cust", "It's me", "card", 0, 12.0, 10.0, 5.0,
-                stdtimefstr("2012-01-01 00:00:00"), "It's", "me", "itsme@me.me",
-                "012345", "23456", "11111", "Address1", "Address2", "59000",
-                "City", "Region", "France", "Note", true);
+        $cust = new Customer(1, "Cust", "It's me", "card", 0, 1, 12.0, 10.0,
+                5.0, stdtimefstr("2012-01-01 00:00:00"), "It's", "me",
+                "itsme@me.me", "012345", "23456", "11111", "Address1",
+                "Address2", "59000", "City", "Region", "France", "Note", true);
         $this->assertEquals(1, $cust->number);
         $this->assertEquals("Cust", $cust->key);
         $this->assertEquals("It's me", $cust->dispName);
         $this->assertEquals("card", $cust->card);
         $this->assertEquals(0, $cust->custTaxId);
+        $this->assertEquals(1, $cust->discountProfileId);
         $this->assertEquals(12.0, $cust->prepaid);
         $this->assertEquals(10.0, $cust->maxDebt);
         $this->assertEquals(5.0, $cust->currDebt);

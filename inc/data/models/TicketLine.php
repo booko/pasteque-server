@@ -26,8 +26,10 @@ class TicketLine {
     public $productId;
     public $attrSetInstId;
     public $quantity;
+    /** Price without tax and befor applying discount */
     public $price;
     public $taxId;
+    public $discountRate;
     /** XML attribute field */
     public $attributes;
 
@@ -35,18 +37,20 @@ class TicketLine {
      * xml attributes. Only the id is then kept.
      */
     function __construct($line, $product, $attrSetInstId, $quantity, $price,
-            $tax) {
+            $tax, $discountRate = 0.0) {
         $this->dispOrder = $line;
         $this->productId = $product->id;
         $this->attrSetInstId = $attrSetInstId;
         $this->quantity = $quantity;
         $this->price = $price;
         $this->taxId = $tax->id;
+        $this->discountRate = $discountRate;
         $this->createAttributes($product, $tax);
     }
 
-    function getSubtotal() {
-        return $this->price * $this->quantity;
+    function getSubtotal($extDiscountRate) {
+        $fullDiscount = $this->discountRate + $extDiscountRate;
+        return $this->price * (1.0 - $fullDiscount) * $this->quantity;
     }
 
     /** Build xml attributes from line data. See TicketLineInfo constructors. */

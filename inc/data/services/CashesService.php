@@ -25,31 +25,37 @@ class CashesService extends AbstractService {
     protected static $dbTable = "CLOSEDCASH";
     protected static $dbIdField = "MONEY";
     protected static $fieldMapping = array(
-            "id" => "MONEY",
-            "host" => "HOST",
-            "sequence" => "HOSTSEQUENCE",
-            "openDate" => "DATESTART",
-            "closeDate" => "DATEEND"
+            "MONEY" => "id",
+            "CASHREGISTER_ID" => "cashRegisterId",
+            "HOSTSEQUENCE" => "sequence",
+            "DATESTART" => "openDate",
+            "DATEEND" => "closeDate",
+            "OPENCASH" => "openCash",
+            "CLOSECASH" => "closeCash",
+            "EXPECTEDCASH" => "expectedCash"
     );
 
-    protected function build($db_cash, $pdo = null) {
-        $cash = Cash::__build($db_cash['MONEY'], $db_cash['HOST'],
-                              $db_cash['HOSTSEQUENCE'],
-                              stdtimefstr($db_cash['DATESTART']),
-                              stdtimefstr($db_cash['DATEEND']));
-        if (isset($db_cash['TKTS'])) {
-            $cash->tickets = $db_cash['TKTS'];
+    protected function build($dbCash, $pdo = null) {
+        $db = DB::get();
+        $cash = Cash::__build($dbCash['MONEY'], $dbCash['CASHREGISTER_ID'],
+                $dbCash['HOSTSEQUENCE'],
+                $db->readDate($dbCash['DATESTART']),
+                $db->readDate($dbCash['DATEEND']),
+                $dbCash['OPENCASH'], $dbCash['CLOSECASH'],
+                $dbCash['EXPECTEDCASH']);
+        if (isset($dbCash['TKTS'])) {
+            $cash->tickets = $dbCash['TKTS'];
         }
-        if (isset($db_cash['TOTAL'])) {
-            $cash->total = $db_cash['TOTAL'];
+        if (isset($dbCash['TOTAL'])) {
+            $cash->total = $dbCash['TOTAL'];
         }
         return $cash;
     }
 
-    private function getLastSequence($host, $pdo) {
+    private function getLastSequence($cashRegisterId, $pdo) {
         $stmt = $pdo->prepare("SELECT max(HOSTSEQUENCE) FROM CLOSEDCASH WHERE "
-                              . "HOST = :host");
-        $stmt->execute(array(':host' => $host));
+                              . "CASHREGISTER_ID = :crId");
+        $stmt->execute(array(':crId' => $cashRegisterId));
         if ($data = $stmt->fetch()) {
             return $data[0];
         } else {
@@ -60,9 +66,11 @@ class CashesService extends AbstractService {
     public function getAll() {
         $cashes = array();
         $pdo = PDOBuilder::getPDO();
-        $sql = "SELECT CLOSEDCASH.MONEY, CLOSEDCASH.HOST, "
+        $sql = "SELECT CLOSEDCASH.MONEY, CLOSEDCASH.CASHREGISTER_ID, "
                 . "CLOSEDCASH.HOSTSEQUENCE, CLOSEDCASH.DATESTART, "
                 . "CLOSEDCASH.DATEEND, "
+                . "CLOSEDCASH.OPENCASH, CLOSEDCASH.CLOSECASH, "
+                . "CLOSEDCASH.EXPECTEDCASH, "
                 . "COUNT(DISTINCT(RECEIPTS.ID)) as TKTS, "
                 . "SUM(PAYMENTS.TOTAL) AS TOTAL "
                 . "FROM CLOSEDCASH "
@@ -91,11 +99,12 @@ class CashesService extends AbstractService {
         return $cashes;
     }
 
-    public function getHost($host) {
+    public function getCashRegister($cashRegisterId) {
         $pdo = PDOBuilder::getPDO();
-        $stmt = $pdo->prepare("SELECT * FROM CLOSEDCASH WHERE HOST = :host "
-                              . "ORDER BY HOSTSEQUENCE DESC");
-        if ($stmt->execute(array(':host' => $host))) {
+        $stmt = $pdo->prepare("SELECT * FROM CLOSEDCASH "
+                . "WHERE CASHREGISTER_ID = :crId "
+                . "ORDER BY HOSTSEQUENCE DESC");
+        if ($stmt->execute(array(':crId' => $cashRegisterId))) {
             if ($row = $stmt->fetch()) {
                 return $this->build($row, $pdo);
             }
@@ -106,19 +115,33 @@ class CashesService extends AbstractService {
     /** Update open and end date for a cash. */
     public function update($cash) {
         $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
         $pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
         $startParam = ($cash->isOpened()) ? ':start' : 'NULL';
         $endParam = ($cash->isClosed()) ? ':end' : 'NULL';
+        $openCashParam = $cash->openCash !== null ? ':openCash' : 'NULL';
+        $closeCashParam = $cash->closeCash !== null ? ':closeCash' : 'NULL';
+        $exptCashParam = $cash->expectedCash !== null ? ':exptCash' : 'NULL';
         $stmt = $pdo->prepare("UPDATE CLOSEDCASH SET DATESTART = $startParam, "
-                              . "DATEEND = $endParam WHERE MONEY = :id");
+                . "DATEEND = $endParam, "
+                . "OPENCASH = $openCashParam, CLOSECASH = $closeCashParam, "
+                . "EXPECTEDCASH = $exptCashParam "
+                . "WHERE MONEY = :id");
         $stmt->bindParam(':id', $cash->id);
         if ($cash->isOpened()) {
-            $open = stdstrftime($cash->openDate);
-            $stmt->bindParam(':start', $open, \PDO::PARAM_INT);
+            $stmt->bindParam(':start', $db->dateVal($cash->openDate));
         }
         if ($cash->isClosed()) {
-            $close = stdstrftime($cash->closeDate);
-            $stmt->bindParam(':end', $close, \PDO::PARAM_INT);
+            $stmt->bindParam(':end', $db->dateVal($cash->closeDate));
+        }
+        if ($cash->openCash !== null) {
+            $stmt->bindParam(':openCash', $cash->openCash);
+        }
+        if ($cash->closeCash !== null) {
+            $stmt->bindParam(':closeCash', $cash->closeCash);
+        }
+        if ($cash->expectedCash !== null) {
+            $stmt->bindParam(':exptCash', $cash->expectedCash);
         }
         return $stmt->execute();
     }
@@ -126,14 +149,14 @@ class CashesService extends AbstractService {
     /** Create a new cash for the given host and return it.
      * Returns null in case of error.
      */
-    public function add($host) {
+    public function add($cashRegisterId) {
         $pdo = PDOBuilder::getPDO();
         $id = md5(time() . rand());
-        $stmt = $pdo->prepare("INSERT INTO CLOSEDCASH (MONEY, HOST, "
-                              . "HOSTSEQUENCE) VALUES (:id, :host, :sequence)");
-        $sequence = CashesService::getLastSequence($host, $pdo) + 1;
+        $stmt = $pdo->prepare("INSERT INTO CLOSEDCASH (MONEY, CASHREGISTER_ID, "
+                              . "HOSTSEQUENCE) VALUES (:id, :crId, :sequence)");
+        $sequence = CashesService::getLastSequence($cashRegisterId, $pdo) + 1;
         $stmt->bindParam(':id', $id);
-        $stmt->bindParam(':host', $host);
+        $stmt->bindParam(':crId', $cashRegisterId);
         $stmt->bindParam(':sequence', $sequence);
         if ($stmt->execute() !== false) {
             return $this->get($id);
@@ -144,6 +167,18 @@ class CashesService extends AbstractService {
 
     public function getZTicket($cashId) {
         $pdo = PDOBuilder::getPDO();
+        // Get open/close cash fund
+        $openCash = null;
+        $closeCash = null;
+        $cashSql = "SELECT OPENCASH, CLOSECASH FROM CLOSEDCASH "
+                . "WHERE MONEY = :id";
+        $cashStmt = $pdo->prepare($cashSql);
+        $cashStmt->bindParam(":id", $cashId);
+        $cashStmt->execute();
+        if ($row = $cashStmt->fetch()) {
+            $openCash = $row['OPENCASH'];
+            $closeCash = $row['CLOSECASH'];
+        }
         // Get tickets, cs and customers
         $ticketCount = 0;
         $sales = 0;
@@ -221,9 +256,8 @@ class CashesService extends AbstractService {
         while ($row = $catStmt->fetch()) {
             $catSales[] = array("id" => $row['CATID'], "amount" => $row['SUM']);
         }
-        return new ZTicket($cashId, $ticketCount, $sales, $paymentCount,
-                $payments, $taxes, $catSales, $custCount);
+        return new ZTicket($cashId, $openCash, $closeCash, $ticketCount,
+                $sales, $paymentCount, $payments, $taxes, $catSales,
+                $custCount);
     }
 }
-
-?>

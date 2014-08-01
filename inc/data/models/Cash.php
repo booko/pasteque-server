@@ -20,31 +20,41 @@
 
 namespace Pasteque;
 
+/** Cash session */
 class Cash {
 
     public $id;
-    public $host;
+    public $cashRegisterId;
     public $sequence;
     /** Open date as timestamp */
     public $openDate;
     /** Close date as timestamp, may be null */
     public $closeDate;
+    public $openCash;
+    public $closeCash;
+    public $expectedCash;
     /** Optionnal tickets count */
     public $tickets;
     /** Optionnal total */
     public $total;
 
-    static function __build($id, $host, $sequence, $openDate, $closeDate) {
-        $cash = new Cash($host, $sequence, $openDate, $closeDate);
+    static function __build($id, $cashRegisterId, $sequence, $openDate,
+            $closeDate, $openCash, $closeCash, $expectedCash) {
+        $cash = new Cash($cashRegisterId, $sequence, $openDate, $closeDate,
+                $openCash, $closeCash, $expectedCash);
         $cash->id = $id;
         return $cash;
     }
 
-    function __construct($host, $sequence, $openDate, $closeDate) {
-        $this->host = $host;
+    function __construct($cashRegisterId, $sequence, $openDate, $closeDate,
+            $openCash, $closeCash, $expectedCash) {
+        $this->cashRegisterId = $cashRegisterId;
         $this->sequence = $sequence;
         $this->openDate = $openDate;
         $this->closeDate = $closeDate;
+        $this->openCash = $openCash;
+        $this->closeCash = $closeCash;
+        $this->expectedCash = $expectedCash;
     }
 
     function isClosed() {
@@ -55,5 +65,3 @@ class Cash {
         return $this->openDate != null;
     }
 }
-
-?>

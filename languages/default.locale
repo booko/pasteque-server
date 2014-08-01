@@ -5,7 +5,7 @@
 "Thousands sep": ",",
 "Dec point": ".",
 
-"Version.Codename": "Date",
+"Version.Codename": "Etrog",
 "Update": "Update",
 "Update notice": "Click the button below to update your database",
 
@@ -75,10 +75,15 @@
 "User.name": "Name",
 "User.role": "Role",
 
+"CashRegister.label": "Cash register",
+"CashRegister.location": "Location",
+
 "Session": "Cash session",
-"Session.host": "Host",
 "Session.openDate": "Open date",
 "Session.closeDate": "Close date",
+"Session.openCash": "Open cash",
+"Session.closeCash": "Close cash",
+"Session.expectedCash": "Expected cash",
 "Session.tickets": "Tickets",
 "Session.total": "Total w/o VAT",
 
@@ -96,6 +101,7 @@
 "Customer.debtDate": "Debt date",
 "Customer.note": "Note",
 "Customer.custTax": "Tax category",
+"Customer.discountProfile": "Discount profile",
 "Customer.firstName": "First name",
 "Customer.lastName": "Last name",
 "Customer.email": "Email",
@@ -108,6 +114,10 @@
 "Customer.city": "City",
 "Customer.region": "Region",
 "Customer.country": "Country",
+
+"DiscountProfile": "Discount profile",
+"DiscountProfile.label": "Name",
+"DiscountProfile.rate": "Rate",
 
 "CustTaxCat.label": "Name",
 "CustTaxCat.taxCat": "Tax",

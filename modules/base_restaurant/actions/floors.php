@@ -111,7 +111,7 @@ $floors = \Pasteque\PlacesService::getAllFloors();
     <legend><?php \pi18n("Place", PLUGIN_NAME); ?></legend>
     <div class="row">
         <label for="placeLabel"><?php \pi18n('Place.label'); ?></label>
-        <input type="text" id="placeLabel" onchange="javascript:updatePlaceLabel();"/>
+        <input type="text" id="placeLabel" onchange="javascript:updatePlaceLabel();" onkeyup="javascript:updatePlaceLabel();" />
     </div>
     <div class="row actions">
         <?php \Pasteque\tpl_js_btn("btn", "newPlace()", \i18n("Add place", PLUGIN_NAME)); ?>

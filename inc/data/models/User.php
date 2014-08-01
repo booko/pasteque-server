@@ -24,6 +24,10 @@ class User {
 
     public $id;
     public $name;
+    /** User password. If set the password is hashed, prefixed with the
+     * hashing method, i.e. sha1:<hash>.
+     * There should be no salt for distributed authentication.
+     */
     public $password;
     public $roleId;
     public $visible;
@@ -47,5 +51,3 @@ class User {
         $this->hasImage = $hasImage;
     }
 }
-
-?>

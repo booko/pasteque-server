@@ -171,6 +171,14 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
         case 'AttributeSet':
             $data = AttributesService::getAll();
             break;
+        case 'Location':
+            $locSrv = new LocationsService();
+            $data = $locSrv->getAll();
+            break;
+        case 'DiscountProfile':
+            $profSrv = new DiscountProfilesService();
+            $data = $profSrv->getAll();
+            break;
         }
         echo '<select id="' . esc_attr($form_id . '-' . $field)
                 . '" name="' . esc_attr($name) . '">';

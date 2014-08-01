@@ -36,6 +36,7 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
     private $user;
     private $currency;
     private $location;
+    private $discountProfile;
 
     protected function setUp() {
         // Attribute set
@@ -87,17 +88,30 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $area->addPrice($this->prd->id, 0.8);
         $area->id = $srvArea->create($area);
         $this->area = $area;
+        // Discount profile
+        $srvProfile = new DiscountProfilesService();
+        $profile = new DiscountProfile("Discount profile", 1.0);
+        $profile->id = $srvProfile->create($profile);
+        $this->discountProfile = $profile;
         // Customer
         $srvCust = new CustomersService();
-        $cust = new Customer(1, "Cust", "It's me", "card", null, 50.0, 10.0,
-                5.0, stdtimefstr("2012-01-01 00:00:00"), "It's", "me",
+        $cust = new Customer(1, "Cust", "It's me", "card", null, null, 50.0,
+                10.0, 5.0, stdtimefstr("2012-01-01 00:00:00"), "It's", "me",
                 "itsme@me.me", "012345", "23456", "11111", "Address1",
                 "Address2", "59000", "City", "Region", "France", "Note", true);
         $cust->id = $srvCust->create($cust);
         $this->customer = $cust;
+        // Location
+        $locSrv = new LocationsService();
+        $loc = new Location("Location");
+        $loc->id = $locSrv->create($loc);
+        $this->location = $loc;
         // Cash
+        $srvCashReg = new CashRegistersService();
+        $cashReg = new CashRegister("CashReg", $loc->id, 1);
+        $cashReg->id = $srvCashReg->create($cashReg);
         $srvCash = new CashesService();
-        $cash = $srvCash->add("Host");
+        $cash = $srvCash->add($cashReg->id);
         $cash->openDate = stdtimefstr("2000-02-02 02:02:02");
         $srvCash->update($cash);
         $this->cash = $cash;
@@ -111,11 +125,6 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $srvCurr = new CurrenciesService();
         $curr->id = $srvCurr->create($curr);
         $this->currency = $curr;
-        // Location
-        $locSrv = new LocationsService();
-        $loc = new Location("Location");
-        $loc->id = $locSrv->create($loc);
-        $this->location = $loc;
     }
 
 
@@ -128,6 +137,7 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
                 || $pdo->exec("DELETE FROM TICKETS") === false
                 || $pdo->exec("DELETE FROM RECEIPTS") === false
                 || $pdo->exec("DELETE FROM CLOSEDCASH") === false
+                || $pdo->exec("DELETE FROM CASHREGISTERS") === false
                 || $pdo->exec("DELETE FROM TARIFFAREAS_PROD") === false
                 || $pdo->exec("DELETE FROM TARIFFAREAS") === false
                 || $pdo->exec("DELETE FROM STOCKDIARY") === false
@@ -148,10 +158,15 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
                 || $pdo->exec("DELETE FROM PEOPLE") === false
                 //|| $pdo->exec("DELETE FROM ROLES") === false
                 || $pdo->exec("DELETE FROM CURRENCIES") === false
-                || $pdo->exec("DELETE FROM CUSTOMERS") === false) {
+                || $pdo->exec("DELETE FROM CUSTOMERS") === false
+                || $pdo->exec("DELETE FROM SHAREDTICKETS") === false
+                || $pdo->exec("DELETE FROM DISCOUNTPROFILES") === false) {
             echo("[ERROR] Unable to restore db\n");
         }
     }
+
+    // Checking functions
+    /////////////////////
 
     private function checkSaleEquality($tktId, $ref, $row) {
         $this->assertEquals($tktId, $row['TICKET'],
@@ -168,6 +183,8 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($ref->price, $row['PRICE'], "Price mismatch");
         $this->assertEquals($ref->taxId, $row['TAXID'],
                 "Tax id mismatch in sale line");
+        $this->assertEquals($ref->discountRate, $row['DISCOUNTRATE'],
+                "Discount rate mismatch");
     }
 
     private function checkTaxEquality($tktId, $taxId, $base, $amount, $row) {
@@ -192,6 +209,34 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
                 "Payment currency id mismatch");
         $this->assertEquals($payment->currencyAmount, $row['TOTALCURRENCY']);
     }
+
+    private function checkTicketEquality($ref, $read) {
+        $this->assertEquals($ref->id, $read->id, "Id mismatch");
+        $this->assertEquals($ref->ticketId, $read->ticketId,
+                "Ticket id mismatch");
+        $this->assertEquals($ref->cashId, $read->cashId, "Cash id mismatch");
+        $this->assertEquals($ref->type, $read->type, "Type mismatch");
+        $this->assertEquals($ref->userId, $read->userId, "User id mismatch");
+        $this->assertEquals($ref->date, $read->date, "Date mismatch");
+        $this->assertEquals($ref->customerId, $read->customerId,
+                "Customer id mismatch");
+        $this->assertEquals($ref->tariffAreaId, $read->tariffAreaId,
+                "Tariff area id mismatch");
+        $this->assertEquals($ref->discountRate, $read->discountRate,
+                "Discount rate mismatch");
+        $this->assertEquals($ref->discountProfileId, $read->discountProfileId,
+                "Discount profile id mismatch");
+        $this->assertEquals(count($ref->lines), count($read->lines),
+                "Line count mismatch");
+        $this->assertEquals(count($ref->payments), count($read->payments),
+                "Payment count mismatch");
+        // Check lines
+        // Check payments
+        // TODO add content check
+    }
+
+    // Create ticket tests
+    //////////////////////
 
     public function testCreateAttrSetInst() {
         $attrSetInst = new AttributeSetInstance($this->attrSet->id, "Value");
@@ -261,6 +306,10 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertNull($row['CUSTOMER'], "Customer id is not null");
         $this->assertNull($row['CUSTCOUNT'], "Customer count is not null");
         $this->assertNull($row['TARIFFAREA'], "Tariff area id is not null");
+        $this->assertNull($row['DISCOUNTPROFILE_ID'],
+                "Discount profile id is not null");
+        $this->assertEquals(0.0, $row['DISCOUNTRATE'],
+                "Discount rate mismatch");
         $stmtPmt = $pdo->prepare("SELECT * FROM PAYMENTS");
         $this->assertNotEquals($stmtPmt->execute(), false,
                 "Payment query failed");
@@ -337,6 +386,29 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertFalse($row, "Too much tickets found");
     }
 
+    public function testSaveDiscount() {
+        $date = stdtimefstr("2013-01-01 00:00:00");
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
+                $date, array(), array(),
+                $this->cash->id, null, null, null, 0.5,
+                $this->discountProfile->id);
+        $id = TicketsService::save($ticket, $this->location->id);
+        $this->assertNotEquals(false, $id, "Ticket save failed");
+        $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
+        $stmtTkt = $pdo->prepare("SELECT * FROM TICKETS");
+        $this->assertNotEquals($stmtTkt->execute(), false,
+                "Ticket query failed");
+        $row = $stmtTkt->fetch();
+        $this->assertEquals(0.5, $row['DISCOUNTRATE'],
+                "Inconsistent customer count");
+        $this->assertEquals($this->discountProfile->id,
+                $row['DISCOUNTPROFILE_ID'],
+                "Discount profile id mismatch");
+        $row = $stmtTkt->fetch();
+        $this->assertFalse($row, "Too much tickets found");
+    }
+
     /** @depends testSaveEmpty */
     public function testSaveLine() {
         $date = stdtimefstr("2013-01-01 00:00:00");
@@ -382,6 +454,142 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(-1, $level->qty);
     }
 
+    /** @depends testSaveLine */
+    public function testSaveTktDiscountLine() {
+        $date = stdtimefstr("2013-01-01 00:00:00");
+        $line = new TicketLine(1, $this->prd, null, 1, 12, $this->tax);
+        $payment = new Payment("cash", 12, $this->currency->id, 14);
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
+                $date, array($line), array($payment),
+                $this->cash->id, null, 3, null, 0.5,
+                $this->discountProfile->id);
+        $id = TicketsService::save($ticket, $this->location->id);
+        $this->assertNotEquals(false, $id, "Ticket save failed");
+        $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
+        // Check sale lines
+        $stmtLines = $pdo->prepare("SELECT * FROM TICKETLINES");
+        $this->assertNotEquals($stmtLines->execute(), false,
+                "Ticket query failed");
+        $row = $stmtLines->fetch();
+        $this->assertNotEquals(false, $row, "No ticket line found");
+        $this->checkSaleEquality($id, $line, $row);
+        $row = $stmtLines->fetch();
+        $this->assertFalse($row, "Too much sale lines found");
+        // Check tax lines
+        $stmtTax = $pdo->prepare("SELECT * FROM TAXLINES");
+        $this->assertNotEquals($stmtTax->execute(), false,
+                "Tax lines query failed");
+        $row = $stmtTax->fetch();
+        $this->assertNotEquals(false, $row, "No tax line found");
+        $this->checkTaxEquality($id, $this->tax->id, 6, 0.6, $row);
+        $row = $stmtTax->fetch();
+        $this->assertFalse($row, "Too much tax lines found");
+        // Check payment lines
+        $stmtPmt = $pdo->prepare("SELECT * FROM PAYMENTS");
+        $this->assertNotEquals($stmtPmt->execute(), false,
+                "Payment lines query failed");
+        $row = $stmtPmt->fetch();
+        $this->assertNotEquals(false, $row, "No payment line found");
+        $this->checkPaymentEquality($id, $payment, $row);
+        $row = $stmtPmt->fetch();
+        $this->assertFalse($row, "Too much payment lines found");
+        // Check stock
+        $level = StocksService::getLevel($this->prd->id, $this->location->id,
+                null);
+        $this->assertEquals(-1, $level->qty);
+    }
+
+    /** @depends testSaveLine */
+    public function testSaveLineDiscountLine() {
+        $date = stdtimefstr("2013-01-01 00:00:00");
+        $line = new TicketLine(1, $this->prd, null, 1, 12, $this->tax, 0.5);
+        $payment = new Payment("cash", 12, $this->currency->id, 14);
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
+                $date, array($line), array($payment),
+                $this->cash->id);
+        $id = TicketsService::save($ticket, $this->location->id);
+        $this->assertNotEquals(false, $id, "Ticket save failed");
+        $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
+        // Check sale lines
+        $stmtLines = $pdo->prepare("SELECT * FROM TICKETLINES");
+        $this->assertNotEquals($stmtLines->execute(), false,
+                "Ticket query failed");
+        $row = $stmtLines->fetch();
+        $this->assertNotEquals(false, $row, "No ticket line found");
+        $this->checkSaleEquality($id, $line, $row);
+        $row = $stmtLines->fetch();
+        $this->assertFalse($row, "Too much sale lines found");
+        // Check tax lines
+        $stmtTax = $pdo->prepare("SELECT * FROM TAXLINES");
+        $this->assertNotEquals($stmtTax->execute(), false,
+                "Tax lines query failed");
+        $row = $stmtTax->fetch();
+        $this->assertNotEquals(false, $row, "No tax line found");
+        $this->checkTaxEquality($id, $this->tax->id, 6, 0.6, $row);
+        $row = $stmtTax->fetch();
+        $this->assertFalse($row, "Too much tax lines found");
+        // Check payment lines
+        $stmtPmt = $pdo->prepare("SELECT * FROM PAYMENTS");
+        $this->assertNotEquals($stmtPmt->execute(), false,
+                "Payment lines query failed");
+        $row = $stmtPmt->fetch();
+        $this->assertNotEquals(false, $row, "No payment line found");
+        $this->checkPaymentEquality($id, $payment, $row);
+        $row = $stmtPmt->fetch();
+        $this->assertFalse($row, "Too much payment lines found");
+        // Check stock
+        $level = StocksService::getLevel($this->prd->id, $this->location->id,
+                null);
+        $this->assertEquals(-1, $level->qty);
+    }
+
+    /** @depends testSaveLine */
+    public function testSaveBothDiscountLine() {
+        $date = stdtimefstr("2013-01-01 00:00:00");
+        $line = new TicketLine(1, $this->prd, null, 1, 12, $this->tax, 0.25);
+        $payment = new Payment("cash", 12, $this->currency->id, 14);
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
+                $date, array($line), array($payment),
+                $this->cash->id, null, null, null, 0.25, null);
+        $id = TicketsService::save($ticket, $this->location->id);
+        $this->assertNotEquals(false, $id, "Ticket save failed");
+        $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
+        // Check sale lines
+        $stmtLines = $pdo->prepare("SELECT * FROM TICKETLINES");
+        $this->assertNotEquals($stmtLines->execute(), false,
+                "Ticket query failed");
+        $row = $stmtLines->fetch();
+        $this->assertNotEquals(false, $row, "No ticket line found");
+        $this->checkSaleEquality($id, $line, $row);
+        $row = $stmtLines->fetch();
+        $this->assertFalse($row, "Too much sale lines found");
+        // Check tax lines
+        $stmtTax = $pdo->prepare("SELECT * FROM TAXLINES");
+        $this->assertNotEquals($stmtTax->execute(), false,
+                "Tax lines query failed");
+        $row = $stmtTax->fetch();
+        $this->assertNotEquals(false, $row, "No tax line found");
+        $this->checkTaxEquality($id, $this->tax->id, 6, 0.6, $row);
+        $row = $stmtTax->fetch();
+        $this->assertFalse($row, "Too much tax lines found");
+        // Check payment lines
+        $stmtPmt = $pdo->prepare("SELECT * FROM PAYMENTS");
+        $this->assertNotEquals($stmtPmt->execute(), false,
+                "Payment lines query failed");
+        $row = $stmtPmt->fetch();
+        $this->assertNotEquals(false, $row, "No payment line found");
+        $this->checkPaymentEquality($id, $payment, $row);
+        $row = $stmtPmt->fetch();
+        $this->assertFalse($row, "Too much payment lines found");
+        // Check stock
+        $level = StocksService::getLevel($this->prd->id, $this->location->id,
+                null);
+        $this->assertEquals(-1, $level->qty);
+    }
+
     public function testSaveRefill() {
         $date = stdtimefstr("2013-01-01 00:00:00");
         $line = new TicketLine(1, $this->prdRefill, null, 1, 10, $this->tax);
@@ -389,6 +597,22 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
                 $date, array($line), array($payment),
                 $this->cash->id,  $this->customer->id);
+        $id = TicketsService::save($ticket, $this->location->id);
+        $this->assertNotEquals(false, $id, "Creation failed");
+        $custSrv = new CustomersService();
+        $cust = $custSrv->get($this->customer->id);
+        $this->assertEquals(60, $cust->prepaid, "Prepaid amount mismatch");
+    }
+
+    /** @depends testSaveRefill */
+    public function testSaveDiscountRefill() {
+        $date = stdtimefstr("2013-01-01 00:00:00");
+        $line = new TicketLine(1, $this->prdRefill, null, 1, 10, $this->tax,
+                0.5);
+        $payment = new Payment("cash", 12, $this->currency->id, 14);
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
+                $date, array($line), array($payment),
+                $this->cash->id,  $this->customer->id, null, null, 0.2, null);
         $id = TicketsService::save($ticket, $this->location->id);
         $this->assertNotEquals(false, $id, "Creation failed");
         $custSrv = new CustomersService();
@@ -408,6 +632,20 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $custSrv = new CustomersService();
         $cust = $custSrv->get($this->customer->id);
         $this->assertEquals(38, $cust->prepaid, "Prepaid amount mismatch");
+    }
+
+    function testSaveDebt() {
+        $date = stdtimefstr("2013-01-01 00:00:00");
+        $line = new TicketLine(1, $this->prd, null, 1, 10, $this->tax);
+        $payment = new Payment("debt", 3, $this->currency->id, 3);
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
+                $date, array($line), array($payment),
+                $this->cash->id,  $this->customer->id);
+        $id = TicketsService::save($ticket, $this->location->id);
+        $this->assertNotEquals(false, $id, "Creation failed");
+        $custSrv = new CustomersService();
+        $cust = $custSrv->get($this->customer->id);
+        $this->assertEquals(8, $cust->currDebt, "Debt amount mismatch");
     }
 
     /** @depends testSaveLine
@@ -545,4 +783,245 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(-2, $level->qty);
         $this->markTestIncomplete("Check stock level with attribute");
     }
+
+    // Read ticket tests
+    ////////////////////
+
+    /** @depends testSaveLine */
+    public function testGet() {
+        $date = stdtimefstr("2013-01-01 00:00:00");
+        $line = new TicketLine(1, $this->prd, null, 1, 12, $this->tax);
+        $payment = new Payment("cash", 12, $this->currency->id, 14);
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
+                $date, array($line), array($payment),
+                $this->cash->id, null, 3);
+        $ticket->id = TicketsService::save($ticket, $this->location->id);
+        $read = TicketsService::get($ticket->id);
+        $this->assertNotNull($read, "Nothing found");
+        $this->checkTicketEquality($ticket, $read);
+    }
+
+    /** @depends testGet */
+    public function testGetOpen() {
+        $date = stdtimefstr("2013-01-01 00:00:00");
+        $line = new TicketLine(1, $this->prd, null, 1, 12, $this->tax);
+        $payment = new Payment("cash", 12, $this->currency->id, 14);
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
+                $date, array($line), array($payment),
+                $this->cash->id, null, 3);
+        $ticket->id = TicketsService::save($ticket, $this->location->id);
+        $tickets = TicketsService::getOpen();
+        $this->assertNotEquals(false, $tickets, "Get open failed");
+        $this->assertTrue(is_array($tickets), "Tickets is not an array");
+        $this->assertEquals(1, count($tickets), "Tickets size mismatch");
+        $toCheck = array($ticket);
+        $count = 0;
+        foreach ($tickets as $tkt) {
+            $ref = null;
+            $count++;
+            if ($tkt->id == $ticket->id) {
+                $ref = $ticket;
+            }
+            $this->assertNotNull($ref, "Unknown ticket");
+            $this->checkTicketEquality($ref, $tkt);
+            foreach ($toCheck as $i => $t) {
+                if ($t->id == $ref->id) {
+                    array_splice($toCheck, $i, 1);
+                    break;
+                }
+            }
+        }
+        $this->assertEquals(0, count($toCheck), "Duplicated tickets");
+    }
+
+    // Delete ticket tests
+    //////////////////////
+
+    /** @depends testGet */
+    public function testDelete() {
+        $date = stdtimefstr("2013-01-01 00:00:00");
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
+                $date, array(), array(),
+                $this->cash->id);
+        $id = TicketsService::save($ticket, $this->location->id);
+        $this->assertTrue(TicketsService::delete($id), "Delete failed");
+        $this->assertNull(TicketsService::get($id),
+                "Ticket is still there after deletion");
+    }
+
+    /** @depends testGet
+     * @depends testSavePrepaid
+     */
+    public function testDeletePrepaid() {
+        $date = stdtimefstr("2013-01-01 00:00:00");
+        $line = new TicketLine(1, $this->prd, null, 1, 10, $this->tax);
+        $payment = new Payment("prepaid", 12, $this->currency->id, 14);
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
+                $date, array($line), array($payment),
+                $this->cash->id,  $this->customer->id);
+        $id = TicketsService::save($ticket, $this->location->id);
+        $this->assertTrue(TicketsService::delete($id), "Delete failed");
+        $this->assertNull(TicketsService::get($id),
+                "Ticket is still there after deletion");
+        $custSrv = new CustomersService();
+        $cust = $custSrv->get($this->customer->id);
+        $this->assertEquals($this->customer->prepaid, $cust->prepaid,
+                "Prepaid payment is not cleared after ticket is deleted");
+    }
+
+    /** @depends testGet
+     * @depends testSaveRefill
+     */
+    public function testDeleteRefill() {
+        $date = stdtimefstr("2013-01-01 00:00:00");
+        $line = new TicketLine(1, $this->prdRefill, null, 1, 10, $this->tax);
+        $payment = new Payment("cash", 12, $this->currency->id, 14);
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
+                $date, array($line), array($payment),
+                $this->cash->id,  $this->customer->id);
+        $id = TicketsService::save($ticket, $this->location->id);
+        $this->assertTrue(TicketsService::delete($id), "Delete failed");
+        $this->assertNull(TicketsService::get($id),
+                "Ticket is still there after deletion");
+        $custSrv = new CustomersService();
+        $cust = $custSrv->get($this->customer->id);
+        $this->assertEquals($this->customer->prepaid, $cust->prepaid,
+                "Prepaid refill is not cleared after ticket is deleted");
+    }
+
+    /** @depends testGet */
+    public function testDeleteClosed() {
+        $date = stdtimefstr("2013-01-01 00:00:00");
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
+                $date, array(), array(),
+                $this->cash->id);
+        $id = TicketsService::save($ticket, $this->location->id);
+        $this->cash->closeDate = stdtimefstr("2013-01-01 12:00:00");
+        $cashSrv = new CashesService();
+        $cashSrv->update($this->cash);
+        $this->assertFalse(TicketsService::delete($id),
+                "Closed ticket should not be deleted");
+        $this->assertNotNull(TicketsService::get($id),
+                "Ticket is not there anymore");
+    }
+
+    /** @depends testGet
+     * @depends testSaveDebt
+     */
+    public function testDeleteDebt() {
+        $currDebt = $this->customer->currDebt;
+        $date = stdtimefstr("2013-01-01 00:00:00");
+        $line = new TicketLine(1, $this->prd, null, 1, 10, $this->tax);
+        $payment = new Payment("debt", 3, $this->currency->id, 3);
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
+                $date, array($line), array($payment),
+                $this->cash->id,  $this->customer->id);
+        $id = TicketsService::save($ticket, $this->location->id);
+        $this->assertTrue(TicketsService::delete($id), "Delete failed");
+        $custSrv = new CustomersService();
+        $cust = $custSrv->get($this->customer->id);
+        $this->assertEquals($currDebt, $cust->currDebt,
+                "Debt not cleared after ticket is deleted");
+    }
+
+    // Shared ticket tests
+    //////////////////////
+
+    private function checkSharedTktEquality($ref, $read) {
+        $this->assertEquals($ref->id, $read->id, "Id mismatch");
+        $this->assertEquals($ref->label, $read->label, "Label mismatch");
+        $this->assertEquals($ref->data, $read->data, "Data mismatch");
+    }
+
+    public function testCreateSharedTicket() {
+        $tkt = SharedTicket::__build("1", "Label", 0x87c9bc);
+        $this->assertTrue(TicketsService::createSharedTicket($tkt),
+                "Creation failed");
+        $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
+        $stmt = $pdo->prepare("SELECT * FROM SHAREDTICKETS");
+        $this->assertNotEquals(false, $stmt->execute());
+        $row = $stmt->fetch();
+        $this->assertNotEquals(false, $row, "Nothing found");
+        $this->assertEquals($tkt->id, $row['ID'], "Id mismatch");
+        $this->assertEquals($tkt->label, $row['NAME'], "Label mismatch");
+        $this->assertEquals($tkt->data, $db->readBin($row['CONTENT']),
+                "Data mismatch");
+    }
+
+    /** @depends testCreateSharedTicket */
+    public function testGetSharedTicket() {
+        $tkt = SharedTicket::__build("1", "Label", 0x87c9bc);
+        $this->assertTrue(TicketsService::createSharedTicket($tkt),
+                "Creation failed");
+        $read = TicketsService::getSharedTicket($tkt->id);
+        $this->assertNotNull($read, "Nothing found");
+        $this->checkSharedTktEquality($tkt, $read);
+    }
+
+    public function testGetInexistentSharedTicket() {
+        $this->assertNull(TicketsService::getSharedTicket("junk"),
+                "Junk id returned something");
+    }
+
+    /** @depends testCreateSharedTicket */
+    public function testGetAllSharedTickets() {
+        $tkt = SharedTicket::__build("1", "Label", 0x87c9bc);
+        TicketsService::createSharedTicket($tkt);
+        $tkt2 = SharedTicket::__build("2", "Label2", 0xc2d9fc);
+        TicketsService::createSharedTicket($tkt2);
+        $read = TicketsService::getAllSharedTickets($tkt->id);
+        $this->assertNotNull($read, "Nothing found");
+        $this->assertTrue(is_array($read), "Content is not an array");
+        $this->assertEquals(2, count($read), "Content size mismatch");
+        $toCheck = array($tkt, $tkt2);
+        $count = 0;
+        foreach ($read as $rtkt) {
+            $ref = null;
+            $count++;
+            if ($rtkt->id == $tkt->id) {
+                $ref = $tkt;
+            } else if ($rtkt->id == $tkt2->id) {
+                $ref = $tkt2;
+            }
+            $this->assertNotNull($ref, "Unknown line");
+            $this->checkSharedTktEquality($ref, $rtkt);
+            for ($i = 0; $i < count($toCheck); $i++) {
+                $t = $toCheck[$i];
+                if ($t->id == $ref->id) {
+                    array_splice($toCheck, $i, 1);
+                    break;
+                }
+            }
+        }
+        $this->assertEquals(2, $count, "Shared tickets count mismatch");
+        $this->assertEquals(0, count($toCheck), "Duplicated shared tickets");
+    }
+
+    /** @depends testCreateSharedTicket
+     * @depends testGetInexistentSharedTicket
+     */
+    public function testDeleteSharedTicket() {
+        $tkt = SharedTicket::__build("1", "Label", 0x87c9bc);
+        TicketsService::createSharedTicket($tkt);
+        $this->assertTrue(TicketsService::deleteSharedTicket($tkt->id),
+                "Delete failed");
+        $this->assertNull(TicketsService::getSharedTicket($tkt->id),
+                "Shared ticket is still there");
+    }
+
+    /** @depends testCreateSharedTicket
+     * @depends testGetSharedTicket
+     */
+    public function testUpdateSharedTicket() {
+        $tkt = SharedTicket::__build("1", "Label", 0x87c9bc);
+        TicketsService::createSharedTicket($tkt);
+        $tkt->label = "Edited";
+        $tkt->data = 0x98bca8;
+        $this->assertTrue(TicketsService::updateSharedTicket($tkt),
+                "Update failed");
+        $read = TicketsService::getSharedTicket($tkt->id);
+        $this->checkSharedTktEquality($tkt, $read);
+    }
+
 }

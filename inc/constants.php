@@ -22,8 +22,8 @@ namespace Pasteque;
 
 class PT {
     public static $ABSPATH;
-    const DB_LEVEL = "4";
-    const VERSION = "4.0.0";
+    const DB_LEVEL = "5";
+    const VERSION = "5.0 alpha 9";
 
     const URL_ACTION_PARAM = "p";
     const URL_REPORT_PARAM = "r";
