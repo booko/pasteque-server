@@ -76,6 +76,10 @@ class Installer {
     static function upgrade($country, $version = null) {
         if ($version === null) {
             $version = Installer::getVersion();
+            if ($version === null) {
+                // Assume it's an old v4 with the old id
+                $version = 4;
+            }
         }
         while ($version != PT::DB_LEVEL) {
             $uid = get_user_id();
@@ -84,26 +88,32 @@ class Installer {
             // Load generic sql update for current version
             $file = PT::$ABSPATH . "/install/database/" . $type
                     . "/upgrade-" . $version . ".sql";
-            $pdo->query(\file_get_contents($file));
+            $fileContent = \file_get_contents($file);
+            if (!Installer::loadFile($pdo, $fileContent, $type)) {
+                return false;
+            }
             // Check for localized update data for current version
             $file = PT::$ABSPATH . "/install/database/" . $type
                     . "upgrade-" . $version . "_" . $country . ".sql";
             if (\file_exists($file)) {
-                $pdo->query(\file_get_contents($file));
+                $fileContent = \file_get_contents($file);
+                if (!Installer::loadFile($pdo, $fileContent, $type)) {
+                    return false;
+                }
             }
             $version++;
         }
     }
 
-    static function getVersion() {
+    static function getVersion($id = "pasteque") {
         $pdo = PDOBuilder::getPDO();
         $sql = "SELECT VERSION FROM APPLICATIONS WHERE ID = :id";
         $stmt = $pdo->prepare($sql);
-        $stmt->bindValue(":id", "pasteque");
+        $stmt->bindValue(":id", $id);
         $stmt->execute();
         $data = $stmt->fetch();
         if ($data !== false) {
-            return $data['VERSION'];
+            return (int) $data['VERSION'];
         } else {
             return null;
         }
@@ -112,6 +122,10 @@ class Installer {
     static function checkVersion($dbVer = null) {
         if ($dbVer === null) {
             $dbVer = Installer::getVersion();
+        }
+        if ($dbVer === null) {
+            // Search for an old lvl4 "postech"
+            $dbVer = Installer::getVersion("postech");
         }
         if ($dbVer !== null) {
             if (intval($dbVer) < intval(PT::DB_LEVEL)) {
