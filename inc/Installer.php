@@ -26,28 +26,22 @@ class Installer {
     const NEED_DB_UPGRADE = 2;
     const NEED_DB_DOWNGRADE = 3;
 
-    private static function loadFile($pdo, $fileContent, $type) {
-        if ($type == "postgresql") {
-            // PDO Postgresql cannot run multiple queries at once
-            // Need to split them and run one by one in a transaction
-            $pdo->beginTransaction();
-            $sqls = str_replace("\r\n", "\n", $fileContent);
-            $sqls = explode(";\n", $sqls);
-            foreach ($sqls as $sql) {
-                $sql = trim($sql);
-                if ($sql == "") {
-                    continue;
-                }
-                if ($pdo->query($sql) === false) {
-                    $pdo->rollback();
-                    return false;
-                }
+    private static function loadFile($pdo, $fileContent) {
+        $pdo->beginTransaction();
+        $sqls = str_replace("\r\n", "\n", $fileContent);
+        $sqls = explode(";\n", $sqls);
+        foreach ($sqls as $sql) {
+            $sql = trim($sql);
+            if ($sql == "") {
+                continue;
             }
-            $pdo->commit();
-            return true;
-        } else {
-            return $pdo->query($fileContent);
+            if ($pdo->query($sql) === false) {
+                $pdo->rollback();
+                return false;
+            }
         }
+        $pdo->commit();
+        return true;
     }
 
     static function install($country) {
@@ -59,7 +53,7 @@ class Installer {
             return false;
         }
         $fileContent = \file_get_contents($file);
-        if (!Installer::loadFile($pdo, $fileContent, $type)) {
+        if (!Installer::loadFile($pdo, $fileContent)) {
             return false;
         }
         // Load country data
@@ -67,7 +61,7 @@ class Installer {
             $cfile = PT::$ABSPATH . "/install/database/" . $type
                     . "/data_" . $country . ".sql";
             $fileContent = \file_get_contents($cfile);
-            Installer::loadFile($pdo, $fileContent, $type);
+            Installer::loadFile($pdo, $fileContent);
         }
         return true;
     }
@@ -89,7 +83,7 @@ class Installer {
             $file = PT::$ABSPATH . "/install/database/" . $type
                     . "/upgrade-" . $version . ".sql";
             $fileContent = \file_get_contents($file);
-            if (!Installer::loadFile($pdo, $fileContent, $type)) {
+            if (!Installer::loadFile($pdo, $fileContent)) {
                 return false;
             }
             // Check for localized update data for current version
@@ -97,7 +91,7 @@ class Installer {
                     . "upgrade-" . $version . "_" . $country . ".sql";
             if (\file_exists($file)) {
                 $fileContent = \file_get_contents($file);
-                if (!Installer::loadFile($pdo, $fileContent, $type)) {
+                if (!Installer::loadFile($pdo, $fileContent)) {
                     return false;
                 }
             }
