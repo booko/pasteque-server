@@ -23,23 +23,23 @@ namespace WordPressDB {
     require_once(dirname(__FILE__) . "/config.php");
     \WordPress\loadWP($config['wordpress_base_path']);
     $data = NULL;
-    function getInfo() {
+    function getInfo($uid) {
         global $data;
         if ($data == NULL) {
             $wpdb = $GLOBALS['wpdb'];
             global $config;
             $sql = $wpdb->prepare('SELECT * FROM ' . $config['wordpress_table']
-                    . ' WHERE user_id = %s', \Pasteque\get_user_id());
+                    . ' WHERE user_id = %s', $uid);
             $data = $wpdb->get_row($sql, ARRAY_A, 0);
         }
         return $data;
     }
     
-    function host() { $info = getInfo(); return $info['host']; }
-    function port() { $info = getInfo(); return $info['port']; }
-    function name() { $info = getInfo(); return $info['database']; }
-    function user() { $info = getInfo(); return $info['user']; }
-    function passwd() { $info = getInfo(); return $info['password']; }
+    function host($uid) { $info = getInfo($uid); return $info['host']; }
+    function port($uid) { $info = getInfo($uid); return $info['port']; }
+    function name($uid) { $info = getInfo($uid); return $info['database']; }
+    function user($uid) { $info = getInfo($uid); return $info['user']; }
+    function passwd($uid) { $info = getInfo($uid); return $info['password']; }
 }
 
 namespace Pasteque {
@@ -47,23 +47,23 @@ namespace Pasteque {
         return "mysql";
     }
     function get_db_host($user_id) {
-        return \WordPressDB\host();
+        return \WordPressDB\host($user_id);
     }
 
     function get_db_port($user_id) {
-        return \WordPressDB\port();
+        return \WordPressDB\port($user_id);
     }
 
     function get_db_name($user_id) {
-        return \WordPressDB\name();
+        return \WordPressDB\name($user_id);
     }
 
     function get_db_user($user_id) {
-        return \WordPressDB\user();
+        return \WordPressDB\user($user_id);
     }
 
     function get_db_password($user_id) {
-        return \WordPressDB\passwd();
+        return \WordPressDB\passwd($user_id);
     }
 }
 ?>

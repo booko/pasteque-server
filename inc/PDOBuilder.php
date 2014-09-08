@@ -22,14 +22,19 @@ namespace Pasteque;
 
 class PDOBuilder {
 
-    private static $pdo = NULL;
+    private static $pdo = null;
+    private static $pdoUid = null;
 
     /** Get PDO from the loaded database core module */
-    public static function getPDO() {
-        if (PDOBuilder::$pdo !== NULL) {
+    public static function getPDO($uid = null) {
+        // Set uid to logged user
+        if ($uid === null) {
+            $uid = get_user_id();
+        }
+        // Return cached pdo if same uid
+        if (PDOBuilder::$pdo !== null && $uid === PDOBuilder::$pdoUid) {
             return PDOBuilder::$pdo;
         }
-        $uid = get_user_id();
         $dsn = null;
         switch (get_db_type($uid)) {
         case 'mysql':
@@ -53,6 +58,7 @@ class PDOBuilder {
             foreach ($attributes as $key => $value) {
                 PDOBuilder::$pdo->setAttribute($key, $value);
             }
+            PDOBuilder::$pdoUid = $uid;
             return PDOBuilder::$pdo;
         } catch (\PDOException $e) {
             die("Connexion error " . $e);
