@@ -20,6 +20,9 @@
 
 namespace Pasteque;
 
+define("PT_THUMBNAIL_DEFAULT_WIDTH", 128);
+define("PT_THUMBNAIL_DEFAULT_HEIGHT", 128);
+
 /** Convert an image to a thumbnail. If target width and height
  * are not specified they are read from config file.
  * @param $fileName Path to file to resize
@@ -31,8 +34,13 @@ function img_thumbnail($fileName, $outputFileName,
         $width = null, $height = null) {
     global $config;
     if ($width === null) {
-        $width = $config['thumb_width'];
-        $height = $config['thumb_height'];
+        if (isset($config['thumb_width']) && isset($config['thumb_height'])) {
+            $width = $config['thumb_width'];
+            $height = $config['thumb_height'];
+        } else {
+            $width = PT_THUMBNAIL_DEFAULT_WIDTH;
+            $height = PT_THUMBNAIL_DEFAULT_HEIGHT;
+        }
     }
     $imgData = getimagesize($fileName);
     $imgWidth = $imgData[0];
