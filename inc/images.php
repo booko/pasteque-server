@@ -85,7 +85,7 @@ function img_thumbnail($fileName, $outputFileName,
     imagecopyresampled($dst, $src, 0, 0, 0, 0, $destWidth, $destHeight,
             $imgWidth, $imgHeight);
     // Handle jpg rotation
-    if ($imgType == IMG_JPG || $imgType == IMAGETYPE_JPG) {
+    if ($imgType == IMG_JPG || $imgType == IMAGETYPE_JPEG) {
         $exif = exif_read_data($fileName);
         if ($exif !== false && isset($exif['Orientation'])) {
             $orientation = $exif['Orientation'];
