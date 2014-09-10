@@ -1,0 +1,25 @@
+{
+"Module list is not configured.":"Module list is not configured.",
+"activated": "activated",
+
+"Once payment is validated, the modules will be activated in a short moment.": "Once payment is validated, the modules will be activated in a short moment.",
+
+"base_cashes":"Cash sessions",
+"base_cashregisters":"Multi-cashes",
+"base_currencies":"Multi-currencies",
+"base_customers":"Customers",
+"base_products":"Products",
+"base_resources":"Advanced configuration",
+"base_restaurant":"Restaurant",
+"base_sales":"Sales reports",
+"base_stocks":"Stocks management",
+"base_users":"Users",
+"customer_discountprofiles":"Discount profiles",
+"module_payment":"Buy module",
+"product_attributes":"Product attributes",
+"product_barcodes":"Barcodes and labels",
+"product_compositions":"Composed products",
+"product_discounts":"Discounts",
+"product_tariffareas":"Tariff areas",
+"stock_multilocations":"Multi-stock"
+}

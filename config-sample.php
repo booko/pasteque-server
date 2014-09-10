@@ -36,3 +36,19 @@ $config['template'] = "pasteque";
 // Thumbnail size in pixels
 $config['thumb_width'] = 128;
 $config['thumb_height'] = 128;
+
+// Paypal config (for module payment)
+$config['pp_sandbox_id'] = "";
+$config['pp_user_id'] = "";
+$config['pp_email'] = "";
+$config['pp_sandbox_email'] = "";
+$config['pp_sandbox'] = true;
+
+$config['pp_modules'] = [
+    array("module" => "product_barcodes", "price" => "1.00"),
+];
+
+function getConfig() {
+    global $config;
+    return $config;
+}
