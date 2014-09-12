@@ -5,13 +5,62 @@ namespace ModulePayment;
 $message = null;
 $error = null;
 $modules = null;
+$mandatoryModules = null;
+$freeModules = null;
 $activatedModules = \Pasteque\get_loaded_modules(\Pasteque\get_user_id());
 $cfg = \getConfig();
-if (!isset($cfg['pp_modules'])) {
+if (!isset($cfg['pp_modules']) || !isset($cfg['mandatory_modules'])
+        || !isset($cfg['free_modules'])) {
     $error = \i18n("Module list is not configured.", PLUGIN_NAME);
     $modules = array();
+    $freeModules = array();
+    $mandatoryModules = array("module_payment");
 } else {
     $modules = $cfg['pp_modules'];
+    $freeModules = $cfg['free_modules'];
+    $mandatoryModules = $cfg['mandatory_modules'];
+}
+
+if (isset($_POST['modules']) && count($mandatoryModules) > 0) {
+	$pdo = \Pasteque\PDOBuilder::getPDO();
+	$paidModules = array();
+	foreach ($modules as $module) {
+        foreach ($activatedModules as $actMod) {
+           if ($actMod == $module['module']) {
+                $paidModules[] = $module['module'];
+                break;
+           }
+        }
+    }
+	$allModules = array_merge($_POST['modules'], $paidModules);
+	// TODO: this is not config agnostic for MODULES table
+	$stmt = $pdo->prepare("update MODULES set modules = :mod where user_id = :id");
+	$stmt->bindParam(":id", \Pasteque\get_user_id());
+	$stmt->bindParam(":mod", implode(",", $allModules));
+	if ($stmt->execute() !== false) {
+	    $message = \i18n("Changes saved");
+	    // Reload activated modules
+	    $activatedModules = $allModules;
+	} else {
+        var_dump($stmt->errorInfo());
+	    $error = \i18n("Unable to save changes");
+	}
+}
+
+function displayFreeModule($module, $activatedModules) {
+   $activated = false;
+    foreach ($activatedModules as $actMod) {
+        if ($actMod == $module) {
+            $activated = true;
+            break;
+        }
+    }
+?>
+<div class="row">
+	<input type="checkbox" name="modules[]" id="module-<?php echo \Pasteque\esc_attr($module); ?>" value="<?php echo \Pasteque\esc_attr($module); ?>" <?php if ($activated) { echo ("checked=\"true\""); } ?> />
+	<label for="module-<?php echo \Pasteque\esc_attr($module); ?>"><?php \pi18n($module, PLUGIN_NAME); ?></label>
+</div>
+<?php
 }
 
 function displayModule($module, $activatedModules, $pp_id, $sandbox) {
@@ -57,6 +106,22 @@ function displayModule($module, $activatedModules, $pp_id, $sandbox) {
 <h1><?php \pi18n("Modules", PLUGIN_NAME); ?></h1>
 
 <?php \Pasteque\tpl_msg_box($message, $error); ?>
+
+<h2><?php \pi18n("Free modules", PLUGIN_NAME); ?></h2>
+
+<form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
+<?php foreach ($mandatoryModules as $module) { ?>
+	<input type="hidden" name="modules[]" value="<?php echo \Pasteque\esc_attr($module); ?>" />
+<?php }  foreach($freeModules as $module) {
+    displayFreeModule($module, $activatedModules);
+} ?>
+	<div class="row actions">
+		<?php \Pasteque\form_save(); ?>
+	</div>
+    <div class="row"><?php \pi18n("Once modules are selected, they will be activated in a short moment.", PLUGIN_NAME); ?></div>
+</form>
+
+<h2><?php \pi18n("Buy modules", PLUGIN_NAME); ?></h2>
 
 <div class="edit">
 	<table cellpadding="0" cellspacing="0">

@@ -47,6 +47,20 @@ $config['pp_sandbox'] = true;
 $config['pp_modules'] = [
     array("module" => "product_barcodes", "price" => "1.00"),
 ];
+$config['mandatory_modules'] = [
+    "base_products",
+    "base_sales",
+    "module_payment",
+];
+$config['free_modules'] = [
+    "base_restaurant",
+    "base_cashes",
+    "base_resources",
+    "base_stocks",
+    "base_users",
+    "product_compositions",
+    "product_discounts",
+];
 
 function getConfig() {
     global $config;

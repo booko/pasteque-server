@@ -1,7 +1,12 @@
 {
 "Module list is not configured.":"La liste des modules n'est pas configurée.",
 "activated": "activé",
+"Administration": "Administration",
 
+"Free modules": "Modules gratuits",
+"Buy modules": "Acheter des modules",
+
+"Once modules are selected, they will be activated in a short moment." : "Une fois les modules sélectionnés, ils seront activés après un court délai.",
 "Once payment is validated, the modules will be activated in a short moment.": "Une fois le paiement validé, les modules seront activés après un court délai.",
 
 "base_cashes":"Sessions de caisses",

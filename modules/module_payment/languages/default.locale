@@ -1,6 +1,12 @@
 {
 "Module list is not configured.":"Module list is not configured.",
 "activated": "activated",
+"Administration": "Administration",
+
+"Free modules": "Free modules",
+"Buy modules": "Buy modules",
+
+"Once modules are selected, they will be activated in a short moment.": "Once modules are selected, they will be activated in a short moment.",
 
 "Once payment is validated, the modules will be activated in a short moment.": "Once payment is validated, the modules will be activated in a short moment.",
 
