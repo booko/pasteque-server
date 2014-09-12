@@ -1,5 +1,5 @@
 <?php
-namespace ModulePayment;
+namespace ModulesManagement;
 
 function init() {
     global $MENU;

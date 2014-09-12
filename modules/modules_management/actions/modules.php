@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulePayment;
+namespace ModulesManagement;
 
 $message = null;
 $error = null;

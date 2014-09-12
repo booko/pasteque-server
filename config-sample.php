@@ -50,7 +50,7 @@ $config['pp_modules'] = [
 $config['mandatory_modules'] = [
     "base_products",
     "base_sales",
-    "module_payment",
+    "modules_management",
 ];
 $config['free_modules'] = [
     "base_restaurant",
