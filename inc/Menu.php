@@ -20,6 +20,8 @@
 
 namespace Pasteque;
 
+require_once("url_broker.php");
+
 class MenuEntry {
 
     const ACTION = 1;
@@ -43,6 +45,25 @@ class MenuEntry {
     public function getName() { return $this->name; }
     public function getNameDomain() { return $this->nameDomain; }
     public function getAction() { return $this->action; }
+    // Used to get the last param of action for css purposes
+    public function getActionName() { 
+        $substr=explode("/",$this->action);
+	return $substr[sizeof($substr)-1];
+    }
+    // Used to know if current entry for css purposes
+    public function isActive() { 
+		switch($this->getType()) {
+			case MenuEntry::REPORT:
+				$url = get_report_url($this->getNameDomain(),$this->getAction(),'display');
+				break;
+			case MenuEntry::ACTION:
+				$url = get_url_action($this->getAction());
+				break;
+		}
+		if(get_current_url() == $url)
+			return true;
+		return false;
+    }
     public function getType() { return $this->type; }
 }
 
@@ -64,6 +85,22 @@ class MenuSection {
     public function getName() { return $this->name; }
     public function getNameDomain() { return $this->nameDomain; }
     public function getEntries() { return $this->entries; }
+    // Used to know if current entry for css purposes
+    public function isActive() { 
+	foreach($this->entries as $entry) {
+		switch($entry->getType()) {
+			case MenuEntry::REPORT:
+				$url = get_report_url($entry->getNameDomain(),$entry->getAction(),'display');
+				break;
+			case MenuEntry::ACTION:
+				$url = get_url_action($entry->getAction());
+				break;
+		}
+		if(get_current_url() == $url)
+			return true;
+	}
+	return false;
+    }
 }
 
 class Menu {

@@ -39,8 +39,27 @@ if ($session->isClosed()) {
 }
 ?>
 
-<h1><?php echo($title); ?></h1>
 
+
+<!-- start bloc titre -->
+<div class="blc_ti">
+<h1><?php echo($title); ?></h1>
+</div>
+<!-- end bloc titre -->
+
+<!-- start container scroll -->
+            <div class="container_scroll">
+            
+            	<div class="stick_row stickem-container">
+                    
+                    <!-- start colonne contenu -->
+                    <div id="content_liste" class="grid_9">
+                    
+                        <div class="blc_content">
+                        
+                        
+                        
+                        
 <table cellpadding="0" cellspacing="0">
 	<thead>
 		<th colspan="2"><?php \pi18n("Session"); ?></th>
@@ -125,3 +144,27 @@ foreach ($zticket->payments as $payment) {
 		</tr>
 <?php } ?>
 </table>
+
+
+</div></div>
+                    <!-- end colonne contenu -->
+                    
+                    <!-- start sidebar menu -->
+                    <div id="sidebar_menu" class="grid_3 stickem">
+                    
+                        <div class="blc_content">
+                            
+                            <!-- start texte editorial -->
+                            <div class="edito"><!-- zone_edito --></div>
+                            <!-- end texte editorial -->
+                            
+                            
+                        </div>
+                        
+                    </div>
+                    <!-- end sidebar menu -->
+                    
+        		</div>
+                
+        	</div>
+            <!-- end container scroll -->

@@ -49,7 +49,25 @@ if (isset($_GET['id'])) {
     $location = $srv->get($_GET['id']);
 }
 ?>
+
+
+<!-- start bloc titre -->
+<div class="blc_ti">
 <h1><?php \pi18n("Edit a location", PLUGIN_NAME); ?></h1>
+</div>
+<!-- end bloc titre -->
+
+<!-- start container scroll -->
+<div class="container_scroll">
+            
+            	<div class="stick_row stickem-container">
+                    
+                    <!-- start colonne contenu -->
+                    <div id="content_liste" class="grid_9">
+                    
+                        <div class="blc_content">
+
+
 
 <?php \Pasteque\tpl_msg_box($message, $error); ?>
 
@@ -66,3 +84,25 @@ if (isset($_GET['id'])) {
     <?php \Pasteque\form_delete("location", $location->id); ?>
 </form>
 <?php } ?>
+</div></div>
+                    <!-- end colonne contenu -->
+                    
+                    <!-- start sidebar menu -->
+                    <div id="sidebar_menu" class="grid_3 stickem">
+                    
+                        <div class="blc_content">
+                            
+                            <!-- start texte editorial -->
+                            <div class="edito"><!-- zone_edito --></div>
+                            <!-- end texte editorial -->
+                            
+                            
+                        </div>
+                        
+                    </div>
+                    <!-- end sidebar menu -->
+                    
+        		</div>
+                
+        	</div>
+            <!-- end container scroll -->

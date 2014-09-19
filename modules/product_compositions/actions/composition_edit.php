@@ -110,9 +110,25 @@ if (isset($_GET['productId'])) {
 
 ?>
 
+<!-- start bloc titre -->
+<div class="blc_ti">
 <h1><?php \pi18n('Composition edit',PLUGIN_NAME)?></h1>
 
 <?php \Pasteque\tpl_msg_box($message, $error); ?>
+</div>
+<!-- end bloc titre -->
+
+<!-- start container scroll -->
+<div class="container_scroll">
+            
+            	<div class="stick_row stickem-container">
+                    
+                    <!-- start colonne contenu -->
+                    <div id="content_liste" class="grid_9">
+                    
+                        <div class="blc_content">
+
+
 
 <?php if (isset($composition)) { ?>
     <form method='post' action="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'composition');?>">
@@ -361,3 +377,25 @@ if ($composition !== null) {
 }
 ?>
 </script>
+</div></div>
+                    <!-- end colonne contenu -->
+                    
+                    <!-- start sidebar menu -->
+                    <div id="sidebar_menu" class="grid_3 stickem">
+                    
+                        <div class="blc_content">
+                            
+                            <!-- start texte editorial -->
+                            <div class="edito"><!-- zone_edito --></div>
+                            <!-- end texte editorial -->
+                            
+                            
+                        </div>
+                        
+                    </div>
+                    <!-- end sidebar menu -->
+                    
+        		</div>
+                
+        	</div>
+            <!-- end container scroll -->

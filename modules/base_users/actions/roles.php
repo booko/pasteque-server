@@ -27,9 +27,28 @@ if (isset($_POST['delete-role'])) {
 
 $roles = $srv->getAll();
 ?>
+
+<!-- start bloc titre -->
+<div class="blc_ti">
 <h1><?php \pi18n("Users", PLUGIN_NAME); ?></h1>
 
-<p><a class="btn" href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'role_edit'); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/btn_add.png" /><?php \pi18n("Add a role", PLUGIN_NAME); ?></a></p>
+<ul class="bt_fonction">
+	<li><a class="btn bt_add" href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'role_edit'); ?>"><?php \pi18n("Add a role", PLUGIN_NAME); ?></a>
+</li>
+</ul>
+
+</div>
+<!-- end bloc titre -->
+
+<!-- start container scroll -->
+<div class="container_scroll">
+            
+            	<div class="stick_row stickem-container">
+                    
+                    <!-- start colonne contenu -->
+                    <div id="content_liste" class="grid_9">
+                    
+                        <div class="blc_content">
 
 <table cellspacing="0" cellpadding="0">
 	<thead>
@@ -54,3 +73,25 @@ foreach ($roles as $role) {
 ?>
 	</tbody>
 </table>
+</div></div>
+                    <!-- end colonne contenu -->
+                    
+                    <!-- start sidebar menu -->
+                    <div id="sidebar_menu" class="grid_3 stickem">
+                    
+                        <div class="blc_content">
+                            
+                            <!-- start texte editorial -->
+                            <div class="edito"><!-- zone_edito --></div>
+                            <!-- end texte editorial -->
+                            
+                            
+                        </div>
+                        
+                    </div>
+                    <!-- end sidebar menu -->
+                    
+        		</div>
+                
+        	</div>
+            <!-- end container scroll -->

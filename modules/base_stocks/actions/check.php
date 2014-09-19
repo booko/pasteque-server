@@ -123,7 +123,11 @@ if ($countedStock !== null) {
     }
 }
 ?>
-<h1><?php \pi18n("Stock check", PLUGIN_NAME); ?></h1>
+
+
+<!-- start bloc titre -->
+<div class="blc_ti">
+<?php \pi18n("Stock check", PLUGIN_NAME); ?></h1>
 
 <?php \Pasteque\tpl_msg_box($message, $error); ?>
 
@@ -132,6 +136,19 @@ if ($countedStock !== null) {
     foreach($_POST as $key => $value) {
         echo "&" . $key . "=" . $value;
     } ?>"><?php \pi18n("Export"); ?></a></div>
+</div>
+<!-- end bloc titre -->
+
+<!-- start container scroll -->
+<div class="container_scroll">
+            
+            	<div class="stick_row stickem-container">
+                    
+                    <!-- start colonne contenu -->
+                    <div id="content_liste" class="grid_9">
+                    
+                        <div class="blc_content">
+
 
 <form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" id="move" method="post" enctype="multipart/form-data">
 	<input type="hidden" name="send" value="true" />
@@ -277,3 +294,25 @@ if ($countedStock !== null) {
 	}
 
 </script>
+</div></div>
+                    <!-- end colonne contenu -->
+                    
+                    <!-- start sidebar menu -->
+                    <div id="sidebar_menu" class="grid_3 stickem">
+                    
+                        <div class="blc_content">
+                            
+                            <!-- start texte editorial -->
+                            <div class="edito"><!-- zone_edito --></div>
+                            <!-- end texte editorial -->
+                            
+                            
+                        </div>
+                        
+                    </div>
+                    <!-- end sidebar menu -->
+                    
+        		</div>
+                
+        	</div>
+            <!-- end container scroll -->

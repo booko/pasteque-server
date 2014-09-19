@@ -109,7 +109,22 @@ if (isset($_FILES['csv'])) {
 }
 ?>
 
+<!-- start bloc titre -->
+<div class="blc_ti">
 <h1><?php \pi18n("Import category from csv file", PLUGIN_NAME); ?></h1>
+</div>
+<!-- end bloc titre -->
+
+<!-- start container scroll -->
+<div class="container_scroll">
+            
+            	<div class="stick_row stickem-container">
+                    
+                    <!-- start colonne contenu -->
+                    <div id="content_liste" class="grid_9">
+                    
+                        <div class="blc_content">
+
 <form class="edit" method="post" action="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'categoriesManagement');?>" enctype="multipart/form-data">
     <div class="row">
         <label for='csv' >
@@ -123,3 +138,27 @@ if (isset($_FILES['csv'])) {
         </button>
     </div>
 </form>
+
+
+</div></div>
+                    <!-- end colonne contenu -->
+                    
+                    <!-- start sidebar menu -->
+                    <div id="sidebar_menu" class="grid_3 stickem">
+                    
+                        <div class="blc_content">
+                            
+                            <!-- start texte editorial -->
+                            <div class="edito"><!-- zone_edito --></div>
+                            <!-- end texte editorial -->
+                            
+                            
+                        </div>
+                        
+                    </div>
+                    <!-- end sidebar menu -->
+                    
+        		</div>
+                
+        	</div>
+            <!-- end container scroll -->

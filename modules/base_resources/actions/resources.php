@@ -28,9 +28,24 @@ if (isset($_POST['delete-res'])) {
 $resources = $resSrv->getAll();
 ?>
 
-<h1><?php \pi18n("Resources", PLUGIN_NAME); ?></h1>
+<!-- start bloc titre -->
+<div class="blc_ti">
 
+<h1><?php \pi18n("Resources", PLUGIN_NAME); ?></h1>
 <p><a class="btn" href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'resource_edit'); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/btn_add.png" /><?php \pi18n("Add a resource", PLUGIN_NAME); ?></a></p>
+
+</div>
+<!-- end bloc titre -->
+
+<!-- start container scroll -->
+<div class="container_scroll">
+            
+            	<div class="stick_row stickem-container">
+                    
+                    <!-- start colonne contenu -->
+                    <div id="content_liste" class="grid_9">
+                    
+                        <div class="blc_content">
 
 <table cellpadding="0" cellspacing="0">
 	<thead>
@@ -57,3 +72,25 @@ foreach ($resources as $res) {
 ?>
 	</tbody>
 </table>
+</div></div>
+                    <!-- end colonne contenu -->
+                    
+                    <!-- start sidebar menu -->
+                    <div id="sidebar_menu" class="grid_3 stickem">
+                    
+                        <div class="blc_content">
+                            
+                            <!-- start texte editorial -->
+                            <div class="edito"><!-- zone_edito --></div>
+                            <!-- end texte editorial -->
+                            
+                            
+                        </div>
+                        
+                    </div>
+                    <!-- end sidebar menu -->
+                    
+        		</div>
+                
+        	</div>
+            <!-- end container scroll -->

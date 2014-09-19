@@ -35,17 +35,37 @@ if (isset($_POST['delete-cat'])) {
 
 $categories = \Pasteque\CategoriesService::getAll();
 ?>
+
+<!-- start bloc titre -->
+<div class="blc_ti">
 <h1><?php \pi18n("Categories", PLUGIN_NAME); ?></h1>
+<span class="nb_article"><?php \pi18n("%d categories", PLUGIN_NAME, count($categories)); ?></span>
+
 
 <?php \Pasteque\tpl_msg_box($message, $error); ?>
 
-<?php \Pasteque\tpl_btn('btn', \Pasteque\get_module_url_action(PLUGIN_NAME, "category_edit"),
-        \i18n('Add a category', PLUGIN_NAME), 'img/btn_add.png');?>
-<?php \Pasteque\tpl_btn('btn', \Pasteque\get_module_url_action(PLUGIN_NAME, "categoriesManagement"),
-        \i18n('Import categories', PLUGIN_NAME), 'img/btn_add.png');?>
+<ul class="bt_fonction">
+	<li><?php \Pasteque\tpl_btn('btn bt_add', \Pasteque\get_module_url_action(PLUGIN_NAME, "category_edit"),
+        \i18n('Add a category', PLUGIN_NAME), 'img/btn_add.png');?></li>
+	<li><?php \Pasteque\tpl_btn('btn bt_import', \Pasteque\get_module_url_action(PLUGIN_NAME, "categoriesManagement"),
+        \i18n('Import categories', PLUGIN_NAME), 'img/btn_add.png');?></li>
+</ul>
 
 
-<p><?php \pi18n("%d categories", PLUGIN_NAME, count($categories)); ?></p>
+        
+</div>
+<!-- end bloc titre -->
+
+<!-- start container scroll -->
+<div class="container_scroll">
+            
+            	<div class="stick_row stickem-container">
+                    
+                    <!-- start colonne contenu -->
+                    <div id="content_liste" class="grid_9">
+                    
+                        <div class="blc_content">
+
 
 <table cellpadding="0" cellspacing="0">
 	<thead>
@@ -89,3 +109,25 @@ if (count($categories) == 0) {
 <?php
 }
 ?>
+</div></div>
+                    <!-- end colonne contenu -->
+                    
+                    <!-- start sidebar menu -->
+                    <div id="sidebar_menu" class="grid_3 stickem">
+                    
+                        <div class="blc_content">
+                            
+                            <!-- start texte editorial -->
+                            <div class="edito"><!-- zone_edito --></div>
+                            <!-- end texte editorial -->
+                            
+                            
+                        </div>
+                        
+                    </div>
+                    <!-- end sidebar menu -->
+                    
+        		</div>
+                
+        	</div>
+            <!-- end container scroll -->

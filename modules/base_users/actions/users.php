@@ -27,11 +27,30 @@ if (isset($_POST['delete-user'])) {
 $srv = new \Pasteque\UsersService();
 $users = $srv->getAll();
 ?>
+
+<!-- start bloc titre -->
+<div class="blc_ti">
 <h1><?php \pi18n("Users", PLUGIN_NAME); ?></h1>
+<span class="nb_article"><?php \pi18n("%d users", PLUGIN_NAME, count($users)); ?></span>
 
-<p><a class="btn" href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'user_edit'); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/btn_add.png" /><?php \pi18n("Add an user", PLUGIN_NAME); ?></a></p>
+<ul class="bt_fonction">
+	<li><a class="btn bt_add" href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'user_edit'); ?>"><?php \pi18n("Add an user", PLUGIN_NAME); ?></a>
+</li>
+</ul>
+</div>
+<!-- end bloc titre -->
 
-<p><?php \pi18n("%d users", PLUGIN_NAME, count($users)); ?></p>
+<!-- start container scroll -->
+<div class="container_scroll">
+            
+            	<div class="stick_row stickem-container">
+                    
+                    <!-- start colonne contenu -->
+                    <div id="content_liste" class="grid_9">
+                    
+                        <div class="blc_content">
+
+
 
 <table cellspacing="0" cellpadding="0">
 	<thead>
@@ -56,3 +75,25 @@ foreach ($users as $user) {
 ?>
 	</tbody>
 </table>
+</div></div>
+                    <!-- end colonne contenu -->
+                    
+                    <!-- start sidebar menu -->
+                    <div id="sidebar_menu" class="grid_3 stickem">
+                    
+                        <div class="blc_content">
+                            
+                            <!-- start texte editorial -->
+                            <div class="edito"><!-- zone_edito --></div>
+                            <!-- end texte editorial -->
+                            
+                            
+                        </div>
+                        
+                    </div>
+                    <!-- end sidebar menu -->
+                    
+        		</div>
+                
+        	</div>
+            <!-- end container scroll -->

@@ -21,6 +21,8 @@
 namespace Pasteque;
 
 ?>
-<h1><?php \pi18n("Main title"); ?></h1>
+<div class="blc_ti"><h1><?php \pi18n("Main title"); ?></h1></div>
 
-<p><?php \pi18n("Introduction"); ?></p>
+<div class="container_scroll"><div class="blc_content"><?php \pi18n("Introduction"); ?></div></div>
+
+<div class="clear"></div>

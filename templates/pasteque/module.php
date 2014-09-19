@@ -27,36 +27,219 @@ function tpl_open() {
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title><?php \pi18n("Pastèque"); ?></title>
 	<link rel="icon" type="image/png" href="templates/pt2.0/img/icon.png" />
-	<link rel="stylesheet" type="text/css" href="<?php echo get_template_url(); ?>/style.css" />
+	
+    <!--
+    <link rel="stylesheet" type="text/css" href="<?php echo get_template_url(); ?>/style.css" />
 	<link rel="stylesheet" type="text/css" href="<?php echo get_template_url(); ?>/catalog.css" />
 	<link rel="stylesheet" type="text/css" href="<?php echo get_template_url(); ?>/stock.css" />
 	<link rel="stylesheet" type="text/css" href="<?php echo get_template_url(); ?>/js/pepper-grinder/jquery-ui-1.10.4.custom.css" />
 	<script type="text/javascript" src="<?php echo get_template_url(); ?>/js/jquery-1.9.1.min.js"></script>
 	<script type="text/javascript" src="<?php echo get_template_url(); ?>/js/jquery-ui-1.10.4.custom.min.js"></script>
 	<script type="text/javascript" src="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=js&id=js/pasteque.js.php"></script>
+	-->
+
+	<script src="<?php echo get_template_url(); ?>/js/jquery_1.8.1.js"></script>
+	<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script> -->
+    
+    <!-- fancybox -->
+	<script type="text/javascript" src="<?php echo get_template_url(); ?>/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
+    <script type="text/javascript" src="<?php echo get_template_url(); ?>/fancybox/jquery.easing-1.4.pack.js"></script>
+    <script type="text/javascript" src="<?php echo get_template_url(); ?>/fancybox/jquery.mousewheel-3.0.4.pack.js"></script>
+    
+    <!-- sticky nav -->
+    <script>
+    $(function() {
+    
+        // grab the initial top offset of the navigation 
+        var sticky_navigation_offset_top = $('#sticky_navigation').offset().top;
+        
+        // our function that decides weather the navigation bar should have "fixed" css position or not.
+        var sticky_navigation = function(){
+            var scroll_top = $(window).scrollTop(); // our current vertical position from the top
+            
+            // if we've scrolled more than the navigation, change its position to fixed to stick to top, otherwise change it back to relative
+            if (scroll_top > sticky_navigation_offset_top) { 
+                $('#sticky_navigation').css({ 'position': 'fixed', 'top':0, 'left':0 });
+            } else {
+                $('#sticky_navigation').css({ 'position': 'relative' }); 
+            }   
+        };
+        
+        // run our function on load
+        sticky_navigation();
+        
+        // and run it again every time you scroll
+        $(window).scroll(function() {
+             sticky_navigation();
+        });
+        
+        // NOT required:
+        // for this demo disable all links that point to "#"
+        $('a[href="#"]').click(function(event){ 
+            event.preventDefault(); 
+        });
+        
+    });
+    </script>
+    
+    <!-- script scroll id -->
+    <script language="javascript">
+    $(document).ready(function(){
+        $('a[href^="#"]').on('click',function (e) {
+            e.preventDefault();
+    
+            var target = this.hash,
+            $target = $(target);
+    
+            $('html, body').stop().animate({
+                'scrollTop': $target.offset().top
+            }, 900, 'swing', function () {
+                window.location.hash = target;
+            });
+        });
+    });
+    </script>
+    
+    <!-- script adapt.js responsive -->      
+    <script language="javascript">
+    // Edit to suit your needs.
+    var ADAPT_CONFIG = {
+      // Where is your CSS?
+      path: '<?php echo get_template_url(); ?>/css/',
+    
+      // false = Only run once, when page first loads.
+      // true = Change on window resize and page tilt.
+      dynamic: true,
+    
+      // First range entry is the minimum.
+      // Last range entry is the maximum.
+      // Separate ranges by "to" keyword.
+      range: [
+        '0px    to 760px  = mobile.min.css',
+        '760px  to 980px  = 720.min.css',
+        '980px  to 1280px = 960.min.css',
+        '1280px           = 1200.min.css'
+        /*,
+        '1600px to 1940px = 1560.min.css',
+        '1940px to 2540px = 1920.min.css',
+        '2540px           = 2520.min.css'
+        */
+      ]
+    };
+    
+    
+    </script>
+    <script src="<?php echo get_template_url(); ?>/js/adapt.min.js"></script>
+
+	<!-- menu mobile -->
+    <link type="text/css" rel="stylesheet" href="<?php echo get_template_url(); ?>/css/jquery.mmenu.all.css" />
+    <!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script> -->  
+    <script type="text/javascript" src="<?php echo get_template_url(); ?>/js/jquery.mmenu.min.all.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            $('nav#nav_main__mobile').mmenu();
+        });
+    </script>
+
+	<link href="<?php echo get_template_url(); ?>/css/styles_admin.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" href="<?php echo get_template_url(); ?>/fancybox/jquery.fancybox-1.3.4.css" type="text/css" media="screen" />
+
 </head>
 <body>
-<?php tpl_menu(); ?>
-<div id="header">
-	<div id="toggle-menu"><a id="menu-toggler" href="" onclick="javascript:toggleMenu();return false;"><?php echo \i18n("Toogle menu"); ?></a></div>
-	<div id="version"><a href="" onclick="showAbout();return false;"><?php echo \i18n("About"); ?></a></div>
-</div>
 
-<div id="content">
+<!-- START tpl open --> 
+<div id="page" class="">
+
+	<!-- start navigation mobile -->
+	<?php tpl_menu_mobile() ?>
+    <nav id="nav_main__mobile">
+    	<?php tpl_menu(); ?>
+    </nav>
+    <!-- end navigation mobile -->
+    
+    
+	<!-- start navigation PC -->
+    <div id="nav_pc">
+    
+        <!-- start bande header -->
+        <header>
+            <div class="container_12">  
+                 
+                <!-- logo -->
+                <div class="logo"><img src="<?php echo get_template_url(); ?>/imgs/logo_worldline.png" width="247" height="69" alt="Worldline E-payment services" /></div>  
+                 
+            </div> 
+        </header>   
+        <!-- end bande header -->
+		
+        <div id="sticky_navigation_wrapper"> 
+            <div id="sticky_navigation">
+            
+				<!-- start navigation standart -->
+				<nav id="nav_main">
+					<div class="container_12">
+						<?php tpl_menu(); ?>
+                	</div>
+                </nav>
+                <!-- end navigation standart -->
+                
+        	</div>
+        </div>
+
+	</div>
+    <!-- end navigation PC -->
+        
+        
+
+	<!-- start content -->
+	<div id="content" class="container_12">
+	<!-- START tpl close -->     
 <?php
 }
 
 function tpl_close() {
 ?>
-	<div style="clear:both"></div>
-</div>
-<div id="footer"></div>
+    </div>
+    <!-- end content -->
+    <div class="clear"></div>
+    
+    
+    <!-- start bande footer -->    
+    <footer>
+    	<div class="container_12">
+    		<div class="grid_12">
+			<div id="version">© Scil pour Worldline 2014 - <a href="" onclick="showAbout();return false;"><?php echo \i18n("About"); ?></a></div>
+		</div>
+    	</div>
+    </footer> 
+    <div id="logout"><a href="/awl/?p=logout">Déconnexion</a></div>
+    
+</div>     
+<!-- END tpl close --> 
+
+<!-- <script src="<?php echo get_template_url(); ?>/js/jquery_1.8.1.js"></script> -->
+<!-- <script src="http://davist11.github.io/jQuery-Stickem/jquery.js"></script>   -->      
+<script src="<?php echo get_template_url(); ?>/js/jquery.stickem.js"></script>
+<script>
+		$(document).ready(function() {
+			$('.container_scroll').stickem();
+		});
+</script>
+
+
 </body>
 </html><?php
 }
 
 function tpl_404() {
-?>	<h1>ERREUR 404</h1>
+?>	
+
+<!-- start bloc titre -->
+<div class="blc_ti">
+<h1>ERREUR 404</h1>
+</div>
+<!-- end bloc titre -->
+
 <?php
 }
 
@@ -87,54 +270,133 @@ function tpl_msg_box($info, $error) {
     }
 }
 
-function tpl_menu() {
+function tpl_menu_mobile() {
     global $MENU;
-    echo "<div id=\"menu-container\">\n";
-    echo "<div id=\"logo\"><img src=\"" . get_template_url() . "img/logo.png\" /></div>\n";
-    foreach ($MENU->getSections() as $section) {
-        echo "\t<div class=\"menu-section\">\n";
-        echo "\t\t<div class=\"menu-section-title\">";
-        \pi18n($section->getName(), $section->getNameDomain());
-        echo "</div>\n";
-        echo "\t\t<ul class=\"menu\">\n";
-        foreach ($section->getEntries() as $entry) {
-            echo "\t\t\t<li>";
-            if ($entry->getImg() !== NULL && $entry->getImg() != "") {
-                $img = get_template_url() . "img/" . $entry->getImg();
-            } else {
-                $img = get_template_url() . "img/menu_default.png";
-            }
-            $style = "style=\"background-image:url('$img');\"";
-            switch ($entry->getType()) {
-            case MenuEntry::ACTION:
-                $url = get_url_action($entry->getAction());
-                break;
-            case MenuEntry::REPORT:
-                $url = get_report_url($entry->getNameDomain(),
-                        $entry->getAction(), 'display');
-                break;
-            }
-            echo "<a $style href=\"" . $url . "\">" . __($entry->getName(), $entry->getNameDomain()) . "</a></li>\n";
-        }
-        echo "\t\t</ul>\n";
-        echo "\t</div>\n";
-    }
-    echo "</div>";
+    echo '<div id="nav_mobile">
+			<a href="#nav_main__mobile" class="bt_nav_mobile">Navigation</a>
+        	<div class="logo_mobile"><img src="';
+	echo get_template_url();
+    echo '/imgs/logo_worldline_mobile.png" width="230" height="70" alt="Worldline E-payment services" /></div>  
+	</div>
+	
+	
+	
+	';
+}
+
+function tpl_menu() {
+    
+	global $MENU;
+    
+	
+	// ----------------------> gérer l'affichage du menu reglage
+	
+	/*
+	<ul id="menu_reglage">
+                        	<li>
+                            	<a class="bt_reglage" href=""><span>Réglages</span></a>
+                                <div class="ssmenu">
+                                <ul class="ul_ssmenu">
+                                    <li><a class="utilisateurs" href="/awl/?p=modules/base_users/actions/users"><span>Utilisateurs</span></a></li>
+                                    <li><a class="roles" href="/awl/?p=modules/base_users/actions/roles"><span>Rôles</span></a></li>
+                                    <li><a class="config_avance" href="/awl/?p=modules/base_resources/actions/resources"><span>Config avancée</span></a></li>
+                                    <li><a class="salles" href="/awl/?p=modules/base_restaurant/actions/floors"><span>Salles</span></a></li>
+                                    <li><a class="caisses" href="/awl/?p=modules/base_cashes/actions/sessions"><span>Caisses</span></a></li>
+                                    <li><a class="devises" href="/awl/?p=modules/base_currencies/actions/currencies"><span>Devises</span></a></li>
+                                    <li><a class="entrepots" href="/awl/?p=modules/stock_multilocations/actions/locations"><span>Entrepôts</span></a></li>
+                                    <li class="clear"></li>
+                                </ul> 
+                                </div>
+                            </li>
+                        </ul>
+	*/
+					
+	echo '
+				<!-- start navigation standart -->
+                
+                    
+                    
+                        <ul id="nav_services">';
+						
+							// ----------------------> gérer les affichage de nom de class sur les boutons
+							// ----------------------> gérer l'affichage de la class "activ" sur le li en cours de consultation pour afficher le sous menu
+						
+                            foreach ($MENU->getSections() as $section) {
+								echo "\t<li class=\"".strtolower($section->getName());
+								if($section->isActive())
+									echo " activ";
+								echo "\">\n";
+								echo "\t\t<a class=\"".strtolower($section->getName())."\"><span>";
+								\pi18n($section->getName(), $section->getNameDomain());
+								echo "</span></a>\n";
+								echo "\t\t<div class=\"ssmenu\"><ul class=\"ul_ssmenu\">\n";
+								foreach ($section->getEntries() as $entry) {
+									echo "\t\t\t<li>";
+									
+									if ($entry->getImg() !== NULL && $entry->getImg() != "") {
+										$img = get_template_url() . "img/" . $entry->getImg();
+									} else {
+										$img = get_template_url() . "img/menu_default.png";
+									}
+									// $style = "style=\"background-image:url('$img');\"";
+									switch ($entry->getType()) {
+									case MenuEntry::ACTION:
+										$url = get_url_action($entry->getAction());
+										break;
+									case MenuEntry::REPORT:
+										$url = get_report_url($entry->getNameDomain(),
+												$entry->getAction(), 'display');
+										break;
+									}
+									if($entry->isActive())
+										$activ=" activ";
+									else
+										$activ="";
+									
+									echo "<a class=\"".strtolower($section->getName())."_".strtolower($entry->getActionName())."".$activ."\" $style href=\"" . $url . "\"><span>" . __($entry->getName(), $entry->getNameDomain()) . "</span></a></li>\n";
+								}
+								echo "\t\t<li class=\"clear\"></li></ul></div>\n";
+								echo "\t</li>\n";
+							}
+							
+							
+							
+                        echo '</ul>
+                        <div class="clear"></div>
+                        
+                    
+                <!-- end navigation standart -->
+	';
 }
 
 function __tpl_report_title($report) {
-    echo "<h1>" . $report->getTitle() . "</h1>\n";
+    echo '
+	<!-- start bloc titre -->
+    <div class="blc_ti">
+	<h1>' . $report->getTitle() . '</h1>
+	';
 }
 
 function __tpl_report_input($report, $values) {
-    // Export button
-    echo "<div id=\"btn\"><a class=\"btn\" href=\""
+    
+	// Export button
+    echo '
+	<ul class="bt_fonction">
+    <li>
+		<a class="bt_export transition btn" href="'
             . \Pasteque\get_report_url($report->getDomain(), $report->getId());
-    foreach($report->getParams() as $param) {
-        echo "&" . $param['param'] . "=" . $values[$param['param']];
-    }
-    echo "\">" . \i18n("Export") . "</a></div>\n";
-    // Input form
+		foreach($report->getParams() as $param) {
+			echo "&" . $param['param'] . "=" . $values[$param['param']];
+		}
+    	echo '">' . \i18n("Export") . '</a>
+		
+	</li></ul>
+	</div>
+    <!-- end bloc titre -->';
+	
+	
+    
+	// Input form
     echo "<form class=\"edit\" action=\"" . \Pasteque\get_current_url() . "\" "
             . "method=\"post\">";
     foreach($report->getParams() as $param) {
@@ -323,8 +585,10 @@ function tpl_report($report) {
 }
 
 function tpl_btn($class, $href, $label, $image_btn, $alt = NULL, $title = NULL) {
-    $btn = "<a class=" . $class . " href=\"" . $href . "\">"
-            . "<img src=\"" .\Pasteque\get_template_url() . "" . $image_btn . "\"";
+    //$btn = '<ul class="bt_fonction"><li>';
+	$btn = '<a class="transition ' . $class . '" href="' . $href . '">'.
+    /*
+	        . "<img src=\"" .\Pasteque\get_template_url() . "" . $image_btn . "\"";
     if (isset($alt)) {
          $btn .= " alt =\"" . $alt . "\"";
     }
@@ -332,12 +596,13 @@ function tpl_btn($class, $href, $label, $image_btn, $alt = NULL, $title = NULL) 
         $btn .= " title =\"" . $title . "\"";
     }
     $btn .= "/>";
+	*/
     $btn .= $label . "</a>";
     echo $btn;
 }
 
 function tpl_js_btn($class, $onclick, $label, $id = NULL, $image_btn = NULL, $alt = NULL, $title = NULL) {
-    $btn = "<a class=\"" . $class . "\" onclick=\"javascript:" . $onclick . ";return false;\"";
+    $btn = "<a class=\"but_2 " . $class . "\" onclick=\"javascript:" . $onclick . ";return false;\"";
     if (isset($id)) {
         $btn .= "id=\"" . $id . "\" ";
     }
