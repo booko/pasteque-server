@@ -32,7 +32,8 @@ if (isset($_POST['install'])) {
 
 function show_install() {
     tpl_open();
-?><h1><?php \pi18n("Installation"); ?></h1>
+?><div class="blc_ti">
+<h1><?php \pi18n("Installation"); ?></h1>
 <form action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
 	<label for="install"><?php \pi18n("Pays"); ?>
 	<select id="install" name="install">
@@ -43,6 +44,7 @@ function show_install() {
 	</select>
 	<?php \Pasteque\form_send(); ?>
 </form>
+</div>
 <?php
     tpl_close();
 }

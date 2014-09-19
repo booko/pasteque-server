@@ -42,6 +42,7 @@ function redirect_report($module, $name) {
 function url_content() {
     if (!isset($_GET[PT::URL_ACTION_PARAM]) && !isset($_GET[PT::URL_REPORT_PARAM])) {
         $action = "home";
+        redirectAction($action);
     } else if (isset($_GET[PT::URL_ACTION_PARAM])) {
         $action = $_GET[PT::URL_ACTION_PARAM];
         $action = str_replace("..", "", $action);
@@ -50,6 +51,9 @@ function url_content() {
         $report = $_GET[PT::URL_REPORT_PARAM];
         $report = str_replace("..", "", $report);
         redirectReport($report);
+    }
+    else {
+        $action = "home";
     }
 }
 /** Redirect to the given report data */

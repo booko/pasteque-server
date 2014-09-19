@@ -131,15 +131,6 @@ function tpl_open() {
     </script>
     <script src="<?php echo get_template_url(); ?>/js/adapt.min.js"></script>
 
-	<!-- menu mobile -->
-    <link type="text/css" rel="stylesheet" href="<?php echo get_template_url(); ?>/css/jquery.mmenu.all.css" />
-    <!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script> -->  
-    <script type="text/javascript" src="<?php echo get_template_url(); ?>/js/jquery.mmenu.min.all.js"></script>
-    <script type="text/javascript">
-        $(function() {
-            $('nav#nav_main__mobile').mmenu();
-        });
-    </script>
 
 	<link href="<?php echo get_template_url(); ?>/css/styles_admin.css" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" href="<?php echo get_template_url(); ?>/fancybox/jquery.fancybox-1.3.4.css" type="text/css" media="screen" />
@@ -148,13 +139,10 @@ function tpl_open() {
 <body>
 
 <!-- START tpl open --> 
-<div id="page" class="">
+<div id="global" class="ee">
 
 	<!-- start navigation mobile -->
 	<?php tpl_menu_mobile() ?>
-    <nav id="nav_main__mobile">
-    	<?php tpl_menu(); ?>
-    </nav>
     <!-- end navigation mobile -->
     
     
@@ -176,11 +164,7 @@ function tpl_open() {
             <div id="sticky_navigation">
             
 				<!-- start navigation standart -->
-				<nav id="nav_main">
-					<div class="container_12">
-						<?php tpl_menu(); ?>
-                	</div>
-                </nav>
+				<?php tpl_menu(); ?>
                 <!-- end navigation standart -->
                 
         	</div>
@@ -208,7 +192,7 @@ function tpl_close() {
     <footer>
     	<div class="container_12">
     		<div class="grid_12">
-			<div id="version">© Scil pour Worldline 2014 - <a href="" onclick="showAbout();return false;"><?php echo \i18n("About"); ?></a></div>
+			<div id="version"><a href="" onclick="showAbout();return false;"><?php echo \i18n("About"); ?></a></div>
 		</div>
     	</div>
     </footer> 
@@ -217,7 +201,7 @@ function tpl_close() {
 </div>     
 <!-- END tpl close --> 
 
-<!-- <script src="<?php echo get_template_url(); ?>/js/jquery_1.8.1.js"></script> -->
+<script src="<?php echo get_template_url(); ?>/js/jquery_1.8.1.js"></script>
 <!-- <script src="http://davist11.github.io/jQuery-Stickem/jquery.js"></script>   -->      
 <script src="<?php echo get_template_url(); ?>/js/jquery.stickem.js"></script>
 <script>
@@ -273,15 +257,11 @@ function tpl_msg_box($info, $error) {
 function tpl_menu_mobile() {
     global $MENU;
     echo '<div id="nav_mobile">
-			<a href="#nav_main__mobile" class="bt_nav_mobile">Navigation</a>
+			<a href="#" class="bt_nav_mobile">Navigation</a>
         	<div class="logo_mobile"><img src="';
 	echo get_template_url();
     echo '/imgs/logo_worldline_mobile.png" width="230" height="70" alt="Worldline E-payment services" /></div>  
-	</div>
-	
-	
-	
-	';
+	</div>';
 }
 
 function tpl_menu() {
@@ -290,9 +270,13 @@ function tpl_menu() {
     
 	
 	// ----------------------> gérer l'affichage du menu reglage
-	
-	/*
-	<ul id="menu_reglage">
+						
+	echo '
+				<!-- start navigation standart -->
+                <nav id="nav_main">
+                    <div class="container_12">
+                    
+                        <ul id="menu_reglage">
                         	<li>
                             	<a class="bt_reglage" href=""><span>Réglages</span></a>
                                 <div class="ssmenu">
@@ -309,13 +293,9 @@ function tpl_menu() {
                                 </div>
                             </li>
                         </ul>
-	*/
-					
-	echo '
-				<!-- start navigation standart -->
-                
-                    
-                    
+                        
+						
+						
                         <ul id="nav_services">';
 						
 							// ----------------------> gérer les affichage de nom de class sur les boutons
@@ -361,13 +341,122 @@ function tpl_menu() {
 							
 							
 							
+					/*
+					echo '<li class="accueil">
+                                <a class="accueil" href=""><span>Accueil</span></a>
+                            </li>
+                            <li class="cata activ">
+                                <a class="cata" href=""><span>Catalogue</span></a>
+                                <div class="ssmenu">
+                                <ul class="ul_ssmenu">
+                                    <li><a class="produits" href=""><span>Produits</span></a></li>
+                                    <li><a class="taxes" href=""><span>Taxes</span></a></li>
+                                    <li><a class="categories" href=""><span>Catégories</span></a></li>
+                                    <li><a class="etiquettes" href=""><span>Etiquettes</span></a></li>
+                                    <li><a class="composition" href=""><span>Composition</span></a></li>
+                                    <li><a class="zone_tarifaire" href=""><span>Zone tarifaire</span></a></li>
+                                    <li><a class="attributs" href=""><span>Attributs</span></a></li>
+                                    <li><a class="jeux_attributs" href=""><span>Jeux d\'attributs</span></a></li>
+                                    <li class="clear"></li>
+                                </ul> 
+                                </div>   
+                            </li>
+                            <li class="vente">
+                                <a class="vente" href=""><span>Vente</span></a>
+                                <div class="ssmenu">
+                                <ul class="ul_ssmenu">
+                                    <li><a class="synthese" href=""><span>Synthèse</span></a></li>
+                                    <li><a class="vente_produit" href=""><span>Vente par produit</span></a></li>
+                                    <li><a class="detail" href=""><span>Détail</span></a></li>
+                                    <li><a class="tva" href=""><span>TVA collectée</span></a></li>
+                                    <li><a class="couverts" href=""><span>Couverts par table</span></a></li>
+                                    <li><a class="remises" href=""><span>Remises par profils</span></a></li>
+                                    <li class="clear"></li>
+                                </ul>
+                                </div> 
+                            </li>
+                            <li class="caisses">
+                                <a class="caisses" href=""><span>Caisses</span></a>
+                                <div class="ssmenu">
+                                <ul class="ul_ssmenu">
+                                    <li><a class="caisses_liste" href=""><span>Caisses</span></a></li>
+                                    <li><a class="caisses_tickets" href=""><span>Tickets Z</span></a></li>
+                                    <li class="clear"></li>
+                                </ul> 
+                                </div>
+                            </li>
+                            <li class="stocks">
+                                <a class="stocks" href=""><span>Stocks</span></a>
+                                <div class="ssmenu">
+                                <ul class="ul_ssmenu">
+                                    <li><a class="stocks_mvt" href=""><span>Mouvement</span></a></li>
+                                    <li><a class="stocks_inventaire" href=""><span>Inventaire</span></a></li>
+                                    <li><a class="stocks_controle" href=""><span>Contrôle</span></a></li>
+                                    <li class="clear"></li>
+                                </ul> 
+                                </div>
+                            </li>
+                            <li class="clients">
+                                <a class="clients" href=""><span>Clients</span></a>
+                                <div class="ssmenu">
+                                <ul class="ul_ssmenu">
+                                    <li><a class="clients_liste" href=""><span>Clients</span></a></li>
+                                    <li><a class="clients_taxes" href=""><span>Taxes clients</span></a></li>
+                                    <li class="clear"></li>
+                                </ul> 
+                                </div>
+                            </li>';
+							*/
+							
+							
                         echo '</ul>
                         <div class="clear"></div>
                         
-                    
+                    </div>
+                </nav> 
                 <!-- end navigation standart -->
 	';
 }
+
+//////////////////////////////////////////////////////////////////
+// SAVE MENU INIT
+
+function tpl_menu______() {
+    global $MENU;
+    echo "<div id=\"menu-container\">\n";
+    echo "<div id=\"logo\"><img src=\"" . get_template_url() . "img/logo.png\" /></div>\n";
+    foreach ($MENU->getSections() as $section) {
+        echo "\t<div class=\"menu-section\">\n";
+        echo "\t\t<div class=\"menu-section-title\">";
+        \pi18n($section->getName(), $section->getNameDomain());
+        echo "</div>\n";
+        echo "\t\t<ul class=\"menu\">\n";
+        foreach ($section->getEntries() as $entry) {
+            echo "\t\t\t<li>";
+            if ($entry->getImg() !== NULL && $entry->getImg() != "") {
+                $img = get_template_url() . "img/" . $entry->getImg();
+            } else {
+                $img = get_template_url() . "img/menu_default.png";
+            }
+            $style = "style=\"background-image:url('$img');\"";
+            switch ($entry->getType()) {
+            case MenuEntry::ACTION:
+                $url = get_url_action($entry->getAction());
+                break;
+            case MenuEntry::REPORT:
+                $url = get_report_url($entry->getNameDomain(),
+                        $entry->getAction(), 'display');
+                break;
+            }
+            echo "<a $style href=\"" . $url . "\">" . __($entry->getName(), $entry->getNameDomain()) . "</a></li>\n";
+        }
+        echo "\t\t</ul>\n";
+        echo "\t</div>\n";
+    }
+    echo "</div>";
+}
+//////////////////////////////////////////////////////////////////
+
 
 function __tpl_report_title($report) {
     echo '
@@ -397,7 +486,7 @@ function __tpl_report_input($report, $values) {
 	
     
 	// Input form
-    echo "<div class=\"blc_content\"><form class=\"edit\" action=\"" . \Pasteque\get_current_url() . "\" "
+    echo "<form class=\"edit\" action=\"" . \Pasteque\get_current_url() . "\" "
             . "method=\"post\">";
     foreach($report->getParams() as $param) {
         $id = $param['param'];
@@ -419,7 +508,7 @@ function __tpl_report_input($report, $values) {
     }
     // Send
     echo "<div class=\"row actions\">" . \Pasteque\form_send() . "</div>\n";
-    echo "</form></div>\n";
+    echo "</form>\n";
 }
 
 function __tpl_report_header($report) {
