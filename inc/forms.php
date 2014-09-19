@@ -28,6 +28,10 @@ function esc_attr($value) {
 function esc_html($value) {
     return htmlspecialchars($value, ENT_NOQUOTES);
 }
+/** Escape a JS variable to be enclosed in double quotes */
+function esc_js($value) {
+    return addslashes($value);
+}
 
 function form_hidden($form_id, $object, $field) {
     if ($object != NULL && isset($object->{$field})) {
@@ -121,8 +125,9 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
         echo "$required />\n";
         break;
     case 'date':
+        // Class dateinput will be catched to show js date picker
         echo '<input id="' . esc_attr($form_id . '-' . $field)
-                . '" type="date" name="' . esc_attr($name) . '"';
+                . '" type="text" class="dateinput" name="' . esc_attr($name) . '"';
         if ($object !== null) {
             if (isset($args['dataformat'])) {
                 if ($args['dataformat'] == 'standard') {

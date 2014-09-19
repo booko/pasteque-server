@@ -26,6 +26,7 @@
 "No result": "No result",
 "Close": "Close",
 "About": "About",
+"Logout": "Logout",
 
 "Image": "Image",
 "Quantity": "Quantity",
@@ -84,7 +85,7 @@
 "Session.closeCash": "Close cash",
 "Session.expectedCash": "Expected cash",
 "Session.tickets": "Tickets",
-"Session.total": "Total",
+"Session.total": "Total w/o VAT",
 
 "Ticket.number": "Ticket #",
 "Ticket.date": "Date",

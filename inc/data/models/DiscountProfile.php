@@ -28,13 +28,13 @@ class DiscountProfile {
 
     static function __build($id, $label, $rate) {
         $profile = new DiscountProfile($label, $rate);
-        $profile->id = $id;
+        $profile->id = (int) $id;
         return $profile;
     }
 
     public function __construct($label, $rate) {
         $this->label = $label;
-        $this->rate = $rate;
+        $this->rate = (double) $rate;
     }
 
 }

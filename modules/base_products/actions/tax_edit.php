@@ -28,11 +28,6 @@ $error = null;
 if (isset($_POST['id'])) {
     // Update tax category
     $taxCat = \Pasteque\TaxCat::__build($_POST['id'], $_POST['label']);
-    $taxCatId = \Pasteque\TaxesService::updateCat($taxCat);
-    if ($taxCatId === false) {
-        $error = \i18n("Unable to save tax.", PLUGIN_NAME);
-        // Continue as taxes can be updated anyway
-    }
     // rebuild tax rates
     $taxValues = array();
     foreach ($_POST as $key => $value) {
@@ -53,9 +48,7 @@ if (isset($_POST['id'])) {
     foreach ($taxValues as $id => $data) {
         $tax = \Pasteque\Tax::__build($id, $taxCat->id, $data['label'],
                 $data['startDate'], floatval($data['rate']));
-        if (!\Pasteque\TaxesService::updateTax($tax)) {
-            $error = \i18n("Unable to save tax.", PLUGIN_NAME);
-        }
+        $taxCat->addTax($tax);
     }
     // new tax rate?
     if (isset($_POST['label-new']) && isset($_POST['rate-new'])) {
@@ -66,32 +59,32 @@ if (isset($_POST['id'])) {
         }
         $tax = new \Pasteque\Tax($_POST['id'], $_POST['label-new'],
                 $start, floatval($_POST['rate-new']));
-        if (!\Pasteque\TaxesService::createTax($tax)) {
-            $error = \i18n("Unable to save tax.", PLUGIN_NAME);
-        }
+        $taxCat->addTax($tax);
+    }
+    // Update
+    $taxCatId = \Pasteque\TaxesService::updateCat($taxCat);
+    if ($taxCatId === false) {
+        $error = \i18n("Unable to save tax.", PLUGIN_NAME);
     }
     if ($error === null) {
         $message = \i18n("Tax saved", PLUGIN_NAME);
     }
 } else if (isset($_POST['label'])) {
     // Create tax category
+    if (!isset($_POST['new-startDate'])) {
+        $start = \time();
+    } else {
+        $start = \i18nRevDate($_POST['new-startDate']);
+    }
     $taxCat = new \Pasteque\TaxCat($_POST['label']);
+    $tax = new \Pasteque\Tax(null, $_POST['label-new'],
+            $start, floatval($_POST['rate-new']));
+    $taxCat->addTax($tax);
     $taxCatId = \Pasteque\TaxesService::createCat($taxCat);
     if ($taxCatId === false) {
         $error = \i18n("Unable to save tax.", PLUGIN_NAME);
     } else {
-        if (!isset($_POST['new-startDate'])) {
-            $start = \time();
-        } else {
-            $start = \i18nRevDate($_POST['new-startDate']);
-        }
-        $tax = new \Pasteque\Tax($taxCatId, $_POST['label-new'],
-                $start, floatval($_POST['rate-new']));
-        if (\Pasteque\TaxesService::createTax($tax)) {
-            $message = \i18n("Tax saved", PLUGIN_NAME);
-        } else {
-            $error = \i18n("Unable to save tax.", PLUGIN_NAME);
-        }
+        $message = \i18n("Tax saved", PLUGIN_NAME);
     }
 }
 

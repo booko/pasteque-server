@@ -137,9 +137,10 @@ if (isset($_POST['reason']) && !isset($_POST['sendCsv'])) {
                 $error[] = \i18n("Undefined quantity for product %s", PLUGIN_NAME, $tab['Reference']);
             }
             if ($productOk && $quantityOk) {
-                echo "setProduct(\"" . $product->id . "\", \""
-                        . $product->reference . "\", \"" . $product->label
-                        . "\", " . ($product->hasImage ? "1":"0") . ", "
+                echo "setProduct(\"" . \Pasteque\esc_js($product->id) . "\", \""
+                        . \Pasteque\esc_js($product->reference) . "\", "
+                        . ($product->hasImage ? "1" : "0") . ", \""
+                        . \Pasteque\esc_js($product->label) . "\", "
                         . $tab['Quantity'] . ");\n";
             }
         }
@@ -183,7 +184,7 @@ if (!$multilocations) {
 	<?php if ($multilocations) { \Pasteque\form_select("destination", \i18n("Destination"), $locIds, $locNames, null); }?>
 	<div class="row">
 		<label for="date"><?php \pi18n("Date", PLUGIN_NAME); ?></label>
-		<input type="date" name="date" id="date" value="<?php echo $dateStr; ?>" />
+		<input type="text" class="dateinput" name="date" id="date" value="<?php echo $dateStr; ?>" />
 	</div>
 
 	<div id="catalog-picker"></div>

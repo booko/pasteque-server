@@ -84,9 +84,10 @@ if (isset($_POST['send']) && !isset($_POST['sendCsv'])) {
                 continue;
             }
             if ($productOk && $quantityOk) {
-                echo "setProduct(\"" . $product->id . "\", \""
-                        . $product->reference . "\", \"" . $product->label
-                        . "\", " . ($product->hasImage ? "1":"0") . ", "
+                echo "setProduct(\"" . \Pasteque\esc_js($product->id) . "\", \""
+                        . \Pasteque\esc_js($product->reference) . "\", "
+                        . ($product->hasImage ? "1":"0") . ", \""
+                        . \Pasteque\esc_js($product->label) . "\", "
                         . $tab['Quantity'] . ");\n";
             }
         }

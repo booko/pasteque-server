@@ -20,12 +20,14 @@
 
 namespace BaseCashes;
 
+$db = \Pasteque\DB::get();
+
 // Cash session request
 $sqls[] = "SELECT "
         . "CASHREGISTERS.NAME, CLOSEDCASH.HOSTSEQUENCE, CLOSEDCASH.MONEY, "
         . "CLOSEDCASH.DATESTART, CLOSEDCASH.DATEEND, "
         . "CLOSEDCASH.OPENCASH, CLOSEDCASH.CLOSECASH, CLOSEDCASH.EXPECTEDCASH, "
-        . "COUNT(RECEIPTS.ID) AS TICKETS, "
+        . "COUNT(DISTINCT(RECEIPTS.ID)) AS TICKETS, "
         . "SUM(TICKETLINES.PRICE * TICKETLINES.UNITS) AS SALES, "
         . "SUM(TICKETLINES.PRICE * TICKETLINES.UNITS * (1 + TAXES.RATE)) "
         . "AS SALESVAT "
@@ -57,7 +59,7 @@ $sqls[] = "SELECT "
 // Taxes request
 $sqls[] = "SELECT "
         . "CLOSEDCASH.MONEY, TAXES.NAME as __KEY__, "
-        . "SUM(TAXLINES.AMOUNT) AS __VALUE__ "
+        . $db->concat($db->concat("SUM(TAXLINES.BASE)", "'/'"), "SUM(TAXLINES.AMOUNT)") . " AS __VALUE__ "
         . "FROM CLOSEDCASH "
         . "LEFT JOIN RECEIPTS ON RECEIPTS.MONEY = CLOSEDCASH.MONEY "
         . "LEFT JOIN TAXLINES ON TAXLINES.RECEIPT = RECEIPTS.ID "
@@ -110,7 +112,12 @@ $report->addFilter("SALES", "\i18nCurr");
 $report->addFilter("SALESVAT", "\i18nCurr");
 $report->addMergedFilter(0, "\i18nCurr");
 $report->addMergedHeaderFilter(0, "\i18n");
-$report->addMergedFilter(1, "\i18nCurr");
+$report->addMergedFilter(1, "\BaseCashes\\vatI18nCurr");
+
+function vatI18nCurr($input) {
+    $amounts = explode("/", $input);
+    return \i18nCurr($amounts[0]) . " / " . \i18nCurr($amounts[1]);
+}
 
 $report->setVisualFilter("EXPECTEDCASH", "\BaseCashes\cashMatch");
 

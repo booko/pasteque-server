@@ -1,0 +1,31 @@
+{
+"Module list is not configured.":"La liste des modules n'est pas configurée.",
+"activated": "activé",
+"Administration": "Administration",
+
+"Free modules": "Modules gratuits",
+"Buy modules": "Acheter des modules",
+
+"Once modules are selected, they will be activated in a short moment." : "Une fois les modules sélectionnés, ils seront activés après un court délai.",
+"Once payment is validated, the modules will be activated in a short moment.": "Une fois le paiement validé, les modules seront activés après un court délai.",
+
+"base_cashes":"Sessions de caisses",
+"base_cashregisters":"Multi-caisses",
+"base_currencies":"Multi-devises",
+"base_customers":"Clients",
+"base_products":"Produits",
+"base_resources":"Configuration avancée",
+"base_restaurant":"Restaurant",
+"base_sales":"Rapports de vente",
+"base_stocks":"Gestion du stock",
+"base_users":"Utilisateurs",
+"customer_discountprofiles":"Profils de remise",
+"module_payment":"Achat de modules",
+"product_attributes":"Attributs de produits",
+"product_barcodes":"Code barres et étiquettes produits",
+"product_compositions":"Menus, produits composés",
+"product_discounts":"Remises",
+"product_tariffareas":"Zones tariffaires",
+"stock_multilocations":"Stocks multiples"
+
+}

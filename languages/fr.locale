@@ -26,6 +26,7 @@
 "No result": "Aucun résultat",
 "Close": "Fermer",
 "About": "À propos",
+"Logout": "Déconnexion",
 
 "Image": "Image",
 "Quantity": "Quantité",
@@ -84,7 +85,7 @@
 "Session.closeCash": "Fond clôture",
 "Session.expectedCash": "Fond attendu",
 "Session.tickets": "Tickets",
-"Session.total": "Total",
+"Session.total": "Total HT",
 
 "Ticket.number": "Ticket n°",
 "Ticket.date": "Date",

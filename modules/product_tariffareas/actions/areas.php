@@ -39,6 +39,8 @@ $areas = $srv->getAll();
 
 <?php \Pasteque\tpl_btn('btn', \Pasteque\get_module_url_action(PLUGIN_NAME, "area_edit"),
         \i18n('Add an area', PLUGIN_NAME), 'img/btn_add.png');?>
+<?php \Pasteque\tpl_btn('btn', \Pasteque\get_module_url_action(PLUGIN_NAME, "areas_import"),
+        \i18n('Import areas', PLUGIN_NAME), 'img/btn_add.png');?>
 
 <table cellpadding="0" cellspacing="0">
 	<thead>

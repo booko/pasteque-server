@@ -44,7 +44,9 @@ if (isset($_POST['id'])) {
         $disp_order = $_POST['dispOrder'] == "" ? NULL : $_POST['dispOrder'];
         $taxCatId = $_POST['taxCatId'];
         if ($_FILES['image']['tmp_name'] !== "") {
-            $img = file_get_contents($_FILES['image']['tmp_name']);
+            $output = $_FILES['image']['tmp_name'] . "thumb";
+            \Pasteque\img_thumbnail($_FILES['image']['tmp_name'], $output);
+            $img = file_get_contents($output);
         } else if ($_POST['clearImage']) {
             $img = NULL;
         } else {
@@ -165,7 +167,7 @@ if ($stocks === TRUE && $product != NULL) {
 	<div class="row">
 		<label for="sell"><?php \pi18n("Product.priceSell"); ?></label>
 		<input type="hidden" id="realsell" name="realsell" <?php if ($product != NULL) echo 'value="' . $product->priceSell. '"'; ?> />
-		<input id="sell" type="numeric" name="sell" value="<?php echo $price; ?>" />
+		<input id="sell" type="numeric" name="sell" value="<?php echo $price; ?>" readonly="true" />
 	</div>
 	<?php \Pasteque\form_input("edit", "Product", $product, "priceBuy", "numeric"); ?>
 	<div class="row">

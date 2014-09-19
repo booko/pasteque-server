@@ -3,7 +3,8 @@
 "Custcount": "Couverts",
 "Number": "Nombre",
 "Tables": "Tables",
-"Average price": "Prix moyen",
+"Average price w/o tax": "Prix moyen HT",
+"Average price": "Prix moyen TTC",
 
 "Floors": "Salles",
 "Floors configuration": "Configuration des salles",

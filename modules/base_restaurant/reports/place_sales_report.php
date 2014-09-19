@@ -24,6 +24,7 @@ $sql = "SELECT TICKETS.CUSTCOUNT, "
         . "MIN(RECEIPTS.DATENEW) AS STARTDATE, "
         . "MAX(RECEIPTS.DATENEW) AS ENDDATE, COUNT(TICKETS.TICKETID) AS COUNT, "
         . "(COUNT(TICKETS.TICKETID) / TICKETS.CUSTCOUNT) AS TABLES ,"
+        . "AVG(TAXLINES.BASE) AS AVGSUBPRICE, "
         . "AVG(TAXLINES.BASE + TAXLINES.AMOUNT) AS AVGPRICE "
         . "FROM TICKETS, RECEIPTS, TAXLINES WHERE RECEIPTS.ID = TICKETS.ID "
         . "AND RECEIPTS.ID = TAXLINES.RECEIPT "
@@ -32,10 +33,12 @@ $sql = "SELECT TICKETS.CUSTCOUNT, "
         . "GROUP BY TICKETS.CUSTCOUNT "
         . "ORDER BY TICKETS.CUSTCOUNT";
 
-$fields = array("CUSTCOUNT", "STARTDATE", "ENDDATE", "COUNT", "TABLES", "AVGPRICE");
+$fields = array("CUSTCOUNT", "STARTDATE", "ENDDATE", "COUNT", "TABLES",
+        "AVGSUBPRICE", "AVGPRICE");
 $headers = array(\i18n("Custcount", PLUGIN_NAME),
         \i18n("Session.openDate"), \i18n("Session.closeDate"),
         \i18n("Number", PLUGIN_NAME), \i18n("Tables", PLUGIN_NAME),
+        \i18n("Average price w/o tax", PLUGIN_NAME),
         \i18n("Average price", PLUGIN_NAME)
         );
 
@@ -52,6 +55,7 @@ $report->addFilter("DATESTART", "\Pasteque\stdtimefstr");
 $report->addFilter("DATESTART", "\i18nDatetime");
 $report->addFilter("DATEEND", "\Pasteque\stdtimefstr");
 $report->addFilter("DATEEND", "\i18nDatetime");
+$report->addFilter("AVGSUBPRICE", "\i18nCurr");
 $report->addFilter("AVGPRICE", "\i18nCurr");
 $report->addFilter("TABLES", "\i18nInt");
 
@@ -61,6 +65,7 @@ $report->addTotal("CUSTCOUNT", \Pasteque\Report::TOTAL_SUM);
 $report->addTotal("CUSTCOUNT", \Pasteque\Report::TOTAL_AVG);
 $report->addPonderate("CUSTCOUNT", "TABLES"); // COUNT = SUM(TABLE * CUSTCOUNT)
 
+$report->addTotal("AVGSUBPRICE", \Pasteque\Report::TOTAL_AVG);
 $report->addTotal("AVGPRICE", \Pasteque\Report::TOTAL_AVG);
 
 \Pasteque\register_report($report);

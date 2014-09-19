@@ -36,8 +36,8 @@ $dateFormat = i18n("date");
 $jsDateFormat = str_replace(array("%Y", "%m", "%d"),
         array("yy", "mm", "dd"),$dateFormat);
 ?>
-    $( "#start" ).datepicker({ dateFormat: "<?php echo $jsDateFormat; ?>", buttonImage: "<?php echo get_template_url(); ?>/img/calendar.png", showOn: "both" });
-    $( "#stop" ).datepicker({ dateFormat: "<?php echo $jsDateFormat; ?>", buttonImage: "<?php echo get_template_url(); ?>/img/calendar.png", showOn: "both" });
+    $( ".dateinput" ).datepicker({ dateFormat: "<?php echo $jsDateFormat; ?>", buttonImage: "<?php echo get_template_url(); ?>/img/calendar.png", showOn: "both" });
+    $( ".dateinput" ).datepicker({ dateFormat: "<?php echo $jsDateFormat; ?>", buttonImage: "<?php echo get_template_url(); ?>/img/calendar.png", showOn: "both" });
 });
 
 var menuHidden = false;

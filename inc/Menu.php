@@ -76,6 +76,11 @@ class Menu {
         $entry = new MenuEntry(MenuEntry::ACTION, "Home", "menu_home.png",
                 "home");
         $this->addEntry("general", $entry);
+        if (can_logout()) {
+            $logout = new MenuEntry(MenuEntry::ACTION, "Logout",
+                    "menu_logout.png", "logout");
+            $this->addENtry("general", $logout);
+        }
     }
 
     public function addSection($id, $name, $nameDomain = NULL) {

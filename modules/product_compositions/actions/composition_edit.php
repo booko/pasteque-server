@@ -155,7 +155,7 @@ if (isset($_GET['productId'])) {
         <div class="row">
             <label for="sell"><?php \pi18n("Product.priceSell"); ?></label>
             <input type="hidden" id="realsell" name="realsell" <?php if ($composition != NULL) echo 'value="' . $composition->priceSell. '"'; ?> />
-            <input id="sell" type="numeric" name="sell" value="<?php echo $price; ?>" />
+            <input id="sell" type="numeric" name="sell" value="<?php echo $price; ?>" readonly="true" />
         </div>
         <?php \Pasteque\form_input("edit", "Product", $composition, "priceBuy", "numeric"); ?>
         <div class="row">
@@ -233,7 +233,7 @@ if (isset($_GET['productId'])) {
 
 	var tax_rates = new Array();
 <?php foreach ($taxes as $tax) {
-	echo "\ttax_rates['" . $tax->id . "'] = " . $tax->getCurrentTax()->rate . ",\n";
+    echo "\ttax_rates[\"" . \Pasteque\esc_js($tax->id) . "\"] = " . $tax->getCurrentTax()->rate . ";\n";
 } ?>
 
 
@@ -345,13 +345,13 @@ updateMargin = function() {
 <script type="text/javascript">
 <?php
 foreach ($products as $product) {
-    echo("registerProduct(\"" . $product->id . "\", \"" . $product->label . "\");\n");
+    echo "registerProduct(\"" . \Pasteque\esc_js($product->id) . "\", \"" . \Pasteque\esc_js($product->label) . "\");\n";
 }
 if ($composition !== null) {
     foreach($composition->groups as $group) {
-        echo "var id = addSubgroup(\"" . $group->label . "\", " . $group->dispOrder . ");\n";
+        echo "var id = addSubgroup(\"" . \Pasteque\esc_js($group->label) . "\", " . \Pasteque\esc_js($group->dispOrder) . ");\n";
         foreach($group->choices as $prod) {
-            echo "addProduct(id, \"" . $prod->productId . "\");";
+            echo "addProduct(id, \"" . \Pasteque\esc_js($prod->productId) . "\");";
         }
     }
     echo("showSubgroup();\n");

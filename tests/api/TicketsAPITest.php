@@ -45,15 +45,15 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
         $set->id = AttributesService::createSet($set);
         // Product, tax and category
         $taxCat = new TaxCat("Tax");
-        $taxCat->id = TaxesService::createCat($taxCat);
-        $tax = new Tax($taxCat->id, "Tax", stdtimefstr("2001-01-01 00:00:00"),
+        $tax = new Tax(null, "Tax", stdtimefstr("2001-01-01 00:00:00"),
                 0.1);
-        $tax->id = TaxesService::createTax($tax);
+        $taxCat->addTax($tax);
+        $taxCat->id = TaxesService::createCat($taxCat);
         $taxCat2 = new TaxCat("Tax2");
-        $taxCat2->id = TaxesService::createCat($taxCat2);
-        $tax2 = new Tax($taxCat2->id, "Tax2",
+        $tax2 = new Tax(null, "Tax2",
                 stdtimefstr("2001-01-01 00:00:00"), 0.2);
-        $tax2->id = TaxesService::createTax($tax2);
+        $taxCat2->addTax($tax2);
+        $taxCat2->id = TaxesService::createCat($taxCat2);
         $pdo = PDOBuilder::getPDO();
         $stmt = $pdo->prepare("INSERT INTO CATEGORIES (ID, NAME) "
                 . "VALUES (:id, :name)");
@@ -196,7 +196,7 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
                 "Result status check failed");
         $content = $result->content;
-        $this->assertEquals(1, $content['saved'], "Content is not correct");
+        $this->assertEquals(array("saved" => 1), $content, "Content mismatch");
     }
 
     public function testSaveDefaultLocation() {
@@ -206,7 +206,7 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
                 "Result status check failed");
         $content = $result->content;
-        $this->assertEquals(1, $content['saved'], "Content is not correct");
+        $this->assertEquals(array("saved" => 1), $content, "Content mismatch");
     }
 
     /** @depends testSaveTicket */
@@ -218,7 +218,7 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
                 "Result status check failed");
         $content = $result->content;
-        $this->assertEquals(1, $content['saved'], "Content is not correct");
+        $this->assertEquals(array("saved" => 1), $content, "Content mismatch");
     }
 
     /** @depends testSaveTicketAttr */
@@ -231,7 +231,7 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
                 "Result status check failed");
         $content = $result->content;
-        $this->assertEquals(2, $content['saved'], "Content is not correct");
+        $this->assertEquals(array("saved" => 2), $content, "Content mismatch");
     }
 
     /** @depends testSaveTicket */

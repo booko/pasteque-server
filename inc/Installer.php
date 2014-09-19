@@ -26,28 +26,22 @@ class Installer {
     const NEED_DB_UPGRADE = 2;
     const NEED_DB_DOWNGRADE = 3;
 
-    private static function loadFile($pdo, $fileContent, $type) {
-        if ($type == "postgresql") {
-            // PDO Postgresql cannot run multiple queries at once
-            // Need to split them and run one by one in a transaction
-            $pdo->beginTransaction();
-            $sqls = str_replace("\r\n", "\n", $fileContent);
-            $sqls = explode(";\n", $sqls);
-            foreach ($sqls as $sql) {
-                $sql = trim($sql);
-                if ($sql == "") {
-                    continue;
-                }
-                if ($pdo->query($sql) === false) {
-                    $pdo->rollback();
-                    return false;
-                }
+    private static function loadFile($pdo, $fileContent) {
+        $pdo->beginTransaction();
+        $sqls = str_replace("\r\n", "\n", $fileContent);
+        $sqls = explode(";\n", $sqls);
+        foreach ($sqls as $sql) {
+            $sql = trim($sql);
+            if ($sql == "") {
+                continue;
             }
-            $pdo->commit();
-            return true;
-        } else {
-            return $pdo->query($fileContent);
+            if ($pdo->query($sql) === false) {
+                $pdo->rollback();
+                return false;
+            }
         }
+        $pdo->commit();
+        return true;
     }
 
     static function install($country) {
@@ -59,7 +53,7 @@ class Installer {
             return false;
         }
         $fileContent = \file_get_contents($file);
-        if (!Installer::loadFile($pdo, $fileContent, $type)) {
+        if (!Installer::loadFile($pdo, $fileContent)) {
             return false;
         }
         // Load country data
@@ -67,7 +61,7 @@ class Installer {
             $cfile = PT::$ABSPATH . "/install/database/" . $type
                     . "/data_" . $country . ".sql";
             $fileContent = \file_get_contents($cfile);
-            Installer::loadFile($pdo, $fileContent, $type);
+            Installer::loadFile($pdo, $fileContent);
         }
         return true;
     }
@@ -76,6 +70,10 @@ class Installer {
     static function upgrade($country, $version = null) {
         if ($version === null) {
             $version = Installer::getVersion();
+            if ($version === null) {
+                // Assume it's an old v4 with the old id
+                $version = 4;
+            }
         }
         while ($version != PT::DB_LEVEL) {
             $uid = get_user_id();
@@ -84,26 +82,32 @@ class Installer {
             // Load generic sql update for current version
             $file = PT::$ABSPATH . "/install/database/" . $type
                     . "/upgrade-" . $version . ".sql";
-            $pdo->query(\file_get_contents($file));
+            $fileContent = \file_get_contents($file);
+            if (!Installer::loadFile($pdo, $fileContent)) {
+                return false;
+            }
             // Check for localized update data for current version
             $file = PT::$ABSPATH . "/install/database/" . $type
                     . "upgrade-" . $version . "_" . $country . ".sql";
             if (\file_exists($file)) {
-                $pdo->query(\file_get_contents($file));
+                $fileContent = \file_get_contents($file);
+                if (!Installer::loadFile($pdo, $fileContent)) {
+                    return false;
+                }
             }
             $version++;
         }
     }
 
-    static function getVersion() {
+    static function getVersion($id = "pasteque") {
         $pdo = PDOBuilder::getPDO();
         $sql = "SELECT VERSION FROM APPLICATIONS WHERE ID = :id";
         $stmt = $pdo->prepare($sql);
-        $stmt->bindValue(":id", "pasteque");
+        $stmt->bindValue(":id", $id);
         $stmt->execute();
         $data = $stmt->fetch();
         if ($data !== false) {
-            return $data['VERSION'];
+            return (int) $data['VERSION'];
         } else {
             return null;
         }
@@ -112,6 +116,10 @@ class Installer {
     static function checkVersion($dbVer = null) {
         if ($dbVer === null) {
             $dbVer = Installer::getVersion();
+        }
+        if ($dbVer === null) {
+            // Search for an old lvl4 "postech"
+            $dbVer = Installer::getVersion("postech");
         }
         if ($dbVer !== null) {
             if (intval($dbVer) < intval(PT::DB_LEVEL)) {

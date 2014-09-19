@@ -220,6 +220,9 @@ if (isset($_GET['id'])) {
 	updateBarcode();
 	generateCard = function() {
 	    var num = "" + jQuery("#edit-number").val();
+	    if (num == "") {
+	        num = "" + Math.floor(Math.random() * <?php echo pow(10, \Pasteque\Customer::CARD_SIZE); ?>);
+	    }
 	    while (num.length < <?php echo \Pasteque\Customer::CARD_SIZE; ?>) {
 	        num = "0" + num;
 	    }

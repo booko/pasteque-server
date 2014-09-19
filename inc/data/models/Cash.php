@@ -49,7 +49,7 @@ class Cash {
     function __construct($cashRegisterId, $sequence, $openDate, $closeDate,
             $openCash, $closeCash, $expectedCash) {
         $this->cashRegisterId = $cashRegisterId;
-        $this->sequence = $sequence;
+        $this->sequence = (int) $sequence;
         $this->openDate = $openDate;
         $this->closeDate = $closeDate;
         $this->openCash = $openCash;

@@ -54,7 +54,12 @@ if (isset($_GET[PT::URL_ACTION_PARAM])) {
 $broker = new APIBroker($api);
 $result = $broker->run($action, $params);
 
-header("Content type: application/json");
-echo json_encode($result);
+if ($api == "ImagesAPI") {
+    // Special case of images api with binary data
+    echo($result);
+} else {
+    header("Content type: application/json");
+    echo json_encode($result);
+}
 
 ?>

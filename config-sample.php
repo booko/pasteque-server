@@ -32,3 +32,37 @@ $config['core_modules'] = "static";
 // Template
 // Must match a directory in templates/
 $config['template'] = "pasteque";
+
+// Thumbnail size in pixels
+$config['thumb_width'] = 128;
+$config['thumb_height'] = 128;
+
+// Paypal config (for module payment)
+$config['pp_sandbox_id'] = "";
+$config['pp_user_id'] = "";
+$config['pp_email'] = "";
+$config['pp_sandbox_email'] = "";
+$config['pp_sandbox'] = true;
+
+$config['pp_modules'] = [
+    array("module" => "product_barcodes", "price" => "1.00"),
+];
+$config['mandatory_modules'] = [
+    "base_products",
+    "base_sales",
+    "modules_management",
+];
+$config['free_modules'] = [
+    "base_restaurant",
+    "base_cashes",
+    "base_resources",
+    "base_stocks",
+    "base_users",
+    "product_compositions",
+    "product_discounts",
+];
+
+function getConfig() {
+    global $config;
+    return $config;
+}

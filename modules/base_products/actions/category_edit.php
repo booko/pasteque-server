@@ -26,7 +26,9 @@ $message = NULL;
 $error = NULL;
 if (isset($_POST['id']) && isset($_POST['label'])) {
     if ($_FILES['image']['tmp_name'] !== "") {
-        $img = file_get_contents($_FILES['image']['tmp_name']);
+        $output = $_FILES['image']['tmp_name'] . "thumb";
+        \Pasteque\img_thumbnail($_FILES['image']['tmp_name'], $output);
+        $img = file_get_contents($output);
     } else if ($_POST['clearImage']) {
         $img = NULL;
     } else {

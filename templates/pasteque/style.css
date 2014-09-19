@@ -11,8 +11,9 @@ body {
 #logo {
 	border-bottom-right-radius: 30px;
 	background-color: #FFF;
-	width: 200px;
-	height: 95px;
+	width: 180px;
+        padding-left: 20px;
+	height: 150px;
 }
 #version {
 	font-size: xx-small;
@@ -170,6 +171,9 @@ form.edit fieldset legend {
 .edit .row select {
 	width: 65%;
 }
+.edit .row input.dateinput {
+	width: 60%;
+}
 
 .edit .row input#start { width:6.5em; }
 .edit .row input#stop { width:6.5em; }
@@ -242,6 +246,7 @@ thead tr {
 }
 td {
 	border-top: 1px solid black;
+        border-right: 1px solid #aaa;
 	padding: 3px;
 }
 td.numeric {
@@ -249,6 +254,7 @@ td.numeric {
 }
 th {
 	text-align: left;
+        border-right: 1px solid #aaa;
 	padding: 8px 20px;
 }
 tr {
@@ -256,6 +262,10 @@ tr {
 }
 tr.row-odd {
 	background-color: #EEE;
+}
+table.report td {
+	white-space: nowrap;
+        padding: 0.5ex 1ex;
 }
 .thumbnail {
 	max-width: 32px;

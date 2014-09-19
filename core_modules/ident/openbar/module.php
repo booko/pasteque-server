@@ -38,4 +38,11 @@ function get_user_id() {
     return 0;
 }
 
+function can_logout() {
+    return false;
+}
+
+function logout() {
+}
+
 ?>

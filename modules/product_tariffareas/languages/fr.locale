@@ -3,7 +3,16 @@
 "Tariff area": "Zone tarifaire",
 
 "Add an area": "Ajouter une zone",
+"Import areas": "Importer des zones",
+
+"Import areas from csv file": "Importer des zones depuis un fichier csv",
+"File": "Fichier",
 
 "Price": "Prix TTC",
-"Area price": "Prix de la zone"
+"Area price": "Prix de la zone",
+
+"Line %d: Unable to create area %s": "Ligne %d: Impossible de créer la zone %s",
+"Line %d: '%s' doesn't exist": "Ligne %d: '%s' n'existe pas",
+"Unable to save tariff area %d": "Impossible d'enregistrer la zone %d",
+"%d line(s) inserted, %d line(s) modified, %d error(s)": "%d ligne(s) insérée(s), %d ligne(s) modifiée(s), %d erreur(s)"
 }

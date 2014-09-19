@@ -29,14 +29,14 @@ class CashRegister {
 
     static function __build($id, $label, $locationId, $nextTicketId = 1) {
         $cr = new CashRegister($label, $locationId, $nextTicketId);
-        $cr->id = $id;
+        $cr->id = (int) $id;
         return $cr;
     }
 
     function __construct($label, $locationId, $nextTicketId = 1) {
         $this->label = $label;
         $this->locationId = $locationId;
-        $this->nextTicketId = $nextTicketId;
+        $this->nextTicketId = (int) $nextTicketId;
     }
 
 }

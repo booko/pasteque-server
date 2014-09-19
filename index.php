@@ -38,8 +38,11 @@ if (!is_user_logged_in()) {
     show_login_page();
 } else {
     require_once(PT::$ABSPATH . "/inc/load_logged.php");
-    // Check install
-    require_once(PT::$ABSPATH . "/install.php");
+    // Check install if not trying to logout
+    if (!(isset($_GET[PT::URL_ACTION_PARAM])
+                    && $_GET[PT::URL_ACTION_PARAM] == "logout")) {
+        require_once(PT::$ABSPATH . "/install.php");
+    }
     if (isset($_GET[PT::URL_ACTION_PARAM])) {
         switch($_GET[PT::URL_ACTION_PARAM]) {
         case "img":
@@ -51,6 +54,9 @@ if (!is_user_logged_in()) {
         case "print":
             require_once(PT::$ABSPATH . "/print.php");
             break;
+        case "logout":
+            logout();
+            break;
         default:
             index_run();
             break;
@@ -59,5 +65,3 @@ if (!is_user_logged_in()) {
         index_run();
     }    
 }
-
-?>

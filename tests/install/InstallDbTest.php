@@ -58,6 +58,12 @@ class InstallDbTest extends \PHPUnit_Framework_TestCase {
         $row = $stmt->fetch();
         $this->assertEquals("Table 10", $row['NAME'],
                 "Country data failed to be inserted");
+        $sql = "SELECT * FROM CASHREGISTERS";
+        $stmt = $pdo->prepare($sql);
+        $this->assertNotEquals(false, $stmt->execute(), "Query failed");
+        $row = $stmt->fetch();
+        $this->assertEquals("Caisse", $row['NAME'],
+                "Cash register failed to be inserted");
     }
 
     /** @depends testInstallStruct */
@@ -73,6 +79,33 @@ class InstallDbTest extends \PHPUnit_Framework_TestCase {
         $row = $stmt->fetch();
         $this->assertEquals("Table 10", $row['NAME'],
                 "Country data failed to be inserted");
+        $sql = "SELECT * FROM CASHREGISTERS";
+        $stmt = $pdo->prepare($sql);
+        $this->assertNotEquals(false, $stmt->execute(), "Query failed");
+        $row = $stmt->fetch();
+        $this->assertEquals("Caisse", $row['NAME'],
+                "Cash register failed to be inserted");
+    }
+
+    /** @depends testInstallStruct */
+    public function testInstallLuxembourg() {
+        Installer::install("luxembourg");
+        $pdo = PDOBuilder::getPDO();
+        $this->assertEquals(PT::DB_LEVEL, Installer::getVersion(),
+                "Version doesn't match");
+        // Check data insert
+        $sql = "SELECT * FROM PLACES WHERE ID = '10'";
+        $stmt = $pdo->prepare($sql);
+        $this->assertNotEquals(false, $stmt->execute(), "Query failed");
+        $row = $stmt->fetch();
+        $this->assertEquals("Table 10", $row['NAME'],
+                "Country data failed to be inserted");
+        $sql = "SELECT * FROM CASHREGISTERS";
+        $stmt = $pdo->prepare($sql);
+        $this->assertNotEquals(false, $stmt->execute(), "Query failed");
+        $row = $stmt->fetch();
+        $this->assertEquals("Caisse", $row['NAME'],
+                "Cash register failed to be inserted");
     }
 
     /** @depends testInstallStruct */
@@ -88,7 +121,12 @@ class InstallDbTest extends \PHPUnit_Framework_TestCase {
         $row = $stmt->fetch();
         $this->assertEquals("Table 10", $row['NAME'],
                 "Country data failed to be inserted");
+        $sql = "SELECT * FROM CASHREGISTERS";
+        $stmt = $pdo->prepare($sql);
+        $this->assertNotEquals(false, $stmt->execute(), "Query failed");
+        $row = $stmt->fetch();
+        $this->assertEquals("Till", $row['NAME'],
+                "Cash register failed to be inserted");
     }
 
 }
-?>

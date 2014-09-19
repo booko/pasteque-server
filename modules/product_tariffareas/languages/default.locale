@@ -3,7 +3,16 @@
 "Tariff area": "Tariff area",
 
 "Add an area": "Add an area",
+"Import areas": "Import areas",
+
+"Import areas from csv file": "Import areas from csv file",
+"File": "File",
 
 "Price": "Price",
-"Area price": "Area price"
+"Area price": "Area price",
+
+"Line %d: Unable to create area %s": "Line %d: Unable to create area %s",
+"Line %d: '%s' doesn't exist": "Line %d: '%s' doesn't exist",
+"Unable to save tariff area %d": "Unable to save tariff area %d",
+"%d line(s) inserted, %d line(s) modified, %d error(s)": "%d line(s) inserted, %d line(s) modified, %d error(s)"
 }

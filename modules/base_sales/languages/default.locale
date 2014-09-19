@@ -18,6 +18,8 @@
 "Tax base": "Base",
 "Tax amount": "Tax amount",
 
+"Total w/o VAT": "Total (without VAT)",
+
 "CS report": "Summary",
 "Consolidated sales report": "Consolidated sales report",
 "Tickets": "Tickets",
