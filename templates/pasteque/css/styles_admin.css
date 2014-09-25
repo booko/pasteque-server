@@ -847,7 +847,7 @@ nav a.administration span { background: url(../imgs/ico_nav_reglage.png) no-repe
 	background:#ff6319;
 	color:#fff;
 	float:right;
-	margin: 2em 4em 0 0;
+	margin: 2em 4em 2em 0;
 	border:none;
 	font-size:1.2em;
 	
@@ -989,10 +989,6 @@ a.bt_utiliser:hover {
 /*                       Fiches détaillée                             */
 /*////////////////////////////////////////////////////////////////////*/
 
-.thumbnail {
-	width:50px;
-	max-height:50px;
-}
 .bando_rech {
 	height:70px;
 	background:url(../imgs/bando_rech_bk.png) repeat-x top left;
@@ -1336,3 +1332,83 @@ a.fiche_create_bt:hover,
 	
 #logout { position: absolute; top:0; right: 10%; background-color: #000; padding: 0.4em 1em; }
 #logout a { color: white; } 
+
+.report {
+    margin: 3em auto;
+    min-width: 50%;
+}
+table.report {
+    border: solid 1px #ddd;
+    background-color: white;
+}
+table.report th {
+    color: #808080;
+    font-size: 1.5em;
+    font-family: "Oxygen","Trebuchet MS",Arial,Helvetica,sans-serif;
+    padding: 0.7em;
+    border: solid 1px #bbb;
+}
+table.report td {
+    border: solid 1px #bbb;
+    padding: 0.7em;
+}
+
+img.thumbnail {
+    width: 65px;
+}
+
+/*// Catalog //*/
+.catalog-category,
+.catalog-product {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 64px;
+    background-color: #DDD;
+    margin: 5px;
+}
+.catalog-category img,
+.catalog-product img {
+    position: absolute;
+    max-width: 64px;
+    max-height: 64px;
+}
+.catalog-label {
+    position: absolute;
+    bottom: 0px;
+    margin: 0px;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.4);
+    overflow: hidden;
+}
+.catalog-label-long {
+    font-size: small;
+}
+.catalog-label-verylong {
+    font-size: x-small;
+}
+
+.catalog-categories-container {
+    float: left;
+    height: 360px;
+    width: 200px;
+    overflow: scroll;
+    border: 1px solid #000;
+    margin-bottom: 10px;
+}
+.catalog-products-container {
+    height: 360px;
+    width: 400px;
+    margin-left: 180px;
+    overflow: scroll;
+    border: 1px solid #000;
+    margin-bottom: 10px;
+}
+
+.qty-cell {
+    text-align: center;
+}
+.qty {
+    width: 2em;
+    text-align: center;
+}
