@@ -40,57 +40,57 @@ function tpl_open() {
 
 	<script src="<?php echo get_template_url(); ?>/js/jquery_1.8.1.js"></script>
 	<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script> -->
-    
+
     <!-- fancybox -->
 	<script type="text/javascript" src="<?php echo get_template_url(); ?>/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
     <script type="text/javascript" src="<?php echo get_template_url(); ?>/fancybox/jquery.easing-1.4.pack.js"></script>
     <script type="text/javascript" src="<?php echo get_template_url(); ?>/fancybox/jquery.mousewheel-3.0.4.pack.js"></script>
-    
+
     <!-- sticky nav -->
     <script>
     $(function() {
-    
-        // grab the initial top offset of the navigation 
+
+        // grab the initial top offset of the navigation
         var sticky_navigation_offset_top = $('#sticky_navigation').offset().top;
-        
+
         // our function that decides weather the navigation bar should have "fixed" css position or not.
         var sticky_navigation = function(){
             var scroll_top = $(window).scrollTop(); // our current vertical position from the top
-            
+
             // if we've scrolled more than the navigation, change its position to fixed to stick to top, otherwise change it back to relative
-            if (scroll_top > sticky_navigation_offset_top) { 
+            if (scroll_top > sticky_navigation_offset_top) {
                 $('#sticky_navigation').css({ 'position': 'fixed', 'top':0, 'left':0 });
             } else {
-                $('#sticky_navigation').css({ 'position': 'relative' }); 
-            }   
+                $('#sticky_navigation').css({ 'position': 'relative' });
+            }
         };
-        
+
         // run our function on load
         sticky_navigation();
-        
+
         // and run it again every time you scroll
         $(window).scroll(function() {
              sticky_navigation();
         });
-        
+
         // NOT required:
         // for this demo disable all links that point to "#"
-        $('a[href="#"]').click(function(event){ 
-            event.preventDefault(); 
+        $('a[href="#"]').click(function(event){
+            event.preventDefault();
         });
-        
+
     });
     </script>
-    
+
     <!-- script scroll id -->
     <script language="javascript">
     $(document).ready(function(){
         $('a[href^="#"]').on('click',function (e) {
             e.preventDefault();
-    
+
             var target = this.hash,
             $target = $(target);
-    
+
             $('html, body').stop().animate({
                 'scrollTop': $target.offset().top
             }, 900, 'swing', function () {
@@ -99,18 +99,18 @@ function tpl_open() {
         });
     });
     </script>
-    
-    <!-- script adapt.js responsive -->      
+
+    <!-- script adapt.js responsive -->
     <script language="javascript">
     // Edit to suit your needs.
     var ADAPT_CONFIG = {
       // Where is your CSS?
       path: '<?php echo get_template_url(); ?>/css/',
-    
+
       // false = Only run once, when page first loads.
       // true = Change on window resize and page tilt.
       dynamic: true,
-    
+
       // First range entry is the minimum.
       // Last range entry is the maximum.
       // Separate ranges by "to" keyword.
@@ -126,14 +126,14 @@ function tpl_open() {
         */
       ]
     };
-    
-    
+
+
     </script>
     <script src="<?php echo get_template_url(); ?>/js/adapt.min.js"></script>
 
 	<!-- menu mobile -->
     <link type="text/css" rel="stylesheet" href="<?php echo get_template_url(); ?>/css/jquery.mmenu.all.css" />
-    <!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script> -->  
+    <!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script> -->
     <script type="text/javascript" src="<?php echo get_template_url(); ?>/js/jquery.mmenu.min.all.js"></script>
     <script type="text/javascript">
         $(function() {
@@ -147,7 +147,7 @@ function tpl_open() {
 </head>
 <body>
 
-<!-- START tpl open --> 
+<!-- START tpl open -->
 <div id="page" class="">
 
 	<!-- start navigation mobile -->
@@ -156,25 +156,25 @@ function tpl_open() {
     	<?php tpl_menu(); ?>
     </nav>
     <!-- end navigation mobile -->
-    
-    
+
+
 	<!-- start navigation PC -->
     <div id="nav_pc">
-    
+
         <!-- start bande header -->
         <header>
-            <div class="container_12">  
-                 
+            <div class="container_12">
+
                 <!-- logo -->
-                <div class="logo"><img src="<?php echo get_template_url(); ?>/imgs/logo_worldline.png" width="247" height="69" alt="Worldline E-payment services" /></div>  
-                 
-            </div> 
-        </header>   
+                <div class="logo"><img src="<?php echo get_template_url(); ?>/imgs/logo_worldline.png" width="247" height="69" alt="Worldline E-payment services" /></div>
+
+            </div>
+        </header>
         <!-- end bande header -->
 		
-        <div id="sticky_navigation_wrapper"> 
+        <div id="sticky_navigation_wrapper">
             <div id="sticky_navigation">
-            
+
 				<!-- start navigation standart -->
 				<nav id="nav_main">
 					<div class="container_12">
@@ -182,18 +182,18 @@ function tpl_open() {
                 	</div>
                 </nav>
                 <!-- end navigation standart -->
-                
+
         	</div>
         </div>
 
 	</div>
     <!-- end navigation PC -->
-        
-        
+
+
 
 	<!-- start content -->
 	<div id="content" class="container_12">
-	<!-- START tpl close -->     
+	<!-- START tpl close -->
 <?php
 }
 
@@ -202,23 +202,23 @@ function tpl_close() {
     </div>
     <!-- end content -->
     <div class="clear"></div>
-    
-    
-    <!-- start bande footer -->    
+
+
+    <!-- start bande footer -->
     <footer>
     	<div class="container_12">
     		<div class="grid_12">
 			<div id="version">© Scil pour Worldline 2014 - <a href="" onclick="showAbout();return false;"><?php echo \i18n("About"); ?></a></div>
 		</div>
     	</div>
-    </footer> 
+    </footer>
     <div id="logout"><a href="/awl/?p=logout">Déconnexion</a></div>
-    
-</div>     
-<!-- END tpl close --> 
+
+</div>
+<!-- END tpl close -->
 
 <!-- <script src="<?php echo get_template_url(); ?>/js/jquery_1.8.1.js"></script> -->
-<!-- <script src="http://davist11.github.io/jQuery-Stickem/jquery.js"></script>   -->      
+<!-- <script src="http://davist11.github.io/jQuery-Stickem/jquery.js"></script>   -->
 <script src="<?php echo get_template_url(); ?>/js/jquery.stickem.js"></script>
 <script>
 		$(document).ready(function() {
@@ -276,7 +276,7 @@ function tpl_menu_mobile() {
 			<a href="#nav_main__mobile" class="bt_nav_mobile">Navigation</a>
         	<div class="logo_mobile"><img src="';
 	echo get_template_url();
-    echo '/imgs/logo_worldline_mobile.png" width="230" height="70" alt="Worldline E-payment services" /></div>  
+    echo '/imgs/logo_worldline_mobile.png" width="230" height="70" alt="Worldline E-payment services" /></div>
 	</div>
 	
 	
@@ -285,37 +285,16 @@ function tpl_menu_mobile() {
 }
 
 function tpl_menu() {
-    
+
 	global $MENU;
-    
+
 	
 	// ----------------------> gérer l'affichage du menu reglage
-	
-	/*
-	<ul id="menu_reglage">
-                        	<li>
-                            	<a class="bt_reglage" href=""><span>Réglages</span></a>
-                                <div class="ssmenu">
-                                <ul class="ul_ssmenu">
-                                    <li><a class="utilisateurs" href="/awl/?p=modules/base_users/actions/users"><span>Utilisateurs</span></a></li>
-                                    <li><a class="roles" href="/awl/?p=modules/base_users/actions/roles"><span>Rôles</span></a></li>
-                                    <li><a class="config_avance" href="/awl/?p=modules/base_resources/actions/resources"><span>Config avancée</span></a></li>
-                                    <li><a class="salles" href="/awl/?p=modules/base_restaurant/actions/floors"><span>Salles</span></a></li>
-                                    <li><a class="caisses" href="/awl/?p=modules/base_cashes/actions/sessions"><span>Caisses</span></a></li>
-                                    <li><a class="devises" href="/awl/?p=modules/base_currencies/actions/currencies"><span>Devises</span></a></li>
-                                    <li><a class="entrepots" href="/awl/?p=modules/stock_multilocations/actions/locations"><span>Entrepôts</span></a></li>
-                                    <li class="clear"></li>
-                                </ul> 
-                                </div>
-                            </li>
-                        </ul>
-	*/
-					
 	echo '
 				<!-- start navigation standart -->
-                
-                    
-                    
+
+
+
                         <ul id="nav_services">';
 						
 							// ----------------------> gérer les affichage de nom de class sur les boutons
@@ -363,8 +342,8 @@ function tpl_menu() {
 							
                         echo '</ul>
                         <div class="clear"></div>
-                        
-                    
+
+
                 <!-- end navigation standart -->
 	';
 }
@@ -378,7 +357,7 @@ function __tpl_report_title($report) {
 }
 
 function __tpl_report_input($report, $values) {
-    
+
 	// Export button
     echo '
 	<ul class="bt_fonction">
@@ -395,7 +374,7 @@ function __tpl_report_input($report, $values) {
     <!-- end bloc titre -->';
 	
 	
-    
+
 	// Input form
     echo "<div class=\"blc_content\"><form class=\"edit\" action=\"" . \Pasteque\get_current_url() . "\" "
             . "method=\"post\">";
@@ -454,15 +433,15 @@ function __tpl_group_header($report, $run) {
 }
 function __tpl_group_footer($report, $run) {
     echo "\t\t<tr>\n";
-    echo "\t\t\t<td colspan=\"" . count($report->getHeaders()) . "\">" . \i18n("Subtotal") . "</td>\n";
+    echo "\t\t\t<th class=\"footer\" colspan=\"" . count($report->getHeaders()) . "\">" . \i18n("Subtotal") . "</th>\n";
     echo "\t\t</tr>\n";
     echo "\t\t<tr class=\"row-par\">\n";
     $subtotals = $run->getSubtotals();
     foreach ($report->getFields() as $field) {
         if (isset($subtotals[$field])) {
-            echo "\t\t\t<td>" . $subtotals[$field] . "</td>\n";
+            echo "\t\t\t<td class=\"footer\">" . $subtotals[$field] . "</td>\n";
         } else {
-            echo "\t\t\t<td></td>\n";
+            echo "\t\t\t<td class=\"footer\"></td>\n";
         }
     }
     echo "\t\t</tr>\n";

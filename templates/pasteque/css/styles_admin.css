@@ -1,6 +1,10 @@
 /* CSS Document */
 
 
+img.thumbnail {
+    width: 65px;
+}
+
 .rounded_5 {
 	-moz-border-radius: 5px;
     -webkit-border-radius: 5px;
@@ -82,6 +86,8 @@ body, td, th, input, textarea,select {
 #content {
 }
 
+#content h2 { color:#808080;display:inline; font-size:2em; padding: 0 14px 0 0; font-family: 'Oxygen', "Trebuchet MS", Arial, Helvetica, sans-serif; }
+
 /* /////////// colonne contenu //////////*/
 
 #content_liste {
@@ -94,7 +100,7 @@ body, td, th, input, textarea,select {
 	background:#FFF;
 	border: 1px solid #ddd;
 	padding:1em;
-	margin:0 0 1.4em 0;
+	margin:0 0 1em 0;
 	}
 	
 h2.titre {
@@ -488,26 +494,22 @@ nav#nav_main a.bt_reglage span {
 	/*opacity: 0.4;
     -ms-filter: "prodig:DXImageTransform.Microsoft.Alpha(Opacity=40)";
     filter: alpha(opacity = 40);*/
-	}
-	
+}
+
 nav#nav_main a.bt_reglage:hover {
-	
-	opacity: 1;
+    opacity: 1;
     -ms-filter: "prodig:DXImageTransform.Microsoft.Alpha(Opacity=100)";
     filter: alpha(opacity = 100);
-	
-	}
-	
-/* menu reglage / administration v02 */
+}
 
+/* menu reglage / administration v02 */
 #page nav#nav_main ul li.administration {
     float:right;
 }
 #page nav#nav_main ul li.administration a {
-	background: none repeat scroll 0 0 #000;
+    background: none repeat scroll 0 0 #000;
     border: medium none;
     font-size: 1em;
-    padding: 0 0 0 8px;
     text-decoration: none;
 }
 nav a.administration span { background: url(../imgs/ico_nav_reglage.png) no-repeat center left; padding: 0 10px 0 30px;}
@@ -515,8 +517,8 @@ nav a.administration span { background: url(../imgs/ico_nav_reglage.png) no-repe
 
 #page nav#nav_main ul li.administration ul li a span {
     display: block;
-    padding: 0 10px;
-	font-size: 1.2em;
+    padding:0 25px 0 28px;
+    font-size: 1.2em;
 }
 
 /* sticky nav */
@@ -823,20 +825,20 @@ nav a.administration span { background: url(../imgs/ico_nav_reglage.png) no-repe
 .blc_content form input,
 .blc_content form select,
 .blc_content form textarea {
-	background: none repeat scroll 0 0 #fff;
+    background: none repeat scroll 0 0 #fff;
     border: 1px solid #ddd;
     color: #000;
     display: inline-block;
     font-size: 1em;
     padding: 0.5em 1em;
     width: 50%;
-	}		
-	
-	
+}
+
+
 .blc_content form input[type="checkbox"] {
 	width:2.4em;
-	}	
-	
+}
+
 /* bouton action */
 
 .blc_content form .row.actions {}
@@ -847,7 +849,7 @@ nav a.administration span { background: url(../imgs/ico_nav_reglage.png) no-repe
 	background:#ff6319;
 	color:#fff;
 	float:right;
-	margin: 2em 4em 2em 0;
+	margin: 2em 4em 1em 0;
 	border:none;
 	font-size:1.2em;
 	
@@ -871,21 +873,7 @@ nav a.administration span { background: url(../imgs/ico_nav_reglage.png) no-repe
     display: block;
     height: 0;
     visibility: hidden;
-}	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+}
 
 /*////////////////////////////////////////////////////////////////////*/
 /*                      liste des fiches produits                     */
@@ -1301,8 +1289,7 @@ a.fiche_create_bt:hover,
 #nav_onglet ul li a.hover {
 	color:#fff;
 	background:#999;
-	
-	margin: 0;	
+	margin: 0;
 	line-height:34px;
 	height:34px;
 	}
@@ -1319,20 +1306,19 @@ a.fiche_create_bt:hover,
 	padding: 0 14px;
 	text-align:center;
 	text-decoration:none;
-	
-	margin: 0;	
+	margin: 0;
 	line-height:34px;
 	height:34px;
-	
 	color:#222;
-	background:#fff;	
-	
+	background:#fff;
 	}
-	
-	
+
+
 #logout { position: absolute; top:0; right: 10%; background-color: #000; padding: 0.4em 1em; }
 #logout a { color: white; } 
 
+
+/*// Table report //*/
 .report {
     margin: 3em auto;
     min-width: 50%;
@@ -1353,8 +1339,19 @@ table.report td {
     padding: 0.7em;
 }
 
-img.thumbnail {
-    width: 65px;
+table.report th.footer {
+    color: #808080;
+    font-size: 1.5em;
+    font-family: "Oxygen","Trebuchet MS",Arial,Helvetica,sans-serif;
+    padding: 0.5em;
+    text-align: center;
+    border: solid 1px #bbb;
+}
+table.report td.footer {
+    font-weight: bold;
+    font-size: 1.1em;
+    text-align: center;
+    border: solid 1px #bbb;
 }
 
 /*// Catalog //*/

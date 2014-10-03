@@ -127,15 +127,15 @@ if ($countedStock !== null) {
 
 <!-- start bloc titre -->
 <div class="blc_ti">
-<?php \pi18n("Stock check", PLUGIN_NAME); ?></h1>
+<h1><?php \pi18n("Stock check", PLUGIN_NAME); ?></h1>
 
 <?php \Pasteque\tpl_msg_box($message, $error); ?>
 
 <?php // Mimic report export button ?>
-<div id="btn"><a class="btn" href="<?php echo \Pasteque\get_report_url(PLUGIN_NAME, "check");
+<ul class="bt_fonction"><li><a class="btn" href="<?php echo \Pasteque\get_report_url(PLUGIN_NAME, "check");
     foreach($_POST as $key => $value) {
         echo "&" . $key . "=" . $value;
-    } ?>"><?php \pi18n("Export"); ?></a></div>
+    } ?>"><?php \pi18n("Export"); ?></a></li></ul>
 </div>
 <!-- end bloc titre -->
 

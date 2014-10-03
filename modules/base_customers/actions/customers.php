@@ -32,14 +32,12 @@ $customers = $srv->getAll(true);
 <div class="blc_ti">
 
 <h1><?php \pi18n("Customers", PLUGIN_NAME); ?></h1>
-<span class="nb_article"><?php \pi18n("%d customers", PLUGIN_NAME, count($customers)); ?></span>
-
-<?php \pi18n("Customer's diary", PLUGIN_NAME); ?>
 
 <ul class="bt_fonction">
 	<li><a class="bt_add transition" href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'customer_edit'); ?>"><?php \pi18n("Add a customer", PLUGIN_NAME); ?></a></li>
 </ul>
 
+<div><span class="nb_article"><?php \pi18n("%d customers", PLUGIN_NAME, count($customers)); ?></span></div>
 
 </div>
 <!-- end bloc titre -->
