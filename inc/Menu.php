@@ -45,24 +45,25 @@ class MenuEntry {
     public function getName() { return $this->name; }
     public function getNameDomain() { return $this->nameDomain; }
     public function getAction() { return $this->action; }
-    // Used to get the last param of action for css purposes
-    public function getActionName() { 
+    /** Get the last param of action */
+    public function getActionName() {
         $substr=explode("/",$this->action);
-	return $substr[sizeof($substr)-1];
+        return $substr[sizeof($substr)-1];
     }
-    // Used to know if current entry for css purposes
-    public function isActive() { 
-		switch($this->getType()) {
-			case MenuEntry::REPORT:
-				$url = get_report_url($this->getNameDomain(),$this->getAction(),'display');
-				break;
-			case MenuEntry::ACTION:
-				$url = get_url_action($this->getAction());
-				break;
-		}
-		if(get_current_url() == $url)
-			return true;
-		return false;
+    /** Check if current entry is active */
+    public function isActive() {
+        switch ($this->getType()) {
+        case MenuEntry::REPORT:
+            $url = get_report_url($this->getNameDomain(),$this->getAction(),'display');
+            break;
+        case MenuEntry::ACTION:
+            $url = get_url_action($this->getAction());
+            break;
+        }
+        if (get_current_url() == $url) {
+            return true;
+        }
+        return false;
     }
     public function getType() { return $this->type; }
 }
@@ -85,36 +86,51 @@ class MenuSection {
     public function getName() { return $this->name; }
     public function getNameDomain() { return $this->nameDomain; }
     public function getEntries() { return $this->entries; }
-    // Used to know if current entry for css purposes. We use the module name because of actions pages who are often not in the menu but as buttons in pages
+
+    /** Used to know if current entry for css purposes.
+     * We use the module name because of actions pages who are often
+     * not in the menu but as buttons in pages */
     public function isActive() { 
-	foreach($this->entries as $entry) {
-		switch($entry->getType()) {
-			case MenuEntry::REPORT:
-				$url = get_report_url($entry->getNameDomain(),$entry->getAction(),'display');
-                                $activeUrl = get_current_url();
-                                $module = substr($url,24,strpos($url,"&",25));
-                                $activeModule = substr($activeUrl,24,strpos($activeUrl,"&",25));
-                                if($activeModule == $module) { return true; }
-				break;
-			case MenuEntry::ACTION:
-				$url = get_url_action($entry->getAction());
-                                $activeUrl = get_current_url();
-                                // if activeUrl or url is shorter than 13 character, it’s the home page. At least, not a module. If both are not consistant, it’s surely not the same page
-                                if(strlen($activeUrl) > 13 && strlen($url) > 13) {
-                                    $module = substr($url,13,strpos($url,"/",14));
-                                    $activeModule = substr($activeUrl,13,strpos($activeUrl,"/",14));
-                                    if($activeModule == $module) { return true; }
-                                }
-                                // it can the home page !
-                                elseif(strlen($activeUrl) < 13 && strlen($url) < 13) {
-                                    $module = substr($url,5,strpos($url,"/",6));
-                                    $activeModule = substr($activeUrl,5,strpos($activeUrl,"/",6));
-                                    if($activeModule == $module) { return true; }
-                                }
-				break;
-		}
-	}
-	return false;
+        foreach($this->entries as $entry) {
+            switch($entry->getType()) {
+            case MenuEntry::REPORT:
+                $url = get_report_url($entry->getNameDomain(),
+                        $entry->getAction(),'display');
+                $activeUrl = get_current_url();
+                $module = substr($url, 24, strpos($url, "&", 25));
+                $activeModule = substr($activeUrl, 24,
+                        strpos($activeUrl, "&", 25));
+                if ($activeModule == $module) {
+                    return true;
+                }
+                break;
+            case MenuEntry::ACTION:
+                $url = get_url_action($entry->getAction());
+                $activeUrl = get_current_url();
+                // if activeUrl or url is shorter than 13 character,
+                // it’s the home page. At least, not a module.
+                // If both are not consistant, it’s surely not the same page
+                if (strlen($activeUrl) > 13 && strlen($url) > 13) {
+                    $module = substr($url, 13, strpos($url, "/", 14));
+                    $activeModule = substr($activeUrl, 13,
+                            strpos($activeUrl, "/", 14));
+                    if ($activeModule == $module) {
+                        return true;
+                    }
+                }
+                // it can the home page !
+                else if (strlen($activeUrl) < 13 && strlen($url) < 13) {
+                    $module = substr($url, 5, strpos($url, "/", 6));
+                    $activeModule = substr($activeUrl, 5,
+                            strpos($activeUrl, "/", 6));
+                    if ($activeModule == $module) {
+                        return true;
+                    }
+                }
+                break;
+            }
+        }
+        return false;
     }
 }
 

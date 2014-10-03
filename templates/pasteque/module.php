@@ -275,7 +275,7 @@ function tpl_menu_mobile() {
     echo '<div id="nav_mobile">
 			<a href="#nav_main__mobile" class="bt_nav_mobile">Navigation</a>
         	<div class="logo_mobile"><img src="';
-	echo get_template_url();
+    echo get_template_url();
     echo '/imgs/logo_worldline_mobile.png" width="230" height="70" alt="Worldline E-payment services" /></div>
 	</div>
 	
@@ -286,11 +286,11 @@ function tpl_menu_mobile() {
 
 function tpl_menu() {
 
-	global $MENU;
+    global $MENU;
 
 	
 	// ----------------------> gérer l'affichage du menu reglage
-	echo '
+    echo '
 				<!-- start navigation standart -->
 
 
@@ -300,47 +300,47 @@ function tpl_menu() {
 							// ----------------------> gérer les affichage de nom de class sur les boutons
 							// ----------------------> gérer l'affichage de la class "activ" sur le li en cours de consultation pour afficher le sous menu
 						
-                            foreach ($MENU->getSections() as $section) {
-								echo "\t<li class=\"".strtolower($section->getName());
-								if($section->isActive())
-									echo " activ";
-								echo "\">\n";
-								echo "\t\t<a class=\"".strtolower($section->getName())."\"><span>";
-								\pi18n($section->getName(), $section->getNameDomain());
-								echo "</span></a>\n";
-								echo "\t\t<div class=\"ssmenu\"><ul class=\"ul_ssmenu\">\n";
-								foreach ($section->getEntries() as $entry) {
-									echo "\t\t\t<li>";
-									
-									if ($entry->getImg() !== NULL && $entry->getImg() != "") {
-										$img = get_template_url() . "img/" . $entry->getImg();
-									} else {
-										$img = get_template_url() . "img/menu_default.png";
-									}
-									// $style = "style=\"background-image:url('$img');\"";
-									switch ($entry->getType()) {
-									case MenuEntry::ACTION:
-										$url = get_url_action($entry->getAction());
-										break;
-									case MenuEntry::REPORT:
-										$url = get_report_url($entry->getNameDomain(),
-												$entry->getAction(), 'display');
-										break;
-									}
-									if($entry->isActive())
-										$activ=" activ";
-									else
-										$activ="";
-									
-									echo "<a class=\"".strtolower($section->getName())."_".strtolower($entry->getActionName())."".$activ."\" $style href=\"" . $url . "\"><span>" . __($entry->getName(), $entry->getNameDomain()) . "</span></a></li>\n";
-								}
-								echo "\t\t<li class=\"clear\"></li></ul></div>\n";
-								echo "\t</li>\n";
-							}
-							
-							
-							
-                        echo '</ul>
+    foreach ($MENU->getSections() as $section) {
+        echo "\t<li class=\"" . strtolower($section->getName());
+        if ($section->isActive()) {
+            echo " activ";
+        }
+        echo "\">\n";
+        echo "\t\t<a class=\"" . strtolower($section->getName()) . "\"><span>";
+        \pi18n($section->getName(), $section->getNameDomain());
+        echo "</span></a>\n";
+        echo "\t\t<div class=\"ssmenu\"><ul class=\"ul_ssmenu\">\n";
+        foreach ($section->getEntries() as $entry) {
+            echo "\t\t\t<li>";
+            if ($entry->getImg() !== NULL && $entry->getImg() != "") {
+                $img = get_template_url() . "img/" . $entry->getImg();
+            } else {
+                $img = get_template_url() . "img/menu_default.png";
+            }
+            // $style = "style=\"background-image:url('$img');\"";
+            switch ($entry->getType()) {
+            case MenuEntry::ACTION:
+                $url = get_url_action($entry->getAction());
+                break;
+            case MenuEntry::REPORT:
+                $url = get_report_url($entry->getNameDomain(),
+                        $entry->getAction(), 'display');
+                break;
+            }
+            if($entry->isActive())
+                $activ=" activ";
+            else
+                $activ="";
+            echo "<a class=\"" . strtolower($section->getName()) . "_"
+                    . strtolower($entry->getActionName()) . "".$activ
+                    . "\" $style href=\"" . $url . "\"><span>"
+                    . __($entry->getName(), $entry->getNameDomain())
+                    . "</span></a></li>\n";
+        }
+        echo "\t\t<li class=\"clear\"></li></ul></div>\n";
+        echo "\t</li>\n";
+    }
+    echo '</ul>
                         <div class="clear"></div>
 
 
