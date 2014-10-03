@@ -28,16 +28,6 @@ function tpl_open() {
 	<title><?php \pi18n("Pastèque"); ?></title>
 	<link rel="icon" type="image/png" href="templates/pt2.0/img/icon.png" />
 	
-    <!--
-    <link rel="stylesheet" type="text/css" href="<?php echo get_template_url(); ?>/style.css" />
-	<link rel="stylesheet" type="text/css" href="<?php echo get_template_url(); ?>/catalog.css" />
-	<link rel="stylesheet" type="text/css" href="<?php echo get_template_url(); ?>/stock.css" />
-	<link rel="stylesheet" type="text/css" href="<?php echo get_template_url(); ?>/js/pepper-grinder/jquery-ui-1.10.4.custom.css" />
-	<script type="text/javascript" src="<?php echo get_template_url(); ?>/js/jquery-1.9.1.min.js"></script>
-	<script type="text/javascript" src="<?php echo get_template_url(); ?>/js/jquery-ui-1.10.4.custom.min.js"></script>
-	<script type="text/javascript" src="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=js&id=js/pasteque.js.php"></script>
-	-->
-
 	<script src="<?php echo get_template_url(); ?>/js/jquery_1.8.1.js"></script>
 	<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script> -->
 
@@ -119,11 +109,6 @@ function tpl_open() {
         '760px  to 980px  = 720.min.css',
         '980px  to 1280px = 960.min.css',
         '1280px           = 1200.min.css'
-        /*,
-        '1600px to 1940px = 1560.min.css',
-        '1940px to 2540px = 1920.min.css',
-        '2540px           = 2520.min.css'
-        */
       ]
     };
 
@@ -564,18 +549,7 @@ function tpl_report($report) {
 }
 
 function tpl_btn($class, $href, $label, $image_btn, $alt = NULL, $title = NULL) {
-    //$btn = '<ul class="bt_fonction"><li>';
 	$btn = '<a class="transition ' . $class . '" href="' . $href . '">'.
-    /*
-	        . "<img src=\"" .\Pasteque\get_template_url() . "" . $image_btn . "\"";
-    if (isset($alt)) {
-         $btn .= " alt =\"" . $alt . "\"";
-    }
-    if (isset($title)) {
-        $btn .= " title =\"" . $title . "\"";
-    }
-    $btn .= "/>";
-	*/
     $btn .= $label . "</a>";
     echo $btn;
 }
