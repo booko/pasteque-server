@@ -50,7 +50,7 @@ function tpl_close() {
 ?>
 	<div style="clear:both"></div>
 </div>
-<div id="footer"></div>
+<div id="footer"><?php \pi18n("Copyright"); ?></div>
 </body>
 </html><?php
 }
