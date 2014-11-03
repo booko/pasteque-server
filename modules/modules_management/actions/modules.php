@@ -149,6 +149,7 @@ foreach ($modules as $module) {
 <input type="hidden" name="display" value="1" />
 <input type="image" src="https://www.sandbox.paypal.com/fr_FR/FR/i/btn/btn_viewcart_LG.gif" border="0" name="submit" alt="PayPal - la solution de paiement en ligne la plus simple et la plus sécurisée !" />
 <img alt="" border="0" src="https://www.sandbox.paypal.com/fr_FR/i/scr/pixel.gif" width="1" height="1" />
+</div>
 </form>
 
 <p><?php \pi18n("Once payment is validated, the modules will be activated in a short moment.", PLUGIN_NAME); ?></p>
