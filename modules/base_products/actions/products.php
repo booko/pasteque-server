@@ -78,8 +78,6 @@ foreach ($products as $product) {
 
 
 
-<!-- <h2><?php \pi18n("Catalog", PLUGIN_NAME); ?></h2> -->
-
 <?php
 $par = false;
 $archive = false;
@@ -139,9 +137,6 @@ $ancre = str_replace(' ','',$ancre);
 
 
 <?php if ($archive) { ?>
-<!-- <h2><?php \pi18n("Archived", PLUGIN_NAME); ?></h2>-->
-
-<?php
 foreach ($categories as $category) {
     if (isset($archivesCat[$category->id])) {
 		
