@@ -32,6 +32,9 @@ class CustomersAPI extends APIService {
             return isset($this->params['id'], $this->params['amount']);
         case 'getTop':
             return true;
+        case 'save':
+            return $this->isParamSet('customer')
+                    || $this->isParamSet('customers');
         }
         return false;
     }
@@ -51,6 +54,52 @@ class CustomersAPI extends APIService {
             break;
         case 'getTop':
             $this->succeed($srv->getTop($this->getParam("limit")));
+            break;
+        case 'save':
+            // Convert single customer to array for consistency
+            if ($this->isParamSet('customers')) {
+                $json = json_decode($this->params['customers']);
+            } else {
+                $json = array(json_decode($this->params['customer']));
+            }
+            $srv = new CustomersService();
+            $result = array();
+            // Begin transaction
+            $pdo = PDOBuilder::getPDO();
+            if (!$pdo->beginTransaction()) {
+                $this->fail(APIError::$ERR_GENERIC);
+                break;
+            }
+            foreach ($json as $customer) {
+                if (isset($customer->id) && $customer->id !== null) {
+                    // Edit
+                    if (!$srv->update($customer)) {
+                        // Error, rollback
+                        $pdo->rollback();
+                        $this->fail(APIError::$ERR_GENERIC);
+                        return;
+                    } else {
+                        $result[] = $customer->id;
+                    }
+                } else {
+                    // Create
+                    $id = $srv->create($customer);
+                    if ($id !== false) {
+                        $result[] = $id;
+                    } else {
+                        // Error, rollback
+                        $pdo->rollback();
+                        $this->fail(APIError::$ERR_GENERIC);
+                        return;
+                    }
+                }
+            }
+            // Success, commit
+            if ($pdo->commit()) {
+                $this->succeed(array("saved" => $result));
+            } else {
+                $this->fail(APIError::$ERR_GENERIC);
+            }
             break;
         }
     }
