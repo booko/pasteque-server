@@ -47,9 +47,9 @@ $report = new \Pasteque\Report(PLUGIN_NAME, "discountprofiles_report",
         $sql, $headers, $fields);
 
 $report->addInput("start", \i18n("Start date"), \Pasteque\DB::DATE);
-$report->setDefaultInput("start", time() - 86400);
+$report->setDefaultInput("start", time() - (time() % 86400) - 7 * 86400);
 $report->addInput("stop", \i18n("Stop date"), \Pasteque\DB::DATE);
-$report->setDefaultinput("stop", time());
+$report->setDefaultinput("stop", time() - (time() % 86400) + 86400);
 
 $report->addFilter("DATENEW", "\Pasteque\stdtimefstr");
 $report->addFilter("DATENEW", "\i18nDatetime");
