@@ -24,7 +24,8 @@ $sql = "SELECT "
         . "PRODUCTS.REFERENCE, "
         . "PRODUCTS.NAME, "
         . "SUM(TICKETLINES.UNITS) AS UNITS, "
-        . "SUM(TICKETLINES.UNITS * TICKETLINES.PRICE) AS TOTAL "
+        . "SUM(TICKETLINES.UNITS * TICKETLINES.PRICE) AS TOTAL, "
+        . "SUM(TICKETLINES.UNITS * (TICKETLINES.PRICE - PRODUCTS.PRICEBUY)) AS MARGIN "
         . "FROM RECEIPTS, TICKETS, TICKETLINES, PRODUCTS, CLOSEDCASH "
         . "WHERE "
         . "CLOSEDCASH.DATESTART > :start AND CLOSEDCASH.DATEEND < :stop "
@@ -35,10 +36,10 @@ $sql = "SELECT "
         . "ORDER BY PRODUCTS.NAME ";
 
 
-$fields = array("REFERENCE", "NAME", "UNITS", "TOTAL");
+$fields = array("REFERENCE", "NAME", "UNITS", "TOTAL","MARGIN");
 $headers = array(\i18n("Product.reference"),
         \i18n("Product.label"),
-        \i18n("Quantity"), \i18n("Total w/o VAT", PLUGIN_NAME));
+        \i18n("Quantity"), \i18n("Total w/o VAT", PLUGIN_NAME), \i18n("Margin"));
 
 $report = new \Pasteque\Report(PLUGIN_NAME, "sales_by_product_report",
         \i18n("Sales by product", PLUGIN_NAME),
@@ -54,5 +55,6 @@ $report->addFilter("DATESTART", "\i18nDatetime");
 $report->addFilter("DATEEND", "\Pasteque\stdtimefstr");
 $report->addFilter("DATEEND", "\i18nDatetime");
 $report->addFilter("TOTAL", "\i18nCurr");
+$report->addFilter("MARGIN", "\i18nCurr");
 
 \Pasteque\register_report($report);
