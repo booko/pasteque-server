@@ -90,9 +90,9 @@ $report = new \Pasteque\MergedReport(PLUGIN_NAME, "ztickets",
         $sqls, $headers, $fields, $mergeFields);
 
 $report->addInput("start", \i18n("Start date"), \Pasteque\DB::DATE);
-$report->setDefaultInput("start", time() - (time() % 86400) - 86400);
+$report->setDefaultInput("start", time() - (time() % 86400) - 7 * 86400);
 $report->addInput("stop", \i18n("Stop date"), \Pasteque\DB::DATE);
-$report->setDefaultinput("stop", time());
+$report->setDefaultinput("stop", time() - (time() % 86400) + 86400);
 
 function cashMatch($val, $values) {
     if ($val != $values['CLOSECASH']) {

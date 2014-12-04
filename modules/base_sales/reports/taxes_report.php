@@ -42,9 +42,9 @@ $report = new \Pasteque\Report(PLUGIN_NAME, "taxes_report",
         $sql, $headers, $fields);
 
 $report->addInput("start", \i18n("Session.openDate"), \Pasteque\DB::DATE);
-$report->setDefaultInput("start", time() - 86400);
+$report->setDefaultInput("start", time() - (time() % 86400) - 30 * 86400);
 $report->addInput("stop", \i18n("Session.closeDate"), \Pasteque\DB::DATE);
-$report->setDefaultinput("stop", time());
+$report->setDefaultinput("stop", time() - (time() % 86400) + 86400);
 
 $report->addFilter("BASE", "\i18nCurr");
 $report->addFilter("AMOUNT", "\i18nCurr");

@@ -93,9 +93,9 @@ $report = new \Pasteque\MergedReport(PLUGIN_NAME, "cs_report",
         $sqls, $headers, $fields, $mergeFields);
 
 $report->addInput("start", \i18n("Session.openDate"), \Pasteque\DB::DATE);
-$report->setDefaultInput("start", time() - 86400);
+$report->setDefaultInput("start", time() - (time() % 86400) - 7 * 86400);
 $report->addInput("stop", \i18n("Session.closeDate"), \Pasteque\DB::DATE);
-$report->setDefaultinput("stop", time());
+$report->setDefaultinput("stop", time() - (time() % 86400) + 86400);
 
 $report->setGrouping("NAME");
 $report->addSubtotal("AVERAGE", \Pasteque\Report::TOTAL_AVG);
