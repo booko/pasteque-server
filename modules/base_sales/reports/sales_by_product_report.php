@@ -54,7 +54,9 @@ $report->addFilter("DATESTART", "\Pasteque\stdtimefstr");
 $report->addFilter("DATESTART", "\i18nDatetime");
 $report->addFilter("DATEEND", "\Pasteque\stdtimefstr");
 $report->addFilter("DATEEND", "\i18nDatetime");
-$report->addFilter("TOTAL", "\i18nCurr");
-$report->addFilter("MARGIN", "\i18nCurr");
+$report->setVisualFilter("TOTAL", "\i18nCurr", \Pasteque\Report::DISP_USER);
+$report->setVisualFilter("TOTAL", "\i18nFlt", \Pasteque\Report::DISP_CSV);
+$report->setVisualFilter("MARGIN", "\i18nCurr", \Pasteque\Report::DISP_USER);
+$report->setVisualFilter("MARGIN", "\i18nFlt", \Pasteque\Report::DISP_CSV);
 
 \Pasteque\register_report($report);
