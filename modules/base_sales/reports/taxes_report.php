@@ -46,7 +46,9 @@ $report->setDefaultInput("start", time() - (time() % 86400) - 30 * 86400);
 $report->addInput("stop", \i18n("Session.closeDate"), \Pasteque\DB::DATE);
 $report->setDefaultinput("stop", time() - (time() % 86400) + 86400);
 
-$report->addFilter("BASE", "\i18nCurr");
-$report->addFilter("AMOUNT", "\i18nCurr");
+$report->setVisualFilter("BASE", "\i18nCurr", \Pasteque\Report::DISP_USER);
+$report->setVisualFilter("BASE", "\i18nFlt", \Pasteque\Report::DISP_CSV);
+$report->setVisualFilter("AMOUNT", "\i18nCurr", \Pasteque\Report::DISP_USER);
+$report->setVisualFilter("AMOUNT", "\i18nFlt", \Pasteque\Report::DISP_CSV);
 
 \Pasteque\register_report($report);
