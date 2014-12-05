@@ -77,6 +77,7 @@ require_once(PT::$ABSPATH . "/inc/data/models/Cash.php");
 require_once(PT::$ABSPATH . "/inc/data/models/ZTicket.php");
 require_once(PT::$ABSPATH . "/inc/data/models/Category.php");
 require_once(PT::$ABSPATH . "/inc/data/models/Floor.php");
+require_once(PT::$ABSPATH . "/inc/data/models/PaymentMode.php");
 require_once(PT::$ABSPATH . "/inc/data/models/Payment.php");
 require_once(PT::$ABSPATH . "/inc/data/models/Place.php");
 require_once(PT::$ABSPATH . "/inc/data/models/Product.php");
