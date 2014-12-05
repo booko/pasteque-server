@@ -57,6 +57,7 @@ $report->addFilter("DATEEND", "\Pasteque\stdtimefstr");
 $report->addFilter("DATEEND", "\i18nDatetime");
 $report->addFilter("DATENEW", "\Pasteque\stdtimefstr");
 $report->addFilter("DATENEW", "\i18nDatetime");
-$report->addFilter("SELL", "\i18nCurr");
+$report->setVisualFilter("SELL", "\i18nCurr", \Pasteque\Report::DISP_USER);
+$report->setVisualFilter("SELL", "\i18nFlt", \Pasteque\Report::DISP_CSV);
 
 \Pasteque\register_report($report);
