@@ -55,9 +55,11 @@ $report->addFilter("DATESTART", "\Pasteque\stdtimefstr");
 $report->addFilter("DATESTART", "\i18nDatetime");
 $report->addFilter("DATEEND", "\Pasteque\stdtimefstr");
 $report->addFilter("DATEEND", "\i18nDatetime");
-$report->addFilter("AVGSUBPRICE", "\i18nCurr");
-$report->addFilter("AVGPRICE", "\i18nCurr");
-$report->addFilter("TABLES", "\i18nInt");
+$report->setVisualFilter("AVGSUBPRICE", "\i18nCurr", \Pasteque\Report::DISP_USER);
+$report->setVisualFilter("AVGSUBPRICE", "\i18nFlt", \Pasteque\Report::DISP_CSV);
+$report->setVisualFilter("AVGPRICE", "\i18nCurr", \Pasteque\Report::DISP_USER);
+$report->setVisualFilter("AVGPRICE", "\i18nFlt", \Pasteque\Report::DISP_CSV);
+$report->setVisualFilter("TABLES", "\i18nInt", \Pasteque\Report::DISP_CSV | \Pasteque\Report::DISP_USER);
 
 $report->addTotal("TABLES", \Pasteque\Report::TOTAL_SUM);
 // sum of count / sum of tables
