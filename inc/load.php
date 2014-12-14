@@ -104,6 +104,7 @@ require_once(PT::$ABSPATH . "/inc/data/services/AttributesService.php");
 require_once(PT::$ABSPATH . "/inc/data/services/CashesService.php");
 require_once(PT::$ABSPATH . "/inc/data/services/CategoriesService.php");
 require_once(PT::$ABSPATH . "/inc/data/services/PlacesService.php");
+require_once(PT::$ABSPATH . "/inc/data/services/PaymentModesService.php");
 require_once(PT::$ABSPATH . "/inc/data/services/ProductsService.php");
 require_once(PT::$ABSPATH . "/inc/data/services/CompositionsService.php");
 require_once(PT::$ABSPATH . "/inc/data/services/TariffAreasService.php");
