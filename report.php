@@ -122,6 +122,7 @@ function totals($report, $run) {
 switch ($_GET['w']) {
 case 'csv':
     header("Content-type: text/csv");
+    header("Content-Disposition: attachment; filename=rapport.csv");
     $params = $_GET;
     unset($params['m']);
     unset($params['n']);
