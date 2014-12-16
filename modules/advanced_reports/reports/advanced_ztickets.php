@@ -69,21 +69,23 @@ $sqls[] = "SELECT "
         . "GROUP BY CLOSEDCASH.MONEY, TAXES.NAME "
         . "ORDER BY CLOSEDCASH.DATESTART DESC";
 
-// Categories request
-$sqls[] = "SELECT "
+// Categories base request
+$red = "SELECT "
         . "CLOSEDCASH.MONEY, "
-        . "CATEGORIES.NAME as __KEY__, "
-        . "SUM(TICKETLINES.UNITS * TICKETLINES.PRICE) AS __VALUE__ "
-        . "FROM RECEIPTS, TICKETS, TICKETLINES, PRODUCTS, CATEGORIES, CLOSEDCASH "
+        . $db->concat($db->concat($db->concat("CATEGORIES.NAME","' ('"),"TAXES.NAME"),"')'") . " AS __KEY__, "
+        . $db->concat($db->concat("SUM(TICKETLINES.UNITS * TICKETLINES.PRICE)","'/'"),"SUM(TICKETLINES.UNITS * TICKETLINES.PRICE * TAXES.RATE)") . " AS __VALUE__ "
+        . "FROM RECEIPTS, TICKETS, TICKETLINES, PRODUCTS, CATEGORIES, CLOSEDCASH, TAXES "
         . "WHERE CLOSEDCASH.DATESTART > :start "
         . "AND CLOSEDCASH.DATESTART <= :stop "
         . "AND RECEIPTS.ID = TICKETLINES.TICKET "
         . "AND RECEIPTS.ID = TICKETS.ID "
+        . "AND TAXES.ID = TICKETLINES.TAXID "
         . "AND TICKETLINES.PRODUCT = PRODUCTS.ID "
         . "AND PRODUCTS.CATEGORY = CATEGORIES.ID "
         . "AND CLOSEDCASH.MONEY = RECEIPTS.MONEY "
-        . "GROUP BY CLOSEDCASH.MONEY, __KEY__ "
+        . "GROUP BY CLOSEDCASH.MONEY, TICKETLINES.TAXID, __KEY__ "
         . "ORDER BY CLOSEDCASH.DATESTART DESC";
+$sqls[] = $red;
 
 $fields = array("NAME", "HOSTSEQUENCE", "DATESTART", "DATEEND", "OPENCASH",
         "CLOSECASH", "EXPECTEDCASH", "TICKETS", "SALES", "SALESVAT");
@@ -134,13 +136,21 @@ $report->setVisualFilter("SALESVAT", "\i18nFlt", \Pasteque\Report::DISP_CSV);
 $report->setMergedVisualFilter(0, "\i18nCurr", \Pasteque\Report::DISP_USER);
 $report->setMergedVisualFilter(0, "\i18nFlt", \Pasteque\Report::DISP_CSV);
 $report->addMergedHeaderFilter(0, "\i18n");
-$report->addMergedFilter(1, "\AdvancedReports\\vatI18nCurr");
-$report->setMergedVisualFilter(2, "\i18nCurr", \Pasteque\Report::DISP_USER);
-$report->setMergedVisualFilter(2, "\i18nFlt", \Pasteque\Report::DISP_CSV);
+$report->addMergedHeaderFilter(1, "\i18n");
+$report->setMergedVisualFilter(1, "\AdvancedReports\\vatI18nCurr",\Pasteque\Report::DISP_USER);
+$report->setMergedVisualFilter(1, "\AdvancedReports\\vatI18nFlt",\Pasteque\Report::DISP_CSV);
+$report->addMergedHeaderFilter(2, "\i18n");
+$report->setMergedVisualFilter(2, "\AdvancedReports\\vatI18nCurr",\Pasteque\Report::DISP_USER);
+$report->setMergedVisualFilter(2, "\AdvancedReports\\vatI18nFlt",\Pasteque\Report::DISP_CSV);
 
 function vatI18nCurr($input) {
     $amounts = explode("/", $input);
     return \i18nCurr($amounts[0]) . " / " . \i18nCurr($amounts[1]);
+}
+
+function vatI18nFlt($input) {
+    $amounts = explode("/", $input);
+    return \i18nFlt($amounts[0]) . " / " . \i18nFlt($amounts[1]);
 }
 
 \Pasteque\register_report($report);

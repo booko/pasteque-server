@@ -118,11 +118,18 @@ $report->setVisualFilter("SALESVAT", "\i18nFlt", \Pasteque\Report::DISP_CSV);
 $report->setMergedVisualFilter(0, "\i18nCurr", \Pasteque\Report::DISP_USER);
 $report->setMergedVisualFilter(0, "\i18nFlt", \Pasteque\Report::DISP_CSV);
 $report->addMergedHeaderFilter(0, "\i18n");
-$report->addMergedFilter(1, "\BaseCashes\\vatI18nCurr");
+$report->addMergedHeaderFilter(1, "\i18n");
+$report->setMergedVisualFilter(1, "\BaseCashes\\vatI18nCurr",\Pasteque\Report::DISP_USER);
+$report->setMergedVisualFilter(1, "\BaseCashes\\vatI18nFlt",\Pasteque\Report::DISP_CSV);
 
 function vatI18nCurr($input) {
     $amounts = explode("/", $input);
     return \i18nCurr($amounts[0]) . " / " . \i18nCurr($amounts[1]);
+}
+
+function vatI18nFlt($input) {
+    $amounts = explode("/", $input);
+    return \i18nFlt($amounts[0]) . " / " . \i18nFlt($amounts[1]);
 }
 
 \Pasteque\register_report($report);
