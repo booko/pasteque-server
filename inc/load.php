@@ -96,6 +96,7 @@ require_once(PT::$ABSPATH . "/inc/data/models/CustTaxCat.php");
 require_once(PT::$ABSPATH . "/inc/data/models/User.php");
 require_once(PT::$ABSPATH . "/inc/data/models/Role.php");
 require_once(PT::$ABSPATH . "/inc/data/models/Location.php");
+require_once(PT::$ABSPATH . "/inc/data/models/Inventory.php");
 require_once(PT::$ABSPATH . "/inc/data/models/Stock.php");
 require_once(PT::$ABSPATH . "/inc/data/models/Resource.php");
 require_once(PT::$ABSPATH . "/inc/data/models/Currency.php");
@@ -121,6 +122,7 @@ require_once(PT::$ABSPATH . "/inc/data/services/StocksService.php");
 require_once(PT::$ABSPATH . "/inc/data/services/ResourcesService.php");
 require_once(PT::$ABSPATH . "/inc/data/services/CurrenciesService.php");
 require_once(PT::$ABSPATH . "/inc/data/services/CashRegistersService.php");
+require_once(PT::$ABSPATH . "/inc/data/services/InventoriesService.php");
 require_once(PT::$ABSPATH . "/inc/Csv.php");
 require_once(PT::$ABSPATH . "/inc/catalog.php");
 
