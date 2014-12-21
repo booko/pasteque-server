@@ -160,4 +160,18 @@ class PaymentModesService extends AbstractService {
             return $del;
         }
     }
+
+    static function getImage($id) {
+        $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
+        $stmt = $pdo->prepare("SELECT IMAGE FROM PAYMENTMODES WHERE ID = :id");
+        $stmt->bindParam(":id", $id);
+        if ($stmt->execute()) {
+            if ($row = $stmt->fetch()) {
+                return $db->readBin($row['IMAGE']);
+            }
+        }
+        return null;
+    }
+
 }
