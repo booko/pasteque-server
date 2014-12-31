@@ -27,4 +27,6 @@ class PT {
 
     const URL_ACTION_PARAM = "p";
     const URL_REPORT_PARAM = "r";
+    const URL_DATESTART_PARAM = "start";
+    const URL_DATESTOP_PARAM = "stop";
 }
