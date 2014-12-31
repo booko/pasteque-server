@@ -55,6 +55,10 @@ $currency = NULL;
 if (isset($_GET['id'])) {
     $currency = $currSrv->get($_GET['id']);
 }
+else {
+    $currency = new \Pasteque\Currency();
+    echo $currency->format;
+}
 ?>
 <h1><?php \pi18n("Edit a currency", PLUGIN_NAME); ?></h1>
 
