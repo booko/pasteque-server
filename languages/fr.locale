@@ -31,6 +31,8 @@
 
 "Image": "Image",
 "Quantity": "Quantité",
+"QuantityMin": "Quantité minimale",
+"QuantityMax": "Quantité maximale",
 "Undefined": "Non défini",
 "Date": "Date",
 "Total": "Total",
@@ -149,7 +151,11 @@
 "Resource.label": "Désignation",
 
 "Location": "Entrepôt",
-"Location.label": "Désignation",
+"Location.label": "Entrepôt",
+
+"Stock.SellValue": "Valeur du stock à la revente",
+"Stock.BuyValue": "Valeur du stock à l’achat",
+"Stock.AlertReport": "Stocks en alerte",
 
 "cash": "Espèces",
 "magcard": "Carte bleue",

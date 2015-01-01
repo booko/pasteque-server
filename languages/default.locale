@@ -31,6 +31,8 @@
 
 "Image": "Image",
 "Quantity": "Quantity",
+"QuantityMin": "Minimal quantity",
+"QuantityMax": "Maximal quantity",
 "Undefined": "Undefined",
 "Date": "Date",
 "Total": "Total",
@@ -150,6 +152,10 @@
 
 "Location": "Warehouse",
 "Location.label": "Name",
+
+"Stock.SellValue": "Stock sell value",
+"Stock.BuyValue": "Stock buy value",
+"Stock.AlertReport": "Alert report",
 
 "cash": "Cash",
 "magcard": "Magcard",

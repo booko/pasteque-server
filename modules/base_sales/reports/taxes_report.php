@@ -35,7 +35,6 @@ $sql = "SELECT "
         . "ORDER BY CLOSEDCASH.DATESTART ASC, TAXES.NAME ASC";
 
 $fields = array("CASHREGISTER", "DATESTART", "DATEEND", "NAME", "BASE", "AMOUNT");
-$mergeFields = array("NAME", "DATESTART", "DATEEND");
 
 $headers = array(
         \i18n("CashRegister.label"),

@@ -83,6 +83,10 @@ foreach ($categories as $category) {
 			<th><?php \pi18n("Product.reference"); ?></th>
 			<th><?php \pi18n("Product.label"); ?></th>
 			<th><?php \pi18n("Quantity"); ?></th>
+			<th><?php \pi18n("Stock.SellValue"); ?></th>
+			<th><?php \pi18n("Stock.BuyValue"); ?></th>
+			<th><?php \pi18n("QuantityMin"); ?></th>
+			<th><?php \pi18n("QuantityMax"); ?></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -96,6 +100,8 @@ foreach ($categories as $category) {
             $prdRef = "";
             $prdLabel = "";
             $imgSrc = "";
+            $prdSellPrice = 0;
+            $prdBuyPrice = 0;
             $level = $prdLevel[$product->id];
             if ($product->hasImage) {
                 $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=product&id=" . $product->id;
@@ -104,6 +110,8 @@ foreach ($categories as $category) {
             }
             $prdLabel = $product->label;
             $prdRef = $product->reference;
+            $prdSellPrice = $product->priceSell;
+            $prdBuyPrice = $product->priceBuy;
             $security = $level->security;
             $max = $level->max;
             $qty = $level->qty !== null ? $level->qty : 0;
@@ -120,12 +128,22 @@ foreach ($categories as $category) {
                 $class=" alert-level";
                 $help = ' title="' . \Pasteque\esc_attr(\i18n("Overstock!", PLUGIN_NAME)) . '"';
             }
+            if (!isset($security)) {
+                $security = \i18n("Undefined");
+            }
+            if (!isset($max)) {
+                $max = \i18n("Undefined");
+            }
             ?>
 		<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
-			<td><img class="thumbnail" src="?<?php echo \Pasteque\esc_attr($imgSrc); ?>" />
+                 <td><img class="thumbnail" src="?<?php echo \Pasteque\esc_attr($imgSrc); ?>" />
                  <td><?php echo \Pasteque\esc_html($prdRef); ?></td>
                  <td><?php echo \Pasteque\esc_html($prdLabel); ?></td>
                  <td class="numeric<?php echo $class; ?>"<?php echo $help; ?>><?php echo \Pasteque\esc_html($qty); ?></td>
+                 <td><?php echo \Pasteque\esc_html(\i18nCurr($prdSellPrice*$qty)); ?></td>
+                 <td><?php echo \Pasteque\esc_html(\i18nCurr($prdBuyPrice*$qty)); ?></td>
+                 <td><?php echo \Pasteque\esc_html($security); ?></td>
+                 <td><?php echo \Pasteque\esc_html($max); ?></td>
 		</tr>
 <?php
         } ?>

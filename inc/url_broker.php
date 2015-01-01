@@ -31,7 +31,7 @@ function redirectAction($path) {
 
 function redirect_report($module, $name) {
     if (!file_exists(PT::$ABSPATH . "/modules/" . $module . "/reports/" . $name . ".php")) {
-        $ret = array("error" => "No such seport");
+        $ret = array("error" => "No such report");
         echo json_encode($ret);
         return;
     }

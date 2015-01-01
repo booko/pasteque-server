@@ -82,7 +82,8 @@ $sqls[] = "SELECT CASHREGISTERS.NAME, CLOSEDCASH.DATESTART, "
 
 $fields = array("NAME", "DATESTART", "DATEEND", "TICKETS", "AVERAGE",
        "REALCS", "THEOCS", "THEOSCS");
-$mergeFields = array("NAME", "DATESTART", "DATEEND");
+$mergeFields = array("NAME","DATESTART","DATEEND");
+
 $headers = array(
         \i18n("CashRegister.label"), \i18n("Session.openDate"),
         \i18n("Session.closeDate"), \i18n("Tickets", PLUGIN_NAME),
