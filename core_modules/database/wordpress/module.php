@@ -24,7 +24,6 @@ namespace WordPressDB {
     \WordPress\loadWP($config['wordpress_base_path']);
     $data = NULL;
     function getInfo($uid) {
-        global $data;
         if ($data == NULL) {
             $wpdb = $GLOBALS['wpdb'];
             global $config;
@@ -59,6 +58,8 @@ namespace Pasteque {
     }
 
     function get_db_user($user_id) {
+//        echo \WordPressDB\user($user_id);
+//        echo $user_id;
         return \WordPressDB\user($user_id);
     }
 
