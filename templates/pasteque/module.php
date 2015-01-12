@@ -50,7 +50,7 @@ function tpl_close() {
 ?>
 	<div style="clear:both"></div>
 </div>
-<div id="footer"></div>
+<div id="footer"><?php \pi18n("Copyright"); ?></div>
 </body>
 </html><?php
 }
@@ -134,30 +134,32 @@ function __tpl_report_input($report, $values) {
         echo "&" . $param['param'] . "=" . $values[$param['param']];
     }
     echo "\">" . \i18n("Export") . "</a></div>\n";
-    // Input form
-    echo "<form class=\"edit\" action=\"" . \Pasteque\get_current_url() . "\" "
-            . "method=\"post\">";
-    foreach($report->getParams() as $param) {
-        $id = $param['param'];
-        echo "<div class=\"row\">";
-        echo "<label for=\"" . $id . "\">" . $param['label'] . "</label>";
-        switch ($param['type']) {
-        case DB::DATE:
-            $value = \i18nDate($values[$id]);
-            echo "<input type=\"text\" name=\"" . $id . "\" id=\"" . $id
-                    . "\" class=\"dateinput\" value=\"" . $value . "\" />";
-            break;
-        default:
-            $value = $values[$param['param']];
-            echo "<input type=\"text\" name=\"" . $id . "\" id=\"" . $id
-                    . "\" value=\"" . $value . "\" />";
-            break;
+    if(is_array($report->getParams()) && sizeof($report->getParams()) > 0) {
+        // Input form
+        echo "<form class=\"edit\" action=\"" . \Pasteque\get_current_url() . "\" "
+                . "method=\"post\">";
+        foreach($report->getParams() as $param) {
+            $id = $param['param'];
+            echo "<div class=\"row\">";
+            echo "<label for=\"" . $id . "\">" . $param['label'] . "</label>";
+            switch ($param['type']) {
+            case DB::DATE:
+                $value = \i18nDate($values[$id]);
+                echo "<input type=\"text\" name=\"" . $id . "\" id=\"" . $id
+                        . "\" class=\"dateinput\" value=\"" . $value . "\" />";
+                break;
+            default:
+                $value = $values[$param['param']];
+                echo "<input type=\"text\" name=\"" . $id . "\" id=\"" . $id
+                        . "\" value=\"" . $value . "\" />";
+                break;
+            }
+            echo "</div>\n";
         }
-        echo "</div>\n";
+        // Send
+        echo "<div class=\"row actions\">" . \Pasteque\form_send() . "</div>\n";
+        echo "</form>\n";
     }
-    // Send
-    echo "<div class=\"row actions\">" . \Pasteque\form_send() . "</div>\n";
-    echo "</form>\n";
 }
 
 function __tpl_report_header($report) {
@@ -198,7 +200,7 @@ function __tpl_group_footer($report, $run) {
     $subtotals = $run->getSubtotals();
     foreach ($report->getFields() as $field) {
         if (isset($subtotals[$field])) {
-            echo "\t\t\t<td>" . $subtotals[$field] . "</td>\n";
+            echo "\t\t\t<td>" . $report->applyVisualFilter($field, $subtotals[$field]) . "</td>\n";
         } else {
             echo "\t\t\t<td></td>\n";
         }
@@ -237,7 +239,7 @@ function __tpl_report_totals($report, $run) {
     $totals = $run->getTotals();
     foreach ($report->getFields() as $field) {
         if (isset($totals[$field])) {
-            echo "\t\t\t<td>" . $totals[$field] . "</td>\n";
+            echo "\t\t\t<td>" . $report->applyVisualFilter($field, $totals[$field]) . "</td>\n";
         } else {
             echo "\t\t\t<td></td>\n";
         }

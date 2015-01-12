@@ -35,7 +35,7 @@ function report_csv($module, $name, $values) {
         while ($line = $reportRun->fetch() ) {
             $data = array();
             foreach ($report->getFields() as $field) {
-                $data = init_data($data, $line, $field);
+                $data = init_data($report, $data, $line, $field);
             }
             fputcsv($output, $data);
         }
@@ -55,7 +55,7 @@ function report_csv($module, $name, $values) {
             }
 
             foreach ($report->getFields() as $field) {
-                $data = init_data($data, $line, $field);
+                $data = init_data($report, $data, $line, $field);
             }
             fputcsv($output, $data);
             unset($data);
@@ -73,11 +73,11 @@ function report_csv($module, $name, $values) {
 }
 
 
-function init_data($data, $line, $field) {
+function init_data($report, $data, $line, $field) {
      if (isset($line[$field])) {
-        $data[] = $line[$field];
+         $data[] = $report->applyVisualFilter($field, $line, Report::DISP_CSV);
      } else {
-        $data[] = "";
+         $data[] = "";
      }
      return $data;
 }
@@ -85,7 +85,7 @@ function init_data($data, $line, $field) {
 function write_subtotals($output, $report, $run) {
     $data = array();
     foreach ($report->getFields() as $field) {
-        $data = init_data($data, $run->subtotals, $field);
+        $data = init_data($report, $data, $run->subtotals, $field);
     }
     fputcsv($output, array(\i18n("Subtotal")));
     fputcsv($output, $data);
@@ -114,7 +114,7 @@ function totalHeader($report, $run) {
 function totals($report, $run) {
     $data = array();
     foreach ($report->getFields() as $field) {
-        $data = init_data($data, $run->getTotals(), $field);
+        $data = init_data($report, $data, $run->getTotals(), $field);
     }
     return $data;
 }
@@ -122,6 +122,7 @@ function totals($report, $run) {
 switch ($_GET['w']) {
 case 'csv':
     header("Content-type: text/csv");
+    header("Content-Disposition: attachment; filename=rapport.csv");
     $params = $_GET;
     unset($params['m']);
     unset($params['n']);

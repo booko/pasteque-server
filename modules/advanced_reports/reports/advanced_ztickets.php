@@ -18,7 +18,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace BaseCashes;
+namespace AdvancedReports;
 
 $db = \Pasteque\DB::get();
 
@@ -69,6 +69,24 @@ $sqls[] = "SELECT "
         . "GROUP BY CLOSEDCASH.MONEY, TAXES.NAME "
         . "ORDER BY CLOSEDCASH.DATESTART DESC";
 
+// Categories base request
+$red = "SELECT "
+        . "CLOSEDCASH.MONEY, "
+        . $db->concat($db->concat($db->concat("CATEGORIES.NAME","' ('"),"TAXES.NAME"),"')'") . " AS __KEY__, "
+        . $db->concat($db->concat("SUM(TICKETLINES.UNITS * TICKETLINES.PRICE)","'/'"),"SUM(TICKETLINES.UNITS * TICKETLINES.PRICE * TAXES.RATE)") . " AS __VALUE__ "
+        . "FROM RECEIPTS, TICKETS, TICKETLINES, PRODUCTS, CATEGORIES, CLOSEDCASH, TAXES "
+        . "WHERE CLOSEDCASH.DATESTART > :start "
+        . "AND CLOSEDCASH.DATESTART <= :stop "
+        . "AND RECEIPTS.ID = TICKETLINES.TICKET "
+        . "AND RECEIPTS.ID = TICKETS.ID "
+        . "AND TAXES.ID = TICKETLINES.TAXID "
+        . "AND TICKETLINES.PRODUCT = PRODUCTS.ID "
+        . "AND PRODUCTS.CATEGORY = CATEGORIES.ID "
+        . "AND CLOSEDCASH.MONEY = RECEIPTS.MONEY "
+        . "GROUP BY CLOSEDCASH.MONEY, TICKETLINES.TAXID, __KEY__ "
+        . "ORDER BY CLOSEDCASH.DATESTART DESC";
+$sqls[] = $red;
+
 $fields = array("NAME", "HOSTSEQUENCE", "DATESTART", "DATEEND", "OPENCASH",
         "CLOSECASH", "EXPECTEDCASH", "TICKETS", "SALES", "SALESVAT");
 $mergeFields = array("MONEY");
@@ -85,8 +103,8 @@ $headers = array(
         \i18n("Sales with VAT", PLUGIN_NAME)
 );
 
-$report = new \Pasteque\MergedReport(PLUGIN_NAME, "ztickets",
-        \i18n("Z tickets", PLUGIN_NAME),
+$report = new \Pasteque\MergedReport(PLUGIN_NAME, "advanced_ztickets",
+        \i18n("Advanced Z tickets", PLUGIN_NAME),
         $sqls, $headers, $fields, $mergeFields);
 
 $report->addInput("start", \i18n("Start date"), \Pasteque\DB::DATE);
@@ -109,7 +127,7 @@ $report->setVisualFilter("OPENCASH", "\i18nCurr", \Pasteque\Report::DISP_USER);
 $report->setVisualFilter("OPENCASH", "\i18nFlt", \Pasteque\Report::DISP_CSV);
 $report->setVisualFilter("CLOSECASH", "\i18nCurr", \Pasteque\Report::DISP_USER);
 $report->setVisualFilter("CLOSECASH", "\i18nFlt", \Pasteque\Report::DISP_CSV);
-$report->setVisualFilter("EXPECTEDCASH", "\BaseCashes\cashMatch", \Pasteque\Report::DISP_USER);
+$report->setVisualFilter("EXPECTEDCASH", "\AdvancedReports\cashMatch", \Pasteque\Report::DISP_USER);
 $report->setVisualFilter("EXPECTEDCASH", "\i18nFlt", \Pasteque\Report::DISP_CSV);
 $report->setVisualFilter("SALES", "\i18nCurr", \Pasteque\Report::DISP_USER);
 $report->setVisualFilter("SALES", "\i18nFlt", \Pasteque\Report::DISP_CSV);
@@ -119,8 +137,11 @@ $report->setMergedVisualFilter(0, "\i18nCurr", \Pasteque\Report::DISP_USER);
 $report->setMergedVisualFilter(0, "\i18nFlt", \Pasteque\Report::DISP_CSV);
 $report->addMergedHeaderFilter(0, "\i18n");
 $report->addMergedHeaderFilter(1, "\i18n");
-$report->setMergedVisualFilter(1, "\BaseCashes\\vatI18nCurr",\Pasteque\Report::DISP_USER);
-$report->setMergedVisualFilter(1, "\BaseCashes\\vatI18nFlt",\Pasteque\Report::DISP_CSV);
+$report->setMergedVisualFilter(1, "\AdvancedReports\\vatI18nCurr",\Pasteque\Report::DISP_USER);
+$report->setMergedVisualFilter(1, "\AdvancedReports\\vatI18nFlt",\Pasteque\Report::DISP_CSV);
+$report->addMergedHeaderFilter(2, "\i18n");
+$report->setMergedVisualFilter(2, "\AdvancedReports\\vatI18nCurr",\Pasteque\Report::DISP_USER);
+$report->setMergedVisualFilter(2, "\AdvancedReports\\vatI18nFlt",\Pasteque\Report::DISP_CSV);
 
 function vatI18nCurr($input) {
     $amounts = explode("/", $input);

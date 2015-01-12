@@ -82,8 +82,10 @@ $sqls[] = "SELECT CASHREGISTERS.NAME, CLOSEDCASH.DATESTART, "
 
 $fields = array("NAME", "DATESTART", "DATEEND", "TICKETS", "AVERAGE",
        "REALCS", "THEOCS", "THEOSCS");
-$mergeFields = array("NAME", "DATESTART", "DATEEND");
-$headers = array(\i18n("CashRegister.label"), \i18n("Session.openDate"),
+$mergeFields = array("NAME","DATESTART","DATEEND");
+
+$headers = array(
+        \i18n("CashRegister.label"), \i18n("Session.openDate"),
         \i18n("Session.closeDate"), \i18n("Tickets", PLUGIN_NAME),
         \i18n("Average", PLUGIN_NAME), \i18n("Real CS", PLUGIN_NAME),
         \i18n("Theo CS", PLUGIN_NAME), \i18n("Theo SCS", PLUGIN_NAME));
@@ -93,9 +95,9 @@ $report = new \Pasteque\MergedReport(PLUGIN_NAME, "cs_report",
         $sqls, $headers, $fields, $mergeFields);
 
 $report->addInput("start", \i18n("Session.openDate"), \Pasteque\DB::DATE);
-$report->setDefaultInput("start", time() - 86400);
+$report->setDefaultInput("start", time() - (time() % 86400) - 7 * 86400);
 $report->addInput("stop", \i18n("Session.closeDate"), \Pasteque\DB::DATE);
-$report->setDefaultinput("stop", time());
+$report->setDefaultinput("stop", time() - (time() % 86400) + 86400);
 
 $report->setGrouping("NAME");
 $report->addSubtotal("AVERAGE", \Pasteque\Report::TOTAL_AVG);
@@ -114,10 +116,15 @@ $report->addFilter("DATESTART", "\Pasteque\stdtimefstr");
 $report->addFilter("DATESTART", "\i18nDatetime");
 $report->addFilter("DATEEND", "\Pasteque\stdtimefstr");
 $report->addFilter("DATEEND", "\i18nDatetime");
-$report->addFilter("AVERAGE", "\i18nCurr");
-$report->addFilter("REALCS", "\i18nCurr");
-$report->addFilter("THEOCS", "\i18nCurr");
-$report->addFilter("THEOSCS", "\i18nCurr");
-$report->addMergedFilter(0, "\i18nCurr");
+$report->setVisualFilter("AVERAGE", "\i18nCurr", \Pasteque\Report::DISP_USER);
+$report->setVisualFilter("AVERAGE", "\i18nFlt", \Pasteque\Report::DISP_CSV);
+$report->setVisualFilter("REALCS", "\i18nCurr", \Pasteque\Report::DISP_USER);
+$report->setVisualFilter("REALCS", "\i18nFlt", \Pasteque\Report::DISP_CSV);
+$report->setVisualFilter("THEOCS", "\i18nCurr", \Pasteque\Report::DISP_USER);
+$report->setVisualFilter("THEOCS", "\i18nFlt", \Pasteque\Report::DISP_CSV);
+$report->setVisualFilter("THEOSCS", "\i18nCurr", \Pasteque\Report::DISP_USER);
+$report->setVisualFilter("THEOSCS", "\i18nFlt", \Pasteque\Report::DISP_CSV);
+$report->SetMergedVisualFilter(0, "\i18nCurr", \Pasteque\Report::DISP_USER);
+$report->SetMergedVisualFilter(0, "\i18nFlt", \Pasteque\Report::DISP_CSV);
 
 \Pasteque\register_report($report);

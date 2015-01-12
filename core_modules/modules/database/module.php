@@ -34,6 +34,13 @@ namespace DatabaseMM {
                 $data = explode(",", $modules);
             }
         }
+        foreach ($data as $module) {
+            if ($module == "all") {
+                return \Pasteque\Module::listAll();
+            } else if ($module == "base") {
+                return \Pasteque\Module::listBase();
+            }
+        }
         return $data;
     }
 }

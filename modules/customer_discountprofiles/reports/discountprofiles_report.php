@@ -47,15 +47,19 @@ $report = new \Pasteque\Report(PLUGIN_NAME, "discountprofiles_report",
         $sql, $headers, $fields);
 
 $report->addInput("start", \i18n("Start date"), \Pasteque\DB::DATE);
-$report->setDefaultInput("start", time() - 86400);
+$report->setDefaultInput("start", time() - (time() % 86400) - 7 * 86400);
 $report->addInput("stop", \i18n("Stop date"), \Pasteque\DB::DATE);
-$report->setDefaultinput("stop", time());
+$report->setDefaultinput("stop", time() - (time() % 86400) + 86400);
 
 $report->addFilter("DATENEW", "\Pasteque\stdtimefstr");
 $report->addFilter("DATENEW", "\i18nDatetime");
-$report->addFilter("BASE", "\i18nCurr");
-$report->addFilter("BASETAX", "\i18nCurr");
-$report->addFilter("DISCOUNT", "\i18nCurr");
-$report->addFilter("DISCOUNTTAX", "\i18nCurr");
+$report->setVisualFilter("BASE", "\i18nCurr", \Pasteque\Report::DISP_USER);
+$report->setVisualFilter("BASE", "\i18nFlt", \Pasteque\Report::DISP_CSV);
+$report->setVisualFilter("BASETAX", "\i18nCurr", \Pasteque\Report::DISP_USER);
+$report->setVisualFilter("BASETAX", "\i18nFlt", \Pasteque\Report::DISP_CSV);
+$report->setVisualFilter("DISCOUNT", "\i18nCurr", \Pasteque\Report::DISP_USER);
+$report->setVisualFilter("DISCOUNT", "\i18nFlt", \Pasteque\Report::DISP_CSV);
+$report->setVisualFilter("DISCOUNTTAX", "\i18nCurr", \Pasteque\Report::DISP_USER);
+$report->setVisualFilter("DISCOUNTTAX", "\i18nFlt", \Pasteque\Report::DISP_CSV);
 
 \Pasteque\register_report($report);

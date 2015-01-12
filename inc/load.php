@@ -62,6 +62,7 @@ require_once(PT::$ABSPATH . "/inc/PDOBuilder.php");
 require_once(PT::$ABSPATH . "/inc/DB.php");
 require_once(PT::$ABSPATH . "/inc/Installer.php");
 require_once(PT::$ABSPATH . "/inc/images.php");
+require_once(PT::$ABSPATH . "/inc/Module.php");
 
 // Load core modules
 require_once(_check_core_module('ident'));

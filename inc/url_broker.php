@@ -31,7 +31,7 @@ function redirectAction($path) {
 
 function redirect_report($module, $name) {
     if (!file_exists(PT::$ABSPATH . "/modules/" . $module . "/reports/" . $name . ".php")) {
-        $ret = array("error" => "No such seport");
+        $ret = array("error" => "No such report");
         echo json_encode($ret);
         return;
     }
@@ -65,17 +65,43 @@ function print_content($module, $name) {
     require_once(PT::$ABSPATH . "/modules/" . $module . "/print/" . $name . ".php");
 }
 
+
 function get_url_action($action) {
     return "./?" . PT::URL_ACTION_PARAM . "=" . $action;
 }
 function get_url_report($report) {
-    return "./?" . PT::URL_REPORT_PARAM . "=" . $report;
+    $url = "./?" . PT::URL_REPORT_PARAM . "=" . $report;
+    if(isset($_POST[PT::URL_DATESTART_PARAM])) {
+        $url .= "&" . PT::URL_DATESTART_PARAM . "=" .$_POST[PT::URL_DATESTART_PARAM];
+    }
+    if(isset($_POST[PT::URL_DATESTOP_PARAM])) {
+        $url .= "&" . PT::URL_DATESTOP_PARAM . "=" .$_POST[PT::URL_DATESTOP_PARAM];
+    }
+    if(isset($_GET[PT::URL_DATESTART_PARAM])) {
+        $url .= "&" . PT::URL_DATESTART_PARAM . "=" .$_GET[PT::URL_DATESTART_PARAM];
+    }
+    if(isset($_GET[PT::URL_DATESTOP_PARAM])) {
+        $url .= "&" . PT::URL_DATESTOP_PARAM . "=" .$_GET[PT::URL_DATESTOP_PARAM];
+    }
+    return $url;
 }
 
 function get_module_url_action($module, $action, $params = array()) {
     $url = "./?" . PT::URL_ACTION_PARAM . "=" . get_module_action($module, $action);
     foreach ($params as $key => $value) {
         $url .= "&" . $key . "=" . $value;
+    }
+    if(isset($_POST[PT::URL_DATESTART_PARAM])) {
+        $url .= "&" . PT::URL_DATESTART_PARAM . "=" .$_POST[PT::URL_DATESTART_PARAM];
+    }
+    if(isset($_POST[PT::URL_DATESTOP_PARAM])) {
+        $url .= "&" . PT::URL_DATESTOP_PARAM . "=" .$_POST[PT::URL_DATESTOP_PARAM];
+    }
+    if(isset($_GET[PT::URL_DATESTART_PARAM])) {
+        $url .= "&" . PT::URL_DATESTART_PARAM . "=" .$_GET[PT::URL_DATESTART_PARAM];
+    }
+    if(isset($_GET[PT::URL_DATESTOP_PARAM])) {
+        $url .= "&" . PT::URL_DATESTOP_PARAM . "=" .$_GET[PT::URL_DATESTOP_PARAM];
     }
     return $url;
     // TODO: escape all of this
@@ -97,8 +123,22 @@ function get_module_report($module, $report) {
 }
 
 function get_report_url($module, $report_name, $type = "csv") {
-    return "./?" . PT::URL_ACTION_PARAM . "=report&w=" . $type . "&m=" . $module
+    $url = "./?" . PT::URL_ACTION_PARAM . "=report&w=" . $type . "&m=" . $module
             . "&n=" . $report_name;
+    if(isset($_POST[PT::URL_DATESTART_PARAM])) {
+        $url .= "&" . PT::URL_DATESTART_PARAM . "=" .$_POST[PT::URL_DATESTART_PARAM];
+    }
+    if(isset($_POST[PT::URL_DATESTOP_PARAM])) {
+        $url .= "&" . PT::URL_DATESTOP_PARAM . "=" .$_POST[PT::URL_DATESTOP_PARAM];
+    }
+    if(isset($_GET[PT::URL_DATESTART_PARAM])) {
+        $url .= "&" . PT::URL_DATESTART_PARAM . "=" .$_GET[PT::URL_DATESTART_PARAM];
+    }
+    if(isset($_GET[PT::URL_DATESTOP_PARAM])) {
+        $url .= "&" . PT::URL_DATESTOP_PARAM . "=" .$_GET[PT::URL_DATESTOP_PARAM];
+    }
+    return $url;
+    // TODO: escape all of this
 } 
 
 function get_template_url() {
