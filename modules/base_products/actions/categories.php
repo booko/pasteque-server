@@ -57,7 +57,7 @@ $categories = \Pasteque\CategoriesService::getAll();
 	</thead>
 	<tbody>
 <?php
-function printCategory($printCategory,$level=0) {
+function printCategory($printCategory, $level, &$par) {
         $par = !$par;
         if ($printCategory->hasImage) {
             $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=category&id=" . $printCategory->id;
@@ -83,18 +83,17 @@ function printCategory($printCategory,$level=0) {
                         </td>
                 </tr>
         <?php
-        $categories = \Pasteque\CategoriesService::getAll();
+        $categories = \Pasteque\CategoriesService::getChildren($printCategory->id);
         $level++;
         foreach($categories as $childCategory) {
-            if($childCategory->parentId == $printCategory->id) {
-                printCategory($childCategory,$level);
-            }
+            printCategory($childCategory, $level, $par);
         }
 }
 
+$par = false;
 foreach ($categories as $category) {
     if($category->parentId == "") {
-        printCategory($category); // we start with root categories. As the function is recursive, we don’t need more than this :-)
+        printCategory($category, 0, $par); // we start with root categories. As the function is recursive, we don’t need more than this :-)
     }
 }
 ?>
