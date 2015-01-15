@@ -86,8 +86,8 @@ class InventoriesService extends AbstractService {
         foreach ($inventory->items as $item) {
             if ($item->missingQty === null) {
                 // Check for missing count on current stock
-                $lvl = StocksService::getLevel($inventory->locationId,
-                        $item->productId, $item->attrSetInstId);
+                $lvl = StocksService::getLevel($item->productId,
+                        $inventory->locationId, $item->attrSetInstId);
                 if ($lvl != null) {
                     $qty = $lvl->qty;
                     $invQty = $item->qty + $item->lostQty
