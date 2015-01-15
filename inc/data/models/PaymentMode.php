@@ -42,22 +42,19 @@ class PaymentMode {
     public $active;
     /** If system, it cannot be deleted */
     public $system;
-    /** If cs, the payment is included in comsolidated sales, otherwise not
-     * (for example free) */
-    public $cs;
     /** Display order */
     public $dispOrder;
 
     static function __build($id, $code, $label, $flags, $hasImage, $rules,
-            $values, $active, $system, $cs, $dispOrder) {
+            $values, $active, $system, $dispOrder) {
         $paymentMode = new PaymentMode($code, $label, $flags, $hasImage, $rules,
-                $values, $active, $system, $cs, $dispOrder);
+                $values, $active, $system, $dispOrder);
         $paymentMode->id = $id;
         return $paymentMode;
     }
 
     function __construct($code, $label, $flags, $hasImage, $rules, $values,
-            $active, $system, $cs, $dispOrder) {
+            $active, $system, $dispOrder) {
         $this->code = $code;
         $this->label = $label;
         $this->flags = $flags;
@@ -66,29 +63,23 @@ class PaymentMode {
         $this->values = $values;
         $this->active = $active;
         $this->system = $system;
-        $this->cs = $cs;
         $this->dispOrder = $dispOrder;
     }
 }
 
-class PaymentModeRule {
+class PaymentModeReturn {
 
-   /** Rule to convert exceedent to credit note
-     * (add a negative payment with code "credit_note") */
-    const CREDIT_NOTE = "note";
-    /** Rule to give back exceedent (add a negative payment of the same type) */
-    const GIVE_BACK = "give_back";
-    /** Rule to add exceedent to customer's prepaid */
-    const PREPAID = "prepaid";
-    /** Rule to cover customer's debt */
-    const DEBT = "debt";
+    const PARENT_ID = "parent";
 
     public $minVal;
-    public $rule;
+    /** In which PaymentMode the exceedent is given back. May be null.
+     * When creating a new PaymentMode, use the special value PARENT_ID
+     * to reference the not currently set PaymentMode id. */
+    public $modeId;
 
-    public function __construct($minVal, $rule) {
+    public function __construct($minVal, $modeId) {
         $this->minVal = $minVal;
-        $this->rule = $rule;
+        $this->modeId = $modeId;
     }
 }
 

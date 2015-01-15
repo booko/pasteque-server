@@ -26,7 +26,7 @@ class PaymentModesServiceTest extends \PHPUnit_Framework_TestCase {
     protected function tearDown() {
         // Restore database in its empty state
         $pdo = PDOBuilder::getPDO();
-        if ($pdo->exec("DELETE FROM PAYMENTMODES_RULES") === false
+        if ($pdo->exec("DELETE FROM PAYMENTMODES_RETURNS") === false
                 || $pdo->exec("DELETE FROM PAYMENTMODES_VALUES") === false
                 || $pdo->exec("DELETE FROM PAYMENTMODES") === false) {
             echo("[ERROR] Unable to restore db\n");
@@ -41,7 +41,6 @@ class PaymentModesServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($ref->hasImage, $read->hasImage);
         $this->assertEquals($ref->active, $read->active);
         $this->assertEquals($ref->system, $read->system);
-        $this->assertEquals($ref->cs, $read->cs);
         $this->assertEquals($ref->dispOrder, $read->dispOrder);
         // Check rules
         $this->assertEquals(count($ref->rules), count($read->rules));
@@ -49,7 +48,7 @@ class PaymentModesServiceTest extends \PHPUnit_Framework_TestCase {
             $refRule = $ref->rules[$i];
             $readRule = $read->rules[$i];
             $this->assertEquals($refRule->minVal, $readRule->minVal);
-            $this->assertEquals($refRule->rule, $readRule->rule);
+            $this->assertEquals($refRule->modeId, $readRule->modeId);
         }
         // Check values
         $this->assertEquals(count($ref->values), count($read->values));
@@ -62,13 +61,12 @@ class PaymentModesServiceTest extends \PHPUnit_Framework_TestCase {
         }
     }
 
-    public function testCreate() {
-        $rules = array(new PaymentModeRule(0.0, PaymentModeRule::CREDIT_NOTE),
-                new PaymentModeRule(1.0, PaymentModeRule::GIVE_BACK));
+    public function testCreateNoReturn() {
+        $rules = array();
         $values = array(new PaymentModeValue(10, "label_10", 1),
                 new PaymentModeValue(20, "label_20", 2));
         $mode = new PaymentMode("code", "label" , PaymentMode::CUST_ASSIGNED,
-                false, $rules, $values, true, false, true, 1);
+                false, $rules, $values, true, true, 2);
         $srv = new PaymentModesService();
         $mode->id = $srv->create($mode);
         $this->assertNotEquals(false, $mode->id, "Creation failed");
@@ -87,38 +85,89 @@ class PaymentModesServiceTest extends \PHPUnit_Framework_TestCase {
                 "Active mismatch");
         $this->assertEquals($mode->system, $db->readBool($row['SYSTEM']),
                 "System mismatch");
-        $this->assertEquals($mode->cs, $db->readBool($row['CS']),
-                "CS mismatch");
         $this->assertEquals($mode->dispOrder, $row['DISPORDER'],
                 "Order mismatch");
-        $stmtRules = $pdo->prepare("SELECT * FROM PAYMENTMODES_RULES "
+        $stmtRules = $pdo->prepare("SELECT * FROM PAYMENTMODES_RETURNS "
+                . "ORDER BY MIN ASC");
+        $this->assertNotEquals(false, $stmtRules->execute(), "Query failed");
+        while ($row = $stmtRules->fetch()) {
+                $this->assertTrue(false, "Unknown rule");
+        }
+    }
+
+    public function testCreateReturnParent() {
+        $rules = array(new PaymentModeReturn(0.0, PaymentModeReturn::PARENT_ID),
+                new PaymentModeReturn(1.0, PaymentModeReturn::PARENT_ID));
+        $values = array(new PaymentModeValue(10, "label_10", 1),
+                new PaymentModeValue(20, "label_20", 2));
+        $mode = new PaymentMode("code", "label" , PaymentMode::CUST_ASSIGNED,
+                false, $rules, $values, true, true, 1);
+        $srv = new PaymentModesService();
+        $mode->id = $srv->create($mode);
+        $this->assertNotEquals(false, $mode->id, "Creation failed");
+        $pdo = PDOBuilder::getPDO();
+        $stmtRules = $pdo->prepare("SELECT * FROM PAYMENTMODES_RETURNS "
                 . "ORDER BY MIN ASC");
         $this->assertNotEquals(false, $stmtRules->execute(), "Query failed");
         $rulesCount = 0;
         while ($row = $stmtRules->fetch()) {
             $this->assertEquals($rules[$rulesCount]->minVal, $row['MIN'],
                     "Rule min val mismatch");
-            $this->assertEquals($rules[$rulesCount]->rule, $row['RULE'],
-                    "Rule mismatch");
+            $this->assertEquals($mode->id,
+                    $row['RETURNMODE_ID'], "Return id mismatch");
             $rulesCount++;
             if ($rulesCount > count($rules)) {
                 $this->assertTrue(false, "Unknown rule");
             }
         }
         $this->assertEquals(count($rules), $rulesCount,
-                "Rules count mismatch");        
+                "Rules count mismatch");
     }
 
-    /** @depends testCreate */
-    public function testRead() {
-        $rules = array(new PaymentModeRule(0.0, PaymentModeRule::CREDIT_NOTE),
-                new PaymentModeRule(1.0, PaymentModeRule::GIVE_BACK));
+    public function testCreateReturnForeign() {
+        $modeA = new PaymentMode("A", "A", 0, false, array(), array(), true,
+                true, 1);
+        $srv = new PaymentModesService();
+        $modeA->id = $srv->create($modeA);
+        $rules = array(new PaymentModeReturn(0.0, $modeA->id),
+                new PaymentModeReturn(1.0, PaymentModeReturn::PARENT_ID));
         $values = array(new PaymentModeValue(10, "label_10", 1),
                 new PaymentModeValue(20, "label_20", 2));
         $mode = new PaymentMode("code", "label" , PaymentMode::CUST_ASSIGNED,
-                false, $rules, $values, true, false, true, 1);
+                false, $rules, $values, true, true, 1);
+        $mode->id = $srv->create($mode);
+        $this->assertNotEquals(false, $mode->id, "Creation failed");
+        $pdo = PDOBuilder::getPDO();
+        $stmtRules = $pdo->prepare("SELECT * FROM PAYMENTMODES_RETURNS "
+                . "ORDER BY MIN ASC");
+        $this->assertNotEquals(false, $stmtRules->execute(), "Query failed");
+        $rulesCount = 0;
+        while ($row = $stmtRules->fetch()) {
+            $this->assertEquals($rules[$rulesCount]->minVal, $row['MIN'],
+                    "Rule min val mismatch");
+            $this->assertEquals($rulesCount == 0 ? $modeA->id : $mode->id,
+                    $row['RETURNMODE_ID'], "Return id mismatch");
+            $rulesCount++;
+            if ($rulesCount > count($rules)) {
+                $this->assertTrue(false, "Unknown rule");
+            }
+        }
+        $this->assertEquals(count($rules), $rulesCount,
+                "Rules count mismatch");
+    }
+
+    /** @depends testCreateReturnParent */
+    public function testRead() {
+        $rules = array(new PaymentModeReturn(0.0, PaymentModeReturn::PARENT_ID),
+                new PaymentModeReturn(1.0, PaymentModeReturn::PARENT_ID));
+        $values = array(new PaymentModeValue(10, "label_10", 1),
+                new PaymentModeValue(20, "label_20", 2));
+        $mode = new PaymentMode("code", "label" , PaymentMode::CUST_ASSIGNED,
+                false, $rules, $values, true, true, 1);
         $srv = new PaymentModesService();
         $mode->id = $srv->create($mode);
+        $rules[0]->modeId = $mode->id;
+        $rules[1]->modeId = $mode->id;
         $read = $srv->get($mode->id);
         $this->assertNotNull($read, "Nothing found");
         $this->checkEquality($mode, $read);
@@ -130,20 +179,19 @@ class PaymentModesServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(null, $read);
     }
 
-    /** @depends testCreate
-     * @depends testRead
-     */
+    /** @depends testRead */
     public function testUpdate() {
-        $rules = array(new PaymentModeRule(0.0, PaymentModeRule::CREDIT_NOTE),
-                new PaymentModeRule(1.0, PaymentModeRule::GIVE_BACK));
+        $rules = array(new PaymentModeReturn(0.0, PaymentModeReturn::PARENT_ID),
+                new PaymentModeReturn(1.0, PaymentModeReturn::PARENT_ID));
         $values = array(new PaymentModeValue(10, "label_10", 1),
                 new PaymentModeValue(20, "label_20", 2));
         $mode = new PaymentMode("code", "label" , PaymentMode::CUST_ASSIGNED,
-                false, $rules, $values, true, false, true, 1);
+                false, $rules, $values, true, true, 1);
         $srv = new PaymentModesService();
         $mode->id = $srv->create($mode);
+        $rules[0]->modeId = $mode->id;
+        $rules[1]->modeId = $mode->id;
         $mode->label = "Edited";
-        $mode->cs = false;
         $this->assertTrue($srv->update($mode), "Update failed");
         $read = $srv->get($mode->id);
         $this->checkEquality($mode, $read);
@@ -153,16 +201,14 @@ class PaymentModesServiceTest extends \PHPUnit_Framework_TestCase {
         $this->markTestIncomplete();
     }
 
-    /** @depends testCreate
-     * @depends testRead
-     */
+    /** @depends testRead */
     public function testDelete() {
-        $rules = array(new PaymentModeRule(0.0, PaymentModeRule::CREDIT_NOTE),
-                new PaymentModeRule(1.0, PaymentModeRule::GIVE_BACK));
+        $rules = array(new PaymentModeReturn(0.0, PaymentModeReturn::PARENT_ID),
+                new PaymentModeReturn(1.0, PaymentModeReturn::PARENT_ID));
         $values = array(new PaymentModeValue(10, "label_10", 1),
                 new PaymentModeValue(20, "label_20", 2));
         $mode = new PaymentMode("code", "label" , PaymentMode::CUST_ASSIGNED,
-                false, $rules, $values, true, false, true, 1);
+                false, $rules, $values, true, true, 1);
         $srv = new PaymentModesService();
         $mode->id = $srv->create($mode);
         $this->assertTrue($srv->delete($mode->id), "Delete failed");

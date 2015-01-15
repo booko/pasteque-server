@@ -31,7 +31,6 @@ class PaymentModesService extends AbstractService {
             "FLAGS" => "flags",
             "ACTIVE" => array("type" => DB::BOOL, "attr" => "active"),
             "SYSTEM" => array("type" => DB::BOOL, "attr" => "system"),
-            "CS" => array("type" => DB::BOOL, "attr" => "cs"),
             "DISPORDER" => "dispOrder"
     );
 
@@ -43,12 +42,13 @@ class PaymentModesService extends AbstractService {
         $db = DB::get();
         // Get rules
         $rules = array();
-        $stmt = $pdo->prepare("SELECT * FROM PAYMENTMODES_RULES "
+        $stmt = $pdo->prepare("SELECT * FROM PAYMENTMODES_RETURNS "
                 . "WHERE PAYMENTMODE_ID = :id ORDER BY MIN ASC");
         $stmt->bindParam(":id", $dbMode['ID']);
         $stmt->execute();
         while ($row = $stmt->fetch()) {
-            $rules[] = new PaymentModeRule($row['MIN'], $row['RULE']);
+            $rules[] = new PaymentModeReturn($row['MIN'],
+                    $row['RETURNMODE_ID']);
         }
         // Get values
         $values = array();
@@ -64,8 +64,7 @@ class PaymentModesService extends AbstractService {
         $mode = PaymentMode::__build($dbMode['ID'], $dbMode['CODE'],
                 $dbMode['NAME'], $dbMode['FLAGS'], $dbMode['IMAGE'] !== null,
                 $rules, $values, $db->readBool($dbMode['ACTIVE']),
-                $db->readBool($dbMode['SYSTEM']), $db->readBool($dbMode['CS']),
-                $dbMode['DISPORDER']);
+                $db->readBool($dbMode['SYSTEM']), $dbMode['DISPORDER']);
         return $mode;
     }
 
@@ -84,13 +83,17 @@ class PaymentModesService extends AbstractService {
             }
         }
         // Insert rules
-        $stmt = $pdo->prepare("INSERT INTO PAYMENTMODES_RULES "
-                . "(PAYMENTMODE_ID, MIN, RULE) "
-                . "VALUES (:pmId, :min, :rule);");
+        $stmt = $pdo->prepare("INSERT INTO PAYMENTMODES_RETURNS "
+                . "(PAYMENTMODE_ID, MIN, RETURNMODE_ID) "
+                . "VALUES (:pmId, :min, :ret);");
         $stmt->bindValue(":pmId", $id);
         foreach ($mode->rules as $rule) {
             $stmt->bindValue(":min", $rule->minVal);
-            $stmt->bindValue(":rule", $rule->rule);
+            if ($rule->modeId == PaymentModeReturn::PARENT_ID) {
+                $stmt->bindValue(":ret", $id);
+            } else {
+                $stmt->bindValue(":ret", $rule->modeId);
+            }
             if ($stmt->execute() === false) {
                 if ($newTransaction) {
                     $pdo->rollback();
@@ -127,7 +130,7 @@ class PaymentModesService extends AbstractService {
             $pdo->beginTransaction();
         }
         // Delete rules
-        $stmt = $pdo->prepare("DELETE FROM PAYMENTMODES_RULES "
+        $stmt = $pdo->prepare("DELETE FROM PAYMENTMODES_RETURNS "
                 . "WHERE PAYMENTMODE_ID = :id;");
         $stmt->bindValue(":id", $id);
         if ($stmt->execute() === false) {
