@@ -37,6 +37,7 @@ class PaymentModesServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($ref->id, $read->id);
         $this->assertEquals($ref->code, $read->code);
         $this->assertEquals($ref->label, $read->label);
+        $this->assertEquals($ref->backLabel, $read->backLabel);
         $this->assertEquals($ref->flags, $read->flags);
         $this->assertEquals($ref->hasImage, $read->hasImage);
         $this->assertEquals($ref->active, $read->active);
@@ -65,7 +66,8 @@ class PaymentModesServiceTest extends \PHPUnit_Framework_TestCase {
         $rules = array();
         $values = array(new PaymentModeValue(10, "label_10", 1),
                 new PaymentModeValue(20, "label_20", 2));
-        $mode = new PaymentMode("code", "label" , PaymentMode::CUST_ASSIGNED,
+        $mode = new PaymentMode("code", "label" , "backLabel",
+                PaymentMode::CUST_ASSIGNED,
                 false, $rules, $values, true, true, 2);
         $srv = new PaymentModesService();
         $mode->id = $srv->create($mode);
@@ -80,6 +82,8 @@ class PaymentModesServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($mode->id, $row['ID'], "Id mismatch");
         $this->assertEquals($mode->code, $row['CODE'], "Code mismatch");
         $this->assertEquals($mode->label, $row['NAME'], "Label mismatch");
+        $this->assertEquals($mode->backLabel, $row['BACKNAME'],
+                "Back label mismatch");
         $this->assertEquals($mode->flags, $row['FLAGS'], "Flags mismatch");
         $this->assertEquals($mode->active, $db->readBool($row['ACTIVE']),
                 "Active mismatch");
@@ -100,7 +104,8 @@ class PaymentModesServiceTest extends \PHPUnit_Framework_TestCase {
                 new PaymentModeReturn(1.0, PaymentModeReturn::PARENT_ID));
         $values = array(new PaymentModeValue(10, "label_10", 1),
                 new PaymentModeValue(20, "label_20", 2));
-        $mode = new PaymentMode("code", "label" , PaymentMode::CUST_ASSIGNED,
+        $mode = new PaymentMode("code", "label" , "backLabel",
+                PaymentMode::CUST_ASSIGNED,
                 false, $rules, $values, true, true, 1);
         $srv = new PaymentModesService();
         $mode->id = $srv->create($mode);
@@ -125,15 +130,16 @@ class PaymentModesServiceTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testCreateReturnForeign() {
-        $modeA = new PaymentMode("A", "A", 0, false, array(), array(), true,
-                true, 1);
+        $modeA = new PaymentMode("A", "A", "A", 0, false, array(), array(),
+                true, true, 1);
         $srv = new PaymentModesService();
         $modeA->id = $srv->create($modeA);
         $rules = array(new PaymentModeReturn(0.0, $modeA->id),
                 new PaymentModeReturn(1.0, PaymentModeReturn::PARENT_ID));
         $values = array(new PaymentModeValue(10, "label_10", 1),
                 new PaymentModeValue(20, "label_20", 2));
-        $mode = new PaymentMode("code", "label" , PaymentMode::CUST_ASSIGNED,
+        $mode = new PaymentMode("code", "label" , "backLabel",
+                PaymentMode::CUST_ASSIGNED,
                 false, $rules, $values, true, true, 1);
         $mode->id = $srv->create($mode);
         $this->assertNotEquals(false, $mode->id, "Creation failed");
@@ -162,7 +168,8 @@ class PaymentModesServiceTest extends \PHPUnit_Framework_TestCase {
                 new PaymentModeReturn(1.0, PaymentModeReturn::PARENT_ID));
         $values = array(new PaymentModeValue(10, "label_10", 1),
                 new PaymentModeValue(20, "label_20", 2));
-        $mode = new PaymentMode("code", "label" , PaymentMode::CUST_ASSIGNED,
+        $mode = new PaymentMode("code", "label" , "backLabel",
+                PaymentMode::CUST_ASSIGNED,
                 false, $rules, $values, true, true, 1);
         $srv = new PaymentModesService();
         $mode->id = $srv->create($mode);
@@ -185,7 +192,8 @@ class PaymentModesServiceTest extends \PHPUnit_Framework_TestCase {
                 new PaymentModeReturn(1.0, PaymentModeReturn::PARENT_ID));
         $values = array(new PaymentModeValue(10, "label_10", 1),
                 new PaymentModeValue(20, "label_20", 2));
-        $mode = new PaymentMode("code", "label" , PaymentMode::CUST_ASSIGNED,
+        $mode = new PaymentMode("code", "label" , "backLabel",
+                PaymentMode::CUST_ASSIGNED,
                 false, $rules, $values, true, true, 1);
         $srv = new PaymentModesService();
         $mode->id = $srv->create($mode);
@@ -207,7 +215,8 @@ class PaymentModesServiceTest extends \PHPUnit_Framework_TestCase {
                 new PaymentModeReturn(1.0, PaymentModeReturn::PARENT_ID));
         $values = array(new PaymentModeValue(10, "label_10", 1),
                 new PaymentModeValue(20, "label_20", 2));
-        $mode = new PaymentMode("code", "label" , PaymentMode::CUST_ASSIGNED,
+        $mode = new PaymentMode("code", "label" , "backLabel",
+                PaymentMode::CUST_ASSIGNED,
                 false, $rules, $values, true, true, 1);
         $srv = new PaymentModesService();
         $mode->id = $srv->create($mode);

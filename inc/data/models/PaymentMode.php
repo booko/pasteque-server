@@ -32,6 +32,7 @@ class PaymentMode {
     public $id;
     public $code;
     public $label;
+    public $backLabel;
     public $flags;
     public $hasImage;
     /** Rules define how exceedent must be treated. It's an array
@@ -45,18 +46,19 @@ class PaymentMode {
     /** Display order */
     public $dispOrder;
 
-    static function __build($id, $code, $label, $flags, $hasImage, $rules,
-            $values, $active, $system, $dispOrder) {
-        $paymentMode = new PaymentMode($code, $label, $flags, $hasImage, $rules,
-                $values, $active, $system, $dispOrder);
+    static function __build($id, $code, $label, $backLabel, $flags, $hasImage,
+            $rules, $values, $active, $system, $dispOrder) {
+        $paymentMode = new PaymentMode($code, $label, $backLabel, $flags,
+                $hasImage, $rules, $values, $active, $system, $dispOrder);
         $paymentMode->id = $id;
         return $paymentMode;
     }
 
-    function __construct($code, $label, $flags, $hasImage, $rules, $values,
-            $active, $system, $dispOrder) {
+    function __construct($code, $label, $backLabel, $flags, $hasImage, $rules,
+            $values, $active, $system, $dispOrder) {
         $this->code = $code;
         $this->label = $label;
+        $this->backLabel = $backLabel;
         $this->flags = $flags;
         $this->hasImage = $hasImage;
         $this->rules = $rules;

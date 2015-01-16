@@ -28,6 +28,7 @@ class PaymentModesService extends AbstractService {
             "ID" => "id",
             "CODE" => "code",
             "NAME" => "label",
+            "BACKNAME" => "backLabel",
             "FLAGS" => "flags",
             "ACTIVE" => array("type" => DB::BOOL, "attr" => "active"),
             "SYSTEM" => array("type" => DB::BOOL, "attr" => "system"),
@@ -62,8 +63,9 @@ class PaymentModesService extends AbstractService {
         }
         // Build
         $mode = PaymentMode::__build($dbMode['ID'], $dbMode['CODE'],
-                $dbMode['NAME'], $dbMode['FLAGS'], $dbMode['IMAGE'] !== null,
-                $rules, $values, $db->readBool($dbMode['ACTIVE']),
+                $dbMode['NAME'], $dbMode['BACKNAME'], $dbMode['FLAGS'],
+                $dbMode['IMAGE'] !== null, $rules, $values,
+                $db->readBool($dbMode['ACTIVE']),
                 $db->readBool($dbMode['SYSTEM']), $dbMode['DISPORDER']);
         return $mode;
     }

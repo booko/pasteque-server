@@ -37,10 +37,12 @@ class PaymentModeTest extends \PHPUnit_Framework_TestCase {
                 new PaymentModeReturn(1.0, 2));
         $values = array(new PaymentModeValue(10, "label_10", 1),
                 new PaymentModeValue(20, "label_20", 2));
-        $mode = new PaymentMode("code", "label" , PaymentMode::CUST_ASSIGNED,
+        $mode = new PaymentMode("code", "label" , "backLabel",
+                PaymentMode::CUST_ASSIGNED,
                 false, $rules, $values, true, false, true, 1);
         $this->assertEquals("code", $mode->code);
         $this->assertEquals("label", $mode->label);
+        $this->assertEquals("backLabel", $mode->backLabel);
         $this->assertEquals(PaymentMode::CUST_ASSIGNED, $mode->flags);
         $this->assertEquals(false, $mode->hasImage);
         $this->assertEquals(true, $mode->active);
@@ -68,7 +70,7 @@ class PaymentModeTest extends \PHPUnit_Framework_TestCase {
                 new PaymentModeReturn(1.0, 2));
         $values = array(new PaymentModeValue(10, "label_10", 1),
                 new PaymentModeValue(20, "label_20", 2));
-        $mode = PaymentMode::__build(1, "code", "label",
+        $mode = PaymentMode::__build(1, "code", "label", "backLabel",
                 PaymentMode::CUST_ASSIGNED, false, $rules, $values, true, false,
                 true, 1);
         $this->assertEquals(1, $mode->id);
