@@ -1,5 +1,5 @@
 <?php
-//    Pastèque Web back office
+//    Pastèque Web back office, Users module
 //
 //    Copyright (C) 2013 Scil (http://scil.coop)
 //
@@ -18,15 +18,9 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace Pasteque;
+namespace AdvancedReports;
 
-class PT {
-    public static $ABSPATH;
-    const DB_LEVEL = "6";
-    const VERSION = "6.0";
+const PLUGIN_NAME = "advanced_reports";
 
-    const URL_ACTION_PARAM = "p";
-    const URL_REPORT_PARAM = "r";
-    const URL_DATESTART_PARAM = "start";
-    const URL_DATESTOP_PARAM = "stop";
-}
+require_once(dirname(__FILE__) . "/advanced_reports.php");
+?>

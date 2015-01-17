@@ -456,6 +456,37 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
     }
 
     /** @depends testSaveLine */
+    public function testSaveBackPayment() {
+        $date = stdtimefstr("2013-01-01 00:00:00");
+        $line = new TicketLine(1, $this->prd, null, 1, 10, $this->tax);
+        $payment = new Payment("cash", 12, $this->currency->id, 14,
+                "cashback", -2);
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
+                $date, array($line), array($payment),
+                $this->cash->id, null, 3);
+        $id = TicketsService::save($ticket, $this->location->id);
+        $this->assertNotEquals(false, $id, "Ticket save failed");
+        $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
+        // Check payment lines
+        $stmtPmt = $pdo->prepare("SELECT * FROM PAYMENTS ORDER BY TOTAL DESC");
+        $this->assertNotEquals($stmtPmt->execute(), false,
+                "Payment lines query failed");
+        $row = $stmtPmt->fetch();
+        $this->assertNotEquals(false, $row, "No payment line found");
+        $this->checkPaymentEquality($id, $payment, $row);
+        $row = $stmtPmt->fetch();
+        $refPmt = new Payment("cashback", -2, $this->currency->id, -2);
+        $this->checkPaymentEquality($id, $refPmt, $row);
+        $row = $stmtPmt->fetch();
+        $this->assertFalse($row, "Too much payment lines found");
+        // Check stock
+        $level = StocksService::getLevel($this->prd->id, $this->location->id,
+                null);
+        $this->assertEquals(-1, $level->qty);
+    }
+
+    /** @depends testSaveLine */
     public function testSaveTktDiscountLine() {
         $date = stdtimefstr("2013-01-01 00:00:00");
         $line = new TicketLine(1, $this->prd, null, 1, 12, $this->tax);

@@ -24,7 +24,8 @@ $sql = "SELECT "
         . "PRODUCTS.REFERENCE, "
         . "PRODUCTS.NAME, "
         . "SUM(TICKETLINES.UNITS) AS UNITS, "
-        . "SUM(TICKETLINES.UNITS * TICKETLINES.PRICE) AS TOTAL "
+        . "SUM(TICKETLINES.UNITS * TICKETLINES.PRICE) AS TOTAL, "
+        . "SUM(TICKETLINES.UNITS * (TICKETLINES.PRICE - PRODUCTS.PRICEBUY)) AS MARGIN "
         . "FROM RECEIPTS, TICKETS, TICKETLINES, PRODUCTS, CLOSEDCASH "
         . "WHERE "
         . "CLOSEDCASH.DATESTART > :start AND CLOSEDCASH.DATEEND < :stop "
@@ -35,24 +36,28 @@ $sql = "SELECT "
         . "ORDER BY PRODUCTS.NAME ";
 
 
-$fields = array("REFERENCE", "NAME", "UNITS", "TOTAL");
+$fields = array("REFERENCE", "NAME", "UNITS", "TOTAL","MARGIN");
 $headers = array(\i18n("Product.reference"),
         \i18n("Product.label"),
-        \i18n("Quantity"), \i18n("Total w/o VAT", PLUGIN_NAME));
+        \i18n("Quantity"), \i18n("Total w/o VAT", PLUGIN_NAME),
+        \i18n("Margin", PLUGIN_NAME));
 
 $report = new \Pasteque\Report(PLUGIN_NAME, "sales_by_product_report",
         \i18n("Sales by product", PLUGIN_NAME),
         $sql, $headers, $fields);
 
 $report->addInput("start", \i18n("Session.openDate"), \Pasteque\DB::DATE);
-$report->setDefaultInput("start", time() - 86400);
+$report->setDefaultInput("start", time() - (time() % 86400) - 7 * 86400);
 $report->addInput("stop", \i18n("Session.closeDate"), \Pasteque\DB::DATE);
-$report->setDefaultinput("stop", time());
+$report->setDefaultinput("stop", time() - (time() % 86400) + 86400);
 
 $report->addFilter("DATESTART", "\Pasteque\stdtimefstr");
 $report->addFilter("DATESTART", "\i18nDatetime");
 $report->addFilter("DATEEND", "\Pasteque\stdtimefstr");
 $report->addFilter("DATEEND", "\i18nDatetime");
-$report->addFilter("TOTAL", "\i18nCurr");
+$report->setVisualFilter("TOTAL", "\i18nCurr", \Pasteque\Report::DISP_USER);
+$report->setVisualFilter("TOTAL", "\i18nFlt", \Pasteque\Report::DISP_CSV);
+$report->setVisualFilter("MARGIN", "\i18nCurr", \Pasteque\Report::DISP_USER);
+$report->setVisualFilter("MARGIN", "\i18nFlt", \Pasteque\Report::DISP_CSV);
 
 \Pasteque\register_report($report);

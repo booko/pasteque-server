@@ -33,27 +33,27 @@ class PaymentModeTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testConstruct() {
-        $rules = array(new PaymentModeRule(0.0, PaymentModeRule::CREDIT_NOTE),
-                new PaymentModeRule(1.0, PaymentModeRule::GIVE_BACK));
+        $rules = array(new PaymentModeReturn(0.0, 1),
+                new PaymentModeReturn(1.0, 2));
         $values = array(new PaymentModeValue(10, "label_10", 1),
                 new PaymentModeValue(20, "label_20", 2));
-        $mode = new PaymentMode("code", "label" , PaymentMode::CUST_ASSIGNED,
+        $mode = new PaymentMode("code", "label" , "backLabel",
+                PaymentMode::CUST_ASSIGNED,
                 false, $rules, $values, true, false, true, 1);
         $this->assertEquals("code", $mode->code);
         $this->assertEquals("label", $mode->label);
+        $this->assertEquals("backLabel", $mode->backLabel);
         $this->assertEquals(PaymentMode::CUST_ASSIGNED, $mode->flags);
         $this->assertEquals(false, $mode->hasImage);
         $this->assertEquals(true, $mode->active);
         $this->assertEquals(false, $mode->system);
-        $this->assertEquals(true, $mode->cs);
         $this->assertEquals(1, $mode->dispOrder);
         $this->assertTrue(is_array($mode->rules));
         $this->assertEquals(2, count($mode->rules));
         $this->assertEquals(0.0, $mode->rules[0]->minVal);
-        $this->assertEquals(PaymentModeRule::CREDIT_NOTE,
-                $mode->rules[0]->rule);
+        $this->assertEquals(1, $mode->rules[0]->modeId);
         $this->assertEquals(1.0, $mode->rules[1]->minVal);
-        $this->assertEquals(PaymentModeRule::GIVE_BACK, $mode->rules[1]->rule);
+        $this->assertEquals(2, $mode->rules[1]->modeId);
         $this->assertTrue(is_array($mode->values));
         $this->assertEquals(2, count($mode->values));
         $this->assertEquals(10, $mode->values[0]->value);
@@ -66,11 +66,11 @@ class PaymentModeTest extends \PHPUnit_Framework_TestCase {
 
     /** @depends testConstruct */
     public function testBuild() {
-        $rules = array(new PaymentModeRule(0.0, PaymentModeRule::CREDIT_NOTE),
-                new PaymentModeRule(1.0, PaymentModeRule::GIVE_BACK));
+        $rules = array(new PaymentModeReturn(0.0, 1),
+                new PaymentModeReturn(1.0, 2));
         $values = array(new PaymentModeValue(10, "label_10", 1),
                 new PaymentModeValue(20, "label_20", 2));
-        $mode = PaymentMode::__build(1, "code", "label",
+        $mode = PaymentMode::__build(1, "code", "label", "backLabel",
                 PaymentMode::CUST_ASSIGNED, false, $rules, $values, true, false,
                 true, 1);
         $this->assertEquals(1, $mode->id);

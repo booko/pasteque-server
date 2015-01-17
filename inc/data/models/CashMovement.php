@@ -21,11 +21,16 @@
 namespace Pasteque;
 
 /** Cash in/out. It has its own payment type */
-class CashMovement extends Payment {
+class CashMovement {
 
     const TYPE_CASHIN = "cashin";
     const TYPE_CASHOUT = "cashout";
 
+    public $id;
+    public $type;
+    public $amount;
+    public $currencyId;
+    public $currencyAmount;
     public $cashId;
     public $receiptId;
     public $date;
@@ -37,11 +42,15 @@ class CashMovement extends Payment {
                 $currencyAmount, $note);
         $mvt->id = $pmtId;
         $mvt->receiptId = $rcptId;
+        return $mvt;
     }
 
     function __construct($cashId, $date, $type, $amount, $currencyId,
             $currencyAmount, $note) {
-        parent::__construct($type, $amount, $currencyId, $currencyAmount);
+        $this->type = $type;
+        $this->amount = $amount;
+        $this->currencyId = $currencyId;
+        $this->currencyAmount = $currencyAmount;
         $this->cashId = $cashId;
         $this->date = $date;
         $this->note = $note;

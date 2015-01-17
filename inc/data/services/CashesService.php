@@ -203,7 +203,7 @@ class CashesService extends AbstractService {
         } else {
             return null;
         }
-        // Get payments
+        // Get consolidated payments by mode
         $payments = array();
         $pmtsSql = "SELECT PAYMENTS.PAYMENT AS TYPE, "
                 . "PAYMENTS.CURRENCY AS CURRENCYID, "

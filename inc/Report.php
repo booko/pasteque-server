@@ -67,6 +67,10 @@ class Report implements ReportInterface {
 
     const TOTAL_SUM = "sum";
     const TOTAL_AVG = "average";
+    /** Display destination for end-user */
+    const DISP_USER = 1;
+    /** Display destination for csv output */
+    const DISP_CSV = 2;
 
     /* array use for ponderate the average */
     protected $ponderate;
@@ -99,7 +103,10 @@ class Report implements ReportInterface {
         $this->fields = $fields;
         $this->params = array();
         $this->filters = array();
-        $this->visualFilters = array();
+        $this->visualFilters = array(
+                Report::DISP_USER => array(),
+                Report::DISP_CSV => array()
+                );
         $this->grouping = NULL;
         $this->subtotals = array();
         $this->totals = array();
@@ -169,8 +176,15 @@ class Report implements ReportInterface {
         }
         $this->filters[$field][] = $function;
     }
-    public function setVisualFilter($field, $function) {
-        $this->visualFilters[$field] = $function;
+    /** Set visual filter for given output (default DISP_USER) */
+    public function setVisualFilter($field, $function,
+            $output = Report::DISP_USER) {
+        if (($output & Report::DISP_USER) > 0) {
+            $this->visualFilters[Report::DISP_USER][$field] = $function;
+        }
+        if (($output & Report::DISP_CSV) > 0) {
+            $this->visualFilters[Report::DISP_CSV][$field] = $function;
+        }
     }
 
     public function getFilters() {
@@ -234,16 +248,29 @@ class Report implements ReportInterface {
         return $this->ponderate[$field];
     }
 
-    /** Apply visual filters on a field, given all the values of the row. */
-    public function applyVisualFilter($field, $values) {
+    /** Apply visual filters on a field, given all the values of the row.
+     * @param $field Field name
+     * @param $values Array of values
+     * @param $display (optional) One of the display constants
+     * (default DISP_USER) */
+    public function applyVisualFilter($field, $values,
+            $display = Report::DISP_USER) {
+        if (isset($this->visualFilters[$display][$field])) {
+            $filter = $this->visualFilters[$display][$field];
+        } else {
+            // No filter defined
+            if (!is_array($values)) {
+                return $values;
+            } else {
+                return $values[$field];
+            }
+        }
         if (!is_array($values)) {
-            return $values;
+            $ret = $values;
+        } else {
+            $ret = $values[$field];
         }
-        $ret = $values[$field];
-        if (isset($this->visualFilters[$field])) {
-            $filter = $this->visualFilters[$field];
-            $ret = $filter($ret, $values);
-        }
+        $ret = $filter($ret, $values);
         return $ret;
     }
 
@@ -472,6 +499,7 @@ class MergedReport extends Report {
     private $mergedSubtotals;
     private $mergedFilters;
     private $mergedHeaderFilters;
+    protected $mergedVisualFilters;
 
     public function __construct($domain, $id, $title, $sqls, $headers, $fields,
             $mergeFields) {
@@ -481,6 +509,7 @@ class MergedReport extends Report {
         $this->mergedTotals = array();
         $this->mergedSubtotals = array();
         $this->mergedFilters = array();
+        $this->mergedVisualFilters = array();
         $this->mergedHeaderFilters = array();
     }
 
@@ -516,6 +545,13 @@ class MergedReport extends Report {
                     $this->addFilter($field, $function);
                 }
             }
+            if (isset($this->mergedVisualFilters[$sqlIndex])) {
+                foreach ($this->mergedVisualFilters[$sqlIndex]
+                        as $disp => $function) {
+                    $function = $this->mergedVisualFilters[$sqlIndex][$disp];
+                    $this->setVisualFilter($field, $function, $disp);
+                }
+            }
         }
     }
 
@@ -540,6 +576,20 @@ class MergedReport extends Report {
         }
         $this->mergedFilters[$sqlIndex][] = $function;
     }
+
+    public function setMergedVisualFilter($sqlIndex, $function,
+            $output = Report::DISP_USER) {
+        if (!isset($this->mergedVisualFilters[$sqlIndex])) {
+            $this->mergedVisualFiltes[$sqlIndex] = array();
+        }
+        if (($output & Report::DISP_USER) > 0) {
+            $this->mergedVisualFilters[$sqlIndex][Report::DISP_USER] = $function;
+        }
+        if (($output & Report::DISP_CSV) > 0) {
+            $this->mergedVisualFilters[$sqlIndex][Report::DISP_CSV] = $function;
+        }
+    }
+
 }
 
 class MergedReportRun extends ReportRun {
