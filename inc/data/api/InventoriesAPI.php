@@ -56,6 +56,7 @@ class InventoriesAPI extends APIService {
                         $item->defectQty, $item->missingQty, $item->unitValue);
                 $inv->addItem($item);
             }
+            $inv->fillZero();
             $id = $srv->create($inv);
             if ($id !== false) {
                 $this->succeed($id);

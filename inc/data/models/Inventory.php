@@ -42,6 +42,24 @@ class Inventory {
     public function addItem($inventoryItem) {
         $this->items[] = $inventoryItem;
     }
+
+    /** Add 0 quantities to all on sales and missing products in inventory */
+    public function fillZero() {
+        $prds = ProductsService::getAll(false);
+        foreach ($this->items as $item) {
+            foreach ($prds as $i => $prd) {
+                if ($prd->id == $item->productId) {
+                    array_splice($prds, $i, 1);
+                    break;
+                }
+            }
+        }
+        // Registered products removed, add 0 items
+        foreach ($prds as $prd) {
+            $this->addItem(new InventoryItem($this->id, $prd->id, null,
+                            0, 0, 0, null, null));
+        }
+    }
 }
 
 class InventoryItem {
