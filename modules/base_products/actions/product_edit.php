@@ -41,6 +41,7 @@ if (isset($_POST['id'])) {
             && isset($_POST['realsell']) && isset($_POST['categoryId'])
             && isset($_POST['taxCatId'])) {
         $catId = $_POST['categoryId'];
+        $provId = $_POST['providerId'];
         $disp_order = $_POST['dispOrder'] == "" ? NULL : $_POST['dispOrder'];
         $taxCatId = $_POST['taxCatId'];
         if ($_FILES['image']['tmp_name'] !== "") {
@@ -65,7 +66,7 @@ if (isset($_POST['id'])) {
             $attr = $_POST['attributeSetId'];
         }
         $prd = \Pasteque\Product::__build($_POST['id'], $_POST['reference'],
-                $_POST['label'], $_POST['realsell'], $catId, $disp_order,
+                $_POST['label'], $_POST['realsell'], $catId, $provId, $disp_order,
                 $taxCatId, $visible, $scaled, $_POST['priceBuy'], $attr,
                 $_POST['barcode'], $img != null,
                 $discount_enabled, $discount_rate);
@@ -80,6 +81,7 @@ if (isset($_POST['id'])) {
             && isset($_POST['realsell']) && isset($_POST['categoryId'])
             && isset($_POST['taxCatId'])) {
         $catId = $_POST['categoryId'];
+        $provId = $_POST['providerId'];
         $disp_order = $_POST['dispOrder'] == "" ? NULL : $_POST['dispOrder'];
         $taxCatId = $_POST['taxCatId'];
         if ($_FILES['image']['tmp_name'] !== "") {
@@ -100,7 +102,7 @@ if (isset($_POST['id'])) {
             $attr = $_POST['attributeSetId'];
         }
         $prd = new \Pasteque\Product($_POST['reference'], $_POST['label'],
-                $_POST['realsell'], $catId, $disp_order, $taxCatId,
+                $_POST['realsell'], $catId, $provId, $disp_order, $taxCatId,
                 $visible, $scaled, $_POST['priceBuy'], $attr, $_POST['barcode'],
                 $img !== null, $discount_enabled, $discount_rate);
         $id = \Pasteque\ProductsService::create($prd, $img);
@@ -141,6 +143,7 @@ if ($stocks === TRUE && $product != NULL) {
 	<legend><?php \pi18n("Display", PLUGIN_NAME); ?></legend>
 	<?php \Pasteque\form_input("edit", "Product", $product, "label", "string", array("required" => true)); ?>
 	<?php \Pasteque\form_input("edit", "Product", $product, "categoryId", "pick", array("model" => "Category")); ?>
+	<?php \Pasteque\form_input("edit", "Product", $product, "providerId", "pick", array("model" => "Provider")); ?>
 	<div class="row">
 		<label for="image"><?php \pi18n("Image"); ?></label>
 		<div style="display:inline-block">
