@@ -39,18 +39,18 @@ class Provider {
     public $city;
     public $region;
     public $country;
-    public $note;
+    public $notes;
     public $visible;
     public $dispOrder;
 
     static function __build($id, $label, $hasImage,
             $firstName, $lastName, $email, $phone1, $phone2, $website,
             $fax, $addr1, $addr2, $zipCode, $city, $region, $country,
-            $note, $visible, $order) {
+            $notes, $visible, $order) {
         $prov = new Provider($label, $hasImage,
             $firstName, $lastName, $email, $phone1, $phone2, $website,
             $fax, $addr1, $addr2, $zipCode, $city, $region, $country,
-            $note, $visible, $order);
+            $notes, $visible, $order);
         $prov->id = $id;
         return $prov;
     }
@@ -58,7 +58,7 @@ class Provider {
     function __construct($label, $hasImage,
             $firstName, $lastName, $email, $phone1, $phone2, $website,
             $fax, $addr1, $addr2, $zipCode, $city, $region, $country,
-            $note, $visible, $order) {
+            $notes, $visible, $order) {
         $this->label = $label;
         $this->hasImage = (bool) $hasImage;
         $this->firstName = $firstName;
@@ -74,7 +74,7 @@ class Provider {
         $this->city = $city;
         $this->region = $region;
         $this->country = $country;
-        $this->note = $note;
+        $this->notes = $notes;
         $this->visible = $visible;
         $this->dispOrder = (int) $order;
     }

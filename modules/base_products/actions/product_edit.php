@@ -126,6 +126,7 @@ if (isset($_GET['id'])) {
 }
 $taxes = \Pasteque\TaxesService::getAll();
 $categories = \Pasteque\CategoriesService::getAll();
+$providers = \Pasteque\ProvidersService::getAll();
 
 $level = NULL;
 if ($stocks === TRUE && $product != NULL) {

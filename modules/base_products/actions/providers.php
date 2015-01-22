@@ -51,16 +51,16 @@ $providers = \Pasteque\providersService::getAll();
 	<thead>
 		<tr>
 			<th></th>
-			<th><?php \pi18n("provider.label"); ?></th>
+			<th><?php \pi18n("Provider.label"); ?></th>
 			<th></th>
 		</tr>
 	</thead>
 	<tbody>
 <?php
-function printprovider($printprovegory, $level, &$par) {
+function printprovider($printprovider, $level, &$par) {
         $par = !$par;
         if ($printprovider->hasImage) {
-            $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=provider&id=" . $printprovegory->id;
+            $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=provider&id=" . $printprovider->id;
         } else {
             $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=provider";
         }
@@ -76,25 +76,18 @@ function printprovider($printprovegory, $level, &$par) {
                         <td><?php echo $printprovider->label; ?></td>
                         <td class="edition">
                     <?php \Pasteque\tpl_btn("edition", \Pasteque\get_module_url_action(PLUGIN_NAME,
-                            'provider_edit', array("id" => $printprovegory->id)), "",
+                            'provider_edit', array("id" => $printprovider->id)), "",
                             'img/edit.png', \i18n('Edit'), \i18n('Edit'));
                     ?>
                                 <form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("prov", $printprovider->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>
                         </td>
                 </tr>
         <?php
-        $providers = \Pasteque\providersService::getChildren($printprovider->id);
-        $level++;
-        foreach($providers as $childprovider) {
-            printprovider($childprovegory, $level, $par);
-        }
 }
 
 $par = false;
 foreach ($providers as $provider) {
-    if($provider->parentId == "") {
-        printprovider($provegory, 0, $par); // we start with root providers. As the function is recursive, we don’t need more than this :-)
-    }
+    printprovider($provider, 0, $par);
 }
 ?>
 	</tbody>

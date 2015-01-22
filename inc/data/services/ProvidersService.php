@@ -23,8 +23,13 @@ namespace Pasteque;
 class ProvidersService {
 
     private static function buildDBprov($db_prov) {
-        return Provider::__build($db_prov['ID'], $db_prov['PARENTID'],
+        return Provider::__build($db_prov['ID'],
                 $db_prov['NAME'], $db_prov['IMAGE'] !== null,
+                $db_prov['FIRSTNAME'],$db_prov['LASTNAME'],$db_prov['EMAIL'],
+                $db_prov['PHONE'],$db_prov['PHONE2'],$db_prov['WEBSITE'],
+                $db_prov['FAX'],$db_prov['ADDRESS'],$db_prov['ADDRESS2'],
+                $db_prov['POSTAL'],$db_prov['CITY'],$db_prov['REGION'],
+                $db_prov['COUNTRY'],$db_prov['NOTES'],$db_prov['VISIBLE'],
                 $db_prov['DISPORDER']);
     }
 
@@ -66,7 +71,7 @@ class ProvidersService {
         }
         return null;
     }
-    
+
     static function getImage($id) {
         $pdo = PDOBuilder::getPDO();
         $db = DB::get();
@@ -100,22 +105,22 @@ class ProvidersService {
                 . "WEBSITE = :website, "
                 . "FAX = :fax, "
                 . "NOTES = :notes, "
-                . "DISPORDER = :order"
+                . "DISPORDER = :order, "
                 . "VISIBLE = :visible";
         if ($image !== "") {
             $sql .= ", IMAGE = :img";
         }
         $sql .= " WHERE ID = :id";
         $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(":id", $id);
+        $stmt->bindParam(":id", $prov->id);
         $stmt->bindParam(":name", $prov->label);
-        $stmt->bindParam(":add1",$prov->add1);
-        $stmt->bindParam(":add2",$prov->add2);
+        $stmt->bindParam(":addr1",$prov->addr1);
+        $stmt->bindParam(":addr2",$prov->addr2);
         $stmt->bindParam(":zipCode",$prov->zipCode);
         $stmt->bindParam(":city",$prov->city);
         $stmt->bindParam(":region",$prov->region);
         $stmt->bindParam(":country",$prov->country);
-        $stmt->bindParam(":firsName",$prov->firstName);
+        $stmt->bindParam(":firstName",$prov->firstName);
         $stmt->bindParam(":lastName",$prov->lastName);
         $stmt->bindParam(":email",$prov->email);
         $stmt->bindParam(":phone1",$prov->phone1);
@@ -123,9 +128,8 @@ class ProvidersService {
         $stmt->bindParam(":website",$prov->website);
         $stmt->bindParam(":fax",$prov->fax);
         $stmt->bindParam(":notes",$prov->notes);
-        $stmt->bindParam(":visible",$prov->visible);
         $stmt->bindParam(":order", $prov->dispOrder);
-        $stmt->bindParam(":img", $image, \PDO::PARAM_LOB);
+        $stmt->bindParam(":visible",$prov->visible);
         if ($image !== "") {
             $stmt->bindParam(":img", $image, \PDO::PARAM_LOB);
         }
@@ -139,7 +143,7 @@ class ProvidersService {
     static function createprov($prov, $image = null) {
         $pdo = PDOBuilder::getPDO();
         $id = md5(time() . rand());
-        $sql = "INSERT INTO PROVIDERS (ID, NAME, IMAGE, ADDRESS, ADDRESS2, POSTAL, CITY, REGION, COUNTRY, FIRSTNAME, LASTNAME, EMAIL, PHONE, PHONE2, WEBSITE, FAX, NOTES, DISPORDER, VISIBLE "
+        $sql = "INSERT INTO PROVIDERS (ID, NAME, IMAGE, ADDRESS, ADDRESS2, POSTAL, CITY, REGION, COUNTRY, FIRSTNAME, LASTNAME, EMAIL, PHONE, PHONE2, WEBSITE, FAX, NOTES, DISPORDER, VISIBLE) "
                 . "VALUES (:id, :name, :img, :add1, :add2, :zipCode, :city, :region, :country, :firsName, :lastName, :email, :phone1, :phone2, :website, :fax, :notes, :order, :visible)";
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(":id", $id);

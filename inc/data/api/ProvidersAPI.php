@@ -26,8 +26,6 @@ class ProvidersAPI extends APIService {
         switch ($this->action) {
         case 'get':
             return isset($this->params['id']);
-        case 'getChildren':
-            return isset($this->params['parentId']);
         case 'getAll':
             return true;
         }
@@ -38,9 +36,6 @@ class ProvidersAPI extends APIService {
         switch ($this->action) {
         case 'get':
             $this->succeed(ProvidersService::get($this->params['id']));
-            break;
-        case 'getChildren':
-            $this->succeed(ProvidersService::getChildren($this->params['parentId']));
             break;
         case 'getAll':
             $this->succeed(ProvidersService::getAll());

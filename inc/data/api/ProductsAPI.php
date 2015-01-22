@@ -53,7 +53,7 @@ class ProductsAPI extends APIService {
         case 'getCategory':
             $this->succeed(ProductsService::getByCategory($this->params['id']));
             break;
-        }        
+        }
     }
 }
 

@@ -34,16 +34,16 @@ if (isset($_POST['id']) && isset($_POST['label'])) {
     } else {
         $img = "";
     }
-    $parent_id = NULL;
-    if ($_POST['parentId'] !== "") {
-        $parent_id = $_POST['parentId'];
-    }
     $dispOrder = 0;
     if ($_POST['dispOrder'] !== "") {
         $dispOrder = intval($_POST['dispOrder']);
     }
-    $prov = \Pasteque\provider::__build($_POST['id'], $parent_id,
-            $_POST['label'], $img !== null, $dispOrder);
+    $prov = \Pasteque\provider::__build($_POST['id'], $_POST['label'], $img !== null,
+            $_POST['firstName'], $_POST['lastName'], $_POST['email'],
+            $_POST['phone1'], $_POST['phone2'], $_POST['website'], $_POST['fax'],
+            $_POST['addr1'],  $_POST['addr2'], $_POST['zipCode'], $_POST['city'],
+            $_POST['region'], $_POST['country'], $_POST['notes'], $_POST['visible'],
+            $dispOrder);
     if (\Pasteque\providersService::updateprov($prov, $img)) {
         $message = \i18n("Changes saved");
     } else {
@@ -55,15 +55,17 @@ if (isset($_POST['id']) && isset($_POST['label'])) {
     } else {
         $img = NULL;
     }
-    $parent_id = NULL;
-    if ($_POST['parentId'] !== "") {
-        $parent_id = $_POST['parentId'];
-    }
     $dispOrder = 0;
     if ($_POST['dispOrder'] !== "") {
         $dispOrder = intval($_POST['dispOrder']);
     }
-    $prov = new \Pasteque\provider($parent_id, $_POST['label'], $img, $dispOrder);
+
+    $prov = new \Pasteque\Provider($_POST['label'], $img !== null, 
+            $_POST['firstName'], $_POST['lastName'], $_POST['email'],
+            $_POST['phone1'], $_POST['phone2'], $_POST['website'], $_POST['fax'],
+            $_POST['addr1'],  $_POST['addr2'], $_POST['zipCode'], $_POST['city'],
+            $_POST['region'], $_POST['country'], $_POST['notes'], $_POST['visible'],
+            $dispOrder);
     $id = \Pasteque\providersService::createprov($prov, $img);
     if ($id !== FALSE) {
         $message = \i18n("provider saved. <a href=\"%s\">Go to the provider page</a>.", PLUGIN_NAME, \Pasteque\get_module_url_action(PLUGIN_NAME, 'provider_edit', array('id' => $id)));
@@ -83,9 +85,8 @@ if (isset($_GET['id'])) {
 
 <form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post" enctype="multipart/form-data">
     <?php \Pasteque\form_hidden("edit", $provider, "id"); ?>
-	<?php \Pasteque\form_input("edit", "provider", $provider, "label", "string", array("required" => true)); ?>
-	<?php \Pasteque\form_input("edit", "provider", $provider, "parentId", "pick", array("model" => "provider", "nullable" => TRUE)); ?>
-	<?php \Pasteque\form_input("edit", "provider", $provider, "dispOrder", "numeric"); ?>
+	<?php \Pasteque\form_input("edit", "Provider", $provider, "label", "string", array("required" => true)); ?>
+	<?php \Pasteque\form_input("edit", "Provider", $provider, "dispOrder", "numeric"); ?>
 	<div class="row">
 		<label for="image"><?php \pi18n("Image", PLUGIN_NAME); ?></label>
 		<div style="display:inline-block">
@@ -98,6 +99,23 @@ if (isset($_GET['id'])) {
 			<input type="file" name="image" />
 		</div>
 	</div>
+	<legend><?php \pi18n("Contact data", PLUGIN_NAME); ?></legend>
+	<?php \Pasteque\form_input("edit", "Provider", $provider, "firstName", "string"); ?>
+	<?php \Pasteque\form_input("edit", "Provider", $provider, "lastName", "string"); ?>
+	<?php \Pasteque\form_input("edit", "Provider", $provider, "email", "string"); ?>
+	<?php \Pasteque\form_input("edit", "Provider", $provider, "phone1", "string"); ?>
+	<?php \Pasteque\form_input("edit", "Provider", $provider, "phone2", "string"); ?>
+	<?php \Pasteque\form_input("edit", "Provider", $provider, "website", "string"); ?>
+	<?php \Pasteque\form_input("edit", "Provider", $provider, "fax", "string"); ?>
+	<?php \Pasteque\form_input("edit", "Provider", $provider, "addr1", "string"); ?>
+	<?php \Pasteque\form_input("edit", "Provider", $provider, "addr2", "string"); ?>
+	<?php \Pasteque\form_input("edit", "Provider", $provider, "zipCode", "string"); ?>
+	<?php \Pasteque\form_input("edit", "Provider", $provider, "city", "string"); ?>
+	<?php \Pasteque\form_input("edit", "Provider", $provider, "region", "string"); ?>
+	<?php \Pasteque\form_input("edit", "Provider", $provider, "country", "string"); ?>
+	<?php \Pasteque\form_input("edit", "Provider", $provider, "notes", "text"); ?>
+	<?php \Pasteque\form_input("edit", "Provider", $provider, "visible", "boolean"); ?>
+	</fieldset>
 
 	<div class="row actions">
 		<?php \Pasteque\form_save(); ?>

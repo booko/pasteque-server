@@ -149,6 +149,9 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
         case 'Category':
             $data = CategoriesService::getAll();
             break;
+        case 'Provider':
+            $data = ProvidersService::getAll();
+            break;
         case 'TaxCategory':
             $data = TaxesService::getAll();
             break;
