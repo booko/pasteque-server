@@ -154,7 +154,11 @@ class TicketsAPI extends APIService {
                 foreach ($jsonTkt->lines as $jsLine) {
                     // Get line info
                     $number = $jsLine->dispOrder;
-                    $productId = $jsLine->productId;
+                    if (property_exists($jsLine, "productId")) {
+                        $productId = $jsLine->productId;
+                    } else {
+                        $productId = null;
+                    }
                     $quantity = $jsLine->quantity;
                     $price = $jsLine->price;
                     $taxId = $jsLine->taxId;
@@ -185,7 +189,8 @@ class TicketsAPI extends APIService {
                     }
                     $product = ProductsService::get($productId);
                     $tax = TaxesService::getTax($taxId);
-                    if ($product == null || $tax == null) {
+                    if ($tax == null) {
+                        $this->fail(new APIError("Unknown tax"));
                         break;
                     }
                     $newLine = new TicketLine($number, $product,
