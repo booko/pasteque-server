@@ -47,7 +47,8 @@ class DB {
         }
         switch ($this->type) {
         case 'mysql':
-            return (ord($val) == 1);
+            // Happy PHP consistency!
+            return ((ord($val) == 1) || ($val == "1"));
         case 'postgresql':
             return ($val == "t");
         }
