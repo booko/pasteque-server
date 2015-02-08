@@ -75,7 +75,7 @@ class Provider {
         $this->region = $region;
         $this->country = $country;
         $this->notes = $notes;
-        $this->visible = $visible;
+        $this->visible = (bool) $visible;
         $this->dispOrder = (int) $order;
     }
 

@@ -194,6 +194,9 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
                     || (is_object($object->{$field}) && $object->{$field}->id == $r->id))) {
                 $selected = ' selected="true"';
             }
+            else {
+                echo $object->{$field}." .".$field."<br />\n";
+            }
             echo '<option value="' . esc_attr($r->id) . '"' . $selected . '>'
                     . esc_html($r->label) . '</option>';
         }

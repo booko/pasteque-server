@@ -34,7 +34,7 @@ class ProductsService {
         }
         return Product::__build($dpPrd['ID'], $dpPrd['REFERENCE'],
                 $dpPrd['NAME'], $dpPrd['PRICESELL'], $dpPrd['CATEGORY'],
-                $dbPrd['PROVIDER'],
+                $dpPrd['PROVIDER'],
                 $dispOrder, $dpPrd['TAXCAT'], $visible,
                 $db->readBool($dpPrd['ISSCALE']), $dpPrd['PRICEBUY'],
                 $dpPrd['ATTRIBUTESET_ID'], $dpPrd['CODE'],
