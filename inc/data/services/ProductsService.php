@@ -183,7 +183,7 @@ class ProductsService {
         }
         $stmt->bindParam(":sell", $prd->priceSell, \PDO::PARAM_STR);
         $stmt->bindParam(":cat", $prd->categoryId, \PDO::PARAM_INT);
-        $stmt->bindParam(":prov", $prd->providerId, \PDO::PARAM_INT);
+        $stmt->bindParam(":prov", $prd->providerId, \PDO::PARAM_STR);
         $stmt->bindParam(":tax", $prd->taxCatId, \PDO::PARAM_INT);
         $stmt->bindParam(":attr", $prd->attributeSetId, \PDO::PARAM_INT);
         $stmt->bindParam(":scale", $db->boolVal($prd->scaled));
