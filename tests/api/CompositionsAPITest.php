@@ -50,12 +50,12 @@ class CompositionsAPITest extends \PHPUnit_Framework_TestCase {
         $cat = new Category(null, "Category", false, 2);
         $cat->id = CategoriesService::createCat($cat);
         // Set up products
-        $prd = new Product("REF", "product", 1.0, $cat->id, 1,
+        $prd = new Product("REF", "product", 1.0, $cat->id, null, 1,
                 $taxCat->id, true, true, 0.3, null, "12345", false, true, 0.2);
         $prd->id = ProductsService::create($prd, null);
         $this->products[] = $prd;
-        $prd2 = new Product("REF2", "product2", 2.0, $cat->id, 3, $taxCat->id,
-                true, false);
+        $prd2 = new Product("REF2", "product2", 2.0, $cat->id, null, 3,
+                $taxCat->id, true, false);
         $prd2->id = ProductsService::create($prd2, null);
         $this->products[] = $prd2;
 
