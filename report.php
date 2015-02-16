@@ -74,6 +74,7 @@ function report_csv($module, $name, $values) {
 
 
 function init_data($data, $line, $field) {
+     $field = strtoupper($field);
      if (isset($line[$field])) {
         $data[] = $line[$field];
      } else {

@@ -46,37 +46,26 @@ foreach ($products as $product) {
 
 <!-- start bloc titre -->
 <div class="blc_ti">
-<h1><?php \pi18n("Products", PLUGIN_NAME); ?></h1>
-<span class="nb_article"><?php \pi18n("%d products", PLUGIN_NAME, count($products)); ?></span>
-
-<ul class="bt_fonction">
-	<li><?php \Pasteque\tpl_btn('btn bt_add ', \Pasteque\get_module_url_action(PLUGIN_NAME, "product_edit"),
-        \i18n('Add a product', PLUGIN_NAME), 'img/btn_add.png');?></li>
-	<li><?php \Pasteque\tpl_btn('btn bt_import ', \Pasteque\get_module_url_action(PLUGIN_NAME, "productsManagement"),
-        \i18n('Import products', PLUGIN_NAME), 'img/btn_add.png');?></li>
-</ul>
-
-
-
-
-
+    <h1><?php \pi18n("Products", PLUGIN_NAME); ?></h1>
+    <span class="nb_article"><?php \pi18n("%d products", PLUGIN_NAME, count($products)); ?></span>
+    <ul class="bt_fonction">
+            <li><?php \Pasteque\tpl_btn('btn bt_add ', \Pasteque\get_module_url_action(PLUGIN_NAME, "product_edit"),
+            \i18n('Add a product', PLUGIN_NAME), 'img/btn_add.png');?></li>
+            <li><?php \Pasteque\tpl_btn('btn bt_import ', \Pasteque\get_module_url_action(PLUGIN_NAME, "productsManagement"),
+            \i18n('Import products', PLUGIN_NAME), 'img/btn_add.png');?></li>
+            <li><?php \Pasteque\tpl_btn('btn bt_export ', \Pasteque\get_report_url(PLUGIN_NAME, "products_export"),
+            \i18n('Export products', PLUGIN_NAME), 'img/btn_add.png');?></li>
+    </ul>
 </div>
 <!-- end bloc titre -->
 
 <!-- start container scroll -->
 <div class="container_scroll">
-            
-            	<div class="stick_row stickem-container">
-                    
+                <div class="stick_row stickem-container">
                     <!-- start colonne contenu -->
                     <div id="content_liste" class="grid_9">
-                    
                         <div class="blc_content">
-
 <?php \Pasteque\tpl_msg_box($message, $error); ?>
-
-
-
 
 <?php
 $par = false;
@@ -84,11 +73,11 @@ $archive = false;
 foreach ($categories as $category) {
     if (isset($prdCat[$category->id])) { 
 
-$ancre = \Pasteque\esc_html($category->label);
-$ancre = str_replace(' ','',$ancre);
+$anchor = \Pasteque\esc_html($category->label);
+$anchor = str_replace(' ','',$anchor);
 ?>
 
-<h2 id="<?php echo $ancre; ?>"><?php echo \Pasteque\esc_html($category->label); ?></h2>
+<h2 id="<?php echo $anchor; ?>"><?php echo \Pasteque\esc_html($category->label); ?></h2>
 <table cellpadding="0" cellspacing="0">
 	<thead>
 		<tr>
@@ -136,16 +125,13 @@ $ancre = str_replace(' ','',$ancre);
 ?>
 
 
-<?php if ($archive) { ?>
+<?php if ($archive) {
 foreach ($categories as $category) {
     if (isset($archivesCat[$category->id])) {
-		
-
-$ancre = \Pasteque\esc_html($category->label);
-$ancre = str_replace(' ','',$ancre);
-
+        $anchor = \Pasteque\esc_html($category->label);
+        $anchor = str_replace(' ','',$anchor);
 ?>
-<h2 id="<?php echo $ancre; ?>"><?php echo \Pasteque\esc_html($category->label); ?></h2>
+<h2 id="<?php echo $anchor; ?>"><?php echo \Pasteque\esc_html($category->label); ?></h2>
 <table cellpadding="0" cellspacing="0">
 	<thead>
 		<tr>
@@ -192,16 +178,12 @@ if (count($products) == 0) {
 
 </div></div>
                     <!-- end colonne contenu -->
-                    
                     <!-- start sidebar menu -->
                     <div id="sidebar_menu" class="grid_3 stickem">
-                    
                         <div class="blc_content visible">
-                            
                             <ul id="menu_site">
                                 <li>
                                     <a href="#">Accès rapide</a>
-                                    
                                     <!--
                                     <ul>
                                         <li><a href="#cat_1" class="scroll">Formules</a></li>
@@ -210,60 +192,37 @@ if (count($products) == 0) {
                                         <li><a href="#" class="scroll">Sandwich</a></li>	
                                     </ul>
                                     -->
-                                    
-                                    
-                                    
-                                    <ul>                                    
+                                    <ul>
                                     <?php
                                     $par = false;
                                     $archive = false;
                                     foreach ($categories as $category) {
                                         if (isset($prdCat[$category->id])) { 
-										
-										
-										$ancre = \Pasteque\esc_html($category->label);
-										$ancre = str_replace(' ','',$ancre);
-										
-										?>
-                                    	<li><a href="#<?php echo $ancre; ?>" class="scroll"><?php echo \Pasteque\esc_html($category->label); ?></a></li>
-                                    
+                                            $anchor = \Pasteque\esc_html($category->label);
+                                            $anchor = str_replace(' ','',$anchor);
+                                    ?>
+                                    	<li><a href="#<?php echo $anchor; ?>" class="scroll"><?php echo \Pasteque\esc_html($category->label); ?></a></li>
                                     <?php
                                         }
                                     }
-                                    ?>
-                                    
-                                    
-                                    <?php if ($archive) { ?>
-                                    
-                                    <?php
+                                    if ($archive) {
                                     foreach ($categories as $category) {
                                         if (isset($archivesCat[$category->id])) {
 											
-										$ancre = \Pasteque\esc_html($category->label);
-										$ancre = str_replace(' ','',$ancre);
+										$anchor = \Pasteque\esc_html($category->label);
+										$anchor = str_replace(' ','',$anchor);
                                     ?>
-                                    	<li><a href="#<?php echo $ancre; ?>" class="scroll"><?php echo \Pasteque\esc_html($category->label); ?></a></li>
-                                    
+                                    	<li><a href="#<?php echo $anchor; ?>" class="scroll"><?php echo \Pasteque\esc_html($category->label); ?></a></li>
                                     <?php
                                         }
                                     }
                                     } // archive end ?>
-                                     </ul>                                   
-                                    
-                                    
-                                    
-                                    
+                                     </ul>
                                 </li>
-                                
                             </ul>
-                            
-                            
                         </div>
-                        
                     </div>
                     <!-- end sidebar menu -->
-                    
-        		</div>
-                
-        	</div>
+                </div>
+            </div>
             <!-- end container scroll -->

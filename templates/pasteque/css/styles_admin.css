@@ -836,38 +836,36 @@ nav a.administration span { background: url(../imgs/ico_nav_reglage.png) no-repe
 
 
 .blc_content form input[type="checkbox"] {
-	width:2.4em;
+    width:2.4em;
 }
 
 /* bouton action */
 
 .blc_content form .row.actions {}
-	
-.blc_content form .btn-send {
-	display:block;
-	padding: 0.6em 1.4em;
-	background:#ff6319;
-	color:#fff;
-	float:right;
-	margin: 2em 4em 1em 0;
-	border:none;
-	font-size:1.2em;
-	
-	-webkit-transition: all 0.5s ease-in-out;/* transition pour Chrome et Safari */
+
+.blc_content form .btn-send, .blc_content form .btn-export {
+    display:block;
+    padding: 0.6em 1.4em;
+    background:#ff6319;
+    color:#fff;
+    float:right;
+    margin: 2em 4em 1em 0;
+    border:none;
+    font-size:1.2em;
+    -webkit-transition: all 0.5s ease-in-out;/* transition pour Chrome et Safari */
     -moz-transition: all 0.5s ease-in-out;/* transition pour Firefox */
     -o-transition: all 0.5s ease-in-out;/* transition pour OpÃ©ra */
     transition: all 0.5s ease-in-out; /* on Ã©crit cette ligne Ã  la fin de faÃ§on Ã  ce que ce soit elle qui soit prise en compte lorsque l'attribut transition sera pris en compte par tous les navigateurs */
+}
 
-	}
-	
-.blc_content form .btn-send:hover {
-	cursor: pointer;
-	padding: 0.6em 1.8em;
-	background: #000000;
-	color:#fff;
-	}
-	
-.blc_content form .btn-send:after {
+.blc_content form .btn-send:hover, .blc_content form .btn-export:hover {
+    cursor: pointer;
+    padding: 0.6em 1.8em;
+    background: #000000;
+    color:#fff;
+}
+
+.blc_content form .btn-send:after, .blc_content form .btn-export:after {
     clear: both;
     content: ".";
     display: block;

@@ -4,7 +4,6 @@ namespace BaseProducts;
 // open csv return null if the file selected had not extension "csv"
 // or user not selected file
 function init_csv() {
-
     if ($_FILES['csv']['tmp_name'] === NULL) {
         return NULL;
     }
@@ -46,8 +45,8 @@ function initArray($key, $tab) {
     }
     return $array;
 }
-function import_csv($csv) {
 
+function import_csv($csv) {
     $error = 0;
     $create = 0;
     $update = 0;
@@ -232,57 +231,59 @@ if (isset($_FILES['csv'])) {
 }
 ?>
 
-<!-- start bloc titre -->
-<div class="blc_ti">
-<h1><?php \pi18n("Import products from csv file", PLUGIN_NAME); ?></h1>
-</div>
-<!-- end bloc titre -->
+                <div class="blc_ti">
+                    <h1><?php \pi18n("Import or export products", PLUGIN_NAME); ?></h1>
+                </div>
 
-<!-- start container scroll -->
 <div class="container_scroll">
-            
-            	<div class="stick_row stickem-container">
-                    
-                    <!-- start colonne contenu -->
-                    <div id="content_liste" class="grid_9">
-                    
-                        <div class="blc_content">
-
-<?php \Pasteque\tpl_msg_box($message, $error); ?>
-
-<form class="edit" method="post" action="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'productsManagement');?>" enctype="multipart/form-data">
-    <div class="row">
-        <label for='csv' >
-            <?php \pi18n("File", PLUGIN_NAME) ?>:
-        </label>
-            <input type="file" name="csv">
-    </div>
-    <div class="row actions">
-        <button class="btn-send" type="submit" id="envoyer" name="envoyer" >
-            <?php \pi18n("send", PLUGIN_NAME)?>
-        </button>
-    </div>
-</form>
-
-</div></div>
-                    <!-- end colonne contenu -->
-                    
-                    <!-- start sidebar menu -->
-                    <div id="sidebar_menu" class="grid_3 stickem">
-                    
-                        <div class="blc_content">
-                            
-                            <!-- start texte editorial -->
-                            <div class="edito"><!-- zone_edito --></div>
-                            <!-- end texte editorial -->
-                            
-                            
-                        </div>
-                        
+    <div class="stick_row stickem-container">
+        <div id="content_liste" class="grid_9">
+            <div class="blc_content">
+                <div class="blc_ti">
+                    <h2 id="import"><?php \pi18n("Import products from csv file", PLUGIN_NAME); ?></h2>
+                </div>
+                <?php \Pasteque\tpl_msg_box($message, $error); ?>
+                <form class="edit" method="post" action="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'productsManagement');?>" enctype="multipart/form-data">
+                    <div class="row">
+                        <label for='csv' >
+                            <?php \pi18n("File", PLUGIN_NAME) ?>:
+                        </label>
+                            <input type="file" name="csv">
                     </div>
-                    <!-- end sidebar menu -->
-                    
-        		</div>
-                
-        	</div>
-            <!-- end container scroll -->
+                    <div class="row actions">
+                        <button class="btn-send" type="submit" id="<?php \pi18n("send", PLUGIN_NAME)?>" name="<?php \pi18n("send", PLUGIN_NAME)?>" >
+                            <?php \pi18n("send", PLUGIN_NAME)?>
+                        </button>
+                    </div>
+                </form>
+                <div class="blc_ti">
+                    <h2 id="export"><?php \pi18n("Export products as csv file", PLUGIN_NAME); ?></h2>
+                </div>
+                <?php \Pasteque\tpl_msg_box($message, $error); ?>
+                <form class="edit" method="post" action="<?php echo \Pasteque\get_report_url(PLUGIN_NAME, 'products_export');?>" enctype="multipart/form-data">
+                    <div class="row">
+                    </div>
+                    <input type="hidden" name="action" value="export" />
+                    <div class="row actions">
+                        <button class="btn-export" type="submit" id="<?php \pi18n("export", PLUGIN_NAME)?>" name="<?php \pi18n("export", PLUGIN_NAME)?>" >
+                            <?php \pi18n("export", PLUGIN_NAME)?>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div id="sidebar_menu" class="grid_3 stickem">
+            <div class="blc_content visible">
+                <ul id="menu_site">
+                    <li>
+                        <a href="#">Accès rapide</a>
+                        <ul>
+                            <li><a href="#import" class="scroll"><?php \pi18n("Import products from csv file", PLUGIN_NAME); ?></a></li>
+                            <li><a href="#export" class="scroll"><?php \pi18n("Export products as csv file", PLUGIN_NAME); ?></a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

@@ -24,15 +24,11 @@ function tpl_open() {
 ?><!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title><?php \pi18n("Pastèque"); ?></title>
-	<link rel="icon" type="image/png" href="templates/pt2.0/img/icon.png" />
-	
-	<script src="<?php echo get_template_url(); ?>/js/jquery_1.8.1.js"></script>
-	<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script> -->
-
-    <!-- fancybox -->
-	<script type="text/javascript" src="<?php echo get_template_url(); ?>/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title><?php \pi18n("Pastèque"); ?></title>
+    <link rel="icon" type="image/png" href="templates/pt2.0/img/icon.png" />
+    <script src="<?php echo get_template_url(); ?>/js/jquery_1.8.1.js"></script>
+    <script type="text/javascript" src="<?php echo get_template_url(); ?>/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
     <script type="text/javascript" src="<?php echo get_template_url(); ?>/fancybox/jquery.easing-1.4.pack.js"></script>
     <script type="text/javascript" src="<?php echo get_template_url(); ?>/fancybox/jquery.mousewheel-3.0.4.pack.js"></script>
 
@@ -77,7 +73,6 @@ function tpl_open() {
     $(document).ready(function(){
         $('a[href^="#"]').on('click',function (e) {
             e.preventDefault();
-
             var target = this.hash,
             $target = $(target);
 
@@ -115,10 +110,8 @@ function tpl_open() {
 
     </script>
     <script src="<?php echo get_template_url(); ?>/js/adapt.min.js"></script>
-
 	<!-- menu mobile -->
     <link type="text/css" rel="stylesheet" href="<?php echo get_template_url(); ?>/css/jquery.mmenu.all.css" />
-    <!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script> -->
     <script type="text/javascript" src="<?php echo get_template_url(); ?>/js/jquery.mmenu.min.all.js"></script>
     <script type="text/javascript">
         $(function() {
@@ -126,8 +119,8 @@ function tpl_open() {
         });
     </script>
 
-	<link href="<?php echo get_template_url(); ?>/css/styles_admin.css" rel="stylesheet" type="text/css" />
-	<link rel="stylesheet" href="<?php echo get_template_url(); ?>/fancybox/jquery.fancybox-1.3.4.css" type="text/css" media="screen" />
+        <link href="<?php echo get_template_url(); ?>/css/styles_admin.css" rel="stylesheet" type="text/css" />
+        <link rel="stylesheet" href="<?php echo get_template_url(); ?>/fancybox/jquery.fancybox-1.3.4.css" type="text/css" media="screen" />
 
 </head>
 <body>
@@ -135,43 +128,35 @@ function tpl_open() {
 <!-- START tpl open -->
 <div id="page" class="">
 
-	<!-- start navigation mobile -->
-	<?php tpl_menu_mobile() ?>
+    <!-- start navigation mobile -->
+    <?php tpl_menu_mobile() ?>
     <nav id="nav_main__mobile">
-    	<?php tpl_menu(); ?>
+    <?php tpl_menu(); ?>
     </nav>
     <!-- end navigation mobile -->
 
 
-	<!-- start navigation PC -->
+    <!-- start navigation PC -->
     <div id="nav_pc">
 
         <!-- start bande header -->
         <header>
             <div class="container_12">
-
-                <!-- logo -->
                 <div class="logo"><img src="<?php echo get_template_url(); ?>/imgs/logo_worldline.png" width="247" height="69" alt="Worldline E-payment services" /></div>
-
             </div>
         </header>
         <!-- end bande header -->
-		
         <div id="sticky_navigation_wrapper">
             <div id="sticky_navigation">
-
-				<!-- start navigation standart -->
-				<nav id="nav_main">
-					<div class="container_12">
-						<?php tpl_menu(); ?>
-                	</div>
+                <!-- start navigation standart -->
+                <nav id="nav_main">
+                    <div class="container_12">
+                        <?php tpl_menu(); ?>
+                    </div>
                 </nav>
-                <!-- end navigation standart -->
-
-        	</div>
+            </div>
         </div>
-
-	</div>
+        </div>
     <!-- end navigation PC -->
 
 
@@ -270,21 +255,13 @@ function tpl_menu_mobile() {
 }
 
 function tpl_menu() {
-
     global $MENU;
-
-	
 	// ----------------------> gérer l'affichage du menu reglage
     echo '
 				<!-- start navigation standart -->
-
-
-
                         <ul id="nav_services">';
-						
-							// ----------------------> gérer les affichage de nom de class sur les boutons
-							// ----------------------> gérer l'affichage de la class "activ" sur le li en cours de consultation pour afficher le sous menu
-						
+// -> gérer les affichage de nom de class sur les boutons
+// -> gérer l'affichage de la class "activ" sur le li en cours de consultation pour afficher le sous menu
     foreach ($MENU->getSections() as $section) {
         echo "\t<li class=\"" . strtolower($section->getName());
         if ($section->isActive()) {
@@ -329,8 +306,7 @@ function tpl_menu() {
                         <div class="clear"></div>
 
 
-                <!-- end navigation standart -->
-	';
+                <!-- end navigation standart -->';
 }
 
 function __tpl_report_title($report) {
@@ -343,7 +319,7 @@ function __tpl_report_title($report) {
 
 function __tpl_report_input($report, $values) {
 
-	// Export button
+    // Export button
     echo '
 	<ul class="bt_fonction">
     <li>
@@ -353,37 +329,36 @@ function __tpl_report_input($report, $values) {
 			echo "&" . $param['param'] . "=" . $values[$param['param']];
 		}
     	echo '">' . \i18n("Export") . '</a>
-		
 	</li></ul>
 	</div>
     <!-- end bloc titre -->';
-	
-	
 
-	// Input form
-    echo "<div class=\"blc_content\"><form class=\"edit\" action=\"" . \Pasteque\get_current_url() . "\" "
-            . "method=\"post\">";
-    foreach($report->getParams() as $param) {
-        $id = $param['param'];
-        echo "<div class=\"row\">";
-        echo "<label for=\"" . $id . "\">" . $param['label'] . "</label>";
-        switch ($param['type']) {
-        case DB::DATE:
-            $value = \i18nDate($values[$id]);
-            echo "<input type=\"text\" name=\"" . $id . "\" id=\"" . $id
-                    . "\" class=\"dateinput\" value=\"" . $value . "\" />";
-            break;
-        default:
-            $value = $values[$param['param']];
-            echo "<input type=\"text\" name=\"" . $id . "\" id=\"" . $id
-                    . "\" value=\"" . $value . "\" />";
-            break;
+    // Input form
+    if(sizeof($report->getParams()) > 0) {
+        echo "<div class=\"blc_content\"><form class=\"edit\" action=\"" . \Pasteque\get_current_url() . "\" "
+                . "method=\"post\">";
+        foreach($report->getParams() as $param) {
+            $id = $param['param'];
+            echo "<div class=\"row\">";
+            echo "<label for=\"" . $id . "\">" . $param['label'] . "</label>";
+            switch ($param['type']) {
+            case DB::DATE:
+                $value = \i18nDate($values[$id]);
+                echo "<input type=\"text\" name=\"" . $id . "\" id=\"" . $id
+                        . "\" class=\"dateinput\" value=\"" . $value . "\" />";
+                break;
+            default:
+                $value = $values[$param['param']];
+                echo "<input type=\"text\" name=\"" . $id . "\" id=\"" . $id
+                        . "\" value=\"" . $value . "\" />";
+                break;
+            }
+            echo "</div>\n";
         }
-        echo "</div>\n";
+        // Send
+        echo "<div class=\"row actions\">" . \Pasteque\form_send() . "</div>\n";
+        echo "</form></div>\n";
     }
-    // Send
-    echo "<div class=\"row actions\">" . \Pasteque\form_send() . "</div>\n";
-    echo "</form></div>\n";
 }
 
 function __tpl_report_header($report) {
@@ -404,6 +379,7 @@ function __tpl_report_footer($report) {
 function __tpl_report_line($report, $line, $par) {
     echo "\t\t<tr class=\"row-" . ($par ? 'par' : 'odd') . "\">\n";
     foreach ($report->getFields() as $field) {
+        $field = strtoupper($field);
         if (isset($line[$field])) {
             echo "\t\t\t<td>" . $report->applyVisualFilter($field, $line)
                     . "</td>\n";

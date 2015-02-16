@@ -182,7 +182,7 @@ form.edit fieldset legend {
 	margin-top: 15px;
 	text-align: right;
 }
-.btn-send {
+.btn-send, .btn-export {
 	background-color: #006DCC;
 	background-image: linear-gradient(to bottom, #0088CC, #0044CC);
 	background-repeat: repeat-x;
