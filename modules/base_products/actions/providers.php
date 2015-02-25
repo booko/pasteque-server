@@ -35,17 +35,26 @@ if (isset($_POST['delete-prov'])) {
 
 $providers = \Pasteque\providersService::getAll();
 ?>
-<h1><?php \pi18n("Providers", PLUGIN_NAME); ?></h1>
 
-<?php \Pasteque\tpl_msg_box($message, $error); ?>
+<div class="blc_ti">
+    <h1><?php \pi18n("Providers", PLUGIN_NAME); ?></h1>
+    <span class="nb_article"><?php \pi18n("%d providers", PLUGIN_NAME, count($providers)); ?></span>
 
-<?php \Pasteque\tpl_btn('btn', \Pasteque\get_module_url_action(PLUGIN_NAME, "provider_edit"),
-        \i18n('Add a provider', PLUGIN_NAME), 'img/btn_add.png');?>
-<?php \Pasteque\tpl_btn('btn', \Pasteque\get_module_url_action(PLUGIN_NAME, "providersManagement"),
-        \i18n('Import providers', PLUGIN_NAME), 'img/btn_add.png');?>
+    <?php \Pasteque\tpl_msg_box($message, $error); ?>
+
+    <ul class="bt_fonction">
+            <li><?php \Pasteque\tpl_btn('btn', \Pasteque\get_module_url_action(PLUGIN_NAME, "provider_edit"),
+        \i18n('Add a provider', PLUGIN_NAME), 'img/btn_add.png');?></li>
+            <li><?php \Pasteque\tpl_btn('btn', \Pasteque\get_module_url_action(PLUGIN_NAME, "providersManagement"),
+        \i18n('Import providers', PLUGIN_NAME), 'img/btn_add.png');?></li>
+    </ul>
+</div>
 
 
-<p><?php \pi18n("%d providers", PLUGIN_NAME, count($providers)); ?></p>
+<div class="container_scroll">
+    <div class="stick_row stickem-container">
+        <div id="content_liste" class="grid_9">
+            <div class="blc_content">
 
 <table cellpadding="0" cellspacing="0">
 	<thead>
@@ -95,7 +104,16 @@ foreach ($providers as $provider) {
 <?php
 if (count($providers) == 0) {
 ?>
-<div class="alert"><?php \pi18n("No provider found", PLUGIN_NAME); ?></div>
+            <div class="alert"><?php \pi18n("No provider found", PLUGIN_NAME); ?></div>
 <?php
 }
 ?>
+            </div>
+        </div>
+        <div id="sidebar_menu" class="grid_3 stickem">
+            <div class="blc_content">
+                <div class="edito"><!-- zone_edito --></div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -79,7 +79,14 @@ if (isset($_GET['id'])) {
     $provider = \Pasteque\providersService::get($_GET['id']);
 }
 ?>
-<h1><?php \pi18n("Edit a provider", PLUGIN_NAME); ?></h1>
+<div class="blc_ti">
+    <h1><?php \pi18n("Edit a provider", PLUGIN_NAME); ?></h1>
+</div>
+
+<div class="container_scroll">
+    <div class="stick_row stickem-container">
+        <div id="content_liste" class="grid_9">
+            <div class="blc_content">
 
 <?php \Pasteque\tpl_msg_box($message, $error); ?>
 
@@ -141,3 +148,12 @@ if (isset($_GET['id'])) {
 		jQuery("#clearImage").val(0);
 	}	
 </script>
+            </div>
+        </div>
+            <div id="sidebar_menu" class="grid_3 stickem">
+                <div class="blc_content">
+                <div class="edito"></div>
+            </div>
+        </div>
+    </div>
+</div>
