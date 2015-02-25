@@ -60,13 +60,13 @@ class TicketsAPITest extends \PHPUnit_Framework_TestCase {
         $stmt->execute(array(":id" => "-1", ":name" => "Refill"));
         $cat = new Category(null, "Category", false, 1);
         $cat->id = CategoriesService::createCat($cat);
-        $prd = new Product("REF", "product", 1.0, $cat->id, 1,
+        $prd = new Product("REF", "product", 1.0, $cat->id, null, 1,
                 $taxCat->id, true, false, 0.5, $set->id);
         $prd->id = ProductsService::create($prd);
-        $prd2 = new Product("REF2", "product2", 2.0, $cat->id, 1,
+        $prd2 = new Product("REF2", "product2", 2.0, $cat->id, null, 1,
                 $taxCat2->id, true, false, 0.5, null);
         $prd2->id = ProductsService::create($prd2);
-        $prdRefill = new Product("REFILL", "Refill", 1.0, "-1", 1,
+        $prdRefill = new Product("REFILL", "Refill", 1.0, "-1", null, 1,
                 $taxCat->id, true, false);
         $prdRefill->id = ProductsService::create($prdRefill);
         // Tariff area

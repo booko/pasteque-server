@@ -35,7 +35,7 @@ class TariffAreasAPITest extends \PHPUnit_Framework_TestCase {
         $taxCat->id = TaxesService::createCat($taxCat);
         $cat = new Category(null, "Category", false, 1);
         $cat->id = CategoriesService::createCat($cat);
-        $prd = new Product("REF", "product", 1.0, $cat->id, 1,
+        $prd = new Product("REF", "product", 1.0, $cat->id, null, 1,
                 $taxCat->id, true, false);
         $prd->id = ProductsService::create($prd);
         $area = new TariffArea("Area", 1);

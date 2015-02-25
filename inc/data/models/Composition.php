@@ -44,7 +44,7 @@ class Composition extends Product {
             $dispOrder, $taxCatId, $visible, $scaled, $priceBuy,
             $attributeSetId, $barcode, $hasImage, $discountEnabled,
             $discountRate) {
-        parent::__construct($reference, $label, $priceSell, $categoryId,
+        parent::__construct($reference, $label, $priceSell, $categoryId, null,
                 $dispOrder, $taxCatId, $visible, $scaled, $priceBuy,
                 $attributeSetId, $barcode, $hasImage, $discountEnabled,
                 $discountRate);
