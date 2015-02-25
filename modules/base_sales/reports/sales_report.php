@@ -47,9 +47,9 @@ $report = new \Pasteque\Report(PLUGIN_NAME, "sales_report",
         $sql, $headers, $fields);
 
 $report->addInput("start", \i18n("Session.openDate"), \Pasteque\DB::DATE);
-$report->setDefaultInput("start", time() - 86400);
+$report->setDefaultInput("start", time() - (time() % 86400) - 86400);
 $report->addInput("stop", \i18n("Session.closeDate"), \Pasteque\DB::DATE);
-$report->setDefaultinput("stop", time());
+$report->setDefaultinput("stop", time() - (time() % 86400) + 86400);
 
 $report->addFilter("DATESTART", "\Pasteque\stdtimefstr");
 $report->addFilter("DATESTART", "\i18nDatetime");
@@ -57,6 +57,7 @@ $report->addFilter("DATEEND", "\Pasteque\stdtimefstr");
 $report->addFilter("DATEEND", "\i18nDatetime");
 $report->addFilter("DATENEW", "\Pasteque\stdtimefstr");
 $report->addFilter("DATENEW", "\i18nDatetime");
-$report->addFilter("SELL", "\i18nCurr");
+$report->setVisualFilter("SELL", "\i18nCurr", \Pasteque\Report::DISP_USER);
+$report->setVisualFilter("SELL", "\i18nFlt", \Pasteque\Report::DISP_CSV);
 
 \Pasteque\register_report($report);

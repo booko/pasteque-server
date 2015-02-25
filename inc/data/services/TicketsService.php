@@ -301,8 +301,9 @@ class TicketsService {
         // Insert payments
         // Also check for prepayment debit and debt recovery
         $stmtPay = $pdo->prepare("INSERT INTO PAYMENTS (ID, RECEIPT, PAYMENT, "
-                . "TOTAL, CURRENCY, TOTALCURRENCY) VALUES (:id, :rcptId, "
-                . ":type, :amount, :currId, :currAmount)");
+                . "TOTAL, CURRENCY, TOTALCURRENCY, PAIRED_WITH) VALUES "
+                . "(:id, :rcptId, :type, :amount, :currId, :currAmount, "
+                . ":pair)");
         foreach ($ticket->payments as $payment) {
             $paymentId = md5(time() . rand());
             $stmtPay->bindParam(":id", $paymentId);
@@ -311,12 +312,33 @@ class TicketsService {
             $stmtPay->bindParam(":amount", $payment->amount);
             $stmtPay->bindParam(":currId", $payment->currencyId);
             $stmtPay->bindParam(":currAmount", $payment->currencyAmount);
+            $stmtPay->bindValue(":pair", null);
             if ($stmtPay->execute() === false) {
                 if ($newTransaction) {
                     $pdo->rollback();
                 }
                 return false;
             }
+            // Insert back payment if any
+            if ($payment->backType !== null) {
+                $backId = md5(time() . rand());
+                $currSrv = new CurrenciesService();
+                $defaultCurrencyId = $currSrv->getDefault()->id;
+                $stmtPay->bindParam(":id", $backId);
+                $stmtPay->bindParam(":type", $payment->backType);
+                $stmtPay->bindParam(":amount", $payment->backAmount);
+                $stmtPay->bindParam(":currId", $defaultCurrencyId);
+                $stmtPay->bindParam(":currAmount", $payment->backAmount);
+                $stmtPay->bindValue(":pair", $paymentId);
+                // :rcptId is already bound
+                if ($stmtPay->execute() === false) {
+                    if ($newTransaction) {
+                        $pdo->rollback();
+                    }
+                    return false;
+                }
+            }
+            // Check prepaid
             if ($payment->type == 'prepaid') {
                 $custSrv = new CustomersService();
                 $ok = $custSrv->addPrepaid($ticket->customerId,

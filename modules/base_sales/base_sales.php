@@ -26,6 +26,7 @@ function init() {
 
     $MENU->registerModuleReport("sales", PLUGIN_NAME, "menu_sales.png", "CS report", "cs_report");
     $MENU->registerModuleReport("sales", PLUGIN_NAME, "menu_product_sales.png", "Sales by product", "sales_by_product_report");
+    $MENU->registerModuleReport("sales", PLUGIN_NAME, "menu_product_sales.png", "Sales by provider", "sales_by_provider_report");
     $MENU->registerModuleReport("sales", PLUGIN_NAME, "menu_sales_details.png", "Sales report", "sales_report");
     $MENU->registerModuleReport("sales", PLUGIN_NAME, "menu_tax.png", "Taxes report", "taxes_report");
     \Pasteque\register_i18n(PLUGIN_NAME);

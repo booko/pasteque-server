@@ -40,13 +40,13 @@ class Currency {
         return $currency;
     }
 
-    function __construct($label, $symbol, $decimalSeparator,
-            $thousandsSeparator, $format, $rate, $main, $active) {
-        $this->label = $label;
-        $this->symbol = $symbol;
-        $this->decimalSeparator = $decimalSeparator;
-        $this->thousandsSeparator = $thousandsSeparator;
-        $this->format = $format;
+    function __construct($label="", $symbol="", $decimalSeparator=".",
+            $thousandsSeparator=",", $format="#.##0.00¤", $rate=0.55, $main=false, $active=true) {
+        $this->label = (string) $label;
+        $this->symbol = (string) $symbol;
+        $this->decimalSeparator = (string) $decimalSeparator;
+        $this->thousandsSeparator = (string) $thousandsSeparator;
+        $this->format = (string) $format;
         $this->rate = (double) $rate;
         $this->isMain = (bool) $main;
         $this->isActive = (bool) $active;

@@ -31,6 +31,7 @@ class Product {
     public $visible;
     public $scaled;
     public $categoryId;
+    public $providerId;
     public $dispOrder;
     public $taxCatId;
     public $attributeSetId;
@@ -38,11 +39,12 @@ class Product {
     public $discountEnabled;
     public $discountRate;
 
-    static function __build($id, $ref, $label, $priceSell, $category,
+    static function __build($id, $ref, $label, $priceSell, $categoryId, $providerId,
             $dispOrder, $taxCatId, $visible, $scaled, $priceBuy = null,
             $attributeSetId = null, $barcode = null, $hasImage = false,
             $discountEnabled = false, $discountRate = 0.0) {
-        $prd = new Product($ref, $label, $priceSell, $category, $dispOrder,
+        $prd = new Product($ref, $label, $priceSell, $categoryId, $providerId,
+                $dispOrder,
                 $taxCatId, $visible, $scaled, $priceBuy,
                 $attributeSetId, $barcode, $hasImage,
                 $discountEnabled, $discountRate);
@@ -50,7 +52,7 @@ class Product {
         return $prd;
     }
 
-    function __construct($ref, $label, $priceSell, $categoryId, $dispOrder,
+    function __construct($ref, $label, $priceSell, $categoryId, $providerId, $dispOrder,
             $taxCatId, $visible, $scaled, $priceBuy = null,
             $attributeSetId = null, $barcode = null, $hasImage = false,
             $discountEnabled = false, $discountRate = 0.0) {
@@ -62,6 +64,7 @@ class Product {
         $this->barcode = $barcode;
         $this->priceBuy = $priceBuy;
         $this->categoryId = $categoryId;
+        $this->providerId = $providerId;
         $this->dispOrder = $dispOrder;
         $this->taxCatId = $taxCatId;
         $this->attributeSetId = $attributeSetId;

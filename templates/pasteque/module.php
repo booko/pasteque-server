@@ -197,6 +197,7 @@ function tpl_close() {
 </script>
 
 
+<div id="footer"><?php \pi18n("Copyright"); ?></div>
 </body>
 </html><?php
 }
@@ -400,7 +401,7 @@ function __tpl_group_footer($report, $run) {
     $subtotals = $run->getSubtotals();
     foreach ($report->getFields() as $field) {
         if (isset($subtotals[$field])) {
-            echo "\t\t\t<td class=\"footer\">" . $subtotals[$field] . "</td>\n";
+            echo "\t\t\t<td class=\"footer\">" . $report->applyVisualFilter($field, $subtotals[$field]) . "</td>\n";
         } else {
             echo "\t\t\t<td class=\"footer\"></td>\n";
         }
@@ -439,7 +440,7 @@ function __tpl_report_totals($report, $run) {
     $totals = $run->getTotals();
     foreach ($report->getFields() as $field) {
         if (isset($totals[$field])) {
-            echo "\t\t\t<td>" . $totals[$field] . "</td>\n";
+            echo "\t\t\t<td>" . $report->applyVisualFilter($field, $totals[$field]) . "</td>\n";
         } else {
             echo "\t\t\t<td></td>\n";
         }

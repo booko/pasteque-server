@@ -69,14 +69,14 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $stmt->execute(array(":id" => "-1", ":name" => "Refill"));
         $cat = new Category(null, "Category", false, 1);
         $cat->id = CategoriesService::createCat($cat);
-        $prd = new Product("REF", "product", 1.0, $cat->id, 1,
+        $prd = new Product("REF", "product", 1.0, $cat->id, null, 1,
                 $taxCat->id, true, false, 0.5, $set->id);
         $prd->id = ProductsService::create($prd);
         $this->prd = $prd;
-        $prd2 = new Product("REF2", "product2", 2.0, $cat->id, 1,
+        $prd2 = new Product("REF2", "product2", 2.0, $cat->id, null, 1,
                 $taxCat2->id, true, false, 0.5, null);
         $prd2->id = ProductsService::create($prd2);
-        $prdRefill = new Product("REFILL", "Refill", 1.0, "-1", 1,
+        $prdRefill = new Product("REFILL", "Refill", 1.0, "-1", null, 1,
                 $taxCat->id, true, false);
         $prdRefill->id = ProductsService::create($prdRefill);
         $this->prd = $prd;
@@ -447,6 +447,37 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $row = $stmtPmt->fetch();
         $this->assertNotEquals(false, $row, "No payment line found");
         $this->checkPaymentEquality($id, $payment, $row);
+        $row = $stmtPmt->fetch();
+        $this->assertFalse($row, "Too much payment lines found");
+        // Check stock
+        $level = StocksService::getLevel($this->prd->id, $this->location->id,
+                null);
+        $this->assertEquals(-1, $level->qty);
+    }
+
+    /** @depends testSaveLine */
+    public function testSaveBackPayment() {
+        $date = stdtimefstr("2013-01-01 00:00:00");
+        $line = new TicketLine(1, $this->prd, null, 1, 10, $this->tax);
+        $payment = new Payment("cash", 12, $this->currency->id, 14,
+                "cashback", -2);
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
+                $date, array($line), array($payment),
+                $this->cash->id, null, 3);
+        $id = TicketsService::save($ticket, $this->location->id);
+        $this->assertNotEquals(false, $id, "Ticket save failed");
+        $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
+        // Check payment lines
+        $stmtPmt = $pdo->prepare("SELECT * FROM PAYMENTS ORDER BY TOTAL DESC");
+        $this->assertNotEquals($stmtPmt->execute(), false,
+                "Payment lines query failed");
+        $row = $stmtPmt->fetch();
+        $this->assertNotEquals(false, $row, "No payment line found");
+        $this->checkPaymentEquality($id, $payment, $row);
+        $row = $stmtPmt->fetch();
+        $refPmt = new Payment("cashback", -2, $this->currency->id, -2);
+        $this->checkPaymentEquality($id, $refPmt, $row);
         $row = $stmtPmt->fetch();
         $this->assertFalse($row, "Too much payment lines found");
         // Check stock

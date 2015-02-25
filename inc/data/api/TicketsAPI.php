@@ -215,8 +215,15 @@ class TicketsAPI extends APIService {
                         $currencyId = $jspay->currencyId;
                         $currencyAmount = $jspay->currencyAmount;
                     }
+                    $backType = null;
+                    $backAmount = null;
+                    if (property_exists($jspay, "back")
+                            && $jspay->back !== null) {
+                        $backType = $jspay->back->type;
+                        $backAmount = $jspay->back->amount;
+                    }
                     $payment = new Payment($type, $amount, $currencyId,
-                            $currencyAmount);
+                            $currencyAmount, $backType, $backAmount);
                     $payments[] = $payment;
                 }
                 $ticket = new Ticket($tktType, $userId, $date, $lines,

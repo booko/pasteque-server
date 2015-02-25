@@ -77,27 +77,44 @@ $categories = \Pasteque\CategoriesService::getAll();
 	</thead>
 	<tbody>
 <?php
-$par = FALSE;
-foreach ($categories as $category) {
-$par = !$par;
-if ($category->hasImage) {
-    $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=category&id=" . $category->id;
-} else {
-    $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=category";
+function printCategory($printCategory, $level, &$par) {
+        $par = !$par;
+        if ($printCategory->hasImage) {
+            $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=category&id=" . $printCategory->id;
+        } else {
+            $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=category";
+        }
+        ?>
+                <tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
+                        <td>
+                        <?php
+                        for($i=0;$i<$level;$i++) {
+                            echo "&nbsp;&nbsp;&nbsp;&nbsp;";
+                        }
+                        ?>
+                        <img class="thumbnail" src="?<?php echo $imgSrc ?>" />
+                        <td><?php echo $printCategory->label; ?></td>
+                        <td class="edition">
+                    <?php \Pasteque\tpl_btn("edition", \Pasteque\get_module_url_action(PLUGIN_NAME,
+                            'category_edit', array("id" => $printCategory->id)), "",
+                            'img/edit.png', \i18n('Edit'), \i18n('Edit'));
+                    ?>
+                                <form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("cat", $printCategory->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>
+                        </td>
+                </tr>
+        <?php
+        $categories = \Pasteque\CategoriesService::getChildren($printCategory->id);
+        $level++;
+        foreach($categories as $childCategory) {
+            printCategory($childCategory, $level, $par);
+        }
 }
-?>
-	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
-		<td><img class="thumbnail" src="?<?php echo $imgSrc ?>" />
-		<td><?php echo $category->label; ?></td>
-		<td class="edition">
-            <?php \Pasteque\tpl_btn("edition", \Pasteque\get_module_url_action(PLUGIN_NAME,
-                    'category_edit', array("id" => $category->id)), "",
-                    'img/edit.png', \i18n('Edit'), \i18n('Edit'));
-            ?>
-			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("cat", $category->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>
-		</td>
-	</tr>
-<?php
+
+$par = false;
+foreach ($categories as $category) {
+    if($category->parentId == "") {
+        printCategory($category, 0, $par); // we start with root categories. As the function is recursive, we don’t need more than this :-)
+    }
 }
 ?>
 	</tbody>

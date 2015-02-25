@@ -55,6 +55,10 @@ $currency = NULL;
 if (isset($_GET['id'])) {
     $currency = $currSrv->get($_GET['id']);
 }
+else {
+    $currency = new \Pasteque\Currency();
+    echo $currency->format;
+}
 ?>
 
 <!-- start bloc titre -->

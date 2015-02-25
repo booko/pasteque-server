@@ -42,7 +42,19 @@ if (isset($_POST['location'])) {
     $currLocation = $locations[0]->id;
 }
 $products = \Pasteque\ProductsService::getAll(true);
+$categories = \Pasteque\CategoriesService::getAll();
+$prdCat = array();
+// Link products to categories and don't track compositions
+foreach ($products as $product) {
+    if ($product->categoryId !== \Pasteque\CompositionsService::CAT_ID) {
+        $prdCat[$product->categoryId][] = $product;
+    }
+}
 $levels = \Pasteque\StocksService::getLevels($currLocation);
+$prdLevel = array();
+foreach ($levels as $level) {
+    $prdLevel[$level->productId] = $level;
+}
 ?>
 
 <!-- start bloc titre -->
@@ -53,16 +65,14 @@ $levels = \Pasteque\StocksService::getLevels($currLocation);
 
 <!-- start container scroll -->
 <div class="container_scroll">
-            
-            	<div class="stick_row stickem-container">
-                    
+        <div class="stick_row stickem-container">
                     <!-- start colonne contenu -->
                     <div id="content_liste" class="grid_9">
-                    
                         <div class="blc_content">
 
 
-<?php if ($multilocations) { ?>
+<?php if ($multilocations) {
+    // Location picker ?>
 <form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
 	<div class="row">
 		<?php \Pasteque\form_select("location", \i18n("Location"), $locIds, $locNames, $currLocation); ?>
@@ -71,8 +81,14 @@ $levels = \Pasteque\StocksService::getLevels($currLocation);
 		<?php \Pasteque\form_send(); ?>
 	</div>
 </form>
-<?php } ?>
+<?php
+}
 
+$par = false;
+foreach ($categories as $category) {
+    if (isset($prdCat[$category->id])) {
+        // Category header ?>
+<h3><?php echo \Pasteque\esc_html($category->label); ?></h3>
 <table cellpadding="0" cellspacing="0">
 	<thead>
 		<tr>
@@ -80,75 +96,83 @@ $levels = \Pasteque\StocksService::getLevels($currLocation);
 			<th><?php \pi18n("Product.reference"); ?></th>
 			<th><?php \pi18n("Product.label"); ?></th>
 			<th><?php \pi18n("Quantity"); ?></th>
+			<th><?php \pi18n("Stock.SellValue"); ?></th>
+			<th><?php \pi18n("Stock.BuyValue"); ?></th>
+			<th><?php \pi18n("QuantityMin"); ?></th>
+			<th><?php \pi18n("QuantityMax"); ?></th>
 		</tr>
 	</thead>
 	<tbody>
 <?php
-$par = FALSE;
-foreach ($levels as $level) {
-$par = !$par;
-$prdRef = "";
-$prdLabel = "";
-$imgSrc = "";
-foreach ($products as $product) {
-    if ($product->id == $level->productId) {
-        $prdLabel = $product->label;
-        $prdRef = $product->reference;
-        if ($product->hasImage) {
-            $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=product&id=" . $product->id;
-        } else {
-            $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=product";
-        }
-        break;
-    }
-}
-$security = $level->security;
-$max = $level->max;
-$qty = $level->qty !== null ? $level->qty : 0;
-$class = "";
-$help = "";
-if ($security !== NULL && $qty < $security) {
-    $class=" warn-level";
-    $help = ' title="' . \i18n("Stock is below security level!", PLUGIN_NAME) . '"';
-}
-if ($qty < 0) {
-    $class=" alert-level";
-    $help = ' title="' . \i18n("Stock is negative!", PLUGIN_NAME) . '"';
-} else if ($max !== NULL && $qty > $max) {
-    $class=" alert-level";
-    $help = ' title="' . \i18n("Overstock!", PLUGIN_NAME) . '"';
-}
-?>
-	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
-	    <td><img class="thumbnail" src="?<?php echo $imgSrc ?>" />
-		<td><?php echo $prdRef; ?></td>
-		<td><?php echo $prdLabel; ?></td>
-		<td class="numeric<?php echo $class; ?>"<?php echo $help; ?>><?php echo $qty; ?></td>
-	</tr>
+        foreach ($prdCat[$category->id] as $product) {
+            if (!isset($prdLevel[$product->id])) {
+                continue;
+            }
+            // Level lines
+            $par = !$par;
+            $prdRef = "";
+            $prdLabel = "";
+            $imgSrc = "";
+            $prdSellPrice = 0;
+            $prdBuyPrice = 0;
+            $level = $prdLevel[$product->id];
+            if ($product->hasImage) {
+                $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=product&id=" . $product->id;
+            } else {
+                $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=product";
+            }
+            $prdLabel = $product->label;
+            $prdRef = $product->reference;
+            $prdSellPrice = $product->priceSell;
+            $prdBuyPrice = $product->priceBuy;
+            $security = $level->security;
+            $max = $level->max;
+            $qty = $level->qty !== null ? $level->qty : 0;
+            $class = "";
+            $help = "";
+            if ($security !== null && $qty < $security) {
+                $class=" warn-level";
+                $help = ' title="' . \Pasteque\esc_attr(\i18n("Stock is below security level!", PLUGIN_NAME)) . '"';
+            }
+            if ($qty < 0) {
+                $class=" alert-level";
+                $help = ' title="' . \Pasteque\esc_attr(\i18n("Stock is negative!", PLUGIN_NAME)) . '"';
+            } else if ($max !== NULL && $qty > $max) {
+                $class=" alert-level";
+                $help = ' title="' . \Pasteque\esc_attr(\i18n("Overstock!", PLUGIN_NAME)) . '"';
+            }
+            if (!isset($security)) {
+                $security = \i18n("Undefined");
+            }
+            if (!isset($max)) {
+                $max = \i18n("Undefined");
+            }
+            ?>
+		<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
+                 <td><img class="thumbnail" src="?<?php echo \Pasteque\esc_attr($imgSrc); ?>" />
+                 <td><?php echo \Pasteque\esc_html($prdRef); ?></td>
+                 <td><?php echo \Pasteque\esc_html($prdLabel); ?></td>
+                 <td class="numeric<?php echo $class; ?>"<?php echo $help; ?>><?php echo \Pasteque\esc_html($qty); ?></td>
+                 <td><?php echo \Pasteque\esc_html(\i18nCurr($prdSellPrice*$qty)); ?></td>
+                 <td><?php echo \Pasteque\esc_html(\i18nCurr($prdBuyPrice*$qty)); ?></td>
+                 <td><?php echo \Pasteque\esc_html($security); ?></td>
+                 <td><?php echo \Pasteque\esc_html($max); ?></td>
+		</tr>
 <?php
-}
-?>
+        } ?>
 	</tbody>
 </table>
 </div></div>
                     <!-- end colonne contenu -->
-                    
                     <!-- start sidebar menu -->
                     <div id="sidebar_menu" class="grid_3 stickem">
-                    
                         <div class="blc_content">
-                            
                             <!-- start texte editorial -->
                             <div class="edito"><!-- zone_edito --></div>
                             <!-- end texte editorial -->
-                            
-                            
                         </div>
-                        
                     </div>
                     <!-- end sidebar menu -->
-                    
-        		</div>
-                
-        	</div>
+                </div>
+            </div>
             <!-- end container scroll -->

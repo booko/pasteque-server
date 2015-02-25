@@ -26,6 +26,7 @@ class ImagesAPI extends APIService {
         switch ($this->action) {
         case 'getPrd':
         case 'getCat':
+        case 'getPM':
             return isset($this->params['id']);
         }
         return false;
@@ -38,6 +39,10 @@ class ImagesAPI extends APIService {
             break;
         case 'getCat':
             $this->result = CategoriesService::getImage($this->params['id']);
+            break;
+        case 'getPM':
+            $srv = new PaymentModesService();
+            $this->result = $srv->getImage($this->params['id']);
             break;
         }
     }
