@@ -33,6 +33,7 @@ function tpl_open() {
 	<link rel="stylesheet" type="text/css" href="<?php echo get_template_url(); ?>/js/pepper-grinder/jquery-ui-1.10.4.custom.css" />
 	<script type="text/javascript" src="<?php echo get_template_url(); ?>/js/jquery-1.9.1.min.js"></script>
 	<script type="text/javascript" src="<?php echo get_template_url(); ?>/js/jquery-ui-1.10.4.custom.min.js"></script>
+	<script type="text/javascript" src="<?php echo get_template_url(); ?>/js/jquery-tablesorter.min.js"></script>
 	<script type="text/javascript" src="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=js&id=js/pasteque.js.php"></script>
 </head>
 <body>
@@ -163,7 +164,7 @@ function __tpl_report_input($report, $values) {
 }
 
 function __tpl_report_header($report) {
-    echo "<table class=\"report\" cellspacing=\"0\" cellpadding=\"0\">\n";
+    echo "<table id=\"".$report->getId()."\" class=\"report\" cellspacing=\"0\" cellpadding=\"0\">\n";
     echo "\t<thead>\n";
     echo "\t\t<tr>\n";
     foreach ($report->getHeaders() as $header) {
@@ -176,6 +177,9 @@ function __tpl_report_header($report) {
 function __tpl_report_footer($report) {
     echo "\t</tbody>\n";
     echo "</table>\n";
+    echo "<script>\$(function(){\$(\"#";
+    echo $report->getId();
+    echo "\").tablesorter();});</script>";
 }
 function __tpl_report_line($report, $line, $par) {
     echo "\t\t<tr class=\"row-" . ($par ? 'par' : 'odd') . "\">\n";
