@@ -34,6 +34,7 @@ function tpl_open() {
 	<script type="text/javascript" src="<?php echo get_template_url(); ?>/js/jquery-1.9.1.min.js"></script>
 	<script type="text/javascript" src="<?php echo get_template_url(); ?>/js/jquery-ui-1.10.4.custom.min.js"></script>
 	<script type="text/javascript" src="<?php echo get_template_url(); ?>/js/jquery-tablesorter.min.js"></script>
+	<script type="text/javascript" src="<?php echo get_template_url(); ?>/js/Chart.min.js"></script>
 	<script type="text/javascript" src="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=js&id=js/pasteque.js.php"></script>
 </head>
 <body>
@@ -163,6 +164,29 @@ function __tpl_report_input($report, $values) {
     }
 }
 
+function __tpl_chart($headers,$datasets) {
+    echo "<script>\n";
+    echo "\tvar data = {\n";
+    echo "\t\tlabels: [";
+    foreach ($headers as $header) {
+        echo "\"".$header."\",";
+    }
+    echo "],\n";
+    echo "\t\tdatasets: [\n";
+    foreach ($datasets as $dataset) {
+        echo "\t\t\t{\n";
+        echo "\t\t\tlabel: \"".$dataset->title."\"\n";
+        echo "\t\t\tdata:";
+        for($i=0;$i<sizeof($dataset->data)-1;$i++) {
+            echo $dataset->data[$i].",";
+        }
+        echo $dataset->data[sizeof($dataset->data)]."]\n",
+        echo "\t\t\t},";
+    }
+    echo "};\n";
+    echo "</script>";
+}
+
 function __tpl_report_header($report) {
     echo "<table id=\"".$report->getId()."\" class=\"report\" cellspacing=\"0\" cellpadding=\"0\">\n";
     echo "\t<thead>\n";
@@ -251,6 +275,7 @@ function __tpl_report_totals($report, $run) {
     echo "\t\t</tr>\n";
     __tpl_report_footer($report);
 }
+
 /** Display a report.
  * @param $report Report data, as given by get_report
  */
@@ -326,6 +351,51 @@ function tpl_report($report) {
             __tpl_report_totals($report, $run);
         }
     }
+}
+
+/** Display a chart.
+ * @param $chart chart data, as given by get_chart
+ */
+function tpl_chart($chart) {
+    // Read values
+    $values = array();
+    foreach ($chart->getParams() as $param) {
+        $id = $param['param'];
+        if (isset($_POST[$id]) || isset($_GET[$id])) {
+            if (isset($_POST[$id])) {
+                $val = $_POST[$id];
+            } else {
+                $val = $_GET[$id];
+            }
+            $db = DB::get();
+            switch ($param['type']) {
+            case DB::DATE:
+                // Revert the i18n input to timestamp
+                $values[$id] = \i18nRevDate($val);
+                break;
+            default:
+                $values[$id] = $val;
+                break;
+            }
+        } else {
+            $default = $chart->getDefault($id);
+            if ($default !== null) {
+                $values[$id] = $default;
+            } else {
+                // TODO: error
+            }
+        }
+    }
+    // Display
+    __tpl_chart_title($chart);
+    __tpl_chart_input($chart, $values);
+    $run = $chart->run($values);
+    $par = FALSE;
+    if ($run->isEmpty()) {
+        echo "<div class=\"information\">" . \i18n("No result") . "</div>";
+        return;
+    }
+    __tpl_chart($chart->getHeaders(),$chart->getDatasets();
 }
 
 function tpl_btn($class, $href, $label, $image_btn, $alt = NULL, $title = NULL) {

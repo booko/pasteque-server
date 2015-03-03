@@ -75,12 +75,18 @@ class Csv {
         $finfo = new \finfo(FILEINFO_MIME_ENCODING);
         $info = $finfo->file($this->path);
         $this->sourceEncoding = strtoupper($info);
-        $check = mb_convert_encoding($this->line, "UTF-8",
-                $this->sourceEncoding);
-        if (!substr($check, 0, 9) == "Pastèque") {
-            $this->errors[] = \i18n("Unidentified character set");
-            return false;
+        $check = mb_convert_encoding($this->line, "UTF-8",$this->sourceEncoding);
+        if (substr($check, 0, 9) != "Pastèque") {
+            // workaround for not working and poorly internet documented macintosh charset detection
+            if(substr(iconv("macintosh","UTF-8",$this->line),0,9) == "Pastèque") {
+                $this->sourceEncoding = "macintosh";
+            }
+            else {
+                $this->errors[] = \i18n("Unidentified character set");
+                return false;
+            }
         }
+        echo $this->sourceEncoding."<br />";
         // Get separator
         $this->sep = substr($this->line, -1, 1);
         if (!$this->sep || $this->sep === " ") {
@@ -201,10 +207,13 @@ class Csv {
             return $array;
         }
         foreach ($array as $field => $value) {
-            if ($this->sourceEncoding !== null) {
+            if ($this->sourceEncoding !== null && $this->sourceEncoding !== "macintosh") {
                 $array[$field] = mb_convert_encoding($value, "UTF-8",
                         $this->sourceEncoding);
-            } else {
+            } elseif($this->sourceEncoding === "macintosh") {
+                $array[$field] = iconv($this->sourceEncoding,"UTF-8",$value);
+            }
+            else {
                 $array[$field] = mb_convert_encoding($value, "UTF-8");
             }
         }
