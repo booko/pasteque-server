@@ -20,7 +20,7 @@
 
 namespace BaseProducts;
 
-$sql = "SELECT REFERENCE as reference, PRODUCTS.NAME AS label, CODE AS barcode, PRICEBUY AS pricebuy, ISSCALE AS scaled, DISCOUNTENABLED AS discount_enabled, DISCOUNTRATE AS discount_rate, ROUND(PRODUCTS.PRICESELL*(1+TAXES.RATE),2) AS sellVat, "
+$sql = "SELECT REFERENCE as reference, PRODUCTS.NAME AS label, CODE AS barcode, PRICEBUY AS price_buy, ISSCALE AS scaled, DISCOUNTENABLED AS discount_enabled, DISCOUNTRATE AS discount_rate, ROUND(PRODUCTS.PRICESELL*(1+TAXES.RATE),2) AS sellVat, "
         . " CATEGORIES.NAME AS category, TAXCATEGORIES.NAME AS tax_cat "
         . " FROM PRODUCTS "
         . " LEFT JOIN CATEGORIES ON CATEGORIES.ID = PRODUCTS.CATEGORY "
