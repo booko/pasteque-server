@@ -11,7 +11,7 @@ function init_csv() {
     $ext = strchr($_FILES['csv']['type'], "/");
     $ext = strtolower($ext);
 
-    if($ext !== "/csv") {
+    if($ext !== "/csv" && $ext !== "/plain") {
         return NULL;
     }
 
@@ -124,7 +124,7 @@ function readProductLine($line, $category, $taxCat) {
     } else {
         $visible = true;
     }
-    if (isset($line['scaled'])) {
+    if (isset($line['scaled']) && ($line['scaled'] !== 1 || $line['scaled'] !== true)) {
         $scaled = $line['scaled'];
     } else {
         $scaled = false;
