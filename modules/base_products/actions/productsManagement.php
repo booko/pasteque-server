@@ -10,7 +10,7 @@ function init_csv() {
     $ext = strchr($_FILES['csv']['type'], "/");
     $ext = strtolower($ext);
 
-    if($ext !== "/csv") {
+    if($ext !== "/csv" && $ext !== "/plain") {
         return NULL;
     }
 
@@ -59,10 +59,11 @@ function import_csv($csv) {
 
         //check
         $category = \Pasteque\CategoriesService::getByName($tab['category']);
+        $provider = \Pasteque\ProvidersService::getByName($tab['provider']);
         $taxCat = \Pasteque\TaxesService::getByName($tab['tax_cat']);
 
         if ($taxCat && $category) {
-            $prod = readProductLine($tab, $category, $taxCat);
+            $prod = readProductLine($tab, $category, $provider, $taxCat);
             $product_exist = \Pasteque\ProductsService::getByRef($prod->reference);
             if ($product_exist !== null ) {
                 // update product
@@ -116,14 +117,14 @@ function import_csv($csv) {
 }
 
 // add to product values not obligatory may be present in array
-function readProductLine($line, $category, $taxCat) {
+function readProductLine($line, $category, $provider, $taxCat) {
     $priceSell =  $line['sellVat'] / ( 1 + $taxCat->getCurrentTax()->rate);
     if (isset($line['visible'])) {
         $visible = $line['visible'];
     } else {
         $visible = true;
     }
-    if (isset($line['scaled'])) {
+    if (isset($line['scaled']) && ($line['scaled'] === 1 || $line['scaled'] === true)) {
         $scaled = $line['scaled'];
     } else {
         $scaled = false;
@@ -134,7 +135,7 @@ function readProductLine($line, $category, $taxCat) {
         $dispOrder = null;
     }
     $product = new \Pasteque\Product($line['reference'], $line['label'],
-            $priceSell, $category->id, $dispOrder,
+            $priceSell, $category->id, $provider->id, $dispOrder,
             $taxCat->id, $visible, $scaled);
     if (isset($line['barcode'])) {
         $product->barcode = $line['barcode'];
