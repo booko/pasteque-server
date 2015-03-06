@@ -37,7 +37,7 @@ Catalog.prototype.getLabelClass = function(label) {
 }
 
 Catalog.prototype.createCategory = function(catVar, id, label, hasImage) {
-    var html = "<a class=\"category-" + id + " catalog-category\" onClick=\"javascript:" + catVar + ".changeCategory('" + id + "');return false;\">";
+    var html = "\t<a class=\"category-" + id + " catalog-category\" onClick=\"javascript:" + catVar + ".changeCategory('" + id + "');return false;\">";
     if (hasImage) {
         src = "?p=img&w=category&id=" + id;
     } else {
@@ -45,7 +45,7 @@ Catalog.prototype.createCategory = function(catVar, id, label, hasImage) {
     }
     html += "<img src=\"" + src + "\" onload=\"javascript:centerImage('.category-" + id + "');\" />";
     var className = this.getLabelClass(label);
-    html += "<p class=\"" + className + "\">" + label + "</p></a>";
+    html += "<p class=\"" + className + "\">" + label + "</p></a>\n";
     jQuery("#" + this.containerId + " .catalog-categories-container").append(html);
 }
 /** Add a product to the catalog. Use full product object. */
@@ -61,7 +61,7 @@ Catalog.prototype.addProductToCat = function(product, category) {
 
 Catalog.prototype.showProduct = function(productId) {
     var product = this.products[productId];
-    html = "<div id=\"product-" + productId + "\"class=\"catalog-product\" onClick=\"javascript:" + this.selectCallback + "('" + product['id'] + "');\">";
+    html = "\t\t<div id=\"product-" + productId + "\"class=\"catalog-product\" onClick=\"javascript:" + this.selectCallback + "('" + product['id'] + "');\">";
     var src;
     if (product['hasImage']) {
         src = "?p=img&w=product&id=" + product['id'];
@@ -71,22 +71,26 @@ Catalog.prototype.showProduct = function(productId) {
     html += "<img src=\"" + src + "\" onload=\"javascript:centerImage('#product-" + productId + "');\" />";
     var className = this.getLabelClass(product['label']);
     html += "<p class=\"" + className + "\">" + product['label'] + "</p>";
-    html += "</div>";
+    html += "</div>\n";
     jQuery("#" + this.containerId + " .catalog-products-container").append(html);
     centerImage("#" + this.containerId + " .product-" + productId);
 }
 
 Catalog.prototype.changeCategory = function(category) {
-    jQuery("#" + this.containerId + " .catalog-products-container").html("");
-    var prdCat = this.productsByCategory[category];
-    if (typeof prdCat == "undefined") {
-        // Empty cat
-        prdCat = new Array();
+    $.ajaxSetup({ async: false });
+    apiGet = $.getJSON("api.php",{p:"ProductsAPI",login:"burgerking",password:"123soleil",action:"getCategory",id:category});
+    apiGetJSON = JSON.parse(apiGet.responseText);
+    prdCat = apiGetJSON.content;
+    $("#" + this.containerId + " .catalog-products-container").html("");
+    for(i=0;i<prdCat.length;i++) {
+        product = prdCat[i];
+        this.addProductToCat("\"" + product.id + "\"","\"" + category + "\"");
+        this.addProduct("{\"id\":" + product.id + ",\"label\":" + product.label + ",\"reference\":" + product.reference + ",\"hasImage\":" + product.hasImage + ",\"buy\":" + product.buy + ",\"sell\":" + product.sell + ",\"vatSell\":" + product.vatSell + "}");
+        productHTML = "<div id=\"product-" + prdCat[i].id + "\" class=\"catalog-product\" onclick=\"javascript:addProduct('" + prdCat[i].id + "');\"><img style=\"left: 8px; top: 0px;\" src=\"?p=img&amp;w=product&amp;id=" + prdCat[i].id + "\" onload=\"javascript:centerImage('#product-" + prdCat[i].id + "');\"><p class=\"catalog-label catalog-label-long\">" + prdCat[i].label + "</p></div>";
+        $("#" + this.containerId + " .catalog-products-container").append(productHTML);
+//        this.showProduct(prdCat[i].id);
     }
-    for (var i = 0; i < prdCat.length; i++) {
-        this.showProduct(prdCat[i]);
-    }
-    this.currentCategoryId = category
+    this.currentCategoryId = category;
 }
 
 Catalog.prototype.getProduct = function(productId) {

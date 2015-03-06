@@ -53,8 +53,8 @@ if (isset($_POST['reason']) && !isset($_POST['sendCsv'])) {
             case \Pasteque\StockMove::REASON_OUT_BACK:
             case \Pasteque\StockMove::REASON_IN_MOVEMENT:
             case \Pasteque\StockMove::REASON_OUT_REFUND:
-           	case \Pasteque\StockMove::REASON_OUT_MOVEMENT:
-           	case \Pasteque\StockMove::REASON_RESET:
+            case \Pasteque\StockMove::REASON_OUT_MOVEMENT:
+            case \Pasteque\StockMove::REASON_RESET:
                 if ($product->priceBuy !== null) {
                     $price = $product->priceBuy;
                 } else {
@@ -255,7 +255,7 @@ if (!$multilocations) {
 			html += "<td>" + product['label'] + "</td>\n";
 			html += "<td class=\"qty-cell\"><input class=\"qty\" id=\"line-" + product['id'] + "-qty\" type=\"numeric\" name=\"qty-" + product['id'] + "\" value=\"1\" />\n";
 			html += "<td><a class=\"btn-delete\" href=\"\" onClick=\"javascript:deleteLine('" + product['id'] + "');return false;\"><?php \pi18n("Delete"); ?></a></td>\n";
-			html += "</tr>\n"; 
+			html += "</tr>\n";
 			jQuery("#list").append(html);
 		}
 	}

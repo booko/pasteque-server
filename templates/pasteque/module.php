@@ -197,7 +197,6 @@ function tpl_close() {
 </script>
 
 
-<div id="footer"><?php \pi18n("Copyright"); ?></div>
 </body>
 </html><?php
 }
