@@ -160,26 +160,26 @@ function readProductLine($line, $category, $provider, $taxCat) {
  */
 function manage_stock_level($id, $array) {
     $level = \Pasteque\StocksService::getLevel($id, "0", null);
-    $min = null;
+    $security = null;
     $max = null;
     if (isset($array['stock_min'])) {
-        $min = $array['stock_min'];
+        $security = $array['stock_min'];
     }
     if (isset($array['stock_max'])) {
         $max = $array['stock_max'];
     }
-    if ($level !== null) {
+    if ($level->security != null || $level->max != null) {
         // Update existing level
-        if ($min !== null) {
-            $level->security = $min;
+        if ($security !== null) {
+            $level->security = $security;
         }
         if ($max !== null) {
             $level->max = $max;
         }
         return \Pasteque\StocksService::updateLevel($level);
-    } else {
+    } elseif($security != null || $max !== null) {
         // Create a new level
-        $level = new \Pasteque\StockLevel($id, "0", null, $min, $max);
+        $level = new \Pasteque\StockLevel($id, "0", null, $security, $max);
         return \Pasteque\StocksService::createLevel($level);
     }
 }
@@ -233,7 +233,7 @@ if (isset($_FILES['csv'])) {
 ?>
 
                 <div class="blc_ti">
-                    <h1><?php \pi18n("Import or export products", PLUGIN_NAME); ?></h1>
+                    <h1><?php \pi18n("Import products from csv file", PLUGIN_NAME); ?></h1>
                 </div>
 
 <div class="container_scroll">
@@ -254,20 +254,6 @@ if (isset($_FILES['csv'])) {
                     <div class="row actions">
                         <button class="btn-send" type="submit" id="<?php \pi18n("send", PLUGIN_NAME)?>" name="<?php \pi18n("send", PLUGIN_NAME)?>" >
                             <?php \pi18n("send", PLUGIN_NAME)?>
-                        </button>
-                    </div>
-                </form>
-                <div class="blc_ti">
-                    <h2 id="export"><?php \pi18n("Export products as csv file", PLUGIN_NAME); ?></h2>
-                </div>
-                <?php \Pasteque\tpl_msg_box($message, $error); ?>
-                <form class="edit" method="post" action="<?php echo \Pasteque\get_report_url(PLUGIN_NAME, 'products_export');?>" enctype="multipart/form-data">
-                    <div class="row">
-                    </div>
-                    <input type="hidden" name="action" value="export" />
-                    <div class="row actions">
-                        <button class="btn-export" type="submit" id="<?php \pi18n("export", PLUGIN_NAME)?>" name="<?php \pi18n("export", PLUGIN_NAME)?>" >
-                            <?php \pi18n("export", PLUGIN_NAME)?>
                         </button>
                     </div>
                 </form>

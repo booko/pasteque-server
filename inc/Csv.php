@@ -75,21 +75,24 @@ class Csv {
         $finfo = new \finfo(FILEINFO_MIME_ENCODING);
         $info = $finfo->file($this->path);
         $this->sourceEncoding = strtoupper($info);
+        // try to convert first line from guessed by finfo() sourceEncoding to UTF-8. Read CSV values. Check if firt value, "Pastèque", can get read with this charset
         $check = mb_convert_encoding($this->line, "UTF-8",$this->sourceEncoding);
-        if (substr($check, 0, 9) != "Pastèque") {
-            // workaround for not working and poorly internet documented macintosh charset detection
+        $line = str_getcsv($check,$this->sep);
+        $check = $line[0];
+        if ($check != "Pastèque") {
+            // workaround for not working and poorly implemented in mbstring macintosh charset only available with iconv
             if(substr(iconv("macintosh","UTF-8",$this->line),0,9) == "Pastèque") {
                 $this->sourceEncoding = "macintosh";
             }
             else {
                 $this->errors[] = \i18n("Unidentified character set");
+                $this->close();
                 return false;
             }
         }
-        echo $this->sourceEncoding."<br />";
         // Get separator
         $this->sep = substr($this->line, -1, 1);
-        if (!$this->sep || $this->sep === " ") {
+        if (!$this->sep || $this->sep === " " ) {
             $this->errors[] = \i18n("Separator not defined");
             $this->close();
             return false;
