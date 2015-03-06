@@ -20,17 +20,33 @@
 
 namespace BaseProducts;
 
-$sql = "SELECT REFERENCE as reference, PRODUCTS.NAME AS label, CODE AS barcode, PRICEBUY AS price_buy, ISSCALE AS scaled, DISCOUNTENABLED AS discount_enabled, DISCOUNTRATE AS discount_rate, ROUND(PRODUCTS.PRICESELL*(1+TAXES.RATE),2) AS sellVat, "
-        . " CATEGORIES.NAME AS category, TAXCATEGORIES.NAME AS tax_cat "
+$sql = "SELECT REFERENCE as reference, "
+            . "PRODUCTS.NAME AS label, "
+            . "CODE AS barcode, "
+            . "PRICEBUY AS price_buy, "
+            . "ISSCALE AS scaled, "
+            . "DISCOUNTENABLED AS discount_enabled, "
+            . "DISCOUNTRATE AS discount_rate, "
+            . "ROUND(PRODUCTS.PRICESELL*(1+TAXES.RATE),2) AS sellVat, "
+            . "CATEGORIES.NAME AS category, "
+            . "TAXCATEGORIES.NAME AS tax_cat, "
+            . "STOCKLEVEL.STOCKSECURITY as stock_min, "
+            . "STOCKLEVEL.STOCKMAXIMUM as stock_max, "
+            . "STOCKCURRENT.UNITS as stock_current"
         . " FROM PRODUCTS "
         . " LEFT JOIN CATEGORIES ON CATEGORIES.ID = PRODUCTS.CATEGORY "
         . " LEFT JOIN PRODUCTS_CAT ON PRODUCTS_CAT.PRODUCT = PRODUCTS.ID "
         . " LEFT JOIN TAXCATEGORIES ON PRODUCTS.TAXCAT = TAXCATEGORIES.ID "
         . " LEFT JOIN TAXES ON TAXCATEGORIES.ID = TAXES.CATEGORY "
+        . " LEFT JOIN STOCKLEVEL ON PRODUCTS.ID = STOCKLEVEL.PRODUCT "
+        . " LEFT JOIN STOCKCURRENT ON PRODUCTS.ID = STOCKCURRENT.PRODUCT "
         . " WHERE PRODUCTS.DELETED = 0 "
         . " ORDER BY PRODUCTS.NAME";
 
-$fields = array("label","reference","sellVat","tax_cat","category","barcode","price_buy","scaled","disp_order","discount_enabled","discount_rate");
+$fields = array("label","reference","sellVat","tax_cat",
+   "category","barcode","price_buy","scaled","disp_order",
+   "discount_enabled","discount_rate", "stock_min", 
+   "stock_max", "stock_current");
 $headers = $fields;
 
 $report = new \Pasteque\Report(PLUGIN_NAME, "products_export",
