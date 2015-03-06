@@ -180,7 +180,7 @@ function __tpl_chart($headers,$datasets) {
         for($i=0;$i<sizeof($dataset->data)-1;$i++) {
             echo $dataset->data[$i].",";
         }
-        echo $dataset->data[sizeof($dataset->data)]."]\n",
+        echo $dataset->data[sizeof($dataset->data)]."]\n";
         echo "\t\t\t},";
     }
     echo "};\n";
@@ -395,7 +395,7 @@ function tpl_chart($chart) {
         echo "<div class=\"information\">" . \i18n("No result") . "</div>";
         return;
     }
-    __tpl_chart($chart->getHeaders(),$chart->getDatasets();
+    __tpl_chart($chart->getHeaders(),$chart->getDatasets());
 }
 
 function tpl_btn($class, $href, $label, $image_btn, $alt = NULL, $title = NULL) {

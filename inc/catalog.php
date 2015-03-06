@@ -53,22 +53,6 @@ function init_catalog($jsName, $containerId, $selectCallback,
                 . esc_js($cat->id) . "\", \"" . esc_js($cat->label) . "\", \""
                 . ($cat->hasImage ? "true" : "false") . "\");\n";
     }
-    foreach ($products as $product) {
-        $taxCat = TaxesService::get($product->taxCatId);
-        $tax = $taxCat->getCurrentTax();
-        $vatPrice = $product->priceSell * (1 + $tax->rate);
-        $prd = '{' . jsonify("id", $product->id) . ', '
-                . jsonify("label", $product->label) . ', '
-                . jsonify("reference", $product->reference) . ', '
-                . jsonify("hasImage", $product->hasImage) . ', '
-                . jsonify("buy", $product->priceBuy) . ', '
-                . jsonify("sell", $product->priceSell) . ', '
-                . jsonify("vatSell", $vatPrice)
-                . '}';
-        echo $jsName . ".addProductToCat(\"" . esc_js($product->id) . "\", \""
-                . $product->categoryId . "\");\n";
-        echo $jsName . ".addProduct(" . $prd  . ");\n";
-    }
     if (count($categories) > 0) {
         echo $jsName . ".changeCategory(\"" . $categories[0]->id . "\");\n";
     }
