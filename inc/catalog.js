@@ -78,7 +78,7 @@ Catalog.prototype.showProduct = function(productId) {
 
 Catalog.prototype.changeCategory = function(category) {
     $.ajaxSetup({ async: false });
-    apiGet = $.getJSON("api.php",{p:"ProductsAPI",login:"burgerking",password:"123soleil",action:"getCategory",id:category});
+    apiGet = $.getJSON("api.php",{p:"ProductsAPI",login:"burgerking",password:"",action:"getCategory",id:category});
     apiGetJSON = JSON.parse(apiGet.responseText);
     prdCat = apiGetJSON.content;
     $("#" + this.containerId + " .catalog-products-container").html("");
@@ -88,7 +88,6 @@ Catalog.prototype.changeCategory = function(category) {
         this.addProduct("{\"id\":" + product.id + ",\"label\":" + product.label + ",\"reference\":" + product.reference + ",\"hasImage\":" + product.hasImage + ",\"buy\":" + product.buy + ",\"sell\":" + product.sell + ",\"vatSell\":" + product.vatSell + "}");
         productHTML = "<div id=\"product-" + prdCat[i].id + "\" class=\"catalog-product\" onclick=\"javascript:addProduct('" + prdCat[i].id + "');\"><img style=\"left: 8px; top: 0px;\" src=\"?p=img&amp;w=product&amp;id=" + prdCat[i].id + "\" onload=\"javascript:centerImage('#product-" + prdCat[i].id + "');\"><p class=\"catalog-label catalog-label-long\">" + prdCat[i].label + "</p></div>";
         $("#" + this.containerId + " .catalog-products-container").append(productHTML);
-//        this.showProduct(prdCat[i].id);
     }
     this.currentCategoryId = category;
 }
