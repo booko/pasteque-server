@@ -46,6 +46,7 @@
 
 
 "Import products": "Import products",
+"Export products": "Export products",
 "Import products from csv file": "Import products from csv file",
 "On line %d: Cannot create product: '%s'": "On line %d: Cannot create product: '%s'",
 "On line %d: Cannot update update: '%s'": "On line %d: Cannot update update: '%s'",

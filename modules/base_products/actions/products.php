@@ -52,6 +52,8 @@ foreach ($products as $product) {
         \i18n('Add a product', PLUGIN_NAME), 'img/btn_add.png');?>
 <?php \Pasteque\tpl_btn('btn', \Pasteque\get_module_url_action(PLUGIN_NAME, "productsManagement"),
         \i18n('Import products', PLUGIN_NAME), 'img/btn_add.png');?>
+<?php \Pasteque\tpl_btn('btn bt_export ', \Pasteque\get_report_url(PLUGIN_NAME, "products_export"),
+        \i18n('Export products', PLUGIN_NAME), 'img/btn_add.png');?>
 
 <p><?php \pi18n("%d products", PLUGIN_NAME, count($products)); ?></p>
 
