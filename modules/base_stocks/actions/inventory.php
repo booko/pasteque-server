@@ -176,3 +176,7 @@ foreach ($categories as $category) {
                 </div>
             </div>
             <!-- end container scroll -->
+<?php
+    }
+}
+?>
