@@ -32,7 +32,6 @@ $sql = "SELECT REFERENCE as reference, "
             . "TAXCATEGORIES.NAME AS tax_cat, "
             . "STOCKLEVEL.STOCKSECURITY as stock_min, "
             . "STOCKLEVEL.STOCKMAXIMUM as stock_max, "
-            . "STOCKCURRENT.UNITS as stock_current, "
             . "PRODUCTS_CAT.CATORDER as disp_order"
         . " FROM PRODUCTS "
         . " LEFT JOIN CATEGORIES ON CATEGORIES.ID = PRODUCTS.CATEGORY "
@@ -40,14 +39,13 @@ $sql = "SELECT REFERENCE as reference, "
         . " LEFT JOIN TAXCATEGORIES ON PRODUCTS.TAXCAT = TAXCATEGORIES.ID "
         . " LEFT JOIN TAXES ON TAXCATEGORIES.ID = TAXES.CATEGORY "
         . " LEFT JOIN STOCKLEVEL ON PRODUCTS.ID = STOCKLEVEL.PRODUCT "
-        . " LEFT JOIN STOCKCURRENT ON PRODUCTS.ID = STOCKCURRENT.PRODUCT "
         . " WHERE PRODUCTS.DELETED = 0 "
         . " ORDER BY PRODUCTS.NAME";
 
 $fields = array("label","reference","sellVat","tax_cat",
    "category","barcode","price_buy","scaled","disp_order",
    "discount_enabled","discount_rate", "stock_min", 
-   "stock_max", "stock_current");
+   "stock_max");
 $headers = $fields;
 
 $report = new \Pasteque\Report(PLUGIN_NAME, "products_export",
