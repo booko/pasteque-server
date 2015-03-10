@@ -21,6 +21,7 @@
 "Send": "Envoyer",
 "Load csv file": "Charger un csv",
 "Load": "Charger",
+"Export stock level": "Exporter l'état des stocks",
 
 "Reference": "Référence",
 "Unable to find product %s": "Impossible de trouver le produit %s",

@@ -178,6 +178,10 @@ if (!$multilocations) {
 <!-- start bloc titre -->
 <div class="blc_ti">
 <h1><?php \pi18n("Stock move", PLUGIN_NAME); ?></h1>
+<ul class="bt_fonction">
+    <li><?php \Pasteque\tpl_btn('btn bt_export ', \Pasteque\get_report_url(PLUGIN_NAME, "stockcurrent_export"),
+    \i18n('Export stock level', PLUGIN_NAME), 'img/btn_add.png');?></li>
+</ul>
 </div>
 <!-- end bloc titre -->
 

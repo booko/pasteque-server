@@ -21,6 +21,7 @@
 "Send": "Send",
 "Load csv file": "Load csv file",
 "Load": "Load",
+"Export stock level": "Export stock level",
 
 "Reference": "Reference",
 "Unable to find product %s": "Unable to find product %s",
