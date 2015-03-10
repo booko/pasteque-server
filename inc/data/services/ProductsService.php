@@ -50,11 +50,11 @@ class ProductsService {
         if ($include_hidden) {
             $sql = "SELECT * FROM PRODUCTS LEFT JOIN PRODUCTS_CAT ON "
                     . "PRODUCTS_CAT.PRODUCT = PRODUCTS.ID "
-                    . "WHERE DELETED = " . $db->false() . " ORDER BY CATORDER";
+                    . "WHERE DELETED = " . $db->false() . " ORDER BY CATORDER, NAME";
         } else {
             $sql = "SELECT * FROM PRODUCTS, PRODUCTS_CAT WHERE "
                     . "PRODUCTS.ID = PRODUCTS_CAT.PRODUCT AND DELETED = "
-                    . $db->false() . " ORDER BY CATORDER";
+                    . $db->false() . " ORDER BY CATORDER, NAME";
         }
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
