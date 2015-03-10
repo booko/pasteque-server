@@ -47,7 +47,7 @@ $headers = array(\i18n("Product.reference"),
 
 $report = new \Pasteque\MergedReport(PLUGIN_NAME, "sales_by_provider_report",
         \i18n("Sales by provider", PLUGIN_NAME),
-        $sql, $headers, $fields, $mergeFields);
+        [$sql], $headers, $fields, $mergeFields);
 
 $report->addInput("start", \i18n("Session.openDate"), \Pasteque\DB::DATE);
 $report->setDefaultInput("start", time() - (time() % 86400) - 7 * 86400);
@@ -55,8 +55,8 @@ $report->addInput("stop", \i18n("Session.closeDate"), \Pasteque\DB::DATE);
 $report->setDefaultinput("stop", time() - (time() % 86400) + 86400);
 
 $report->setGrouping("PROVIDER");
-$report->addSubTotal("TOTAL");
-$report->addSubTotal("MARGIN");
+$report->addSubTotal("TOTAL", \Pasteque\Report::TOTAL_SUM);
+$report->addSubTotal("MARGIN", \Pasteque\Report::TOTAL_SUM);
 $report->addFilter("DATESTART", "\Pasteque\stdtimefstr");
 $report->addFilter("DATESTART", "\i18nDatetime");
 $report->addFilter("DATEEND", "\Pasteque\stdtimefstr");
