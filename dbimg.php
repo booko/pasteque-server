@@ -102,6 +102,23 @@ case 'product':
     }
     echo file_get_contents(PT::$ABSPATH . "/templates/" . $config['template'] . "/img/default_product.png");
     break;
+case 'provider':
+    if (isset($_GET['id'])) {
+        $prd = ProvidersService::get($_GET['id']);
+        if ($prd !== null && $prd->hasImage !== false) {
+            $img = ProvidersService::getImage($prd->id);
+        } else {
+            $img = NULL;
+        }
+    } else {
+        $img = NULL;
+    }
+    if ($img !== NULL) {
+        echo $img;
+    } else {
+        echo file_get_contents(PT::$ABSPATH . "/templates/" . $config['template'] . "/img/default_provider.png");
+    }
+    break;
 case 'category':
     if (isset($_GET['id'])) {
         $cat = CategoriesService::get($_GET['id']);
