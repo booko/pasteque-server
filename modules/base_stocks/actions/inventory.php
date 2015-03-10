@@ -88,7 +88,7 @@ $par = false;
 foreach ($categories as $category) {
     if (isset($prdCat[$category->id])) {
         // Category header ?>
-<h3><?php echo \Pasteque\esc_html($category->label); ?></h3>
+<h2><?php echo \Pasteque\esc_html($category->label); ?></h2>
 <table cellpadding="0" cellspacing="0">
 	<thead>
 		<tr>
@@ -162,6 +162,10 @@ foreach ($categories as $category) {
         } ?>
 	</tbody>
 </table>
+<?php
+    }
+}
+?>
 </div></div>
                     <!-- end colonne contenu -->
                     <!-- start sidebar menu -->
@@ -176,7 +180,4 @@ foreach ($categories as $category) {
                 </div>
             </div>
             <!-- end container scroll -->
-<?php
-    }
-}
-?>
+
