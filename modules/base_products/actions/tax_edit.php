@@ -96,7 +96,7 @@ if (isset($_GET['id'])) {
 
 <!-- start bloc titre -->
 <div class="blc_ti">
-<?php \pi18n("Edit tax", PLUGIN_NAME); ?></h1>
+<h1><?php \pi18n("Edit tax", PLUGIN_NAME); ?></h1>
 </div>
 <!-- end bloc titre -->
 
