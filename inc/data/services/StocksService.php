@@ -46,7 +46,7 @@ class StocksService {
         $stmtLvl->execute();
         $locationExists = false;
         while ($row = $stmtLvl->fetch()) {
-            $locationExists = true; 
+            $locationExists = true;
             if ($row['PRODUCT'] !== null) {
                 $lvls[$row['PRODUCT']] = array($row['ID'],
                         $row['STOCKSECURITY'], $row['STOCKMAXIMUM']);

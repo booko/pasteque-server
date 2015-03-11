@@ -124,7 +124,7 @@ function readProductLine($line, $category, $provider, $taxCat) {
     } else {
         $visible = true;
     }
-    if (isset($line['scaled']) && ($line['scaled'] === 1 || $line['scaled'] === true)) {
+    if (isset($line['scaled']) && ($line['scaled'] == 1 || $line['scaled'] == true)) {
         $scaled = $line['scaled'];
     } else {
         $scaled = false;
