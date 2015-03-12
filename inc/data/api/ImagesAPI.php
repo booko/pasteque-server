@@ -28,6 +28,10 @@ class ImagesAPI extends APIService {
         case 'getCat':
         case 'getPM':
             return isset($this->params['id']);
+            break;
+        case 'getRes':
+            return isset($this->params['label']);
+            break;
         }
         return false;
     }
@@ -43,6 +47,9 @@ class ImagesAPI extends APIService {
         case 'getPM':
             $srv = new PaymentModesService();
             $this->result = $srv->getImage($this->params['id']);
+            break;
+        case 'getRes':
+            $this->result = ResourcesService::getImage($this->params['label']);
             break;
         }
     }
