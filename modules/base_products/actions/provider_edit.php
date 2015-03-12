@@ -68,7 +68,7 @@ if (isset($_POST['id']) && isset($_POST['label'])) {
             $dispOrder);
     $id = \Pasteque\providersService::createprov($prov, $img);
     if ($id !== FALSE) {
-        $message = \i18n("provider saved. <a href=\"%s\">Go to the provider page</a>.", PLUGIN_NAME, \Pasteque\get_module_url_action(PLUGIN_NAME, 'provider_edit', array('id' => $id)));
+        $message = \i18n("Provider saved. <a href=\"%s\">Go to the provider page</a>.", PLUGIN_NAME, \Pasteque\get_module_url_action(PLUGIN_NAME, 'provider_edit', array('id' => $id)));
     } else {
         $error = \i18n("Unable to save changes");
     }
