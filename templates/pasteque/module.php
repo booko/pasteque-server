@@ -143,12 +143,18 @@ function __tpl_report_input($report, $values) {
         foreach($report->getParams() as $param) {
             $id = $param['param'];
             echo "<div class=\"row\">";
-            echo "<label for=\"" . $id . "\">" . $param['label'] . "</label>";
+            if($param['label'] != null && $param['label'] != "" && $param['type'] != "hidden")
+                echo "<label for=\"" . $id . "\">" . $param['label'] . "</label>";
             switch ($param['type']) {
             case DB::DATE:
                 $value = \i18nDate($values[$id]);
                 echo "<input type=\"text\" name=\"" . $id . "\" id=\"" . $id
                         . "\" class=\"dateinput\" value=\"" . $value . "\" />";
+                break;
+            case 'hidden':
+                $value = $values[$param['param']];
+                echo "<input type=\"hidden\" name=\"" . $id . "\" id=\"" . $id
+                        . "\" value=\"" . $value . "\" />";
                 break;
             default:
                 $value = $values[$param['param']];

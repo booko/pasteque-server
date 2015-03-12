@@ -56,12 +56,19 @@ $report->addInput("start", \i18n("Session.openDate"), \Pasteque\DB::DATE);
 $report->setDefaultInput("start", time() - 604800);
 $report->addInput("stop", \i18n("Session.closeDate"), \Pasteque\DB::DATE);
 $report->setDefaultInput("stop", time());
-$report->addInput("id", "", null);
+$report->addInput("id", "", "hidden");
 
 $report->addFilter("DATENEW", "\Pasteque\stdtimefstr");
 $report->addFilter("DATENEW", "\i18nDatetime");
 $report->addFilter("SUBTOTAL", "\i18nCurr");
 $report->addFilter("TAXESTOTAL", "\i18nCurr");
 $report->addFilter("TOTAL", "\i18nCurr");
+
+$report->setVisualFilter("SUBTOTAL","\i18nCurr", \Pasteque\Report::DISP_USER);
+$report->setVisualFilter("SUBTOTAL","\i18nFlt", \Pasteque\Report::DISP_CSV);
+$report->setVisualFilter("TAXESTOTAL","\i18nCurr", \Pasteque\Report::DISP_USER);
+$report->setVisualFilter("TAXESTOTAL","\i18nFlt", \Pasteque\Report::DISP_CSV);
+$report->setVisualFilter("TOTAL","\i18nCurr", \Pasteque\Report::DISP_USER);
+$report->setVisualFilter("TOTAL","\i18nFlt", \Pasteque\Report::DISP_CSV);
 
 \Pasteque\register_report($report);
