@@ -109,17 +109,27 @@ if (isset($_FILES['csv'])) {
 }
 ?>
 
-<h1><?php \pi18n("Import provider from csv file", PLUGIN_NAME); ?></h1>
-<form class="edit" method="post" action="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'providersManagement');?>" enctype="multipart/form-data">
-    <div class="row">
-        <label for='csv' >
-            <?php \pi18n("File", PLUGIN_NAME) ?>:
-        </label>
-            <input type="file" name="csv">
+<div class="container_scroll">
+    <div class="stick_row stickem-container">
+        <div id="content_liste" class="grid_9">
+            <div class="blc_content">
+                <div class="blc_ti">
+                    <h1><?php \pi18n("Import provider from csv file", PLUGIN_NAME); ?></h1>
+                </div>
+            <form class="edit" method="post" action="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'providersManagement');?>" enctype="multipart/form-data">
+                <div class="row">
+                    <label for='csv' >
+                        <?php \pi18n("File", PLUGIN_NAME) ?>:
+                    </label>
+                        <input type="file" name="csv">
+                </div>
+                <div class="row actions">
+                    <button class="btn-send" type="submit" id="envoyer" name="envoyer" >
+                        <?php \pi18n("send", PLUGIN_NAME)?>
+                    </button>
+                </div>
+            </form>
+            </div>
+        </div> 
     </div>
-    <div class="row actions">
-        <button class="btn-send" type="submit" id="envoyer" name="envoyer" >
-            <?php \pi18n("send", PLUGIN_NAME)?>
-        </button>
-    </div>
-</form>
+</div>
