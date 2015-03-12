@@ -26,6 +26,7 @@
 "Providers": "Providers",
 "Edit a provider": "Edit a provider",
 "Import providers": "Import providers",
+"Import providers from csv file": "Import providers from csv file",
 "Add a provider": "Add a provider",
 "%d providers": "%d providers",
 "No provider found": "No provider found",

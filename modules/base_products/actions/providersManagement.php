@@ -114,7 +114,7 @@ if (isset($_FILES['csv'])) {
         <div id="content_liste" class="grid_9">
             <div class="blc_content">
                 <div class="blc_ti">
-                    <h1><?php \pi18n("Import provider from csv file", PLUGIN_NAME); ?></h1>
+                    <h1><?php \pi18n("Import providers from csv file", PLUGIN_NAME); ?></h1>
                 </div>
             <form class="edit" method="post" action="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'providersManagement');?>" enctype="multipart/form-data">
                 <div class="row">
