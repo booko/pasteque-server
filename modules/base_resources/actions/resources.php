@@ -32,8 +32,13 @@ $resources = $resSrv->getAll();
 <div class="blc_ti">
 
 <h1><?php \pi18n("Resources", PLUGIN_NAME); ?></h1>
-<p><a class="btn" href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'resource_edit'); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/btn_add.png" /><?php \pi18n("Add a resource", PLUGIN_NAME); ?></a></p>
-
+<ul class="bt_fonction">
+    <li>
+        <a class="btn bt_add" href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'resource_edit'); ?>">
+            <img src="<?php echo \Pasteque\get_template_url(); ?>img/btn_add.png" /><?php \pi18n("Add a resource", PLUGIN_NAME); ?>
+        </a>
+    </li>
+</ul>
 </div>
 <!-- end bloc titre -->
 
