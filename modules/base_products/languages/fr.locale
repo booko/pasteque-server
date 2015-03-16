@@ -44,6 +44,7 @@
 "On line %d: Category parent doesn't exist": "À la ligne %d: La categorie parent n'existe pas",
 
 "Import products": "Importer des produits",
+"Export products": "Exporter des produits",
 "Import products from csv file": "Importer des produits à partir d'un fichier csv",
 "On line %d: Cannot create product: '%s'": "À la ligne %d: Impossible de créer le produit: '%s'",
 "On line %d: Cannot update update: '%s'": "À la ligne %d: Impossible de mettre a jour le produit: '%s'",

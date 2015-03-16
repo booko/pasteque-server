@@ -39,13 +39,15 @@ class TicketLine {
     function __construct($line, $product, $attrSetInstId, $quantity, $price,
             $tax, $discountRate = 0.0) {
         $this->dispOrder = $line;
-        $this->productId = $product->id;
         $this->attrSetInstId = $attrSetInstId;
         $this->quantity = $quantity;
         $this->price = $price;
         $this->taxId = $tax->id;
         $this->discountRate = $discountRate;
-        $this->createAttributes($product, $tax);
+        if ($product !== null) {
+            $this->productId = $product->id;
+            $this->createAttributes($product, $tax);
+        }
     }
 
     function getSubtotal($extDiscountRate) {

@@ -32,7 +32,7 @@ class APIBroker {
     /** Run everything an return the result as APIResult. */
     public function run($action, $input) {
         // Check user login
-        if (!api_user_login()) {
+        if (!api_user_login() && !is_user_logged_in()) {
             return APIResult::reject(APIError::$REJ_NOT_LOGGED);
         }
         // Check requested api, existing without illegal characters

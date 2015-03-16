@@ -30,6 +30,7 @@ function report_csv($module, $name, $values) {
     $output = fopen("php://output", "rb+");
 
     if (!$report->isGrouping()) {
+        fputcsv($output,array("Pastèque"));
         $line = $report->getHeaders();
         fputcsv($output, $line);
         while ($line = $reportRun->fetch() ) {
@@ -74,6 +75,7 @@ function report_csv($module, $name, $values) {
 
 
 function init_data($report, $data, $line, $field) {
+     $field = strtoupper($field);
      if (isset($line[$field])) {
          $data[] = $report->applyVisualFilter($field, $line, Report::DISP_CSV);
      } else {
