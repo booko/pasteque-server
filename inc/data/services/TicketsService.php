@@ -252,14 +252,16 @@ class TicketsService {
                 return false;
             }
             // Update stock
-            $move = new StockMove($ticket->date, StockMove::REASON_OUT_SELL,
-                    $line->productId, $locationId, $line->attrSetInstId,
-                    $line->quantity, $discountPrice);
-            if (StocksService::addMove($move) === false) {
-                if ($newTransaction) {
-                    $pdo->rollback();
+            if ($line->productId !== null) {
+                $move = new StockMove($ticket->date, StockMove::REASON_OUT_SELL,
+                        $line->productId, $locationId, $line->attrSetInstId,
+                        $line->quantity, $discountPrice);
+                if (StocksService::addMove($move) === false) {
+                    if ($newTransaction) {
+                        $pdo->rollback();
+                    }
+                    return false;
                 }
-                return false;
             }
             // Check prepayment refill
             // Refill is not affected by discount
@@ -381,17 +383,20 @@ class TicketsService {
         $stmtLines->bindParam(":id", $ticket->id);
         foreach ($ticket->lines as $line) {
             // Update stock
-            $discountRate = $ticket->discountRate;
-            $fullDiscount = $discountRate + $line->discountRate;
-            $discountPrice = $line->price * (1.0 - $fullDiscount);
-            $move = new StockMove($ticket->date, StockMove::REASON_IN_REFUND,
-                    $line->productId, $locationId, $line->attrSetInstId,
-                    $line->quantity, $discountPrice);
-            if (StocksService::addMove($move) === false) {
-                if ($newTransaction) {
-                    $pdo->rollback();
+            if ($line->productId !== null) {
+                $discountRate = $ticket->discountRate;
+                $fullDiscount = $discountRate + $line->discountRate;
+                $discountPrice = $line->price * (1.0 - $fullDiscount);
+                $move = new StockMove($ticket->date,
+                        StockMove::REASON_IN_REFUND,
+                        $line->productId, $locationId, $line->attrSetInstId,
+                        $line->quantity, $discountPrice);
+                if (StocksService::addMove($move) === false) {
+                    if ($newTransaction) {
+                        $pdo->rollback();
+                    }
+                    return false;
                 }
-                return false;
             }
             // Check prepayment refill
             // Refill is not affected by discount

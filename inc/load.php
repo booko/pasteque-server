@@ -38,6 +38,15 @@ function _check_core_module($type) {
     return $file;
 }
 
+// Check dependencies
+$dependencies = array("intl", "gd");
+foreach ($dependencies as $dependency) {
+    if (!\extension_loaded($dependency)) {
+        echo("Missing PHP module: " . $dependency);
+        die();
+    }
+}
+
 // Load configuration file
 if (isset($altConfigFile)) {
     define("CFG_FILE", PT::$ABSPATH . "/" . $altConfigFile);

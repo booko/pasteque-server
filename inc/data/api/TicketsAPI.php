@@ -134,6 +134,7 @@ class TicketsAPI extends APIService {
             }
             foreach ($json as $jsonTkt) {
                 if ($jsonTkt === null) {
+                    $this->fail(new APIError("Unable to decode ticket"));
                     break;
                 }
                 $userId = $jsonTkt->userId;
@@ -149,7 +150,11 @@ class TicketsAPI extends APIService {
                 foreach ($jsonTkt->lines as $jsLine) {
                     // Get line info
                     $number = $jsLine->dispOrder;
-                    $productId = $jsLine->productId;
+                    if (property_exists($jsLine, "productId")) {
+                        $productId = $jsLine->productId;
+                    } else {
+                        $productId = null;
+                    }
                     $quantity = $jsLine->quantity;
                     $price = $jsLine->price;
                     $taxId = $jsLine->taxId;
@@ -172,7 +177,7 @@ class TicketsAPI extends APIService {
                         $attrsId = TicketsService::createAttrSetInst($attrs);
                         
                         if ($attrsId === false) {
-                            // Fail, will check line count to continue
+                            $this->fail(new APIError("Unknown attributes"));
                             break;
                         }
                     } else {
@@ -180,7 +185,8 @@ class TicketsAPI extends APIService {
                     }
                     $product = ProductsService::get($productId);
                     $tax = TaxesService::getTax($taxId);
-                    if ($product == null || $tax == null) {
+                    if ($tax == null) {
+                        $this->fail(new APIError("Unknown tax"));
                         break;
                     }
                     $newLine = new TicketLine($number, $product,
@@ -232,6 +238,7 @@ class TicketsAPI extends APIService {
                             && TicketsService::save($ticket, $locationId)) {
                         $successes++;
                     } else {
+                        $this->fail(new APIError("Unable to edit ticket"));
                         break;
                     }
                 } else {
@@ -239,6 +246,7 @@ class TicketsAPI extends APIService {
                     if (TicketsService::save($ticket, $locationId)) {
                         $successes++;
                     } else {
+                        $this->fail(new APIError("Unable to save ticket"));
                         break;
                     }
                 }
