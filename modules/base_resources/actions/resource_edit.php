@@ -99,7 +99,7 @@ if (isset($_GET['id'])) {
 			</select>
 		</div>
 		<div id="selector-btn" class="row actions">
-			<a href="" class="btn" onClick="javascript:selected();return false;"><?php \pi18n("OK"); ?></a>
+			<a href="" class="btn" onClick="javascript:selected();return false;"><?php \pi18n("Select", PLUGIN_NAME); ?></a>
 		</div>
 	</div>
 	<div id="editor">
