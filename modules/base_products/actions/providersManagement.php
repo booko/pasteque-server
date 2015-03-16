@@ -48,8 +48,12 @@ function import_csv($csv) {
         }
 
         if ($parentOk) {
-            $prov = new \Pasteque\provider($tab['Parent'], $tab['Designation'],
-                $image, $tab['Ordre']);
+            $prov = new \Pasteque\Provider(/*$tab['Parent'], */$tab['Designation'],
+                false, '' /*firstname */, '' /* lastname */, '' /* email */,
+                '' /* phone1 */, '' /* phone2 */, '' /* website */, 
+                '' /* fax */, '' /* addr1 */, '' /* addr2 */, '' /* zipcode */,
+                '' /* city */, '' /* region */, '' /* country */,
+                '' /* note */, true /* visible */, $tab['Ordre']);
 
             $provider_exist = \Pasteque\providersService::getByName($prov->label);
             //UPDATE provider
