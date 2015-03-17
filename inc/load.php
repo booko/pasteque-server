@@ -128,6 +128,7 @@ require_once(PT::$ABSPATH . "/inc/data/services/CashRegistersService.php");
 require_once(PT::$ABSPATH . "/inc/data/services/InventoriesService.php");
 require_once(PT::$ABSPATH . "/inc/Csv.php");
 require_once(PT::$ABSPATH . "/inc/catalog.php");
+require_once(PT::$ABSPATH . "/inc/data/validation/load.php");
 
 load_base_i18n(detect_preferred_language());
 
