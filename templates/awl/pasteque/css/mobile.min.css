@@ -1,0 +1,154 @@
+.grid_1,.grid_2,.grid_3,.grid_4,.grid_5,.grid_6,.grid_7,.grid_8,.grid_9,.grid_10,.grid_11,.grid_12{margin-left:10px;margin-right:10px}.alpha,.omega{margin-left:0;margin-right:0}.align_center,.align_right{text-align:left}
+
+/* customisation */
+
+#nav_mobile {display:block !important;}
+#nav_pc {display:none  !important;}
+ 
+
+/*//////////////////////////////////////////*/		
+/*///////// elements désactivés ////////////*/
+/*//////////////////////////////////////////*/	
+
+/*
+#sidebar_categorie,
+#sidebar_homepage,
+.pub_right,
+#header_main,
+#bande_haute,
+a#scroll-to-top   { display:none; }
+
+*/
+
+#sidebar_menu  { display:none  !important; }
+
+
+/*//////////////////////////////////////////*/
+/* STRUCTURE */
+/*//////////////////////////////////////////*/
+
+.blc_ti h1 {
+    clear: both;
+    display: block;
+}
+
+.stickem-container.stick_row .grid_1,
+.stickem-container.stick_row .grid_2,
+.stickem-container.stick_row .grid_3,
+.stickem-container.stick_row .grid_4,
+.stickem-container.stick_row .grid_5,
+.stickem-container.stick_row .grid_6,
+.stickem-container.stick_row .grid_7,
+.stickem-container.stick_row .grid_8,
+.stickem-container.stick_row .grid_9,
+.stickem-container.stick_row .grid_10,
+.stickem-container.stick_row .grid_11,
+.stickem-container.stick_row .grid_12 {
+    display:block !important;
+    }
+	
+
+/*
+#content-box {
+    padding: 0 1em;
+}
+
+#content-container {
+    float: left;
+    overflow: hidden;
+    position: relative;
+    width: 684px;
+}*/
+
+	
+/*///////////////////////////////////////////////////*/	
+/*///////////////// NAVIGATION //////////////////////*/
+/*///////////////////////////////////////////////////*/
+
+/*
+#header_mobile .ti_site {
+	color: #FFFFFF;
+    font-family: 'Homenaje','Oswald',Arial,Helvetica,sans-serif;
+    font-size: 20px;
+    font-weight: normal;
+    line-height: 38px;
+    padding-left: 1em;
+}
+
+
+
+#header_mobile .ti_site a {
+	color:#fff;
+}
+	
+#header_mobile .ti_site a:hover {
+	text-decoration:none;
+	color:#fff;
+}
+
+#header_mobile .ti_site a em {
+	font-style: normal;
+}
+
+#header_mobile .ti_site a:hover em {
+	font-style: normal;
+	text-decoration: underline;
+}
+	
+
+#header_mobile .nav_mobile {
+	float:right;
+	margin-right: 1em;
+	}
+	
+	*/
+/* bouton icones 
+
+#header_mobile .nav_mobile #menu-nav_mobile li a {
+	text-indent: -3000em;
+	background:#333;
+	padding:0;
+	margin:0;
+	width:44px;
+	}
+	
+#header_mobile .nav_mobile li#menu-item-4326 a { background:url(../images/ico_nav_mobile_liste.png) no-repeat center center;} 
+#header_mobile .nav_mobile li#menu-item-4327 a { background:url(../images/ico_nav_mobile_search.png) no-repeat center center;} 
+#header_mobile .nav_mobile li#menu-item-4328 a { background: url(../images/ico_nav_mobile_annuaire.png) no-repeat center center;} 
+#header_mobile .nav_mobile li#menu-item-4329 a { background: url(../images/ico_nav_mobile_devis.png) no-repeat center center;} 
+	
+
+#header_mobile .nav_mobile li#menu-item-4326 a:hover { background:url(../images/ico_nav_mobile_liste.png) no-repeat center center #222;}
+#header_mobile .nav_mobile li#menu-item-4327 a:hover { background:url(../images/ico_nav_mobile_search.png) no-repeat center center #222;}
+#header_mobile .nav_mobile li#menu-item-4328 a:hover { background: url(../images/ico_nav_mobile_annuaire.png) no-repeat center center #222;}
+#header_mobile .nav_mobile li#menu-item-4329 a:hover { background: url(../images/ico_nav_mobile_devis.png) no-repeat center center #222;}
+
+*/		
+/*///////// menu mobile ///////////
+
+.mobile_ssmenu {
+	margin-top:37px;
+	}
+
+.menu_mobile {
+	display:none;
+	background: #eee;
+    margin-top: 37px;
+    padding: 2em 3em;
+	border-bottom:7px solid #ccc;
+	}
+	
+.menu_mobile a {
+	color:#222;
+	text-decoration:underline;
+	}
+	
+.menu_mobile a:hover {
+	color:#000;
+	text-decoration:none;
+	}
+	
+#headersearch #searchform input#s, #blc_search_mobile #searchform input#s {
+    width: 570px;
+}*/
+	
