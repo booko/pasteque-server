@@ -75,6 +75,13 @@ class Csv {
         $finfo = new \finfo(FILEINFO_MIME_ENCODING);
         $info = $finfo->file($this->path);
         $this->sourceEncoding = strtoupper($info);
+        // Get separator
+        $this->sep = substr($this->line, -1, 1);
+        if (!$this->sep || $this->sep === " " ) {
+            $this->errors[] = \i18n("Separator not defined");
+            $this->close();
+            return false;
+        }
         // try to convert first line from guessed by finfo() sourceEncoding to UTF-8. Read CSV values. Check if firt value, "Pastèque", can get read with this charset
         $check = mb_convert_encoding($this->line, "UTF-8",$this->sourceEncoding);
         $line = str_getcsv($check,$this->sep);
@@ -89,13 +96,6 @@ class Csv {
                 $this->close();
                 return false;
             }
-        }
-        // Get separator
-        $this->sep = substr($this->line, -1, 1);
-        if (!$this->sep || $this->sep === " " ) {
-            $this->errors[] = \i18n("Separator not defined");
-            $this->close();
-            return false;
         }
         // Get headers (second line)
         $headers = fgetcsv($this->fd, 4048, $this->sep);
