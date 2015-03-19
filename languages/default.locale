@@ -183,5 +183,7 @@
 "paperin": "Paper",
 "free": "Free",
 "debt": "Debt",
-"prepaid": "Prepaid"
+"prepaid": "Prepaid",
+
+"The price '%s' is not valid":"The price '%s' is not valid"
 }

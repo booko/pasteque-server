@@ -21,26 +21,9 @@
 
 namespace Pasteque\Validators;
 
-/**
- * Convert a string or a number to a float representing price
- * 
- * @param mixed $price
- * @return float
- */
-function parsePrice($price)
-{
-    $stripped = str_replace(',', '.', $price);
-    if(!is_numeric($stripped)) {
-        throw new ParsingException("The string $price is not numeric");
-    }
-    return (float) $stripped;
-}
 
 function validatePrice($price)
 {
     
 }
 
-class ParsingException extends \Exception {
-    
-}
