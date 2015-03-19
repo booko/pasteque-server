@@ -1,4 +1,5 @@
 <?php
+
 //    Pastèque Web back office
 //
 //    Copyright (C) 2015 Scil (http://scil.coop)
@@ -18,6 +19,21 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once('ValidationException.php');
-require_once('validators/price.php');
 
+namespace Pasteque\Parsing;
+
+/**
+ * Convert a string or a number to a float representing price
+ * 
+ * @param mixed $price
+ * @return float
+ */
+function parsePrice($price)
+{
+    $stripped = str_replace(',', '.', $price);
+    if(!is_numeric($stripped)) {
+        throw new ParsingException("The string $price is not numeric", $price,
+              "The price '%s' is not valid");
+    }
+    return (float) $stripped;
+}

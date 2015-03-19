@@ -182,5 +182,7 @@
 "paperin": "Coupon",
 "free": "Offert",
 "debt": "Dette",
-"prepaid": "Pré-payé"
+"prepaid": "Pré-payé",
+
+"The price '%s' is not valid":"Le prix '%s' n'est pas valide"
 }

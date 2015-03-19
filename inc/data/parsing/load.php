@@ -1,4 +1,5 @@
 <?php
+
 //    Pastèque Web back office
 //
 //    Copyright (C) 2015 Scil (http://scil.coop)
@@ -18,6 +19,5 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once('ValidationException.php');
-require_once('validators/price.php');
-
+require_once('parsers/price.php');
+require_once('ParsingException.php');

@@ -1,4 +1,5 @@
 <?php
+
 //    Pastèque Web back office
 //
 //    Copyright (C) 2015 Scil (http://scil.coop)
@@ -18,6 +19,39 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once('ValidationException.php');
-require_once('validators/price.php');
+namespace Pasteque\Parsing;
 
+class ParsingException extends \Exception 
+{
+    /**
+     * The invalid value
+     *
+     * @var mixed
+     */
+    public $invalidValue;
+    
+    /**
+     * a message to show in the UI
+     *
+     * @var string
+     */
+    private $i18nMessage;
+    
+    /**
+     * 
+     * @param string $message message show to developer
+     * @param mixed $invalidValue
+     * @param string $i18nMessage a message to show on UI
+     */
+    public function __construct($message, $invalidValue, $i18nMessage)
+    {
+        $this->invalidValue = $invalidValue;
+        $this->i18nMessage = $i18nMessage;
+        parent::__construct($message);
+    }
+    
+    public function getI18nMessage()
+    {
+        return $this->i18nMessage;
+    }
+}
