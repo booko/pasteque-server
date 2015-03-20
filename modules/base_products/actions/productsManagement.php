@@ -38,7 +38,6 @@ function initArray($key, $tab) {
     $array = array_fill_keys($key, NULL);
     $array['visible'] = true;
     $array['scaled'] = false;
-    $tab['disp_order'] = 0;
 
     foreach ($tab as $field => $value) {
         $array[$field] = $value;
