@@ -23,9 +23,9 @@ namespace BaseCustomers;
 $sql = "SELECT RECEIPTS.DATENEW, TICKETS.TICKETID, "
         . "PRODUCTS.NAME AS PNAME, TICKETS.TICKETTYPE, "
         . "SUM(TICKETLINES.UNITS) AS UNITS, "
-        . "ROUND(SUM(TICKETLINES.UNITS * TICKETLINES.PRICE),2) AS SUBTOTAL, "
-        . "ROUND(SUM(TICKETLINES.UNITS * TICKETLINES.PRICE)*(1+TAXES.RATE),2) AS TOTAL, "
-        . "ROUND(SUM(TICKETLINES.UNITS * TICKETLINES.PRICE)*(TAXES.RATE),2) AS TAXESTOTAL, "
+        . "TICKETLINES.UNITS * TICKETLINES.PRICE AS SUBTOTAL, "
+        . "TICKETLINES.UNITS * TICKETLINES.PRICE * (1 + TAXES.RATE) AS TOTAL, "
+        . "TICKETLINES.UNITS * TICKETLINES.PRICE * (TAXES.RATE) AS TAXESTOTAL, "
         . "TAXCATEGORIES.NAME AS TAXNAME, "
         . "PAYMENTS.PAYMENT AS MODE "
         . "FROM TICKETLINES "
@@ -60,9 +60,6 @@ $report->addInput("id", "", "hidden");
 
 $report->addFilter("DATENEW", "\Pasteque\stdtimefstr");
 $report->addFilter("DATENEW", "\i18nDatetime");
-$report->addFilter("SUBTOTAL", "\i18nCurr");
-$report->addFilter("TAXESTOTAL", "\i18nCurr");
-$report->addFilter("TOTAL", "\i18nCurr");
 
 $report->setVisualFilter("SUBTOTAL","\i18nCurr", \Pasteque\Report::DISP_USER);
 $report->setVisualFilter("SUBTOTAL","\i18nFlt", \Pasteque\Report::DISP_CSV);
