@@ -42,22 +42,17 @@ foreach ($allProducts as $product) {
 
 <!-- start container scroll -->
 <div class="container_scroll">
-            
-            	<div class="stick_row stickem-container">
-                    
+    <div class="stick_row stickem-container">
                     <!-- start colonne contenu -->
                     <div id="content_liste" class="grid_9">
-                    
                         <div class="blc_content">
-
-
 <?php \Pasteque\tpl_msg_box($message, $error); ?>
 
 <form class="edit" action="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=print&w=pdf&m=<?php echo PLUGIN_NAME; ?>&n=tags" method="post">
-	<div class="row">
-		<label for="start_from"><?php \pi18n("Start from", PLUGIN_NAME); ?></label>
-		<input type="numeric" name="start_from" id="start_from" value="1" />
-	</div>
+    <div class="row">
+        <label for="start_from"><?php \pi18n("Start from", PLUGIN_NAME); ?></label>
+        <input type="numeric" name="start_from" id="start_from" value="1" />
+    </div>
 
     <div id="catalog-picker"></div>
 
@@ -109,27 +104,18 @@ foreach ($allProducts as $product) {
 	deleteLine = function(productId) {
 		jQuery("#line-" + productId).detach();
 	}
-
 </script>
 </div></div>
                     <!-- end colonne contenu -->
-                    
                     <!-- start sidebar menu -->
                     <div id="sidebar_menu" class="grid_3 stickem">
-                    
                         <div class="blc_content">
-                            
                             <!-- start texte editorial -->
                             <div class="edito"><!-- zone_edito --></div>
                             <!-- end texte editorial -->
-                            
-                            
                         </div>
-                        
                     </div>
                     <!-- end sidebar menu -->
-                    
         		</div>
-                
         	</div>
             <!-- end container scroll -->

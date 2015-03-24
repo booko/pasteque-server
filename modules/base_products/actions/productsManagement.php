@@ -189,7 +189,7 @@ function mergeProduct($old, $new) {
     if (!isset($new->barcode)) {
         $new->barcode = $old->barcode;
     }
-    if (!isset($new->price_buy)) {
+    if (!isset($new->priceBuy)) {
         $new->priceBuy = $old->priceBuy;
     }
     if (!isset($new->hasImage)) {
