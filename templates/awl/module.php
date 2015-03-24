@@ -525,7 +525,7 @@ function tpl_report($report) {
 }
 
 function tpl_btn($class, $href, $label, $image_btn, $alt = NULL, $title = NULL) {
-	$btn = '<a class="transition ' . $class . '" href="' . $href . '">'.
+	$btn = '<a class="bt_fonction transition ' . $class . '" href="' . $href . '">'.
     $btn .= $label . "</a>";
     echo $btn;
 }

@@ -431,10 +431,14 @@ nav a.administration span { background: url(../imgs/ico_nav_reglage.png) no-repe
     margin-bottom: 2em;
 }
 .blc_ti h1 { color:#808080;display:inline; font-size:3em; padding: 0 14px 0 0; font-family: 'Oxygen', "Trebuchet MS", Arial, Helvetica, sans-serif; }
+#content h1 { color:#808080; font-size:3em; padding: 0 14px 0 0; font-family: 'Oxygen', "Trebuchet MS", Arial, Helvetica, sans-serif; border-bottom: 4px dotted #808080; padding: 0.3em 1em; margin-bottom: 1em; }
+
+.hint { }
 .blc_ti span.nb_article { color:#808080;display:inline;color: #aaa;
     display: inline;
     font-size: 1.42em;}
 
+a.bt_fonction { margin: 1.4em 1.4em 1.4em 1em; padding:0.8em 1em 0.7em 2.5em; background: url(../imgs/ico_fonction_import.png) center left no-repeat #808080; color:#fff;text-decoration: none; display: block; }
 .blc_ti ul.bt_fonction { float: right;margin-bottom:1.4em;}
 .blc_ti ul.bt_fonction li { float:left;display:block;margin: 0 0 0 1em; }
 
