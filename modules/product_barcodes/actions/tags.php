@@ -53,6 +53,21 @@ foreach ($allProducts as $product) {
         <label for="start_from"><?php \pi18n("Start from", PLUGIN_NAME); ?></label>
         <input type="numeric" name="start_from" id="start_from" value="1" />
     </div>
+    <div class="row">
+        <label for="format"><?php \pi18n("Format", PLUGIN_NAME); ?></label>
+        <select name="format" id="format">
+        <?php
+            $dir = opendir("modules/product_barcodes/print/templates/");
+            echo getcwd();
+            while($f = readdir($dir)) {
+                if($f != "." && $f != ".." && $f != "index.php") {
+                    $name = substr($f,0,strpos($f,".php"));
+                    echo "\t\t\t<option value=\"" . $name . "\">" . $name ."</option>\n";
+                }
+            }
+        ?>
+        </select>
+    </div>
 
     <div id="catalog-picker"></div>
 
