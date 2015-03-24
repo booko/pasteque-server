@@ -85,7 +85,7 @@ Catalog.prototype.changeCategory = function(category) {
     for(i=0;i<prdCat.length;i++) {
         product = prdCat[i];
         this.addProductToCat("\"" + product.id + "\"","\"" + category + "\"");
-        this.addProduct("{\"id\":" + product.id + ",\"label\":" + product.label + ",\"reference\":" + product.reference + ",\"hasImage\":" + product.hasImage + ",\"buy\":" + product.buy + ",\"sell\":" + product.sell + ",\"vatSell\":" + product.vatSell + "}");
+        this.addProduct(product);
         productHTML = "<div id=\"product-" + prdCat[i].id + "\" class=\"catalog-product\" onclick=\"javascript:addProduct('" + prdCat[i].id + "');\"><img style=\"left: 8px; top: 0px;\" src=\"?p=img&amp;w=product&amp;id=" + prdCat[i].id + "\" onload=\"javascript:centerImage('#product-" + prdCat[i].id + "');\"><p class=\"catalog-label catalog-label-long\">" + prdCat[i].label + "</p></div>";
         $("#" + this.containerId + " .catalog-products-container").append(productHTML);
     }
