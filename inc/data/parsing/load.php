@@ -20,4 +20,5 @@
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
 require_once('parsers/price.php');
+require_once('parsers/ean.php');
 require_once('ParsingException.php');

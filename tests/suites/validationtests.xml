@@ -1,9 +1,8 @@
 <phpunit  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.5/phpunit.xsd">
 	<testsuites>
-		<testsuite name="parsing">
-                    <file>validators/PriceParserTest.php</file>
-                    <file>validators/EANParserTest.php</file>
+		<testsuite name="validators">
+                    <file>validators/PriceValidatorTest.php</file>
 		</testsuite>
 	</testsuites>
 </phpunit>

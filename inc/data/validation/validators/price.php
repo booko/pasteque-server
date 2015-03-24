@@ -19,11 +19,23 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace Pasteque\Validators;
+namespace Pasteque\Validation;
 
-
+/**
+ * return true if price is valid, and throw a ValidationException
+ * if price is not valid
+ * 
+ * @param float $price
+ * @return boolean
+ * @throws \Pasteque\Validators\ValidationException
+ */
 function validatePrice($price)
 {
+    if (!is_numeric($price) OR $price < 0) {
+        throw new \Pasteque\Validation\ValidationException(
+              'price is not valid', $price, "The price '%s' is not valid");
+    }
     
+    return true;
 }
 

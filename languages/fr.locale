@@ -184,5 +184,6 @@
 "debt": "Dette",
 "prepaid": "Pré-payé",
 
-"The price '%s' is not valid":"Le prix '%s' n'est pas valide"
+"The price '%s' is not valid":"Le prix '%s' n'est pas valide",
+"Impossible to read the ean code '%s'":"Impossible d'interpréter '%s' comme une code EAN"
 }
