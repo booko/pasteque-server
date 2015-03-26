@@ -2,7 +2,7 @@
          xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.5/phpunit.xsd">
 	<testsuites>
 		<testsuite name="validators">
-                    <file>validators/PriceParserTest.php</file>
+                    <file>parsing/PriceParserTest.php</file>
 		</testsuite>
 	</testsuites>
 </phpunit>

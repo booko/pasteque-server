@@ -41,21 +41,21 @@ class PriceParserTest extends \PHPUnit_Framework_TestCase
     
     public function testPriceWithDot() 
     {
-        $this->assertSame(10.1, \Pasteque\Validators\parsePrice('10.1'));
-        $this->assertSame(10.1, \Pasteque\Validators\parsePrice(10.1));
+        $this->assertSame(10.1, \Pasteque\Parsing\parsePrice('10.1'));
+        $this->assertSame(10.1, \Pasteque\Parsing\parsePrice(10.1));
     }
     
     public function testPriceWithComma() 
     {
-        $this->assertSame(10.1, \Pasteque\Validators\parsePrice('10,1'));
+        $this->assertSame(10.1, \Pasteque\Parsing\parsePrice('10,1'));
     }
     
     /**
-     * @expectedException Pasteque\Validators\ParsingException
+     * @expectedException Pasteque\Parsing\ParsingException
      */
     public function testInvalidString()
     {
-        \Pasteque\Validators\parsePrice('I am a string');
+        \Pasteque\Parsing\parsePrice('I am a string');
     }
     
 }
