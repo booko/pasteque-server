@@ -38,7 +38,6 @@ function initArray($key, $tab) {
     $array = array_fill_keys($key, NULL);
     $array['visible'] = true;
     $array['scaled'] = false;
-    $tab['disp_order'] = 0;
 
     foreach ($tab as $field => $value) {
         $array[$field] = $value;
@@ -190,7 +189,7 @@ function mergeProduct($old, $new) {
     if (!isset($new->barcode)) {
         $new->barcode = $old->barcode;
     }
-    if (!isset($new->price_buy)) {
+    if (!isset($new->priceBuy)) {
         $new->priceBuy = $old->priceBuy;
     }
     if (!isset($new->hasImage)) {

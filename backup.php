@@ -1,8 +1,7 @@
 <?php
-
 //    Pastèque Web back office
 //
-//    Copyright (C) 2015 Scil (http://scil.coop)
+//    Copyright (C) 2013 Scil (http://scil.coop)
 //
 //    This file is part of Pastèque.
 //
@@ -19,6 +18,19 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once('parsers/price.php');
-require_once('parsers/ean.php');
-require_once('ParsingException.php');
+namespace Pasteque;
+
+ob_clean();
+$user_id = \Pasteque\get_user_id();
+$dbhost = \Pasteque\get_db_host($user_id);
+$dbuser = \Pasteque\get_db_user($user_id);
+$dbpasswd = \Pasteque\get_db_password($user_id);
+$database = \Pasteque\get_db_name($user_id);
+$dbport = \Pasteque\get_db_port($user_id);
+
+
+header("Content-type: application/x-gzip-compressed");
+header("Content-Disposition: attachment; filename=pasteque-".date(Ymd)."-" . $database . "-.sql.gz");
+$output = fopen("php://output", "rb+");
+$cmd ="mysqldump -u " . $dbuser . " --password=" . $dbpasswd . " " . $database ." --port=" . $dbport . " | gzip -c";
+fputs($output,system($cmd));

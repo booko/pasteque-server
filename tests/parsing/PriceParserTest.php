@@ -20,7 +20,7 @@
 //    along with Pasteque.  If not, see <http://www.gnu.org/licenses/>.
 
 
-namespace Pasteque\Tests\Validators;
+namespace Pasteque\Tests\Parsing;
 
 require_once(dirname(dirname(__FILE__)) . "/common_load.php");
 

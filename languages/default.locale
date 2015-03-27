@@ -185,5 +185,6 @@
 "debt": "Debt",
 "prepaid": "Prepaid",
 
-"The price '%s' is not valid":"The price '%s' is not valid"
+"The price '%s' is not valid":"The price '%s' is not valid",
+"Impossible to read the ean code '%s'":"Impossible to read the ean code '%s'"
 }
