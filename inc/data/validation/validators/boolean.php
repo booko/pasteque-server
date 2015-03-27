@@ -19,7 +19,14 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once('parsers/price.php');
-require_once('parsers/ean.php');
-require_once('parsers/boolean.php');
-require_once('ParsingException.php');
+namespace Pasteque\Validation;
+
+function validateBoolean($value)
+{
+    if (is_bool($value)) {
+        return true;
+    } else {
+        throw new ValidationException("could not validate $value as a boolean",
+              $value, "The value '%s' is not a valid boolean");
+    }
+}
