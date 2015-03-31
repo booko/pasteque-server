@@ -52,6 +52,6 @@ class ValidationException extends \Exception
     
     public function getI18nMessage()
     {
-        return $this->i18nMessage;
+        return \i18n($this->i18nMessage, NULL, $this->invalidValue);
     }
 }

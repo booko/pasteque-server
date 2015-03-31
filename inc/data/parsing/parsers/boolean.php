@@ -40,7 +40,7 @@ function parseBoolean($bool)
                 return false;
             default:
                 throw new ParsingException('Fail to convert '.$bool.
-                      ' to boolean', $bool, 'Impossible to parse boolean "%s"');
+                      ' to boolean', $bool, "Impossible to parse boolean '%s'");
         }
     }
     if (is_int($bool)) {
@@ -48,10 +48,10 @@ function parseBoolean($bool)
             case 1: return true;
             case 0: return false;
             default: throw new ParsingException('Fail to convert int '.$bool.
-                  ' to boolean', $bool, 'Impossible to parse boolean "%s"');
+                  ' to boolean', $bool, "Impossible to parse boolean '%s'");
         }
     }
     
     throw new ParsingException('The type of expected boolean '.$bool.
-          ' is not handled', $bool, 'Impossible to parse boolean "%s"');
+          ' is not handled', $bool, "Impossible to parse boolean '%s'");
 }
