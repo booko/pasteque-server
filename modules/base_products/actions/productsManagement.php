@@ -55,13 +55,16 @@ function import_csv($csv) {
         //init optionnal values
         $AllKeyPossible = array_merge($csv->getKeys(), $csv->getOptionalKeys());
         $tab = initArray($AllKeyPossible, $tab);
+        
+        $product_errors = validateLine($tab, $csv->getCurrentLineNumber());
+        $error_mess = array_merge($product_errors, $error_mess);
 
         //check
         $category = \Pasteque\CategoriesService::getByName($tab['category']);
         $provider = \Pasteque\ProvidersService::getByName($tab['provider']);
         $taxCat = \Pasteque\TaxesService::getByName($tab['tax_cat']);
 
-        if ($taxCat && $category) {
+        if (count($product_errors) === 0) {
             $prod = readProductLine($tab, $category, $provider, $taxCat);
             $product_exist = \Pasteque\ProductsService::getByRef($prod->reference);
             if ($product_exist !== null ) {
@@ -97,22 +100,76 @@ function import_csv($csv) {
         } else {
             // Missing category or tax category
             $error++;
-            if (!$category) {
-                $error_mess[] = \i18n("On line %d "
-                        . "category: '%s' doesn't exist", PLUGIN_NAME,
-                        $csv->getCurrentLineNumber(), $tab['category']);
-            }
-            if (!$taxCat) {
-                $error_mess[] = \i18n("On line %d: "
-                        . "Tax category: '%s' doesn't exist", PLUGIN_NAME,
-                        $csv->getCurrentLineNumber(), $tab['tax_cat']);
-            }
         }
     }
 
     $message = \i18n("%d line(s) inserted, %d line(s) modified, %d error(s)",
             PLUGIN_NAME, $create, $update, $error);
     return array($message, $error_mess);
+}
+
+function validateLine(&$tab, $line)
+{
+    $error_mess = array();
+    
+    //check category & provider
+    $category = \Pasteque\CategoriesService::getByName($tab['category']);
+    $provider = \Pasteque\ProvidersService::getByName($tab['provider']);
+    $taxCat = \Pasteque\TaxesService::getByName($tab['tax_cat']);
+    
+    if (!$category) {
+        $error_mess[] = \i18n("On line %d "
+                . "category: '%s' doesn't exist", PLUGIN_NAME,
+                $line, $tab['category']);
+    }
+    if (!$taxCat) {
+        $error_mess[] = \i18n("On line %d: "
+                . "Tax category: '%s' doesn't exist", PLUGIN_NAME,
+                $line, $tab['tax_cat']);
+    }
+    
+    $fieldsToCheck = array('barcode', 'price_buy', 'scaled', 'sellVat',
+        'discount_enabled');
+    foreach($fieldsToCheck as $field) {
+        try {
+            switch ($field) {
+                //parsing & validation of EAN
+                case 'barcode':
+                    $barcode = \Pasteque\Parsing\parseEAN($tab[$field]);
+                    if (\Pasteque\Validation\validateEAN($barcode)) {
+                        $tab[$field] = $barcode;
+                    }
+                    break;
+                //parsing & validation of price
+                case 'price_buy':
+                case 'sellVat':
+                    $price = \Pasteque\Parsing\parsePrice($tab[$field]);
+                    if (\Pasteque\Validation\validatePrice($price)) {
+                        $tab[$field] = $price;
+                    }
+                    break;
+                case 'scaled':
+                case 'discount_enabled':
+                    $boolean = \Pasteque\Parsing\parseBoolean($tab[$field]);
+                    if (\Pasteque\Validation\validateBoolean($boolean)) {
+                        $tab[$field] = $boolean;
+                    }
+                break;
+                default:
+                    continue;
+            }
+        } catch (\Pasteque\Parsing\ParsingException $ex) {
+            $error_mess[] = \i18n("On line %d ", PLUGIN_NAME, $line).": ".
+                    $ex->getI18nMessage();
+        } catch (\Pasteque\Validation\ValidationException $ex) {
+            $error_mess[] = \i18n("On line %d ", PLUGIN_NAME, $line).": ".
+                    $ex->getI18nMessage();
+        }
+        
+    }
+    
+    return $error_mess;
+    
 }
 
 // add to product values not obligatory may be present in array

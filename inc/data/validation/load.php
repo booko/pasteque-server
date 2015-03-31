@@ -19,7 +19,7 @@
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
 require_once('ValidationException.php');
-require_once('validators/price.php');
+//require_once('validators/price.php');
 require_once('validators/ean.php');
 require_once('validators/boolean.php');
 
