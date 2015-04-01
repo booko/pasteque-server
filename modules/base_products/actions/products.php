@@ -32,7 +32,32 @@ if (isset($_POST['delete-product'])) {
     }
 }
 
-$products = \Pasteque\ProductsService::getAll(true);
+if(!isset($_GET["start"])) {
+    $start = 0;
+}
+else {
+    $start = $_GET["start"];
+}
+if(!isset($_GET["range"])) {
+    $range = 50;
+}
+else {
+    $range = $_GET["range"];
+}
+if(!isset($_GET["hidden"])) {
+    $hidden = false;
+}
+else {
+    $hidden = $_GET["hidden"];
+}
+
+if($range == "all") {
+    $products = \Pasteque\ProductsService::getAll($hidden);
+}
+else {
+    $products = \Pasteque\ProductsService::getRange($range,$start,$hidden);
+}
+$totalProducts = \Pasteque\ProductsService::getTotal($hidden);
 $categories = \Pasteque\CategoriesService::getAll();
 $prdCat = array();
 $archivesCat = array();
@@ -47,7 +72,7 @@ foreach ($products as $product) {
 <!-- start bloc titre -->
 <div class="blc_ti">
     <h1><?php \pi18n("Products", PLUGIN_NAME); ?></h1>
-    <span class="nb_article"><?php \pi18n("%d products", PLUGIN_NAME, count($products)); ?></span>
+    <span class="nb_article"><?php \pi18n("%d products", PLUGIN_NAME, $totalProducts); ?></span>
     <ul class="bt_fonction">
             <li><?php \Pasteque\tpl_btn('btn bt_add ', \Pasteque\get_module_url_action(PLUGIN_NAME, "product_edit"),
             \i18n('Add a product', PLUGIN_NAME), 'img/btn_add.png');?></li>
@@ -57,7 +82,6 @@ foreach ($products as $product) {
             \i18n('Export products', PLUGIN_NAME), 'img/btn_add.png');?></li>
     </ul>
 </div>
-<!-- end bloc titre -->
 
 <!-- start container scroll -->
 <div class="container_scroll">
@@ -66,6 +90,8 @@ foreach ($products as $product) {
                     <div id="content_liste" class="grid_9">
                         <div class="blc_content">
 <?php \Pasteque\tpl_msg_box($message, $error); ?>
+
+<?php \Pasteque\tpl_pagination($totalProducts,$range,$start); ?>
 
 <?php
 $par = false;

@@ -524,8 +524,84 @@ function tpl_report($report) {
     }
 }
 
+/** Display a chart.
+ * @param $chart chart data, as given by get_chart
+ */
+function tpl_chart($chart) {
+    // Read values
+    $values = array();
+    foreach ($chart->getParams() as $param) {
+        $id = $param['param'];
+        if (isset($_POST[$id]) || isset($_GET[$id])) {
+            if (isset($_POST[$id])) {
+                $val = $_POST[$id];
+            } else {
+                $val = $_GET[$id];
+            }
+            $db = DB::get();
+            switch ($param['type']) {
+            case DB::DATE:
+                // Revert the i18n input to timestamp
+                $values[$id] = \i18nRevDate($val);
+                break;
+            default:
+                $values[$id] = $val;
+                break;
+            }
+        } else {
+            $default = $chart->getDefault($id);
+            if ($default !== null) {
+                $values[$id] = $default;
+            } else {
+                // TODO: error
+            }
+        }
+    }
+    // Display
+    __tpl_chart_title($chart);
+    __tpl_chart_input($chart, $values);
+    $run = $chart->run($values);
+    $par = FALSE;
+    if ($run->isEmpty()) {
+        echo "<div class=\"information\">" . \i18n("No result") . "</div>";
+        return;
+    }
+    __tpl_chart($chart->getHeaders(),$chart->getDatasets());
+}
+
+function __tpl_pagination_url($offset,$start=0) {
+    $url = \Pasteque\get_current_url();
+    $url = preg_replace("/start=(\d+)/","start=".$start,$url);
+    $url = preg_replace("/offset=(\d+)/","offset=".$offset,$url);
+    if($url == \Pasteque\get_current_url()) {
+        $url .= "&start=".$start."&offset=".$offset;
+    }
+    return $url;
+}
+
+function tpl_pagination($total,$offset,$start=0) {
+    echo "<div class=\"pagination\">";
+    if(isset($_GET["start"]) && $_GET["start"] != 0) {
+        $url = __tpl_pagination_url($offset,$_GET["start"]-$offset);
+        echo "<a class=\"prev_page\" href=\"".$url."\">«</a>";
+    }
+    for($i=0;$i<ceil($total/$offset);$i++) {
+        echo "<a";
+        if($i*$offset == $_GET["start"]) {
+            echo " class=\"current_page\"";
+        }
+        $url = __tpl_pagination_url($offset,$i*$offset);
+        echo " href=\"".$url."\">".$i."</a>";
+    }
+    if(isset($_GET["start"]) && $_GET["start"] < ($total-$offset)) {
+        $url = __tpl_pagination_url($offset,$_GET["start"]+$offset);
+        echo "<a class=\"next_page\" href=\"".$url."\">»</a>";
+    }
+    echo "</div>\n";
+}
+
 function tpl_btn($class, $href, $label, $image_btn, $alt = NULL, $title = NULL) {
-	$btn = '<a class="bt_fonction transition ' . $class . '" href="' . $href . '">'.
+    $btn = '<a class="bt_fonction transition ' . $class . '" href="' . $href . '">'.
     $btn .= $label . "</a>";
     echo $btn;
 }
