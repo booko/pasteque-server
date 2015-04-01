@@ -111,6 +111,37 @@ body {
 	color: #C27353;
 }
 
+div.pagination {
+    padding: 3px;
+    margin: 3px;
+    color:#ff6500;
+    font-size:80%;
+}
+
+div.pagination a {
+    text-decoration: none;
+    color: #ff6500;
+    border: 1px solid #ff9600;
+    margin-right:3px;
+    padding:5px 7px;
+}
+
+div.pagination a:hover, div.pagination a:active {
+    border: 1px solid #ff9600;
+    background-image:none;
+    background-color:#ffc794;
+    color: #ff6500;
+}
+
+div.pagination a.current_page {
+    margin-right:3px;
+    padding:5px 7px;
+    border: 1px solid #ff6500;
+    font-weight: bold;
+    background-color: #ffbe94;
+    color: #ff6500;
+}
+
 .btn {
 	background-color: #AAA;
 	background-image: linear-gradient(to bottom, #CCC, #777);

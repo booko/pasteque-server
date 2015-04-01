@@ -32,7 +32,32 @@ if (isset($_POST['delete-product'])) {
     }
 }
 
-$products = \Pasteque\ProductsService::getAll(true);
+if(!isset($_GET["start"])) {
+    $start = 0;
+}
+else {
+    $start = $_GET["start"];
+}
+if(!isset($_GET["range"])) {
+    $range = 50;
+}
+else {
+    $range = $_GET["range"];
+}
+if(!isset($_GET["hidden"])) {
+    $hidden = false;
+}
+else {
+    $hidden = $_GET["hidden"];
+}
+
+if($range == "all") {
+    $products = \Pasteque\ProductsService::getAll($hidden);
+}
+else {
+    $products = \Pasteque\ProductsService::getRange($range,$start,$hidden);
+}
+$totalProducts = \Pasteque\ProductsService::getTotal($hidden);
 $categories = \Pasteque\CategoriesService::getAll();
 $prdCat = array();
 $archivesCat = array();
@@ -55,9 +80,11 @@ foreach ($products as $product) {
 <?php \Pasteque\tpl_btn('btn bt_export ', \Pasteque\get_report_url(PLUGIN_NAME, "products_export"),
         \i18n('Export products', PLUGIN_NAME), 'img/btn_add.png');?>
 
-<p><?php \pi18n("%d products", PLUGIN_NAME, count($products)); ?></p>
+<p><?php \pi18n("%d products", PLUGIN_NAME, $totalProducts); ?></p>
 
 <h2><?php \pi18n("Catalog", PLUGIN_NAME); ?></h2>
+
+<?php \Pasteque\tpl_pagination($totalProducts,$range,$start); ?>
 
 <?php
 $par = false;

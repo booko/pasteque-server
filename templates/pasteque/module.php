@@ -404,6 +404,37 @@ function tpl_chart($chart) {
     __tpl_chart($chart->getHeaders(),$chart->getDatasets());
 }
 
+function __tpl_pagination_url($offset,$start=0) {
+    $url = \Pasteque\get_current_url();
+    $url = preg_replace("/start=(\d+)/","start=".$start,$url);
+    $url = preg_replace("/offset=(\d+)/","offset=".$offset,$url);
+    if($url == \Pasteque\get_current_url()) {
+        $url .= "&start=".$start."&offset=".$offset;
+    }
+    return $url;
+}
+
+function tpl_pagination($total,$offset,$start=0) {
+    echo "<div class=\"pagination\">";
+    if(isset($_GET["start"]) && $_GET["start"] != 0) {
+        $url = __tpl_pagination_url($offset,$_GET["start"]-$offset);
+        echo "<a class=\"prev_page\" href=\"".$url."\">«</a>";
+    }
+    for($i=0;$i<ceil($total/$offset);$i++) {
+        echo "<a";
+        if($i*$offset == $_GET["start"]) {
+            echo " class=\"current_page\"";
+        }
+        $url = __tpl_pagination_url($offset,$i*$offset);
+        echo " href=\"".$url."\">".$i."</a>";
+    }
+    if(isset($_GET["start"]) && $_GET["start"] < ($total-$offset)) {
+        $url = __tpl_pagination_url($offset,$_GET["start"]+$offset);
+        echo "<a class=\"next_page\" href=\"".$url."\">»</a>";
+    }
+    echo "</div>\n";
+}
+
 function tpl_btn($class, $href, $label, $image_btn, $alt = NULL, $title = NULL) {
     $btn = "<a class=" . $class . " href=\"" . $href . "\">"
             . "<img src=\"" .\Pasteque\get_template_url() . "" . $image_btn . "\"";
