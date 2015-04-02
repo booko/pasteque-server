@@ -430,8 +430,8 @@ nav a.administration span { background: url(../imgs/ico_nav_reglage.png) no-repe
     padding: 3em 1em 1.2em;
     margin-bottom: 2em;
 }
-.blc_ti h1 { color:#808080;display:inline; font-size:3em; padding: 0 14px 0 0; font-family: 'Oxygen', "Trebuchet MS", Arial, Helvetica, sans-serif; }
 #content h1 { color:#808080; font-size:3em; padding: 0 14px 0 0; font-family: 'Oxygen', "Trebuchet MS", Arial, Helvetica, sans-serif; border-bottom: 4px dotted #808080; padding: 0.3em 1em; margin-bottom: 1em; }
+#content .blc_ti h1 { border-bottom: none; color:#808080;display:inline; font-size:3em; padding: 0 14px 0 0; font-family: 'Oxygen', "Trebuchet MS", Arial, Helvetica, sans-serif; }
 
 .hint { }
 .blc_ti span.nb_article { color:#808080;display:inline;color: #aaa;
