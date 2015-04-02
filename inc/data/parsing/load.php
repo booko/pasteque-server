@@ -21,4 +21,5 @@
 
 require_once('parsers/price.php');
 require_once('parsers/ean.php');
+require_once('parsers/boolean.php');
 require_once('ParsingException.php');

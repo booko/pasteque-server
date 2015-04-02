@@ -61,6 +61,7 @@
 "On line %d: Cannot update update: '%s'": "On line %d: Cannot update update: '%s'",
 "On line %d: Tax category: '%s' doesn't exist": "On line %d: Tax category: '%s' doesn't exist",
 "On line %d category: '%s' doesn't exist": "On line %d category: '%s' doesn't exist",
+"On line %d ":"On line %d ",
 
 "Reference": "Reference",
 "Quantity": "Quantity"

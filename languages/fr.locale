@@ -185,5 +185,7 @@
 "prepaid": "Pré-payé",
 
 "The price '%s' is not valid":"Le prix '%s' n'est pas valide",
-"Impossible to read the ean code '%s'":"Impossible d'interpréter '%s' comme une code EAN"
+"Impossible to read the ean code '%s'":"Impossible d'interpréter '%s' comme une code EAN",
+"The EAN code '%s' is invalid":"Le code EAN '%s' est invalide",
+"Impossible to parse boolean '%s'":"Impossible d'interpréter '%s' comme un boléen"
 }

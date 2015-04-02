@@ -4,6 +4,7 @@
 		<testsuite name="parsing">
                     <file>validators/PriceParserTest.php</file>
                     <file>validators/EANParserTest.php</file>
+                    <file>validators/BooleanParserTest.php</file>
 		</testsuite>
 	</testsuites>
 </phpunit>

@@ -19,39 +19,14 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace Pasteque\Parsing;
+namespace Pasteque\Validation;
 
-class ParsingException extends \Exception 
+function validateBoolean($value)
 {
-    /**
-     * The invalid value
-     *
-     * @var mixed
-     */
-    public $invalidValue;
-    
-    /**
-     * a message to show in the UI
-     *
-     * @var string
-     */
-    private $i18nMessage;
-    
-    /**
-     * 
-     * @param string $message message show to developer
-     * @param mixed $invalidValue
-     * @param string $i18nMessage a message to show on UI
-     */
-    public function __construct($message, $invalidValue, $i18nMessage)
-    {
-        $this->invalidValue = $invalidValue;
-        $this->i18nMessage = $i18nMessage;
-        parent::__construct($message);
-    }
-    
-    public function getI18nMessage()
-    {
-        return \i18n($this->i18nMessage, NULL, $this->invalidValue);
+    if (is_bool($value)) {
+        return true;
+    } else {
+        throw new ValidationException("could not validate $value as a boolean",
+              $value, "The value '%s' is not a valid boolean");
     }
 }

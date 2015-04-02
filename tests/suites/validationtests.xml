@@ -3,6 +3,8 @@
 	<testsuites>
 		<testsuite name="validators">
                     <file>validators/PriceValidatorTest.php</file>
+                    <file>validators/BooleanValidatorTest.php</file>
+                    <file>validators/EANValidatorTest.php</file>
 		</testsuite>
 	</testsuites>
 </phpunit>
