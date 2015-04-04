@@ -167,5 +167,7 @@
 "paperin": "Paper",
 "free": "Free",
 "debt": "Debt",
-"prepaid": "Prepaid"
+"prepaid": "Prepaid",
+
+"confirm": "Are you sure you want to do it ?"
 }

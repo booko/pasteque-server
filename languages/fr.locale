@@ -167,5 +167,7 @@
 "paperin": "Coupon",
 "free": "Offert",
 "debt": "Dette",
-"prepaid": "Pré-payé"
+"prepaid": "Pré-payé",
+
+"confirm": "Êtes-vous certain de vouloir faire ça ?"
 }
