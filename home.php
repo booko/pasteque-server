@@ -27,23 +27,13 @@ require_once("lib/simplepie_1.3.1.compiled.php");
 
 <p><?php \pi18n("Introduction"); ?></p>
 
-<h2><?php \pi18n("News"); ?></h2>
-<?php
+<div class="twitter-feed">
+    <a class="twitter-timeline"  href="https://twitter.com/pastequepos" data-widget-id="584374065407885312">Tweets de @pastequepos</a>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+</div>
 
-$url = "http://communaute.pasteque.coop/feed/";
+<h2><?php \pi18n("Download"); ?></h2>
+    <p><?php \pi18n("Download instructions"); ?></p>
 
-$feed = new \SimplePie();
-$feed->set_feed_url($url);
-$feed->init();
-
-$start  = 0;
-$length = 3;
-
-foreach($feed->get_items($start,$length) as $key=>$item) {
-        echo "<div class=\"news_item\">\n";
-        echo "<h3><a href=\"" . $item->get_link() . "\">" . $item->get_title() . "</a></h3>\n";
-        echo " <p><small>".$item->get_date("d-m-Y")."</small><br>\n";
-        echo $item->get_content()."</p>\n";
-        echo "</div>\n";
-}
-?>
+<h2><?php \pi18n("Documentation"); ?></h2>
+    <p><?php \pi18n("Documentation instructions"); ?></p>

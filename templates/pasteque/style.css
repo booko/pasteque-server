@@ -404,7 +404,11 @@ table.report td {
 	box-shadow: 0px 0px 10px #999;
 	border-radius:5px;
 	padding: 15px 15px 15px 45px;
+}
 
+.twitter-feed {
+    float: right;
+    margin: 5px 15px
 }
 
 @font-face {
