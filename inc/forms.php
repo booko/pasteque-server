@@ -182,6 +182,10 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
             $profSrv = new DiscountProfilesService();
             $data = $profSrv->getAll();
             break;
+        case 'TariffArea':
+            $areaSrv = new TariffAreasService();
+            $data = $areaSrv->getAll();
+            break;
         }
         echo '<select id="' . esc_attr($form_id . '-' . $field)
                 . '" name="' . esc_attr($name) . '">';

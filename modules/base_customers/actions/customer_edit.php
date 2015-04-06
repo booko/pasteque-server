@@ -25,9 +25,13 @@ namespace BaseCustomers;
 $message = null;
 $error = null;
 $discounts = false;
+$tariffAreas = false;
 $modules = \Pasteque\get_loaded_modules(\Pasteque\get_user_id());
 if (in_array("customer_discountprofiles", $modules)) {
     $discounts = true;
+}
+if (in_array("product_tariffareas", $modules)) {
+    $tariffAreas = true;
 }
 
 if (isset($_POST['id']) && isset($_POST['dispName'])) {
@@ -51,6 +55,10 @@ if (isset($_POST['id']) && isset($_POST['dispName'])) {
     if ($discounts && $_POST['discountProfileId'] !== "") {
         $discountProfileId = $_POST['discountProfileId'];
     }
+    $tariffAreaId = null;
+    if ($tariffAreas && $_POST['tariffAreaId'] !== "") {
+        $tariffAreaId = $_POST['tariffAreaId'];
+    }
     $currDebt = NULL;
     if (isset($_POST['currDebt']) && $_POST['currDebt'] != "") {
         $currDebt = $_POST['currDebt'];
@@ -69,13 +77,20 @@ if (isset($_POST['id']) && isset($_POST['dispName'])) {
     if ($_POST['prepaid'] != "") {
         $prepaid = $_POST['prepaid'];
     }
+    $expireDate = NULL;
+    if (isset($_POST['expireDate']) && $_POST['expireDate'] !== "") {
+        $expireDate = $_POST['expireDate'];
+        $expireDate = \i18nRevDate($expireDate);
+        $expireDate = \Pasteque\stdstrftime($expireDate);
+    }
     $cust = \Pasteque\Customer::__build($_POST['id'], $number, $key,
             $_POST['dispName'], $_POST['card'], $taxCatId, $discountProfileId,
-            $prepaid, $maxDebt, $currDebt, $debtDate,
+            $tariffAreaId, $prepaid, $maxDebt, $currDebt, $debtDate,
             $_POST['firstName'], $_POST['lastName'], $_POST['email'],
             $_POST['phone1'], $_POST['phone2'], $_POST['fax'], $_POST['addr1'],
             $_POST['addr2'], $_POST['zipCode'], $_POST['city'],
-            $_POST['region'], $_POST['country'], $_POST['note'], $visible);
+            $_POST['region'], $_POST['country'], $_POST['note'],
+            $visible, $expireDate);
     if (\Pasteque\CustomersService::update($cust)) {
         $message = \i18n("Changes saved");
     } else {
@@ -102,6 +117,10 @@ if (isset($_POST['id']) && isset($_POST['dispName'])) {
     if ($discounts && $_POST['discountProfileId'] !== "") {
         $discountProfileId = $_POST['discountProfileId'];
     }
+    $tariffAreaId = null;
+    if ($tariffAreas && $_POST['tariffAreaId'] !== "") {
+        $tariffAreaId = $_POST['tariffAreaId'];
+    }
     $maxDebt = 0.0;
     if ($_POST['maxDebt'] !== "") {
         $maxDebt = $_POST['maxDebt'];
@@ -110,13 +129,20 @@ if (isset($_POST['id']) && isset($_POST['dispName'])) {
     if ($_POST['prepaid'] != "") {
         $prepaid = $_POST['prepaid'];
     }
+    $expireDate = NULL;
+    if (isset($_POST['expireDate']) && $_POST['expireDate'] != "") {
+        $expireDate = $_POST['expireDate'];
+        $expireDate = \i18nRevDate($expireDate);
+        $expireDate = \Pasteque\stdstrftime($expireDate);
+    }
     $cust = new \Pasteque\Customer($number, $key,
             $_POST['dispName'], $_POST['card'], $taxCatId, $discountProfileId,
-            $prepaid, $maxDebt, null, null,
+            $tariffAreaId, $prepaid, $maxDebt, $currDebt, $debtDate,
             $_POST['firstName'], $_POST['lastName'], $_POST['email'],
             $_POST['phone1'], $_POST['phone2'], $_POST['fax'], $_POST['addr1'],
             $_POST['addr2'], $_POST['zipCode'], $_POST['city'],
-            $_POST['region'], $_POST['country'], $_POST['note'], $visible);
+            $_POST['region'], $_POST['country'], $_POST['note'],
+            $visible, $expireDate);
     $id = \Pasteque\CustomersService::create($cust);
     if ($id !== false) {
         $message = \i18n("Customer saved. <a href=\"%s\">Go to the customer page</a>.", PLUGIN_NAME, \Pasteque\get_module_url_action(PLUGIN_NAME, 'customer_edit', array('id' => $id)));
@@ -129,12 +155,17 @@ $cust = null;
 $currDebt = "";
 $prepaid = 0;
 $str_debtDate = "";
+$str_expireDate = "";
 if (isset($_GET['id'])) {
     $cust = \Pasteque\CustomersService::get($_GET['id']);
     $currDebt = $cust->currDebt;
     $prepaid = $cust->prepaid;
     if ($cust->debtDate !== NULL) {
+        echo $cust->expireDate."AA1";
         $str_debtDate = \i18nDatetime($cust->debtDate);
+    }
+    if ($cust->expireDate !== NULL) {
+        $str_expireDate = \i18nDate($cust->expireDate);
     }
 }
 ?>
@@ -163,6 +194,10 @@ if (isset($_GET['id'])) {
 			<input id="barcode" type="text" readonly="true" name="card" <?php if ($cust != NULL) echo 'value="' . $cust->card . '"'; ?> />
 			<a class="btn" href="" onClick="javascript:generateCard(); return false;"><?php \pi18n("Generate"); ?></a>
 		</div>
+	<div class="row">
+		<label for="date"><?php \pi18n("Customer.expireDate"); ?></label>
+		<input id="date" name="expireDate" type="date" class="dateinput" value="<?php echo $str_expireDate; ?>" />
+	</div>
 	</div>
 	<?php \Pasteque\form_input("edit", "Customer", $cust, "visible", "boolean"); ?>
 	</fieldset>
@@ -187,6 +222,7 @@ if (isset($_GET['id'])) {
 	<?php \Pasteque\form_input("edit", "Customer", $cust, "note", "text"); ?>
     <?php \Pasteque\form_input("edit", "Customer", $cust, "custTaxId", "pick", array("model" => "CustTaxCat", "nullable" => true)); ?>
     <?php if ($discounts) { \Pasteque\form_input("edit", "Customer", $cust, "discountProfileId", "pick", array("model" => "DiscountProfile", "nullable" => true)); } ?>
+    <?php if ($tariffAreas) { \Pasteque\form_input("edit", "Customer", $cust, "tariffAreaId", "pick", array("model" => "TariffArea", "nullable" => true)); } ?>
 	</fieldset>
 	<fieldset>
 	<legend><?php \pi18n("Personnal data", PLUGIN_NAME); ?></legend>

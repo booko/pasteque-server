@@ -211,7 +211,7 @@ form.edit fieldset legend {
 	width: 65%;
 }
 .edit .row input.dateinput {
-	width: 60%;
+	width: 6.5em;
 }
 
 .edit .row input#start { width:6.5em; }

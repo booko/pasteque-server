@@ -34,6 +34,7 @@ class Customer {
     public $card;
     public $custTaxId;
     public $discountProfileId;
+    public $tariffAreaId;
     public $prepaid;
     public $maxDebt;
     public $currDebt;
@@ -52,29 +53,34 @@ class Customer {
     public $country;
     public $note;
     public $visible;
+    public $expireDate;
 
     static function __build($id, $number, $key, $dispName, $card, $custTaxId,
-            $discountProfileId, $prepaid, $maxDebt, $currDebt, $debtDate,
-            $firstName, $lastName, $email, $phone1, $phone2, $fax, $addr1,
-            $addr2, $zipCode, $city, $region, $country, $note, $visible) {
+            $discountProfileId, $tariffAreaId, $prepaid, $maxDebt, $currDebt,
+            $debtDate, $firstName, $lastName, $email, $phone1, $phone2, $fax,
+            $addr1, $addr2, $zipCode, $city, $region, $country, $note, $visible,
+            $expireDate) {
         $cust = new Customer($number, $key, $dispName, $card, $custTaxId,
-                $discountProfileId, $prepaid, $maxDebt, $currDebt, $debtDate,
-                $firstName, $lastName, $email, $phone1, $phone2, $fax, $addr1,
-                $addr2, $zipCode, $city, $region, $country, $note, $visible);
+                $discountProfileId, $tariffAreaId, $prepaid, $maxDebt, $currDebt,
+                $debtDate, $firstName, $lastName, $email, $phone1, $phone2, $fax,
+                $addr1, $addr2, $zipCode, $city, $region, $country, $note, $visible,
+                $expireDate);
         $cust->id = $id;
         return $cust;
     }
 
     function __construct($number, $key, $dispName, $card, $custTaxId,
-            $discountProfileId, $prepaid, $maxDebt, $currDebt, $debtDate,
-            $firstName, $lastName, $email, $phone1, $phone2, $fax, $addr1,
-            $addr2, $zipCode, $city, $region, $country, $note, $visible) {
+            $discountProfileId, $tariffAreaId, $prepaid, $maxDebt, $currDebt,
+            $debtDate, $firstName, $lastName, $email, $phone1, $phone2, $fax,
+            $addr1, $addr2, $zipCode, $city, $region, $country, $note, $visible,
+            $expireDate) {
         $this->number = $number;
         $this->key = $key;
         $this->dispName = $dispName;
         $this->card = $card;
         $this->custTaxId = $custTaxId;
         $this->discountProfileId = $discountProfileId;
+        $this->tariffAreaId = $tariffAreaId;
         $this->prepaid = $prepaid;
         $this->maxDebt = $maxDebt;
         $this->currDebt = $currDebt;
@@ -93,6 +99,7 @@ class Customer {
         $this->country = $country;
         $this->note = $note;
         $this->visible = $visible;
+        $this->expireDate = $expireDate;
     }
 
 }
