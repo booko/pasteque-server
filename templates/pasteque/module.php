@@ -134,6 +134,7 @@ function __tpl_report_input($report, $values) {
         echo "&" . $param['param'] . "=" . $values[$param['param']];
     }
     echo "\">" . \i18n("Export") . "</a></div>\n";
+    echo "<br />\n";
     if(is_array($report->getParams()) && sizeof($report->getParams()) > 0) {
         // Input form
         echo "<form class=\"edit\" action=\"" . \Pasteque\get_current_url() . "\" "
