@@ -130,7 +130,7 @@ $products = \Pasteque\ProductsService::getAll(true);
 			html += "<td>" + product['label'] + "</td>\n";
 			html += "<td>" + product['vatSell'] + "</td>\n";
 			html += "<td class=\"price-cell\"><input class=\"price\" id=\"line-" + product['id'] + "\" type=\"numeric\" name=\"price-" + product['id'] + "\" value=\"" + price + "\" />\n";
-			html += "<td><a class=\"btn-delete\" href=\"\" onClick=\"javascript:deleteLine('" + product['id'] + "');return false;\"><?php \pi18n("Delete"); ?></a></td>\n";
+			html += "<td><a class=\"btn-delete\" href=\"\" onClick=\"javascript:deleteLine('" + product['id'] + "');return false;\"><img alt=\"<?php \pi18n("Delete"); ?>\" src=\"<?php echo get_template_url(); ?>/img/delete.png\" /></a></td>\n";
 			html += "</tr>\n"; 
 			jQuery("#list").append(html);
 		}

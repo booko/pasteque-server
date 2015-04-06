@@ -24,8 +24,8 @@ namespace BaseProducts;
 
 $message = NULL;
 $error = NULL;
-if (isset($_POST['delete-taxcat'])) {
-    if (\Pasteque\TaxesService::deleteCat($_POST['delete-taxcat'])) {
+if (isset($_GET['delete-taxcat'])) {
+    if (\Pasteque\TaxesService::deleteCat($_GET['delete-taxcat'])) {
         $message = \i18n("Changes saved");
     } else {
         $error = \i18n("Unable to delete tax. Tax cannot be deleted when in use.", PLUGIN_NAME);
@@ -56,8 +56,13 @@ $par = !$par;
 	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
 		<td><?php echo $tax->label; ?></td>
 		<td class="edition">
-			<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'tax_edit', array('id' => $tax->id)); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
-			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("taxcat", $tax->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>
+                    <?php \Pasteque\tpl_btn('btn-edition', \Pasteque\get_module_url_action(
+                            PLUGIN_NAME, 'tax_edit', array("id" => $tax->id)), "",
+                            'img/edit.png', \i18n('Edit'), \i18n('Edit'));
+                    ?>
+                    <?php \Pasteque\tpl_btn('btn-delete', \Pasteque\get_current_url() . "&delete-taxcat=" . $tax->id, "",
+                            'img/delete.png', \i18n('Delete'), \i18n('Delete'), true);
+                    ?>
 		</td>
 	</tr>
 <?php

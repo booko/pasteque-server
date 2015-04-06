@@ -24,8 +24,8 @@ $message = null;
 $error = null;
 $srv = new \Pasteque\CashRegistersService();
 
-if (isset($_POST['delete-cashreg'])) {
-    if ($srv->delete($_POST['delete-cashreg'])) {
+if (isset($_GET['delete-cashreg'])) {
+    if ($srv->delete($_GET['delete-cashreg'])) {
         $message = \i18n("Changes saved");
     } else {
         $error = \i18n("Unable to save changes");
@@ -36,8 +36,12 @@ $cashRegs = $srv->getAll();
 ?>
 <h1><?php \pi18n("Cash registers", PLUGIN_NAME); ?></h1>
 
+<?php \Pasteque\tpl_msg_box($message, $error); ?>
+
 <?php \Pasteque\tpl_btn('btn', \Pasteque\get_module_url_action(PLUGIN_NAME, "cashregister_edit"),
         \i18n('New cash register', PLUGIN_NAME), 'img/btn_add.png');?>
+
+<p><?php \pi18n("%d cash registers", PLUGIN_NAME, count($cashRegs)); ?></p>
 
 <table cellpadding="0" cellspacing="0">
 	<thead>
@@ -51,7 +55,13 @@ $cashRegs = $srv->getAll();
 		<tr>
 			<td><?php echo $cashReg->label; ?></td>
 			<td class="edition">
-				<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'cashregister_edit', array('id' => $cashReg->id)); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
+                    <?php \Pasteque\tpl_btn('btn-edition', \Pasteque\get_module_url_action(
+                            PLUGIN_NAME, 'cashregister_edit', array("id" => $cashReg->id)), "",
+                            'img/edit.png', \i18n('Edit'), \i18n('Edit'));
+                    ?>
+                    <?php \Pasteque\tpl_btn('btn-delete', \Pasteque\get_current_url() . "&delete-cashreg=" . $cashReg->id, "",
+                            'img/delete.png', \i18n('Delete'), \i18n('Delete'), true);
+                    ?>
 			</td>
 		</tr>
 <?php } ?>
