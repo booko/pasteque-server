@@ -27,7 +27,7 @@ $srv = new \Pasteque\TariffAreasService();
 if (isset($_POST['id'])) {
     // Edit the area
     $area = \Pasteque\TariffArea::__build($_POST['id'], $_POST['label'],
-            $_POST['dispOrder']);
+            $_POST['dispOrder'], $_POST['notes']);
     foreach ($_POST as $key => $value) {
         if (strpos($key, "price-") === 0) {
             $productId = substr($key, 6);
@@ -45,7 +45,7 @@ if (isset($_POST['id'])) {
     }
 } else if (isset($_POST['label'])) {
     $area = new \Pasteque\TariffArea($_POST['label'],
-            $_POST['dispOrder']);
+            $_POST['dispOrder'],$_POST['notes']);
     foreach ($_POST as $key => $value) {
         if (strpos($key, "price-") === 0) {
             $productId = substr($key, 6);
@@ -80,6 +80,7 @@ $products = \Pasteque\ProductsService::getAll(true);
 	<?php \Pasteque\form_hidden("edit", $area, "id"); ?>
 	<?php \Pasteque\form_input("edit", "TariffArea", $area, "label", "string", array("required" => true)); ?>
 	<?php \Pasteque\form_input("edit", "TariffArea", $area, "dispOrder", "numeric", array("required" => true)); ?>
+	<?php \Pasteque\form_input("edit", "TariffArea", $area, "notes", "text"); ?>
 
     <div id="catalog-picker"></div>
 
@@ -90,7 +91,7 @@ $products = \Pasteque\ProductsService::getAll(true);
 				<th><?php \pi18n("Product.reference"); ?></th>
 				<th><?php \pi18n("Product.label"); ?></th>
 				<th><?php \pi18n("Price", PLUGIN_NAME); ?></th>
-                <th><?php \pi18n("Area price", PLUGIN_NAME); ?></th>
+                                <th><?php \pi18n("Area price", PLUGIN_NAME); ?></th>
 				<th></th>
 			</tr>
 		</thead>
@@ -104,7 +105,7 @@ $products = \Pasteque\ProductsService::getAll(true);
 
 </form>
 
-<?php \Pasteque\init_catalog("catalog", "catalog-picker", "addProduct",
+<?php \Pasteque\init_catalog_old("catalog", "catalog-picker", "addProduct",
         $categories, $products); ?>
 <script type="text/javascript">
 
@@ -137,12 +138,16 @@ $products = \Pasteque\ProductsService::getAll(true);
     }
 
     jQuery(document).ready(function() {
-<?php if ($area !== null) foreach ($area->getPrices() as $price) {
-    $product = \Pasteque\ProductsService::get($price->productId);
-    $taxCat = \Pasteque\TaxesService::get($product->taxCatId);
-    $tax = $taxCat->getCurrentTax();
-    $vatPrice = $price->price * (1 + $tax->rate);
-    echo "\t\tinitProduct(\"" . $price->productId . "\", " . $vatPrice . ");\n";
+<?php
+if ($area !== null) {
+    foreach ($area->getPrices() as $price) {
+        $product = \Pasteque\ProductsService::get($price->productId);
+        $taxCat = \Pasteque\TaxesService::get($product->taxCatId);
+        $tax = $taxCat->getCurrentTax();
+        $vatPrice = $price->price * (1 + $tax->rate);
+        //echo "\t\tinitProduct(\"" . $price->productId . "\", " . $vatPrice . ");\n";
+        echo "\t\taddProduct('" . $price->productId . "');\n";
+    }
 } ?>
     });
 </script>

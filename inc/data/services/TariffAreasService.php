@@ -27,11 +27,12 @@ class TariffAreasService extends AbstractService {
     protected static $fieldMapping = array(
             "ID" => "id",
             "NAME" => "label",
-            "TARIFFORDER" => "dispOrder"
+            "TARIFFORDER" => "dispOrder",
+            "NOTES" => "notes"
     );
 
     protected function build($dbArea, $pdo = null) {
-        $area = TariffArea::__build($dbArea['ID'], $dbArea['NAME'], $dbArea['TARIFFORDER']);
+        $area = TariffArea::__build($dbArea['ID'], $dbArea['NAME'], $dbArea['TARIFFORDER'], $dbArea['NOTES']);
         $stmt = $pdo->prepare("SELECT * FROM TARIFFAREAS_PROD "
                 . "WHERE TARIFFID = :id");
         $stmt->bindParam(":id", $area->id);
@@ -72,10 +73,11 @@ class TariffAreasService extends AbstractService {
     public function create($area) {
         $pdo = PDOBuilder::getPDO();
         $stmt = $pdo->prepare("INSERT INTO TARIFFAREAS "
-                . "(NAME, TARIFFORDER) "
-                . "VALUES (:label, :dispOrder)");
+                . "(NAME, TARIFFORDER, NOTES) "
+                . "VALUES (:label, :dispOrder, :notes)");
         $stmt->bindParam(":label", $area->label);
         $stmt->bindParam(":dispOrder", $area->dispOrder);
+        $stmt->bindParam(":notes", $area->notes);
         if ($stmt->execute() !== false) {
             $id = $pdo->lastInsertId(static::$dbTable . "_"
                     . static::$dbIdField . "_seq");
@@ -92,10 +94,11 @@ class TariffAreasService extends AbstractService {
         }
         $pdo = PDOBuilder::getPDO();
         $stmt = $pdo->prepare("UPDATE TARIFFAREAS SET NAME = :label, "
-                . "TARIFFORDER = :dispOrder WHERE ID = :id");
+                . "TARIFFORDER = :dispOrder, NOTES = :notes WHERE ID = :id");
         $stmt->bindParam(":id", $area->id);
         $stmt->bindParam(":label", $area->label);
         $stmt->bindParam(":dispOrder", $area->dispOrder);
+        $stmt->bindParam(":notes", $area->notes);
         if ($stmt->execute() === false) {
             return false;
         }

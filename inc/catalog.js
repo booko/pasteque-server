@@ -78,7 +78,7 @@ Catalog.prototype.showProduct = function(productId) {
 
 Catalog.prototype.changeCategory = function(category) {
     $.ajaxSetup({ async: false });
-    apiGet = $.getJSON("api.php",{p:"ProductsAPI",login:"burgerking",password:"",action:"getCategory",id:category});
+    apiGet = $.getJSON("api.php",{p:"ProductsAPI",login:"",password:"",action:"getCategory",id:category});
     apiGetJSON = JSON.parse(apiGet.responseText);
     prdCat = apiGetJSON.content;
     $("#" + this.containerId + " .catalog-products-container").html("");
