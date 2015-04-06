@@ -53,4 +53,17 @@ class ResourcesService extends AbstractService {
             return false;
         }
     }
+
+    static function getImage($label) {
+        $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
+        $stmt = $pdo->prepare("SELECT CONTENT FROM RESOURCES WHERE NAME = :label");
+        $stmt->bindParam(":label", $label, \PDO::PARAM_STR);
+        if ($stmt->execute()) {
+            if ($row = $stmt->fetch()) {
+                return $db->readBin($row['CONTENT']);
+            }
+        }
+        return null;
+    }
 }

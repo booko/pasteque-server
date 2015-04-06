@@ -20,38 +20,29 @@
 
 namespace Pasteque;
 
-class ImagesAPI extends APIService {
+class ProvidersAPI extends APIService {
 
     protected function check() {
         switch ($this->action) {
-        case 'getPrd':
-        case 'getCat':
-        case 'getPM':
+        case 'get':
             return isset($this->params['id']);
-            break;
-        case 'getRes':
-            return isset($this->params['label']);
-            break;
+        case 'getAll':
+            return true;
         }
         return false;
     }
 
     protected function proceed() {
         switch ($this->action) {
-        case 'getPrd':
-            $this->result = ProductsService::getImage($this->params['id']);
+        case 'get':
+            $this->succeed(ProvidersService::get($this->params['id']));
             break;
-        case 'getCat':
-            $this->result = CategoriesService::getImage($this->params['id']);
-            break;
-        case 'getPM':
-            $srv = new PaymentModesService();
-            $this->result = $srv->getImage($this->params['id']);
-            break;
-        case 'getRes':
-            $this->result = ResourcesService::getImage($this->params['label']);
+        case 'getAll':
+            $this->succeed(ProvidersService::getAll());
             break;
         }
     }
 
 }
+
+?>

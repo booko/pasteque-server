@@ -32,11 +32,11 @@ class StocksServiceTest extends \PHPUnit_Framework_TestCase {
         $taxCat->id = TaxesService::createCat($taxCat);
         $cat = new Category(null, "Category", false, 1);
         $cat->id = CategoriesService::createCat($cat);
-        $prd1 = new Product("REF", "product", 1.0, $cat->id, 1,
+        $prd1 = new Product("REF", "product", 1.0, $cat->id, null, 1,
                 $taxCat->id, true, true, 0.3, null, "12345", false, true, 0.2);
         $prd1->id = ProductsService::create($prd1);
-        $prd2 = new Product("REF2", "product2", 2.0, $cat->id, 3, $taxCat->id,
-                true, false);
+        $prd2 = new Product("REF2", "product2", 2.0, $cat->id, null, 3,
+                $taxCat->id, true, false);
         $prd2->id = ProductsService::create($prd2);
         $this->products = array($prd1, $prd2);
         // Locations

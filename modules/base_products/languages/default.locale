@@ -23,6 +23,15 @@
 "No category found": "No category found",
 "Category saved. <a href=\"%s\">Go to the category page</a>.": "Category saved. <a href=\"%s\">Go to the category page</a>.",
 
+"Providers": "Providers",
+"Edit a provider": "Edit a provider",
+"Import providers": "Import providers",
+"Add a provider": "Add a provider",
+"%d providers": "%d providers",
+"No provider found": "No provider found",
+"Contact data": "Contact data",
+"Provider saved. <a href=\"%s\">Go to the provider page</a>.": "Provider saved. <a href=\"%s\">Go to the provider page</a>.",
+
 "Taxes": "Taxes",
 "Add a tax": "Add a tax",
 "Edit tax": "Edit tax",
@@ -55,4 +64,5 @@
 
 "Reference": "Reference",
 "Quantity": "Quantity"
+
 }

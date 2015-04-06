@@ -35,6 +35,7 @@ function dropDatabase() {
     if ($config['db_type'] == "mysql") {
         $sqls = array("DROP TABLE APPLICATIONS;", "DROP TABLE ROLES;",
                "DROP TABLE PEOPLE;", "DROP TABLE RESOURCES;",
+                "DROP TABLE PROVIDERS;",
                 "DROP TABLE DISCOUNTPROFILES;",
                 "DROP TABLE TAXCUSTCATEGORIES;", "DROP TABLE CUSTOMERS;",
                 "DROP TABLE CATEGORIES;", "DROP TABLE TAXCATEGORIES;",
@@ -62,6 +63,7 @@ function dropDatabase() {
     } else if ($config['db_type'] == "postgresql") {
         $sqls = array("DROP TABLE APPLICATIONS;", "DROP TABLE ROLES;",
                 "DROP TABLE PEOPLE;", "DROP TABLE RESOURCES;",
+                "DROP TABLE PROVIDERS;",
                 "DROP SEQUENCE DISCOUNTPROFILES_ID_SEQ CASCADE;",
                 "DROP TABLE DISCOUNTPROFILES;",
                 "DROP TABLE TAXCUSTCATEGORIES;", "DROP TABLE CUSTOMERS;",

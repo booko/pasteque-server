@@ -34,6 +34,7 @@ class ProductsService {
         }
         return Product::__build($dpPrd['ID'], $dpPrd['REFERENCE'],
                 $dpPrd['NAME'], $dpPrd['PRICESELL'], $dpPrd['CATEGORY'],
+                $dpPrd['PROVIDER'],
                 $dispOrder, $dpPrd['TAXCAT'], $visible,
                 $db->readBool($dpPrd['ISSCALE']), $dpPrd['PRICEBUY'],
                 $dpPrd['ATTRIBUTESET_ID'], $dpPrd['CODE'],
@@ -164,7 +165,7 @@ class ProductsService {
         }
         $sql = "UPDATE PRODUCTS SET REFERENCE = :ref, CODE = :code, "
                 . "NAME = :name, PRICEBUY = :buy, PRICESELL = :sell, "
-                . "CATEGORY = :cat, TAXCAT = :tax, ATTRIBUTESET_ID = :attr, "
+                . "CATEGORY = :cat, PROVIDER = :prov, TAXCAT = :tax, ATTRIBUTESET_ID = :attr, "
                 . "ISSCALE = :scale, DISCOUNTENABLED = :discountEnabled, "
                 . "DISCOUNTRATE = :discountRate";
         if ($image !== "") {
@@ -182,6 +183,7 @@ class ProductsService {
         }
         $stmt->bindParam(":sell", $prd->priceSell, \PDO::PARAM_STR);
         $stmt->bindParam(":cat", $prd->categoryId, \PDO::PARAM_INT);
+        $stmt->bindParam(":prov", $prd->providerId, \PDO::PARAM_STR);
         $stmt->bindParam(":tax", $prd->taxCatId, \PDO::PARAM_INT);
         $stmt->bindParam(":attr", $prd->attributeSetId, \PDO::PARAM_INT);
         $stmt->bindParam(":scale", $db->boolVal($prd->scaled));
@@ -225,9 +227,9 @@ class ProductsService {
             $code = $prd->barcode;
         }
         $sql = "INSERT INTO PRODUCTS (ID, REFERENCE, CODE, NAME, "
-                . "PRICEBUY, PRICESELL, CATEGORY, TAXCAT, "
+                . "PRICEBUY, PRICESELL, CATEGORY, PROVIDER, TAXCAT, "
                 . "ATTRIBUTESET_ID, ISSCALE, DISCOUNTENABLED, DISCOUNTRATE, "
-                . "IMAGE) VALUES (:id, :ref, :code, :name, :buy, :sell, :cat, "
+                . "IMAGE) VALUES (:id, :ref, :code, :name, :buy, :sell, :cat, :prov, "
                 . ":tax, :attr, :scale, :discEnabled, :discRate, :img)";
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(":ref", $prd->reference, \PDO::PARAM_STR);
@@ -240,6 +242,7 @@ class ProductsService {
         }
         $stmt->bindParam(":sell", $prd->priceSell, \PDO::PARAM_STR);
         $stmt->bindParam(":cat", $prd->categoryId, \PDO::PARAM_INT);
+        $stmt->bindParam(":prov", $prd->providerId, \PDO::PARAM_INT);
         $stmt->bindParam(":tax", $prd->taxCatId, \PDO::PARAM_INT);
         $stmt->bindParam(":attr", $prd->attributeSetId, \PDO::PARAM_INT);
         $stmt->bindParam(":scale", $db->boolVal($prd->scaled));
