@@ -117,13 +117,13 @@ foreach ($categories as $category) {
 		<td><?php echo $product->reference; ?></td>
 		<td><?php echo $product->label; ?></td>
 		<td class="edition">
-            <?php \Pasteque\tpl_btn('btn-edition', \Pasteque\get_module_url_action(
-                    PLUGIN_NAME, 'product_edit', array("id" => $product->id)), "",
-                    'img/edit.png', \i18n('Edit'), \i18n('Edit'));
-            ?>
-            <?php \Pasteque\tpl_btn('btn-delete', \Pasteque\get_current_url() . "&delete-product=" . $product->id, "",
-                    'img/delete.png', \i18n('Delete'), \i18n('Delete'), true);
-            ?>
+                    <?php \Pasteque\tpl_btn('btn-edition', \Pasteque\get_module_url_action(
+                            PLUGIN_NAME, 'product_edit', array("id" => $product->id)), "",
+                            'img/edit.png', \i18n('Edit'), \i18n('Edit'));
+                    ?>
+                    <?php \Pasteque\tpl_btn('btn-delete', \Pasteque\get_current_url() . "&delete-product=" . $product->id, "",
+                            'img/delete.png', \i18n('Delete'), \i18n('Delete'), true);
+                    ?>
 		</td>
 	</tr>
 <?php

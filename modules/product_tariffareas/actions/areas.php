@@ -42,6 +42,8 @@ $areas = $srv->getAll();
 <?php \Pasteque\tpl_btn('btn', \Pasteque\get_module_url_action(PLUGIN_NAME, "areas_import"),
         \i18n('Import areas', PLUGIN_NAME), 'img/btn_add.png');?>
 
+<p><?php \pi18n("%d tariff areas", PLUGIN_NAME, count($areas)); ?></p>
+
 <table cellpadding="0" cellspacing="0">
 	<thead>
 		<tr>

@@ -21,8 +21,8 @@
 namespace BaseCustomers;
 
 $srv = new \Pasteque\CustomersService();
-if (isset($_POST['delete-customer'])) {
-    $srv->delete($_POST['delete-customer']);
+if (isset($_GET['delete-customer'])) {
+    $srv->delete($_GET['delete-customer']);
 }
 
 $customers = $srv->getAll(true);
@@ -51,8 +51,13 @@ foreach ($customers as $cust) {
 		<td><?php echo $cust->key; ?></td>
 		<td><?php echo $cust->dispName; ?></td>
 		<td class="edition">
-			<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'customer_edit', array('id' => $cust->id)); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
-			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("customer", $cust->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>
+                    <?php \Pasteque\tpl_btn('btn-edition', \Pasteque\get_module_url_action(
+                            PLUGIN_NAME, 'customer_edit', array("id" => $cust->id)), "",
+                            'img/edit.png', \i18n('Edit'), \i18n('Edit'));
+                    ?>
+                    <?php \Pasteque\tpl_btn('btn-delete', \Pasteque\get_current_url() . "&delete-customer=" . $cust->id, "",
+                            'img/delete.png', \i18n('Delete'), \i18n('Delete'), true);
+                    ?>
 		</td>
 	</tr>
 <?php

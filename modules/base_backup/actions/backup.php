@@ -21,7 +21,7 @@
 namespace BaseBackup;
 
 ?><h1><?php \pi18n("Backup", PLUGIN_NAME); ?></h1>
-<div class="hint"><?php \pi18n("Backup_help", PLUGIN_NAME); ?></div><?php
+<div class="hint"><p><?php \pi18n("Backup_help", PLUGIN_NAME); ?></p></div><?php
 
 $user_id        = \Pasteque\get_user_id();
 $dbhost = \Pasteque\get_db_host($user_id);
