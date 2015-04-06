@@ -20,38 +20,52 @@
 
 namespace ProductBarcodes;
 
-const V_MARGIN = 10;
-const H_MARGIN = 4;
-const COL_SIZE = 38.1;
-const ROW_SIZE = 21.2;
-const COL_NUM = 5;
-const ROW_NUM = 13;
-const V_PADDING = 0;
-const H_PADDING = 2.8;
-const BARCODE_WIDTH = 30;
-const BARCODE_HEIGHT = 10;
+if(isset($_POST["format"]))
+    $formatFile = "modules/product_barcodes/print/templates/".$_POST["format"].".php";
+
+if(isset($formatFile) && file_exists($formatFile)) {
+    require_once($formatFile);
+}
+else {
+    // default to agipa 119601, first format implemented
+    Define("PAPER_SIZE","A4");
+    Define("PAPER_ORIENTATION","P");
+    Define("V_MARGIN",6);
+    Define("H_MARGIN",13);
+    Define("COL_SIZE",22);
+    Define("ROW_SIZE",16);
+    Define("COL_NUM",9);
+    Define("ROW_NUM",17);
+    Define("V_PADDING",0);
+    Define("H_PADDING",0);
+    Define("BARCODE_WIDTH",20);
+    Define("BARCODE_HEIGHT",10);
+    Define("TEXT_HEIGHT",3);
+    Define("TEXT_SIZE",8);
+}
 
 require_once(\Pasteque\PT::$ABSPATH . "/lib/barcode-master/php-barcode.php");
 $font = "./lib/barcode-master/NOTTB___.TTF";
 
-$pdf = new \FPDF("P", "mm", "A4");
-$pdf->setMargins(V_MARGIN, H_MARGIN, V_MARGIN);
+$pdf = new \FPDF(PAPER_ORIENTATION, "mm", PAPER_SIZE);
+$pdf->setMargins(H_MARGIN, V_MARGIN);
+$pdf->setAutoPageBreak(false,V_MARGIN);
 $pdf->AddPage();
-$pdf->SetFont('Arial','B',12);
+$pdf->SetFont('Arial','B',TEXT_SIZE);
 
 function pdf_barcode($pdf, $productId, $col, $row) {
     $product = \Pasteque\ProductsService::get($productId);
-    $x = V_MARGIN + $col * COL_SIZE + $col * V_PADDING;
-    $y = H_MARGIN + $row * ROW_SIZE + $row * H_PADDING;
+    $x = H_MARGIN + $col * COL_SIZE + $col * H_PADDING;
+    $y = V_MARGIN + $row * ROW_SIZE + $row * V_PADDING;
     $pdf->SetXY($x, $y);
-    $pdf->Cell(BARCODE_WIDTH, 5, utf8_decode($product->reference), 0, 1, "C");
-    $pdf->SetXY($x, $y + 5);
+    $pdf->Cell(BARCODE_WIDTH, TEXT_HEIGHT, utf8_decode($product->reference), 0, 1, "C");
+    $pdf->SetXY($x, $y + TEXT_HEIGHT);
     $data = \Barcode::fpdf($pdf, "000000",
             $pdf->GetX() + BARCODE_WIDTH / 2, $pdf->GetY() + BARCODE_HEIGHT / 2,
             0, "ean13", array('code' => $product->barcode),
             BARCODE_WIDTH / (15 * 7), BARCODE_HEIGHT);
-    $pdf->SetXY($x, $y + BARCODE_HEIGHT + 5);
-    $pdf->Cell(BARCODE_WIDTH, 5, $product->barcode, 0, 1, "C");
+    $pdf->SetXY($x, $y + BARCODE_HEIGHT + TEXT_HEIGHT);
+    $pdf->Cell(BARCODE_WIDTH, TEXT_HEIGHT, $product->barcode, 0, 1, "C");
 }
 
 $col = 0;
@@ -64,12 +78,12 @@ foreach ($_POST as $key => $value) {
     if (substr($key, 0, 4) == "qty-") {
         $productId = substr($key, 4);
         $qty = $value;
-        for ($i = 0; $i < $qty; $i++) {
+        for ($i = 1; $i <= $qty; $i++) {
             pdf_barcode($pdf, $productId, $col, $row);
             $col++;
             if ($col == COL_NUM) {
                 $row++;
-                if ($row == ROW_NUM) {
+                if ($row == ROW_NUM && $i < $qty) {
                     $pdf->addPage();
                     $row = 0;
                 }

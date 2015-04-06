@@ -20,20 +20,17 @@
 
 namespace Pasteque;
 
-require_once("lib/simplepie_1.3.1.compiled.php");
-?>
+ob_clean();
+$user_id = \Pasteque\get_user_id();
+$dbhost = \Pasteque\get_db_host($user_id);
+$dbuser = \Pasteque\get_db_user($user_id);
+$dbpasswd = \Pasteque\get_db_password($user_id);
+$database = \Pasteque\get_db_name($user_id);
+$dbport = \Pasteque\get_db_port($user_id);
 
-<div class="twitter-feed">
-    <a class="twitter-timeline"  href="https://twitter.com/pastequepos" data-widget-id="584374065407885312">Tweets de @pastequepos</a>
-    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-</div>
 
-<h1><?php \pi18n("Main title"); ?></h1>
-
-<p><?php \pi18n("Introduction"); ?></p>
-
-<h2><?php \pi18n("Download"); ?></h2>
-    <p><?php \pi18n("Download instructions"); ?></p>
-
-<h2><?php \pi18n("Documentation"); ?></h2>
-    <p><?php \pi18n("Documentation instructions"); ?></p>
+header("Content-type: application/x-gzip-compressed");
+header("Content-Disposition: attachment; filename=pasteque-".date(Ymd)."-" . $database . "-.sql.gz");
+$output = fopen("php://output", "rb+");
+$cmd ="mysqldump -u " . $dbuser . " --password=" . $dbpasswd . " " . $database ." --port=" . $dbport . " | gzip -c";
+fputs($output,system($cmd));

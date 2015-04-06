@@ -72,6 +72,13 @@ class Csv {
             $this->line = substr($this->line, 0, -1);
         }
         $this->currentLineNumber++;
+        // Get separator
+        $this->sep = substr($this->line, -1, 1);
+        if (!$this->sep || $this->sep === " " ) {
+            $this->errors[] = \i18n("Separator not defined");
+            $this->close();
+            return false;
+        }
         $finfo = new \finfo(FILEINFO_MIME_ENCODING);
         $info = $finfo->file($this->path);
         $this->sourceEncoding = strtoupper($info);
@@ -89,13 +96,6 @@ class Csv {
                 $this->close();
                 return false;
             }
-        }
-        // Get separator
-        $this->sep = substr($this->line, -1, 1);
-        if (!$this->sep || $this->sep === " " ) {
-            $this->errors[] = \i18n("Separator not defined");
-            $this->close();
-            return false;
         }
         // Get headers (second line)
         $headers = fgetcsv($this->fd, 4048, $this->sep);

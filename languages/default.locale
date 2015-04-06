@@ -10,7 +10,11 @@
 "Update notice": "Click the button below to update your database",
 
 "Main title": "Pastèque, back-office",
-"Introduction": "Clic on the left menu to manage your point of sales",
+"Introduction": "Here is your back-office where you create your products, categories, get your sales statistics etc. Clic on the left menu to manage your point of sales",
+"Download": "Download",
+"Download instructions": "You are on administration of Pastèque. To run the software you have two choices :\n\t<ul>\n\t\t<li><a href=\"http://downloads.pasteque.coop/android/pasteque-android.apk\">Android version</a> for tablets</li>\n\t\t<li><a href=\"http://downloads.pasteque.coop/desktop/pasteque-desktop-installer.jar\">Desktop (Windows, MacOS, Gnu/Linux …) version</a></li>\n\t</ul>",
+"Documentation": "Documentation",
+"Documentation instructions": "There are several documentations sources :\n\t<ul>\n\t\t<li><a href=\"http://en.wikibooks.org/wiki/Past%C3%A8que_%28software%29\">Documentation on wikibooks</a></li>\n\t\t<li><a href=\"http://communaute.pasteque.coop/communaute/forum/\">Community forums</a></li>\n\t\t<li><a href=\"http://redmine.scil.coop\">Bug tracker</a></li>\n\t</ul>",
 
 "Home": "Home",
 
@@ -183,5 +187,7 @@
 "paperin": "Paper",
 "free": "Free",
 "debt": "Debt",
-"prepaid": "Prepaid"
+"prepaid": "Prepaid",
+
+"confirm": "Are you sure you want to do it ?"
 }

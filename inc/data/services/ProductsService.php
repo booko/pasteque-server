@@ -43,6 +43,25 @@ class ProductsService {
                 $dpPrd['DISCOUNTRATE']);
     }
 
+    // Retrieves the number of products
+    static function getTotal($include_hidden = false) {
+        $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
+        $sql = NULL;
+        if ($include_hidden) {
+            $sql = "SELECT COUNT(*) AS TOTAL FROM PRODUCTS LEFT JOIN PRODUCTS_CAT ON "
+                    . "PRODUCTS_CAT.PRODUCT = PRODUCTS.ID "
+                    . "WHERE DELETED = " . $db->false();
+        } else {
+            $sql = "SELECT COUNT(*) AS TOTAL FROM PRODUCTS, PRODUCTS_CAT WHERE "
+                    . "PRODUCTS.ID = PRODUCTS_CAT.PRODUCT AND DELETED = "
+                    . $db->false();
+        }
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
+
     static function getAll($include_hidden = FALSE) {
         $prds = array();
         $pdo = PDOBuilder::getPDO();
@@ -50,13 +69,41 @@ class ProductsService {
         $sql = NULL;
         if ($include_hidden) {
             $sql = "SELECT * FROM PRODUCTS LEFT JOIN PRODUCTS_CAT ON "
-                    . "PRODUCTS_CAT.PRODUCT = PRODUCTS.ID "
-                    . "WHERE DELETED = " . $db->false() . " ORDER BY CATORDER, NAME";
+                    . "PRODUCTS_CAT.PRODUCT = PRODUCTS.ID";
         } else {
             $sql = "SELECT * FROM PRODUCTS, PRODUCTS_CAT WHERE "
                     . "PRODUCTS.ID = PRODUCTS_CAT.PRODUCT AND DELETED = "
-                    . $db->false() . " ORDER BY CATORDER, NAME";
+                    . $db->false();
         }
+        $sql .= " ORDER BY CATORDER, NAME";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        while ($dpPrd = $stmt->fetch()) {
+            $prd = ProductsService::buildDBPrd($dpPrd, $pdo);
+            $prds[] = $prd;
+        }
+        return $prds;
+    }
+
+    static function getRange($range,$start=0,$include_hidden=false) {
+        $prds = array();
+        $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
+        $sql = NULL;
+        if ($include_hidden) {
+            $sql = "SELECT PRODUCTS.*, PRODUCTS_CAT.* FROM PRODUCTS "
+                    . "LEFT JOIN PRODUCTS_CAT ON "
+                    . "PRODUCTS_CAT.PRODUCT = PRODUCTS.ID AND "
+                    . "PRODUCTS.CATEGORY = CATEGORIES.ID";
+        } else {
+            $sql = "SELECT PRODUCTS.*, PRODUCTS_CAT.* FROM PRODUCTS, "
+                    . "PRODUCTS_CAT, CATEGORIES "
+                    . "WHERE PRODUCTS.ID = PRODUCTS_CAT.PRODUCT AND "
+                    . "PRODUCTS.CATEGORY = CATEGORIES.ID AND DELETED = "
+                    . $db->false();
+        }
+        $sql .= " ORDER BY CATEGORIES.DISPORDER, CATEGORY, CATORDER, PRODUCTS.NAME";
+        $sql .= " LIMIT ".$range." OFFSET ".$start;
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
         while ($dpPrd = $stmt->fetch()) {
@@ -140,6 +187,7 @@ class ProductsService {
         }
         return null;
     }
+
 
     static function getImage($id) {
         $pdo = PDOBuilder::getPDO();

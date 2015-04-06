@@ -29,8 +29,25 @@ $resources = $resSrv->getAll();
 ?>
 
 <h1><?php \pi18n("Resources", PLUGIN_NAME); ?></h1>
+<ul class="bt_fonction">
+    <li>
+        <a class="btn btn_add" href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'resource_edit'); ?>">
+            <!-- <img src="<?php echo \Pasteque\get_template_url(); ?>img/btn_add.png" />k--><?php \pi18n("Add a resource", PLUGIN_NAME); ?>
+        </a>
+    </li>
+</ul>
+</div>
+<!-- end bloc titre -->
 
-<p><a class="btn" href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'resource_edit'); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/btn_add.png" /><?php \pi18n("Add a resource", PLUGIN_NAME); ?></a></p>
+<!-- start container scroll -->
+<div class="container_scroll">
+            
+            	<div class="stick_row stickem-container">
+                    
+                    <!-- start colonne contenu -->
+                    <div id="content_liste" class="grid_9">
+                    
+                        <div class="blc_content">
 
 <table cellpadding="0" cellspacing="0">
 	<thead>

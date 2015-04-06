@@ -51,6 +51,9 @@ if (!is_user_logged_in()) {
         case "report":
             require_once(PT::$ABSPATH . "/report.php");
             break;
+        case "backup":
+            require_once(PT::$ABSPATH . "/backup.php");
+            break;
         case "print":
             require_once(PT::$ABSPATH . "/print.php");
             break;
@@ -63,5 +66,5 @@ if (!is_user_logged_in()) {
         }
     } else {
         index_run();
-    }    
+    }
 }

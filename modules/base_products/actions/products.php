@@ -24,15 +24,40 @@ namespace BaseProducts;
 
 $message = null;
 $error = null;
-if (isset($_POST['delete-product'])) {
-    if (\Pasteque\ProductsService::delete($_POST['delete-product'])) {
+if (isset($_GET['delete-product'])) {
+    if (\Pasteque\ProductsService::delete($_GET['delete-product'])) {
         $message = \i18n("Changes saved") ;
     } else {
         $message = "Le produit a été placé en archive (car déjà vendu ou en stock)";
     }
 }
 
-$products = \Pasteque\ProductsService::getAll(true);
+if(!isset($_GET["start"])) {
+    $start = 0;
+}
+else {
+    $start = $_GET["start"];
+}
+if(!isset($_GET["range"])) {
+    $range = 50;
+}
+else {
+    $range = $_GET["range"];
+}
+if(!isset($_GET["hidden"])) {
+    $hidden = false;
+}
+else {
+    $hidden = $_GET["hidden"];
+}
+
+if($range == "all") {
+    $products = \Pasteque\ProductsService::getAll($hidden);
+}
+else {
+    $products = \Pasteque\ProductsService::getRange($range,$start,$hidden);
+}
+$totalProducts = \Pasteque\ProductsService::getTotal($hidden);
 $categories = \Pasteque\CategoriesService::getAll();
 $prdCat = array();
 $archivesCat = array();
@@ -48,16 +73,18 @@ foreach ($products as $product) {
 <?php \Pasteque\tpl_msg_box($message, $error); ?>
 
 
-<?php \Pasteque\tpl_btn('btn', \Pasteque\get_module_url_action(PLUGIN_NAME, "product_edit"),
+<?php \Pasteque\tpl_btn('btn-add', \Pasteque\get_module_url_action(PLUGIN_NAME, "product_edit"),
         \i18n('Add a product', PLUGIN_NAME), 'img/btn_add.png');?>
-<?php \Pasteque\tpl_btn('btn', \Pasteque\get_module_url_action(PLUGIN_NAME, "productsManagement"),
+<?php \Pasteque\tpl_btn('btn-import', \Pasteque\get_module_url_action(PLUGIN_NAME, "productsManagement"),
         \i18n('Import products', PLUGIN_NAME), 'img/btn_add.png');?>
-<?php \Pasteque\tpl_btn('btn bt_export ', \Pasteque\get_report_url(PLUGIN_NAME, "products_export"),
+<?php \Pasteque\tpl_btn('btn-export ', \Pasteque\get_report_url(PLUGIN_NAME, "products_export"),
         \i18n('Export products', PLUGIN_NAME), 'img/btn_add.png');?>
 
-<p><?php \pi18n("%d products", PLUGIN_NAME, count($products)); ?></p>
+<p><?php \pi18n("%d products", PLUGIN_NAME, $totalProducts); ?></p>
 
 <h2><?php \pi18n("Catalog", PLUGIN_NAME); ?></h2>
+
+<?php \Pasteque\tpl_pagination($totalProducts,$range,$start); ?>
 
 <?php
 $par = false;
@@ -90,11 +117,13 @@ foreach ($categories as $category) {
 		<td><?php echo $product->reference; ?></td>
 		<td><?php echo $product->label; ?></td>
 		<td class="edition">
-            <?php \Pasteque\tpl_btn('edition', \Pasteque\get_module_url_action(
+            <?php \Pasteque\tpl_btn('btn-edition', \Pasteque\get_module_url_action(
                     PLUGIN_NAME, 'product_edit', array("id" => $product->id)), "",
                     'img/edit.png', \i18n('Edit'), \i18n('Edit'));
             ?>
-			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("product", $product->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>
+            <?php \Pasteque\tpl_btn('btn-delete', \Pasteque\get_current_url() . "&delete-product=" . $product->id, "",
+                    'img/delete.png', \i18n('Delete'), \i18n('Delete'), true);
+            ?>
 		</td>
 	</tr>
 <?php
