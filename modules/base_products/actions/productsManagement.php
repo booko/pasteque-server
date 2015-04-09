@@ -131,39 +131,41 @@ function validateLine(&$tab, $line)
     $fieldsToCheck = array('barcode', 'price_buy', 'scaled', 'sellVat',
         'discount_enabled');
     foreach($fieldsToCheck as $field) {
-        try {
-            switch ($field) {
-                //parsing & validation of EAN
-                case 'barcode':
-                    $barcode = \Pasteque\Parsing\parseEAN($tab[$field]);
-                    if (\Pasteque\Validation\validateEAN($barcode)) {
-                        $tab[$field] = $barcode;
-                    }
+        if (trim($tab[$field]) != '') {
+            try {
+                switch ($field) {
+                    //parsing & validation of EAN
+                    case 'barcode':
+                        $barcode = \Pasteque\Parsing\parseEAN($tab[$field]);
+                        if (\Pasteque\Validation\validateEAN($barcode)) {
+                            $tab[$field] = $barcode;
+                        }
+                        break;
+                    //parsing & validation of price
+                    case 'price_buy':
+                    case 'sellVat':
+                        $price = \Pasteque\Parsing\parsePrice($tab[$field]);
+                        if (\Pasteque\Validation\validatePrice($price)) {
+                            $tab[$field] = $price;
+                        }
+                        break;
+                    case 'scaled':
+                    case 'discount_enabled':
+                        $boolean = \Pasteque\Parsing\parseBoolean($tab[$field]);
+                        if (\Pasteque\Validation\validateBoolean($boolean)) {
+                            $tab[$field] = $boolean;
+                        }
                     break;
-                //parsing & validation of price
-                case 'price_buy':
-                case 'sellVat':
-                    $price = \Pasteque\Parsing\parsePrice($tab[$field]);
-                    if (\Pasteque\Validation\validatePrice($price)) {
-                        $tab[$field] = $price;
-                    }
-                    break;
-                case 'scaled':
-                case 'discount_enabled':
-                    $boolean = \Pasteque\Parsing\parseBoolean($tab[$field]);
-                    if (\Pasteque\Validation\validateBoolean($boolean)) {
-                        $tab[$field] = $boolean;
-                    }
-                break;
-                default:
-                    continue;
+                    default:
+                        continue;
+                }
+            } catch (\Pasteque\Parsing\ParsingException $ex) {
+                $error_mess[] = \i18n("On line %d ", PLUGIN_NAME, $line).": ".
+                        $ex->getI18nMessage();
+            } catch (\Pasteque\Validation\ValidationException $ex) {
+                $error_mess[] = \i18n("On line %d ", PLUGIN_NAME, $line).": ".
+                        $ex->getI18nMessage();
             }
-        } catch (\Pasteque\Parsing\ParsingException $ex) {
-            $error_mess[] = \i18n("On line %d ", PLUGIN_NAME, $line).": ".
-                    $ex->getI18nMessage();
-        } catch (\Pasteque\Validation\ValidationException $ex) {
-            $error_mess[] = \i18n("On line %d ", PLUGIN_NAME, $line).": ".
-                    $ex->getI18nMessage();
         }
         
     }
