@@ -31,5 +31,14 @@
 "Stock check": "Contrôle du stock",
 "Counted stock": "Stock compté",
 "Actual stock": "Stock actuel",
-"Difference": "Différence"
+"Difference": "Différence",
+
+"The product with reference '%s' does not exists at line %d":"Le produit ayant pour référence '%s' n'existe pas dans la base de donnée (ligne %d)",
+"%d line(s) inserted, %d line(s) modified, %d error(s)":"%d lignes insérée(s), %d lignes modifiée(s), %d erreur(s)",
+"Line %d ignored because QuantityMin and QuantityMax are empty":"Ligne %d ignorée parce que la quantité maximum et minimum sont vides",
+"Line %d: QuantityMin is not numeric":"Ligne %d: le champ quantité minimum n'est pas pas numérique",
+"Line %d: QuantityMax is not numeric":"Ligne %d: le champs quantité maxium n'est pas numérique",
+"Line %d: QuantityMin must be lower than QuantityMax":"Ligne %d: le champ quantité minimum doit être plus petit que la quantité maximum",
+"Import alerts from csv file":"Importer les niveaux d'alertes par fichier CSV",
+"File":"Fichier"
 }

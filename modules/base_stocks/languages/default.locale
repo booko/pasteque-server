@@ -31,5 +31,14 @@
 "Stock check": "Stock check",
 "Counted stock": "Counted stock",
 "Actual stock": "Actual stock",
-"Difference": "Difference"
+"Difference": "Difference",
+
+"The product with reference '%s' does not exists at line %d":"The product with reference '%s' does not exists at line %d",
+"%d line(s) inserted, %d line(s) modified, %d error(s)":"%d line(s) inserted, %d line(s) modified, %d error(s)",
+"Line %d ignored because QuantityMin and QuantityMax are empty":"Line %d ignored because QuantityMin and QuantityMax are empty",
+"Line %d: QuantityMin is not numeric":"Line %d: QuantityMin is not numeric",
+"Line %d: QuantityMax is not numeric":"Line %d: QuantityMax is not numeric",
+"Line %d: QuantityMin must be lower than QuantityMax":"Line %d: QuantityMin must be lower than QuantityMax",
+"Import alerts from csv file":"Import alerts from csv file"
+
 }
