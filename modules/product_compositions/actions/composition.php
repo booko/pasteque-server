@@ -21,6 +21,14 @@ $compositions = \Pasteque\CompositionsService::getAll();
         \i18n('Add composition', PLUGIN_NAME), 'img/btn_add.png');?>
 
 
+<?php
+if (count($compositions) == 0) {
+?>
+<div class="alert"><?php \pi18n("No category found", PLUGIN_NAME); ?></div>
+<?php
+}
+else {
+?>
 <p><?php \pi18n("%d compositions", PLUGIN_NAME, count($compositions)); ?></p>
 
 <table cellpadding="0" cellspacing="0">
@@ -32,36 +40,30 @@ $compositions = \Pasteque\CompositionsService::getAll();
 		</tr>
 	</thead>
 	<tbody>
-<?php
-$par = FALSE;
-foreach ($compositions as $composition) {
-$par = !$par;
-if ($composition->hasImage) {
-    $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=product&id=" . $composition->id;
-} else {
-    $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=product";
-}
-?>
-	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
-		<td><img class="thumbnail" src="?<?php echo $imgSrc ?>" />
-		<td><?php echo $composition->label; ?></td>
-		<td class="edition">
-            <?php \Pasteque\tpl_btn("edition", \Pasteque\get_module_url_action(PLUGIN_NAME,
-                    'composition_edit', array("productId" => $composition->id)), "",
-                    'img/edit.png', \i18n('Edit'), \i18n('Edit'));
-            ?>
-			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("comp", $composition->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>
-		</td>
-	</tr>
-<?php
-}
-?>
 	</tbody>
 </table>
 <?php
-if (count($compositions) == 0) {
-?>
-<div class="alert"><?php \pi18n("No category found", PLUGIN_NAME); ?></div>
-<?php
+    $par = FALSE;
+    foreach ($compositions as $composition) {
+    $par = !$par;
+    if ($composition->hasImage) {
+        $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=product&id=" . $composition->id;
+    } else {
+        $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=product";
+    }
+    ?>
+            <tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
+                    <td><img class="thumbnail" src="?<?php echo $imgSrc ?>" />
+                    <td><?php echo $composition->label; ?></td>
+                    <td class="edition">
+                <?php \Pasteque\tpl_btn("edition", \Pasteque\get_module_url_action(PLUGIN_NAME,
+                        'composition_edit', array("productId" => $composition->id)), "",
+                        'img/edit.png', \i18n('Edit'), \i18n('Edit'));
+                ?>
+                            <form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("comp", $composition->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>
+                    </td>
+            </tr>
+    <?php
+    }
 }
 ?>

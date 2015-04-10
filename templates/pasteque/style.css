@@ -126,33 +126,26 @@ div.pagination a.current_page {
     color: #ff6500;
 }
 
-.btn {
+.btn, .btn-send, .btn-edition, .btn-delete, .btn-import, .btn-export {
         font-family: Titillium;
         font-weight: bold;
 	text-align: center;
 	background-color: #21435C;
 	color: #DDD;
-	border-width: 1px;
-	border-style: solid;
-	border-color: #DDD;
+	border: solid 1px #333;
 	text-decoration: none;
-	padding: 10px;
+	padding: 5px 10px;
 	margin: 5px;
 }
 .btn-send {
 	background-color: #D6B66F;
-        border: solid 1px #333;
 	color: #333;
 }
 .btn-edition {
 	background-color: #21435C;
-	border: solid 1px #333;
-	color: #DDD;
 }
 .btn-delete {
 	background-color: #4F4C4D;
-	border: solid 1px #333;
-	color: #DDD;
 }
 .btn-import, .btn-export {
         background-color: #333;
@@ -234,7 +227,6 @@ h1, h2, h3, h4 {
 h1 {
 	padding: 25px 20px 5px 10px;
 	font-size: 200%;
-	margin: 0px;
 }
 h2 { font-size: 150%; }
 
