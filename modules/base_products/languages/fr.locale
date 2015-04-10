@@ -25,6 +25,7 @@
 
 "Providers": "Fournisseurs",
 "Edit a provider": "Éditer un fournisseur",
+"Export Providers":"Exporter les fournisseurs",
 "Import providers": "Importer des fournisseurs",
 "Import providers from csv file": "Importer des fournisseurs depuis un fichier CSV",
 "Add a provider": "Ajouter un fournisseur",

@@ -47,6 +47,8 @@ $providers = \Pasteque\providersService::getAll();
         \i18n('Add a provider', PLUGIN_NAME), 'img/btn_add.png');?></li>
             <li><?php \Pasteque\tpl_btn('btn', \Pasteque\get_module_url_action(PLUGIN_NAME, "providersManagement"),
         \i18n('Import providers', PLUGIN_NAME), 'img/btn_add.png');?></li>
+            <li><?php \Pasteque\tpl_btn('btn bt_export ', \Pasteque\get_report_url(PLUGIN_NAME, "providers_export"),
+            \i18n('Export Providers', PLUGIN_NAME), 'img/btn_add.png');?></li>
     </ul>
 </div>
 

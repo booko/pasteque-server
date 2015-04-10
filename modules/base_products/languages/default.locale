@@ -25,6 +25,7 @@
 
 "Providers": "Providers",
 "Edit a provider": "Edit a provider",
+"Export Providers":"Export Providers",
 "Import providers": "Import providers",
 "Import providers from csv file": "Import providers from csv file",
 "Add a provider": "Add a provider",
