@@ -47,6 +47,8 @@ $categories = \Pasteque\CategoriesService::getAll();
             \i18n('Add a category', PLUGIN_NAME), 'img/btn_add.png');?></li>
             <li><?php \Pasteque\tpl_btn('btn bt_import', \Pasteque\get_module_url_action(PLUGIN_NAME, "categoriesManagement"),
             \i18n('Import categories', PLUGIN_NAME), 'img/btn_add.png');?></li>
+            <li><?php \Pasteque\tpl_btn('btn bt_export ', \Pasteque\get_report_url(PLUGIN_NAME, "categories_export"),
+            \i18n('Export categories', PLUGIN_NAME), 'img/btn_add.png');?></li>
     </ul>
 </div>
 
