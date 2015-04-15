@@ -413,7 +413,7 @@ function __tpl_pagination_url($offset,$start=0) {
 }
 
 function tpl_pagination($total,$offset,$start=0) {
-    if($offset>=$pagination) {
+    if($offset>=$total) {
         return;
     }
     echo "<div class=\"pagination\">";
