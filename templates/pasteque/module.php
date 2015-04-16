@@ -402,35 +402,35 @@ function tpl_chart($chart) {
     __tpl_chart($chart->getHeaders(),$chart->getDatasets());
 }
 
-function __tpl_pagination_url($offset,$start=0) {
+function __tpl_pagination_url($range,$start=0) {
     $url = \Pasteque\get_current_url();
     $url = preg_replace("/start=(\d+)/","start=".$start,$url);
-    $url = preg_replace("/offset=(\d+)/","offset=".$offset,$url);
+    $url = preg_replace("/offset=(\d+)/","range=".$range,$url);
     if($url == \Pasteque\get_current_url()) {
-        $url .= "&start=".$start."&offset=".$offset;
+        $url .= "&start=".$start."&range=".$range;
     }
     return $url;
 }
 
-function tpl_pagination($total,$offset,$start=0) {
-    if($offset>=$total) {
+function tpl_pagination($total,$range,$start=0) {
+    if($range>=$total) {
         return;
     }
     echo "<div class=\"pagination\">";
     if(isset($_GET["start"]) && $_GET["start"] != 0) {
-        $url = __tpl_pagination_url($offset,$_GET["start"]-$offset);
+        $url = __tpl_pagination_url($range,$_GET["start"]-$range);
         echo "<a class=\"prev_page\" href=\"".$url."\">«</a>";
     }
-    for($i=0;$i<ceil($total/$offset);$i++) {
+    for($i=0;$i<ceil($total/$range);$i++) {
         echo "<a";
-        if($i*$offset == $_GET["start"]) {
+        if($i*$range== $_GET["start"]) {
             echo " class=\"current_page\"";
         }
-        $url = __tpl_pagination_url($offset,$i*$offset);
+        $url = __tpl_pagination_url($range,$i*$range);
         echo " href=\"".$url."\">".$i."</a>";
     }
-    if(isset($_GET["start"]) && $_GET["start"] < ($total-$offset)) {
-        $url = __tpl_pagination_url($offset,$_GET["start"]+$offset);
+    if(isset($_GET["start"]) && $_GET["start"] < ($total-$range)) {
+        $url = __tpl_pagination_url($range,$_GET["start"]+$range);
         echo "<a class=\"next_page\" href=\"".$url."\">»</a>";
     }
     echo "</div>\n";
