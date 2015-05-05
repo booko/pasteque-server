@@ -149,6 +149,7 @@ if (isset($_GET['id'])) {
 
 <ul class="bt_fonction">
 	<li><a class="bt_add transition" href="<?php echo \Pasteque\get_report_url(PLUGIN_NAME, 'customers_diary', 'display'); ?>&id=<?php echo $cust->id; ?>"><?php \pi18n("Customer's diary", PLUGIN_NAME); ?></a></li>
+        <li><a class="btn" href="<?php echo \Pasteque\get_report_url(PLUGIN_NAME, 'customers_prepaid_diary', 'display'); ?>&id=<?php echo $cust->id; ?>"><?php \pi18n("Customer's prepaid diary", PLUGIN_NAME); ?></a></li>
 </ul>
 
 <?php } ?>
@@ -158,12 +159,9 @@ if (isset($_GET['id'])) {
 
 <!-- start container scroll -->
 <div class="container_scroll">
-            
             	<div class="stick_row stickem-container">
-                    
                     <!-- start colonne contenu -->
                     <div id="content_liste" class="grid_9">
-                    
                         <div class="blc_content">
 
 

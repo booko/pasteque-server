@@ -136,6 +136,11 @@ class Report implements ReportInterface {
                 "type" => $type);
     }
 
+    public function addHiddenInput($param, $label, $type) {
+        $this->params[] = array("param" => $param, "label" => $label,
+                "type" => $type);
+    }
+
     public function setDefaultInput($param, $value) {
         foreach ($this->params as $i => $defParam) {
             if ($defParam['param'] == $param) {

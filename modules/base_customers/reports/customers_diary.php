@@ -23,9 +23,14 @@ namespace BaseCustomers;
 $sql = "SELECT RECEIPTS.DATENEW, TICKETS.TICKETID, "
         . "PRODUCTS.NAME AS PNAME, TICKETS.TICKETTYPE, "
         . "SUM(TICKETLINES.UNITS) AS UNITS, "
-        . "SUM(TICKETLINES.UNITS * TICKETLINES.PRICE) AS TOTAL "
+        . "ROUND(SUM(TICKETLINES.UNITS * TICKETLINES.PRICE),2) AS SUBTOTAL, "
+        . "ROUND(SUM(TICKETLINES.UNITS * TICKETLINES.PRICE)*(1+TAXES.RATE),2) AS TOTAL, "
+        . "ROUND(SUM(TICKETLINES.UNITS * TICKETLINES.PRICE)*(TAXES.RATE),2) AS TAXESTOTAL, "
+        . "TAXCATEGORIES.NAME AS TAXNAME "
         . "FROM RECEIPTS, CUSTOMERS, TICKETS, TICKETLINES "
         . "LEFT OUTER JOIN PRODUCTS ON TICKETLINES.PRODUCT = PRODUCTS.ID "
+        . "LEFT JOIN TAXCATEGORIES ON TICKETLINES.TAXID = TAXCATEGORIES.ID "
+        . "LEFT JOIN TAXES ON TAXCATEGORIES.ID = TAXES.CATEGORY "
         . "WHERE CUSTOMERS.ID = TICKETS.CUSTOMER "
         . "AND TICKETLINES.PRODUCT = PRODUCTS.ID AND RECEIPTS.ID = TICKETS.ID "
         . "AND TICKETS.ID = TICKETLINES.TICKET "
@@ -34,22 +39,26 @@ $sql = "SELECT RECEIPTS.DATENEW, TICKETS.TICKETID, "
         . "GROUP BY RECEIPTS.DATENEW, TICKETS.TICKETID, PRODUCTS.NAME, "
         . "TICKETS.TICKETTYPE "
         . "ORDER BY PRODUCTS.NAME, RECEIPTS.DATENEW";
-$fields = array("PNAME", "DATENEW", "TICKETID", "UNITS", "TOTAL");
+
+$fields = array("PNAME", "DATENEW", "TICKETID", "UNITS", "SUBTOTAL","TAXNAME","TAXESTOTAL","TOTAL");
 $headers = array(\i18n("Product.label"), \i18n("Date"), \i18n("Ticket number"),
-        \i18n("Quantity"), \i18n("Subtotal"));
+        \i18n("Quantity"), \i18n("Subtotal"), \i18n("TaxRate"),
+        \i18n("TaxTotal"), \i18n("Total"));
 
 $report = new \Pasteque\Report(PLUGIN_NAME, "customers_diary",
-        \pi18n("Customer's diary", PLUGIN_NAME),
+        \i18n("Customer's diary", PLUGIN_NAME),
         $sql, $headers, $fields);
 
 $report->addInput("start", \i18n("Session.openDate"), \Pasteque\DB::DATE);
 $report->setDefaultInput("start", time() - 604800);
 $report->addInput("stop", \i18n("Session.closeDate"), \Pasteque\DB::DATE);
 $report->setDefaultInput("stop", time());
-$report->addInput("id", "", null);
+$report->addInput("id", "", "hidden");
 
 $report->addFilter("DATENEW", "\Pasteque\stdtimefstr");
 $report->addFilter("DATENEW", "\i18nDatetime");
+$report->addFilter("SUBTOTAL", "\i18nCurr");
+$report->addFilter("TAXESTOTAL", "\i18nCurr");
 $report->addFilter("TOTAL", "\i18nCurr");
 
 \Pasteque\register_report($report);

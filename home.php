@@ -20,6 +20,7 @@
 
 namespace Pasteque;
 
+require_once("lib/simplepie_1.3.1.compiled.php");
 ?>
 <div class="blc_ti"><h1><?php \pi18n("Main title"); ?></h1></div>
 

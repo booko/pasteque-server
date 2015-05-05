@@ -8,7 +8,6 @@ Floor = function(id, label, state) {
     this.label = label;
     this.places = new Array();
     this.status = state;
-    
 }
 Floor.prototype.addPlace = function(place) {
     this.places.push(place);
@@ -125,7 +124,7 @@ function updateFloor() {
 
 function newPlace() {
     var floor = getCurrentFloor();
-    var place = new Place(tmpId--, newPlaceLabel, 60, 50, NEW);
+    var place = new Place(tmpId--, newPlaceLabel, 50, 50, NEW);
     floor.addPlace(place);
     showPlace(place);
 }
@@ -138,10 +137,8 @@ function updatePlacePos() {
     var div = jQuery("#place-" + selectedPlace.id);
     offset = div.offset();
     osf = jQuery("#floorDiv").offset();
-    var width = div.width() / 2 - 1;
-    var height = div.height() / 2 - 1;
-    var x = offset.left - osf.left + width;
-    var y = offset.top - osf.top + height;
+    var x = offset.left - osf.left - 1;
+    var y = offset.top - osf.top - 1;
     selectedPlace.x = x;
     selectedPlace.y = y;
 }
@@ -187,13 +184,14 @@ function showPlace(place) {
 
     jQuery("#floorDiv").append(placeToAdd);
     var divPlace = jQuery("#place-" + place.id);
-    var posX = place.x - divPlace.width() / 2 - 1;
-    var posY = place.y - divPlace.height() / 2 - 1;
-    divPlace.css({"left": posX + "px", "top": posY + "px"});
+    var posX = Math.round(place.x/10)*10;
+    var posY = Math.round(place.y/10)*10;
+    // 78px ? yes, plus 2x1px border
+    divPlace.css({"left": posX + "px", "top": posY + "px", "min-width": "78px", "text-align": "center"});
     var scope = place;
     divPlace.mousedown(function() {selectPlace(scope.id); });
     divPlace.click(function() {updatePlacePos();})
-            .draggable({ 'containment': '#floorDiv' })
+            .draggable({ containment: '#floorDiv', grid: [ 10, 10 ] })
             .css({'left' : posX + 'px', 'top': posY + 'px'});
     selectPlace(null);
 }

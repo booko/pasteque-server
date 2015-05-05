@@ -14,6 +14,7 @@
 "Add a tax category": "Ajouter une catégorie",
 "Edit a customer tax": "Édition d'une catégorie de taxe client",
 "Customer's diary": "Historique client",
+"Customer's prepaid diary": "Historique pré-payé client",
 "Customer saved. <a href=\"%s\">Go to the customer page</a>.": "Client enregistré. <a href=\"%s\">Aller à la page du client</a>.",
 "Tax saved. <a href=\"%s\">Go to the tax page</a>.": "Taxe enregistrée. <a href=\"%s\">Aller à la page de la taxe</a>."
 }

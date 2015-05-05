@@ -55,6 +55,7 @@
 "On line %d ":"À la ligne %d",
 
 "Import products": "Importer des produits",
+"Export products": "Exporter des produits",
 "Import products from csv file": "Importer des produits à partir d'un fichier csv",
 "Export products": "Exporter les produits",
 "On line %d: Cannot create product: '%s'": "À la ligne %d: Impossible de créer le produit: '%s'",
