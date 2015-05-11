@@ -45,7 +45,7 @@ else {
     $range = $_GET["range"];
 }
 if(!isset($_GET["hidden"])) {
-    $hidden = false;
+    $hidden = true;
 }
 else {
     $hidden = $_GET["hidden"];
