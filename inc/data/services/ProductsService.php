@@ -92,7 +92,8 @@ class ProductsService {
         if ($include_hidden) {
             $sql = "SELECT PRODUCTS.*, PRODUCTS_CAT.* FROM CATEGORIES, PRODUCTS  "
                     . "LEFT JOIN PRODUCTS_CAT ON "
-                    . "PRODUCTS_CAT.PRODUCT = PRODUCTS.ID";
+                    . "PRODUCTS_CAT.PRODUCT = PRODUCTS.ID "
+                    . "WHERE 1=1";
         } else {
             $sql = "SELECT PRODUCTS.*, PRODUCTS_CAT.* FROM CATEGORIES, PRODUCTS  "
                     . "LEFT JOIN PRODUCTS_CAT ON "
@@ -100,7 +101,7 @@ class ProductsService {
                     . "WHERE DELETED = " . $db->false();
         }
         $sql .= " AND PRODUCTS.CATEGORY = CATEGORIES.ID ";
-        $sql .= " ORDER BY CATEGORIES.DISPORDER, CATEGORY, CATORDER, PRODUCTS.NAME";
+        $sql .= " ORDER BY DELETED ASC, CATEGORIES.DISPORDER, CATEGORY, CATORDER, PRODUCTS.NAME";
         $sql .= " LIMIT ".$range." OFFSET ".$start;
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
