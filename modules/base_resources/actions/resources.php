@@ -32,6 +32,7 @@ $resources = $resSrv->getAll();
 <div class="blc_ti">
 
 <h1><?php \pi18n("Resources", PLUGIN_NAME); ?></h1>
+<span class="nb_article"><?php \pi18n("%d resources", PLUGIN_NAME, count($resources)); ?></span>
 <ul class="bt_fonction">
     <li>
         <a class="btn bt_add" href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'resource_edit'); ?>">
@@ -42,12 +43,17 @@ $resources = $resSrv->getAll();
 </div>
 <!-- end bloc titre -->
 
-<?php \Pasteque\tpl_btn('btn-add', \Pasteque\get_module_url_action(PLUGIN_NAME, "resource_edit"),
-        \i18n('Add a resource', PLUGIN_NAME), 'img/btn_add.png');?>
+<div class="container_scroll">
+            
+            	<div class="stick_row stickem-container">
+                    
+                    <!-- start colonne contenu -->
+                    <div id="content_liste" class="grid_9">
+                    
+                        <div class="blc_content">
 
 <?php \Pasteque\tpl_msg_box($message, $error); ?>
 
-<p><?php \pi18n("%d resources", PLUGIN_NAME, count($resources)); ?></p>
 
 <table cellpadding="0" cellspacing="0">
 	<thead>
@@ -65,8 +71,7 @@ foreach ($resources as $res) {
 	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
 		<td><?php echo $res->label; ?></td>
 		<td class="edition">
-                    <?php \Pasteque\tpl_btn('btn-edition', \Pasteque\get_module_url_action(
-                            PLUGIN_NAME, 'resource_edit', array("id" => $res->id)), "",
+                    <?php \Pasteque\tpl_btn('btn-edition', \Pasteque\get_module_url_action(PLUGIN_NAME, 'resource_edit', array("id" => $res->id)), "",
                             'img/edit.png', \i18n('Edit'), \i18n('Edit'));
                     ?>
                     <?php \Pasteque\tpl_btn('btn-delete', \Pasteque\get_current_url() . "&delete-resource=" . $res->id, "",

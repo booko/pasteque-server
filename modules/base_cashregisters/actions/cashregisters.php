@@ -38,6 +38,7 @@ $cashRegs = $srv->getAll();
 <!-- start bloc titre -->
 <div class="blc_ti">
 <h1><?php \pi18n("Cash registers", PLUGIN_NAME); ?></h1>
+<span class="nb_article"><?php \pi18n("%d cash registers", PLUGIN_NAME, count($cashRegs)); ?></span>
 
 
 <ul class="bt_fonction">
@@ -63,7 +64,6 @@ $cashRegs = $srv->getAll();
 <?php \Pasteque\tpl_msg_box($message, $error); ?>
 
 
-<p><?php \pi18n("%d cash registers", PLUGIN_NAME, count($cashRegs)); ?></p>
 
 <table cellpadding="0" cellspacing="0">
 	<thead>

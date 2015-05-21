@@ -31,6 +31,7 @@ $roles = $srv->getAll();
 <!-- start bloc titre -->
 <div class="blc_ti">
 <h1><?php \pi18n("Users", PLUGIN_NAME); ?></h1>
+<span class="nb_article"><?php \pi18n("%d roles", PLUGIN_NAME, count($roles)); ?></span>
 
 <ul class="bt_fonction">
 	<li><a class="btn bt_add" href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'role_edit'); ?>"><?php \pi18n("Add a role", PLUGIN_NAME); ?></a>
@@ -52,7 +53,6 @@ $roles = $srv->getAll();
 
 <?php \Pasteque\tpl_msg_box($message, $error); ?>
 
-<p><?php \pi18n("%d roles", PLUGIN_NAME, count($roles)); ?></p>
 
 <table cellspacing="0" cellpadding="0">
 	<thead>

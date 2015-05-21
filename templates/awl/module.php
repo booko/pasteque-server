@@ -600,8 +600,20 @@ function tpl_pagination($total,$offset,$start=0) {
     echo "</div>\n";
 }
 
-function tpl_btn($class, $href, $label, $image_btn, $alt = NULL, $title = NULL) {
-    $btn = '<a class="bt_fonction transition ' . $class . '" href="' . $href . '">'.
+function tpl_btn($class, $href, $label, $image_btn, $alt = NULL, $title = NULL, $confirm = false) {
+    $btn = '<a class="bt_fonction transition ' . $class . '" href="' . $href . '"';
+    if($confirm) {
+             $btn .= " onclick=\"return confirm('" . \i18n('confirm') ."');return false;\"";
+    }
+    $btn .= ">";
+    $btn .= "<img src=\"" .\Pasteque\get_template_url() . "" . $image_btn . "\"";
+    if (isset($alt)) {
+         $btn .= " alt =\"" . $alt . "\"";
+    }
+    if (isset($title)) {
+        $btn .= " title =\"" . $title . "\"";
+    }
+    $btn .= "/>";
     $btn .= $label . "</a>";
     echo $btn;
 }

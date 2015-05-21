@@ -39,7 +39,6 @@ $taxes = \Pasteque\TaxesService::getAll();
 <div class="blc_ti">
 <h1><?php \pi18n("Taxes", PLUGIN_NAME); ?></h1>
 
-<p><a class="btn" href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'tax_edit'); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/btn_add.png" /><?php \pi18n("Add a tax", PLUGIN_NAME); ?></a></p>
 
 <?php \Pasteque\tpl_msg_box($message, $error); ?>
 

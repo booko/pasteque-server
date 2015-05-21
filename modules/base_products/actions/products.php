@@ -225,27 +225,15 @@ if (count($products) == 0) {
                                     <?php
                                     $par = false;
                                     $archive = false;
+                                    $categories = \Pasteque\CategoriesService::getAll();
                                     foreach ($categories as $category) {
-                                        if (isset($prdCat[$category->id])) { 
                                             $anchor = \Pasteque\esc_html($category->label);
                                             $anchor = str_replace(' ','',$anchor);
                                     ?>
                                     	<li><a href="#<?php echo $anchor; ?>" class="scroll"><?php echo \Pasteque\esc_html($category->label); ?></a></li>
                                     <?php
-                                        }
                                     }
-                                    if ($archive) {
-                                    foreach ($categories as $category) {
-                                        if (isset($archivesCat[$category->id])) {
-											
-										$anchor = \Pasteque\esc_html($category->label);
-										$anchor = str_replace(' ','',$anchor);
                                     ?>
-                                    	<li><a href="#<?php echo $anchor; ?>" class="scroll"><?php echo \Pasteque\esc_html($category->label); ?></a></li>
-                                    <?php
-                                        }
-                                    }
-                                    } // archive end ?>
                                      </ul>
                                 </li>
                             </ul>
