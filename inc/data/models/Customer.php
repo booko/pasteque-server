@@ -98,6 +98,9 @@ class Customer {
         $this->region = $region;
         $this->country = $country;
         $this->note = $note;
+        if($visible == "") {
+            $visible = 1;
+        }
         $this->visible = $visible;
         $this->expireDate = $expireDate;
     }

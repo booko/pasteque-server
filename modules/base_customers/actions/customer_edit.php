@@ -71,7 +71,6 @@ if (isset($_POST['id']) && isset($_POST['dispName'])) {
     if (isset($_POST['debtDate']) && $_POST['debtDate'] != "") {
         $debtDate = $_POST['debtDate'];
         $debtDate = \i18nRevDateTime($debtDate);
-        $debtDate = \Pasteque\stdstrftime($debtDate);
     }
     $prepaid = 0.0;
     if ($_POST['prepaid'] != "") {
@@ -81,7 +80,6 @@ if (isset($_POST['id']) && isset($_POST['dispName'])) {
     if (isset($_POST['expireDate']) && $_POST['expireDate'] !== "") {
         $expireDate = $_POST['expireDate'];
         $expireDate = \i18nRevDate($expireDate);
-        $expireDate = \Pasteque\stdstrftime($expireDate);
     }
     $cust = \Pasteque\Customer::__build($_POST['id'], $number, $key,
             $_POST['dispName'], $_POST['card'], $taxCatId, $discountProfileId,
@@ -133,7 +131,6 @@ if (isset($_POST['id']) && isset($_POST['dispName'])) {
     if (isset($_POST['expireDate']) && $_POST['expireDate'] != "") {
         $expireDate = $_POST['expireDate'];
         $expireDate = \i18nRevDate($expireDate);
-        $expireDate = \Pasteque\stdstrftime($expireDate);
     }
     $cust = new \Pasteque\Customer($number, $key,
             $_POST['dispName'], $_POST['card'], $taxCatId, $discountProfileId,
@@ -161,8 +158,7 @@ if (isset($_GET['id'])) {
     $currDebt = $cust->currDebt;
     $prepaid = $cust->prepaid;
     if ($cust->debtDate !== NULL) {
-        echo $cust->expireDate."AA1";
-        $str_debtDate = \i18nDatetime($cust->debtDate);
+        $str_debtDate = \i18nDateTime($cust->debtDate);
     }
     if ($cust->expireDate !== NULL) {
         $str_expireDate = \i18nDate($cust->expireDate);
