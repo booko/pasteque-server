@@ -24,6 +24,7 @@
 "Generate": "Generate",
 "Save": "Save",
 "Send": "Send",
+"Search": "Search",
 "Changes saved": "Changes saved",
 "Unable to save changes": "Unable to save changes",
 "Export": "Export",
@@ -169,5 +170,6 @@
 "debt": "Debt",
 "prepaid": "Prepaid",
 
-"confirm": "Are you sure you want to do it ?"
+"confirm": "Are you sure you want to do it ?",
+"all": "All"
 }

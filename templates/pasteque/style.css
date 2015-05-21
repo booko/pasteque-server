@@ -46,28 +46,40 @@ body {
 	text-align: center;
         padding: 1px 0;
 }
+#search {
+        float: right;
+        margin: 10px auto;
+        border: solid 1px #CCC;
+}
+#search h5 {
+    margin: 15px auto 5px auto;
+    text-align: center;
+}
 #header a, #footer a {
-	color: #CCC;
+        color: #CCC;
 }
 #header a:visited, #footer a:visited {
 	color: #CC8989;
 }
 
 .menu-section {
-	width: 90%;
-	margin: 10px auto;
-	background-color: #FFF;
+        width: 90%;
+        margin: 10px auto;
         border: solid 1px #CCC;
 }
 
-.menu-section-title {
+#search .title, .menu-section-title {
         font-family: @Titillium;
-	font-weight: bold;
-	text-align: center;
-	background-color: #21435C;
-	color: #DDD;
-	padding: 5px 0 2px 0;
-	overflow: hidden;
+        font-weight: bold;
+        text-align: center;
+        background-color: #21435C;
+        color: #DDD;
+        padding: 5px 0 2px 0;
+        overflow: hidden;
+}
+
+#search form {
+        margin: 10px;
 }
 .menu {
 	list-style-type: none;
@@ -220,7 +232,7 @@ form.edit fieldset legend {
 	width: auto;
 }
 
-h1, h2, h3, h4 {
+h1, h2, h3, h4, h5, h6 {
 	color: #A3351E;
 	font-family: Titillium;
 }

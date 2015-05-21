@@ -28,10 +28,14 @@ class CategoriesService {
                 $db_cat['DISPORDER']);
     }
 
-    static function getAll() {
+    static function getAll($specials=true) {
         $cats = array();
         $pdo = PDOBuilder::getPDO();
-        $sql = "SELECT * FROM CATEGORIES ORDER BY DISPORDER ASC, NAME ASC";
+        $sql = "SELECT * FROM CATEGORIES";
+        if($specials == false) {
+            $sql .= " WHERE ID != '0'";
+        }
+        $sql .= " ORDER BY DISPORDER ASC, NAME ASC";
         $data = $pdo->query($sql);
         if ($data !== FALSE) {
             foreach ($pdo->query($sql) as $db_cat) {

@@ -61,6 +61,25 @@ class ProductsService {
         return $stmt->fetchColumn();
     }
 
+    static function getTotalByCategory($categoryId, $include_hidden = false) {
+        $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
+        $sql = NULL;
+        if ($include_hidden) {
+            $sql = "SELECT COUNT(*) AS TOTAL FROM PRODUCTS LEFT JOIN PRODUCTS_CAT ON "
+                    . "PRODUCTS_CAT.PRODUCT = PRODUCTS.ID "
+                    . "WHERE DELETED = " . $db->false();
+        } else {
+            $sql = "SELECT COUNT(*) AS TOTAL FROM PRODUCTS, PRODUCTS_CAT WHERE "
+                    . "PRODUCTS.ID = PRODUCTS_CAT.PRODUCT AND DELETED = "
+                    . $db->false();
+        }
+        $sql .= " AND CATEGORY = '".$categoryId."'";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
+
     static function getAll($include_hidden = FALSE) {
         $prds = array();
         $pdo = PDOBuilder::getPDO();

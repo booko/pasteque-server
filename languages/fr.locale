@@ -24,6 +24,7 @@
 "Generate": "Génerer",
 "Save": "Enregistrer",
 "Send": "Envoyer",
+"Search": "Rechercher",
 "Changes saved": "Modifications enregistrées",
 "Unable to save changes": "Impossible d'enregistrer les modifications",
 "Export": "Exporter",
@@ -169,5 +170,6 @@
 "debt": "Dette",
 "prepaid": "Pré-payé",
 
-"confirm": "Êtes-vous certain de vouloir faire ça ?"
+"confirm": "Êtes-vous certain de vouloir faire ça ?",
+"all": "Tout"
 }

@@ -52,5 +52,7 @@
 "On line %d: Tax category: '%s' doesn't exist": "À la ligne %d: La categorie de taxe: '%s' n'existe pas",
 
 "Reference": "Référence",
-"Quantity": "Quantité"
+"Quantity": "Quantité",
+
+"by category": "par catégorie"
 }
