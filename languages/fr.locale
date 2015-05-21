@@ -24,6 +24,7 @@
 "Generate": "Génerer",
 "Save": "Enregistrer",
 "Send": "Envoyer",
+"Search": "Rechercher",
 "Changes saved": "Modifications enregistrées",
 "Unable to save changes": "Impossible d'enregistrer les modifications",
 "Export": "Exporter",
@@ -31,7 +32,7 @@
 "Close": "Fermer",
 "About": "À propos",
 "Logout": "Déconnexion",
-"Copyright": "<a href=\"http://downloads.pasteque.coop\">Accès au code source</a> − <a href=\"http://communaute.pasteque.coop/forum\">Forum communautaire</a> − <a href=\"mailto:contact@scil.coop?Support pasteque\">Support professionnel</a> : +33.3.66.72.96.02 − <a href=\"http://shop.pasteque.coop\">Boutique matériel compatible et extensions</a>",
+"Copyright": "<a href=\"http://downloads.pasteque.coop\">Accès au code source</a> − <a href=\"http://communaute.pasteque.coop/forum\">Forum communautaire</a> − <a href=\"mailto:contact@scil.coop?Support pasteque\">Support professionnel</a> − <a href=\"http://shop.pasteque.coop\">Boutique matériel compatible et extensions</a>",
 
 "Image": "Image",
 "Quantity": "Quantité",
@@ -195,5 +196,6 @@
 "Impossible to read the ean code '%s'":"Impossible d'interpréter '%s' comme une code EAN",
 "The EAN code '%s' is invalid":"Le code EAN '%s' est invalide",
 "Impossible to parse boolean '%s'":"Impossible d'interpréter '%s' comme un boléen",
-"confirm": "Êtes-vous certain de vouloir faire ça ?"
+"confirm": "Êtes-vous certain de vouloir faire ça ?",
+"all": "Tout"
 }

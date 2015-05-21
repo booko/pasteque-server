@@ -45,7 +45,7 @@ else {
     $range = $_GET["range"];
 }
 if(!isset($_GET["hidden"])) {
-    $hidden = false;
+    $hidden = true;
 }
 else {
     $hidden = $_GET["hidden"];
@@ -53,11 +53,16 @@ else {
 
 if($range == "all") {
     $products = \Pasteque\ProductsService::getAll($hidden);
+    $totalProducts = \Pasteque\ProductsService::getTotal($hidden);
+}
+else if(isset($_GET["category"])) {
+    $products = \Pasteque\ProductsService::getByCategory($_GET["category"]);
+    $totalProducts = \Pasteque\ProductsService::getTotalByCategory($_GET["category"],$hidden);
 }
 else {
     $products = \Pasteque\ProductsService::getRange($range,$start,$hidden);
+    $totalProducts = \Pasteque\ProductsService::getTotal($hidden);
 }
-$totalProducts = \Pasteque\ProductsService::getTotal($hidden);
 $categories = \Pasteque\CategoriesService::getAll();
 $prdCat = array();
 $archivesCat = array();
@@ -213,28 +218,9 @@ if (count($products) == 0) {
                             <ul id="menu_site">
                                 <li>
                                     <a href="#">Accès rapide</a>
-                                    <!--
-                                    <ul>
-                                        <li><a href="#cat_1" class="scroll">Formules</a></li>
-                                        <li><a href="#cat_2" class="scroll">Pré-paiement</a></li>
-                                        <li><a href="#" class="scroll">Catégorie standard 	</a></li>
-                                        <li><a href="#" class="scroll">Sandwich</a></li>	
-                                    </ul>
-                                    -->
-                                    <ul>
-                                    <?php
-                                    $par = false;
-                                    $archive = false;
-                                    $categories = \Pasteque\CategoriesService::getAll();
-                                    foreach ($categories as $category) {
-                                            $anchor = \Pasteque\esc_html($category->label);
-                                            $anchor = str_replace(' ','',$anchor);
-                                    ?>
-                                    	<li><a href="#<?php echo $anchor; ?>" class="scroll"><?php echo \Pasteque\esc_html($category->label); ?></a></li>
-                                    <?php
-                                    }
-                                    ?>
-                                     </ul>
+<?php
+    \Pasteque\tpl_form('select', 'category', \Pasteque\CategoriesService::getAll());
+?>
                                 </li>
                             </ul>
                         </div>

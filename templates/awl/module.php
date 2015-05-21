@@ -579,22 +579,26 @@ function __tpl_pagination_url($offset,$start=0) {
     return $url;
 }
 
-function tpl_pagination($total,$offset,$start=0) {
+function tpl_pagination($total,$range,$start=0) {
+    if($range>=$total) {
+        return;
+    }
     echo "<div class=\"pagination\">";
+    echo "<a href=\"".\Pasteque\get_current_url()."&range=all\">".\i18n('all')."</a>";
     if(isset($_GET["start"]) && $_GET["start"] != 0) {
-        $url = __tpl_pagination_url($offset,$_GET["start"]-$offset);
+        $url = __tpl_pagination_url($range,$_GET["start"]-$range);
         echo "<a class=\"prev_page\" href=\"".$url."\">«</a>";
     }
-    for($i=0;$i<ceil($total/$offset);$i++) {
+    for($i=0;$i<ceil($total/$range);$i++) {
         echo "<a";
-        if($i*$offset == $_GET["start"]) {
+        if($i*$range== $_GET["start"]) {
             echo " class=\"current_page\"";
         }
-        $url = __tpl_pagination_url($offset,$i*$offset);
+        $url = __tpl_pagination_url($range,$i*$range);
         echo " href=\"".$url."\">".$i."</a>";
     }
-    if(isset($_GET["start"]) && $_GET["start"] < ($total-$offset)) {
-        $url = __tpl_pagination_url($offset,$_GET["start"]+$offset);
+    if(isset($_GET["start"]) && $_GET["start"] < ($total-$range)) {
+        $url = __tpl_pagination_url($range,$_GET["start"]+$range);
         echo "<a class=\"next_page\" href=\"".$url."\">»</a>";
     }
     echo "</div>\n";
@@ -637,4 +641,24 @@ function tpl_js_btn($class, $onclick, $label, $id = NULL, $image_btn = NULL, $al
     }
     $btn .= $label . "</a>";
     echo $btn;
+}
+
+function tpl_form($type,$key,$data) {
+    $form = "<form action=\"".\Pasteque\url_content()."\" method=\"get\">\n";
+    switch($type) {
+        case 'select':
+            $form .= "<select name=\"".$key."\" onchange=\"this.form.submit();\">\n";
+            foreach($data as $d) {
+                $form .= "\t<option value=\"".$d->id."\"";
+                if($_GET[$key] == $d->id) {
+                    $form .= " selected";
+                }
+                $form .= ">".$d->label."</option>\n";
+            }
+            $form .= "</select>\n";
+            break;
+    }
+    $form .= "<input type=\"hidden\" name=\"p\" value=\"".$_GET[PT::URL_ACTION_PARAM]."\" />\n";
+    $form .= "</form>\n";
+    echo $form;
 }

@@ -51,7 +51,7 @@ class CustomersService extends AbstractService {
             "COUNTRY" => "country",
             "NOTES" => "note",
             "VISIBLE" => array("type" => DB::BOOL, "attr" => "visible"),
-            "EXPIREDATE" => "expireDate"
+            "EXPIREDATE" => array("type" => DB::DATE, "attr" => "expireDate")
     );
 
     protected function build($row, $pdo = null) {

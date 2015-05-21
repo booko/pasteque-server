@@ -9,6 +9,7 @@
 "Sales": "Sales",
 "Sales report": "Details",
 "Sales by product": "Sales by product",
+"Sales by category": "Sales by category",
 "Taxes report": "Taxes report",
 "Product name": "Product",
 "Category name": "Category",
@@ -19,7 +20,7 @@
 "Tax amount": "Tax amount",
 
 "Total w/o VAT": "Total (without VAT)",
-"Margin": "Total margin",
+"Margin": "Margin",
 
 "CS report": "Summary",
 "Consolidated sales report": "Consolidated sales report",
