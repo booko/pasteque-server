@@ -24,8 +24,8 @@ namespace BaseProducts;
 
 $message = null;
 $error = null;
-if (isset($_POST['delete-product'])) {
-    if (\Pasteque\ProductsService::delete($_POST['delete-product'])) {
+if (isset($_GET['delete-product'])) {
+    if (\Pasteque\ProductsService::delete($_GET['delete-product'])) {
         $message = \i18n("Changes saved") ;
     } else {
         $message = "Le produit a été placé en archive (car déjà vendu ou en stock)";
@@ -73,6 +73,7 @@ foreach ($products as $product) {
 <div class="blc_ti">
     <h1><?php \pi18n("Products", PLUGIN_NAME); ?></h1>
     <span class="nb_article"><?php \pi18n("%d products", PLUGIN_NAME, $totalProducts); ?></span>
+    <?php \Pasteque\tpl_msg_box($message, $error); ?>
     <ul class="bt_fonction">
             <li><?php \Pasteque\tpl_btn('btn bt_add ', \Pasteque\get_module_url_action(PLUGIN_NAME, "product_edit"),
             \i18n('Add a product', PLUGIN_NAME), 'img/btn_add.png');?></li>
@@ -129,11 +130,13 @@ $anchor = str_replace(' ','',$anchor);
 		<td><?php echo $product->reference; ?></td>
 		<td><?php echo $product->label; ?></td>
 		<td class="edition">
-            <?php \Pasteque\tpl_btn('edition', \Pasteque\get_module_url_action(
-                    PLUGIN_NAME, 'product_edit', array("id" => $product->id)), "",
-                    'img/edit.png', \i18n('Edit'), \i18n('Edit'));
-            ?>
-			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("product", $product->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>
+                    <?php \Pasteque\tpl_btn('btn-edition', \Pasteque\get_module_url_action(
+                            PLUGIN_NAME, 'product_edit', array("id" => $product->id)), "",
+                            'img/edit.png', \i18n('Edit'), \i18n('Edit'));
+                    ?>
+                    <?php \Pasteque\tpl_btn('btn-delete', \Pasteque\get_current_url() . "&delete-product=" . $product->id, "",
+                            'img/delete.png', \i18n('Delete'), \i18n('Delete'), true);
+                    ?>
 		</td>
 	</tr>
 <?php

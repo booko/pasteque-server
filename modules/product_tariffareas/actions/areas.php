@@ -59,6 +59,8 @@ $areas = $srv->getAll();
                     
                         <div class="blc_content">
 
+<p><?php \pi18n("%d tariff areas", PLUGIN_NAME, count($areas)); ?></p>
+
 <table cellpadding="0" cellspacing="0">
 	<thead>
 		<tr>

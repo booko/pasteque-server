@@ -24,6 +24,9 @@ namespace Pasteque\Validation;
 function validateEAN($ean)
 {
     //test length
+    if (strlen($ean) === 0) {
+        return true;
+    }
     if (strlen($ean) !== 13) {
         throw new ValidationException('EAN code is too long', $ean, "The EAN code '%s' is invalid");
     }

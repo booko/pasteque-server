@@ -21,8 +21,8 @@
 namespace BaseResources;
 
 $resSrv = new \Pasteque\ResourcesService();
-if (isset($_POST['delete-res'])) {
-    $resSrv->delete($_POST['delete-res']);
+if (isset($_GET['delete-res'])) {
+    $resSrv->delete($_GET['delete-res']);
 }
 
 $resources = $resSrv->getAll();
@@ -42,15 +42,12 @@ $resources = $resSrv->getAll();
 </div>
 <!-- end bloc titre -->
 
-<!-- start container scroll -->
-<div class="container_scroll">
-            
-            	<div class="stick_row stickem-container">
-                    
-                    <!-- start colonne contenu -->
-                    <div id="content_liste" class="grid_9">
-                    
-                        <div class="blc_content">
+<?php \Pasteque\tpl_btn('btn-add', \Pasteque\get_module_url_action(PLUGIN_NAME, "resource_edit"),
+        \i18n('Add a resource', PLUGIN_NAME), 'img/btn_add.png');?>
+
+<?php \Pasteque\tpl_msg_box($message, $error); ?>
+
+<p><?php \pi18n("%d resources", PLUGIN_NAME, count($resources)); ?></p>
 
 <table cellpadding="0" cellspacing="0">
 	<thead>
@@ -68,8 +65,13 @@ foreach ($resources as $res) {
 	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
 		<td><?php echo $res->label; ?></td>
 		<td class="edition">
-			<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'resource_edit', array('id' => $res->id)); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
-			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("res", $res->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>
+                    <?php \Pasteque\tpl_btn('btn-edition', \Pasteque\get_module_url_action(
+                            PLUGIN_NAME, 'resource_edit', array("id" => $res->id)), "",
+                            'img/edit.png', \i18n('Edit'), \i18n('Edit'));
+                    ?>
+                    <?php \Pasteque\tpl_btn('btn-delete', \Pasteque\get_current_url() . "&delete-resource=" . $res->id, "",
+                            'img/delete.png', \i18n('Delete'), \i18n('Delete'), true);
+                    ?>
 		</td>
 	</tr>
 <?php

@@ -58,3 +58,38 @@ function init_catalog($jsName, $containerId, $selectCallback,
     }
     echo "});\n</script>";
 }
+
+function init_catalog_old($jsName, $containerId, $selectCallback,
+        $categories, $products) {
+    echo '<script type="text/javascript" src="inc/catalog-old.js"></script>';
+    echo '<script type="text/javascript">';
+    echo "var $jsName = new Catalog(\"$containerId\", \"$selectCallback\");\n";
+    echo "jQuery(document).ready(function() {\n";
+    echo "var html = \"<div class=\\\"catalog-categories-container\\\"></div>\";\n";
+    echo "html += \"<div class=\\\"catalog-products-container\\\"></div>\";\n";
+    echo "jQuery(\"#$containerId\").html(html);\n";
+    foreach ($categories as $cat) {
+        echo $jsName . ".createCategory(\"" . $jsName . "\", \"" . $cat->id . "\""
+                . ", \"" . $cat->label . "\", "
+                . ($cat->hasImage ? "true" : "false") . ");\n";
+    }
+    foreach ($products as $product) {
+        $taxCat = TaxesService::get($product->taxCatId);
+        $tax = $taxCat->getCurrentTax();
+        $vatPrice = $product->priceSell * (1 + $tax->rate);
+        $prd = '{' . jsonify("id", $product->id) . ', '
+                . jsonify("label", $product->label) . ', '
+                . jsonify("reference", $product->reference) . ', '
+                . jsonify("hasImage", $product->hasImage) . ', '
+                . jsonify("buy", $product->priceBuy) . ', '
+                . jsonify("sell", $product->priceSell) . ', '
+                . jsonify("vatSell", $vatPrice)
+                . '}';
+        echo $jsName . ".addProductToCat(\"" . $product->id . "\", \"" . $product->categoryId . "\");\n";
+        echo $jsName . ".addProduct(" . $prd .");\n";
+    }
+    if (count($categories) > 0) {
+        echo $jsName . ".changeCategory(\"" . $categories[0]->id . "\");\n";
+    }
+    echo "});\n</script>";
+}

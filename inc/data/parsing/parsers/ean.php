@@ -30,6 +30,9 @@ namespace Pasteque\Parsing;
  */
 function parseEAN($ean) {
     $string = (string) $ean;
+    if (strlen($string) === 0) {
+        return null;
+    }
     if (strlen($string) === 12) {
         return '0'.$string;
     } elseif (strlen($string) === 13) {

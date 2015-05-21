@@ -26,6 +26,9 @@ function parseBoolean($bool)
     if (is_bool($bool)) {
         return $bool;
     }
+    if (is_null($bool)) {
+        return false;
+    }
     if (is_string($bool)) {
         switch($bool) {
             case 'true':

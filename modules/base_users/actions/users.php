@@ -20,8 +20,8 @@
 
 namespace BaseUsers;
 
-if (isset($_POST['delete-user'])) {
-    \Pasteque\UsersService::delete($_POST['delete-user']);
+if (isset($_GET['delete-user'])) {
+    \Pasteque\UsersService::delete($_GET['delete-user']);
 }
 
 $srv = new \Pasteque\UsersService();
@@ -51,6 +51,8 @@ $users = $srv->getAll();
                         <div class="blc_content">
 
 
+<?php \Pasteque\tpl_msg_box($message, $error); ?>
+
 
 <table cellspacing="0" cellpadding="0">
 	<thead>
@@ -66,8 +68,13 @@ foreach ($users as $user) {
 	<tr>
 		<td><?php echo $user->name; ?></td>
 		<td class="edition">
-			<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'user_edit', array('id' => $user->id)); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
-			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("user", $user->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>
+                    <?php \Pasteque\tpl_btn('btn-edition', \Pasteque\get_module_url_action(
+                            PLUGIN_NAME, 'user_edit', array("id" => $user->id)), "",
+                            'img/edit.png', \i18n('Edit'), \i18n('Edit'));
+                    ?>
+                    <?php \Pasteque\tpl_btn('btn-delete', \Pasteque\get_current_url() . "&delete-user=" . $user->id, "",
+                            'img/delete.png', \i18n('Delete'), \i18n('Delete'), true);
+                    ?>
 		</td>
 	</tr>
 <?php

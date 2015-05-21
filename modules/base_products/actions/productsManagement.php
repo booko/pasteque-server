@@ -55,7 +55,7 @@ function import_csv($csv) {
         //init optionnal values
         $AllKeyPossible = array_merge($csv->getKeys(), $csv->getOptionalKeys());
         $tab = initArray($AllKeyPossible, $tab);
-        
+
         $product_errors = validateLine($tab, $csv->getCurrentLineNumber());
         $error_mess = array_merge($product_errors, $error_mess);
 

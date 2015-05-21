@@ -34,15 +34,13 @@ function tpl_open() {
 	<script type="text/javascript" src="<?php echo get_template_url(); ?>/js/jquery-1.9.1.min.js"></script>
 	<script type="text/javascript" src="<?php echo get_template_url(); ?>/js/jquery-ui-1.10.4.custom.min.js"></script>
 	<script type="text/javascript" src="<?php echo get_template_url(); ?>/js/jquery-tablesorter.min.js"></script>
-	<script type="text/javascript" src="<?php echo get_template_url(); ?>/js/Chart.min.js"></script>
 	<script type="text/javascript" src="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=js&id=js/pasteque.js.php"></script>
 </head>
 <body>
-<?php tpl_menu(); ?>
 <div id="header">
-	<div id="toggle-menu"><a id="menu-toggler" href="" onclick="javascript:toggleMenu();return false;"><?php echo \i18n("Toogle menu"); ?></a></div>
 	<div id="version"><a href="" onclick="showAbout();return false;"><?php echo \i18n("About"); ?></a></div>
 </div>
+<?php tpl_menu(); ?>
 
 <div id="content">
 <?php
@@ -92,7 +90,7 @@ function tpl_msg_box($info, $error) {
 function tpl_menu() {
     global $MENU;
     echo "<div id=\"menu-container\">\n";
-    echo "<div id=\"logo\"><img src=\"" . get_template_url() . "img/logo.png\" /></div>\n";
+    echo "<div id=\"logo\"><a href=\"" . get_url_action("home") . "\"><img src=\"" . get_template_url() . "img/logo.png\" /></a></div>\n";
     foreach ($MENU->getSections() as $section) {
         echo "\t<div class=\"menu-section\">\n";
         echo "\t\t<div class=\"menu-section-title\">";
@@ -136,6 +134,7 @@ function __tpl_report_input($report, $values) {
         echo "&" . $param['param'] . "=" . $values[$param['param']];
     }
     echo "\">" . \i18n("Export") . "</a></div>\n";
+    echo "<br />\n";
     if(is_array($report->getParams()) && sizeof($report->getParams()) > 0) {
         // Input form
         echo "<form class=\"edit\" action=\"" . \Pasteque\get_current_url() . "\" "
@@ -415,6 +414,9 @@ function __tpl_pagination_url($offset,$start=0) {
 }
 
 function tpl_pagination($total,$offset,$start=0) {
+    if($offset>=$pagination) {
+        return;
+    }
     echo "<div class=\"pagination\">";
     if(isset($_GET["start"]) && $_GET["start"] != 0) {
         $url = __tpl_pagination_url($offset,$_GET["start"]-$offset);
@@ -435,16 +437,20 @@ function tpl_pagination($total,$offset,$start=0) {
     echo "</div>\n";
 }
 
-function tpl_btn($class, $href, $label, $image_btn, $alt = NULL, $title = NULL) {
-    $btn = "<a class=" . $class . " href=\"" . $href . "\">"
-            . "<img src=\"" .\Pasteque\get_template_url() . "" . $image_btn . "\"";
+function tpl_btn($class, $href, $label, $image_btn, $alt = NULL, $title = NULL, $confirm = false) {
+    $btn = "<a class=\"btn " . $class . "\" href=\"" . $href . "\"";
+    if($confirm) {
+             $btn .= " onclick=\"return confirm('" . \i18n('confirm') ."');return false;\"";
+    }
+    $btn .= ">";
+    $btn .= "<img src=\"" .\Pasteque\get_template_url() . "" . $image_btn . "\"";
     if (isset($alt)) {
          $btn .= " alt =\"" . $alt . "\"";
     }
     if (isset($title)) {
         $btn .= " title =\"" . $title . "\"";
     }
-    $btn .= "/>";
+    $btn .= "/>&nbsp;";
     $btn .= $label . "</a>";
     echo $btn;
 }

@@ -21,8 +21,8 @@
 namespace BaseUsers;
 
 $srv = new \Pasteque\RolesService();
-if (isset($_POST['delete-role'])) {
-    $srv->delete($_POST['delete-role']);
+if (isset($_GET['delete-role'])) {
+    $srv->delete($_GET['delete-role']);
 }
 
 $roles = $srv->getAll();
@@ -50,6 +50,10 @@ $roles = $srv->getAll();
                     
                         <div class="blc_content">
 
+<?php \Pasteque\tpl_msg_box($message, $error); ?>
+
+<p><?php \pi18n("%d roles", PLUGIN_NAME, count($roles)); ?></p>
+
 <table cellspacing="0" cellpadding="0">
 	<thead>
 		<tr>
@@ -64,8 +68,13 @@ foreach ($roles as $role) {
 	<tr>
 		<td><?php echo $role->name; ?></td>
 		<td class="edition">
-			<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'role_edit', array('id' => $role->id)); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
-			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("role", $role->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>
+                    <?php \Pasteque\tpl_btn('btn-edition', \Pasteque\get_module_url_action(
+                            PLUGIN_NAME, 'role_edit', array("id" => $role->id)), "",
+                            'img/edit.png', \i18n('Edit'), \i18n('Edit'));
+                    ?>
+                    <?php \Pasteque\tpl_btn('btn-delete', \Pasteque\get_current_url() . "&delete-role=" . $role->id, "",
+                            'img/delete.png', \i18n('Delete'), \i18n('Delete'), true);
+                    ?>
 		</td>
 	</tr>
 <?php

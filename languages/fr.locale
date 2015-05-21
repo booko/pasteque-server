@@ -11,6 +11,10 @@
 
 "Main title": "Pastèque, interface de gestion",
 "Introduction": "Cliquez sur le menu pour gérer votre point de vente.",
+"Download": "Téléchargement",
+"Download instructions": "Vous êtes dans l’interface d’administration de Pastèque. Pour utiliser le logiciel vous avez deux options :\n\t<ul>\n\t\t<li><a href=\"http://downloads.pasteque.coop/android/pasteque-android.apk\">La version android</a>, pour tablettes</li>\n\t\t<li><a href=\"http://downloads.pasteque.coop/desktop/pasteque-desktop-installer.jar\">La version <i>Desktop</i> (pour Windows, MacOS, Gnu/Linux …)</a></li>\n\t</ul>",
+"Documentation": "Documentation",
+"Documentation instructions": "Il y a plusieurs sources de documentation :\n\t<ul>\n\t\t<li><a href=\"http://en.wikibooks.org/wiki/Past%C3%A8que_%28software%29\">Manuel d’installation, de configuration et d’utilisation sur wikibooks</a></li>\n\t\t<li><a href=\"http://communaute.pasteque.coop/communaute/forum/\">Les forums communautaires</a></li>\n\t\t<li><a href=\"http://redmine.scil.coop\">Le bug tracker</a></li>\n\t</ul>",
 
 "Home": "Accueil",
 
@@ -117,6 +121,7 @@
 "Customer.dispName": "Nom",
 "Customer.card": "Carte",
 "Customer.visible": "Actif",
+"Customer.expireDate": "Date d’expiration",
 "Customer.prepaid": "Solde pré-payé",
 "Customer.maxDebt": "Dette max",
 "Customer.currDebt": "Dette actuelle",
@@ -124,6 +129,7 @@
 "Customer.note": "Note",
 "Customer.custTax": "Catégorie de taxe",
 "Customer.discountProfile": "Profil de remise",
+"Customer.tariffArea": "Zone tarifaire",
 "Customer.firstName": "Prénom",
 "Customer.lastName": "Nom",
 "Customer.email": "Email",
@@ -166,6 +172,7 @@
 
 "TariffArea.label": "Désignation",
 "TariffArea.dispOrder": "Ordre",
+"TariffArea.notes": "Notes",
 
 "Resource.label": "Désignation",
 
@@ -187,5 +194,6 @@
 "The price '%s' is not valid":"Le prix '%s' n'est pas valide",
 "Impossible to read the ean code '%s'":"Impossible d'interpréter '%s' comme une code EAN",
 "The EAN code '%s' is invalid":"Le code EAN '%s' est invalide",
-"Impossible to parse boolean '%s'":"Impossible d'interpréter '%s' comme un boléen"
+"Impossible to parse boolean '%s'":"Impossible d'interpréter '%s' comme un boléen",
+"confirm": "Êtes-vous certain de vouloir faire ça ?"
 }

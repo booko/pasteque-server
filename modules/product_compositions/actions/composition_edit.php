@@ -240,7 +240,7 @@ if (isset($_GET['productId'])) {
         <?php \Pasteque\form_save();?>
 </form>
 
-<?php \Pasteque\init_catalog("catalog", "catalog-picker", "productPicked",
+<?php \Pasteque\init_catalog_old("catalog", "catalog-picker", "productPicked",
         $categories, $products); ?>
 
 <script src="<?php echo \Pasteque\get_module_action(PLUGIN_NAME, "control.js")?>" type="text/javascript"></script>

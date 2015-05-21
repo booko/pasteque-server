@@ -182,6 +182,10 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
             $profSrv = new DiscountProfilesService();
             $data = $profSrv->getAll();
             break;
+        case 'TariffArea':
+            $areaSrv = new TariffAreasService();
+            $data = $areaSrv->getAll();
+            break;
         }
         echo '<select id="' . esc_attr($form_id . '-' . $field)
                 . '" name="' . esc_attr($name) . '">';
@@ -253,10 +257,10 @@ function form_delete($what, $id, $img_src = NULL) {
     echo '<input type="hidden" name="delete-' . esc_attr($what)
             . '" value="' . esc_attr($id) . '" />';
     if ($img_src == NULL) {
-        echo '<button type="submit">' . \i18n('Delete') . '</button>';
+        echo '<button onclick="return confirm(\'' . \i18n('confirm deletion') . '\');return false;" type="submit"><a class="btn btn-delete">' . \i18n('Delete') . '</a></button>';
     } else {
-        echo '<button type="submit"><img src="' . esc_attr($img_src)
+        echo '<button onclick="return confirm(\'' . \i18n('confirm deletion') . '\');return false;" type="submit"><a class="btn btn-delete"><img src="' . esc_attr($img_src)
                 . '" alt="' . esc_attr(\i18n('Delete'))
-                . '" title="' . esc_attr(\i18n('Delete')) . '" /></button>';
+                . '" title="' . esc_attr(\i18n('Delete')) . '" /></a></button>';
     }
 }

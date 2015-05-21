@@ -30,6 +30,9 @@ namespace Pasteque\Parsing;
  */
 function parsePrice($price)
 {
+    if($price == "") {
+        return 0;
+    }
     $stripped = str_replace(',', '.', $price);
     if(!is_numeric($stripped)) {
         throw new ParsingException("The string $price is not numeric", $price,

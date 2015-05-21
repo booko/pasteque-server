@@ -11,6 +11,10 @@
 
 "Main title": "Pastèque, back-office",
 "Introduction": "Clic on the menu to manage your point of sales",
+"Download": "Download",
+"Download instructions": "You are on administration of Pastèque. To run the software you have two choices :\n\t<ul>\n\t\t<li><a href=\"http://downloads.pasteque.coop/android/pasteque-android.apk\">Android version</a> for tablets</li>\n\t\t<li><a href=\"http://downloads.pasteque.coop/desktop/pasteque-desktop-installer.jar\">Desktop (Windows, MacOS, Gnu/Linux …) version</a></li>\n\t</ul>",
+"Documentation": "Documentation",
+"Documentation instructions": "There are several documentations sources :\n\t<ul>\n\t\t<li><a href=\"http://en.wikibooks.org/wiki/Past%C3%A8que_%28software%29\">Documentation on wikibooks</a></li>\n\t\t<li><a href=\"http://communaute.pasteque.coop/communaute/forum/\">Community forums</a></li>\n\t\t<li><a href=\"http://redmine.scil.coop\">Bug tracker</a></li>\n\t</ul>",
 
 "Home": "Home",
 
@@ -118,6 +122,7 @@
 "Customer.dispName": "Name",
 "Customer.card": "Card",
 "Customer.visible": "Active",
+"Customer.expireDate": "Expire date",
 "Customer.prepaid": "Prepayment",
 "Customer.maxDebt": "Max debt",
 "Customer.currDebt": "Current debt",
@@ -125,6 +130,7 @@
 "Customer.note": "Note",
 "Customer.custTax": "Tax category",
 "Customer.discountProfile": "Discount profile",
+"Customer.tariffArea": "Tariff area",
 "Customer.firstName": "First name",
 "Customer.lastName": "Last name",
 "Customer.email": "Email",
@@ -167,6 +173,7 @@
 
 "TariffArea.label": "Label",
 "TariffArea.dispOrder": "Order",
+"TariffArea.notes": "Notes",
 
 "Resource.label": "Label",
 
@@ -188,5 +195,6 @@
 "The price '%s' is not valid":"The price '%s' is not valid",
 "Impossible to read the ean code '%s'":"Impossible to read the ean code '%s'",
 "The EAN code '%s' is invalid":"The EAN code '%s' is invalid",
-"Impossible to parse boolean '%s'":"Impossible to parse boolean '%s'"
+"Impossible to parse boolean '%s'":"Impossible to parse boolean '%s'",
+"confirm": "Are you sure you want to do it ?"
 }
