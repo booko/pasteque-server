@@ -45,7 +45,7 @@ else {
     $range = $_GET["range"];
 }
 if(!isset($_GET["hidden"])) {
-    $hidden = false;
+    $hidden = true;
 }
 else {
     $hidden = $_GET["hidden"];
@@ -53,11 +53,16 @@ else {
 
 if($range == "all") {
     $products = \Pasteque\ProductsService::getAll($hidden);
+    $totalProducts = \Pasteque\ProductsService::getTotal($hidden);
+}
+else if(isset($_GET["category"])) {
+    $products = \Pasteque\ProductsService::getByCategory($_GET["category"]);
+    $totalProducts = \Pasteque\ProductsService::getTotalByCategory($_GET["category"],$hidden);
 }
 else {
     $products = \Pasteque\ProductsService::getRange($range,$start,$hidden);
+    $totalProducts = \Pasteque\ProductsService::getTotal($hidden);
 }
-$totalProducts = \Pasteque\ProductsService::getTotal($hidden);
 $categories = \Pasteque\CategoriesService::getAll();
 $prdCat = array();
 $archivesCat = array();
@@ -79,6 +84,14 @@ foreach ($products as $product) {
         \i18n('Import products', PLUGIN_NAME), 'img/btn_add.png');?>
 <?php \Pasteque\tpl_btn('btn-export ', \Pasteque\get_report_url(PLUGIN_NAME, "products_export"),
         \i18n('Export products', PLUGIN_NAME), 'img/btn_add.png');?>
+
+<div id="search">
+<div class="title"><?php \pi18n("Search"); ?></div>
+<h5><? \pi18n("by category", PLUGIN_NAME); ?></h5>
+<?php
+    \Pasteque\tpl_form('select', 'category', \Pasteque\CategoriesService::getAll());
+?>
+</div>
 
 <p><?php \pi18n("%d products", PLUGIN_NAME, $totalProducts); ?></p>
 

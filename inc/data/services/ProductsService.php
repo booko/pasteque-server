@@ -62,6 +62,25 @@ class ProductsService {
         return $stmt->fetchColumn();
     }
 
+    static function getTotalByCategory($categoryId, $include_hidden = false) {
+        $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
+        $sql = NULL;
+        if ($include_hidden) {
+            $sql = "SELECT COUNT(*) AS TOTAL FROM PRODUCTS LEFT JOIN PRODUCTS_CAT ON "
+                    . "PRODUCTS_CAT.PRODUCT = PRODUCTS.ID "
+                    . "WHERE DELETED = " . $db->false();
+        } else {
+            $sql = "SELECT COUNT(*) AS TOTAL FROM PRODUCTS, PRODUCTS_CAT WHERE "
+                    . "PRODUCTS.ID = PRODUCTS_CAT.PRODUCT AND DELETED = "
+                    . $db->false();
+        }
+        $sql .= " AND CATEGORY = '".$categoryId."'";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
+
     static function getAll($include_hidden = FALSE) {
         $prds = array();
         $pdo = PDOBuilder::getPDO();
@@ -71,7 +90,7 @@ class ProductsService {
             $sql = "SELECT * FROM PRODUCTS LEFT JOIN PRODUCTS_CAT ON "
                     . "PRODUCTS_CAT.PRODUCT = PRODUCTS.ID";
         } else {
-            $sql = "SELECT * FROM PRODUCTS, PRODUCTS_CAT WHERE "
+            $sql = "SELECT * FROM PRODUCTS LEFT JOIN PRODUCTS_CAT ON "
                     . "PRODUCTS.ID = PRODUCTS_CAT.PRODUCT AND DELETED = "
                     . $db->false();
         }
@@ -91,18 +110,18 @@ class ProductsService {
         $db = DB::get();
         $sql = NULL;
         if ($include_hidden) {
-            $sql = "SELECT PRODUCTS.*, PRODUCTS_CAT.* FROM PRODUCTS "
+            $sql = "SELECT PRODUCTS.*, PRODUCTS_CAT.* FROM CATEGORIES, PRODUCTS  "
                     . "LEFT JOIN PRODUCTS_CAT ON "
-                    . "PRODUCTS_CAT.PRODUCT = PRODUCTS.ID AND "
-                    . "PRODUCTS.CATEGORY = CATEGORIES.ID";
+                    . "PRODUCTS_CAT.PRODUCT = PRODUCTS.ID "
+                    . "WHERE 1=1";
         } else {
-            $sql = "SELECT PRODUCTS.*, PRODUCTS_CAT.* FROM PRODUCTS, "
-                    . "PRODUCTS_CAT, CATEGORIES "
-                    . "WHERE PRODUCTS.ID = PRODUCTS_CAT.PRODUCT AND "
-                    . "PRODUCTS.CATEGORY = CATEGORIES.ID AND DELETED = "
-                    . $db->false();
+            $sql = "SELECT PRODUCTS.*, PRODUCTS_CAT.* FROM CATEGORIES, PRODUCTS  "
+                    . "LEFT JOIN PRODUCTS_CAT ON "
+                    . "PRODUCTS_CAT.PRODUCT = PRODUCTS.ID "
+                    . "WHERE DELETED = " . $db->false();
         }
-        $sql .= " ORDER BY CATEGORIES.DISPORDER, CATEGORY, CATORDER, PRODUCTS.NAME";
+        $sql .= " AND PRODUCTS.CATEGORY = CATEGORIES.ID ";
+        $sql .= " ORDER BY DELETED ASC, CATEGORIES.DISPORDER, CATEGORY, CATORDER, PRODUCTS.NAME";
         $sql .= " LIMIT ".$range." OFFSET ".$start;
         $stmt = $pdo->prepare($sql);
         $stmt->execute();

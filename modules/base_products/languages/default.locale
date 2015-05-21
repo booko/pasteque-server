@@ -63,6 +63,7 @@
 "On line %d category: '%s' doesn't exist": "On line %d category: '%s' doesn't exist",
 
 "Reference": "Reference",
-"Quantity": "Quantity"
+"Quantity": "Quantity",
 
+"by category": "by category"
 }
