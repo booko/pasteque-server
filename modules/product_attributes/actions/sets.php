@@ -49,11 +49,9 @@ $sets = \Pasteque\AttributesService::getAll();
 	</thead>
 	<tbody>
 <?php
-$par = false;
 foreach ($sets as $set) {
-$par = !$par;
 ?>
-	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
+	<tr>
 		<td><?php echo $set->label; ?></td>
 		<td class="edition">
             <?php \Pasteque\tpl_btn("edition", \Pasteque\get_module_url_action(PLUGIN_NAME,

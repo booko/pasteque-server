@@ -211,7 +211,7 @@ function __tpl_report_footer($report) {
     echo "\").tablesorter();});</script>";
 }
 function __tpl_report_line($report, $line, $par) {
-    echo "\t\t<tr class=\"row-" . ($par ? 'par' : 'odd') . "\">\n";
+    echo "\t\t<tr>\n";
     foreach ($report->getFields() as $field) {
         if (isset($line[$field])) {
             echo "\t\t\t<td>" . $report->applyVisualFilter($field, $line)
@@ -229,7 +229,7 @@ function __tpl_group_footer($report, $run) {
     echo "\t\t<tr>\n";
     echo "\t\t\t<td colspan=\"" . count($report->getHeaders()) . "\">" . \i18n("Subtotal") . "</td>\n";
     echo "\t\t</tr>\n";
-    echo "\t\t<tr class=\"row-par\">\n";
+    echo "\t\t<tr>\n";
     $subtotals = $run->getSubtotals();
     foreach ($report->getFields() as $field) {
         if (isset($subtotals[$field])) {
@@ -268,7 +268,7 @@ function __tpl_total_header($report, $run) {
 function __tpl_report_totals($report, $run) {
     echo "<h2>" . \i18n("Total") . "</h2>\n";
     __tpl_total_header($report, $run);
-    echo "\t\t<tr class=\"row-par\">\n";
+    echo "\t\t<tr>\n";
     $totals = $run->getTotals();
     foreach ($report->getFields() as $field) {
         if (isset($totals[$field])) {

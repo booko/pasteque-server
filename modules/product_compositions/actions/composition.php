@@ -41,16 +41,14 @@ else {
     </thead>
     <tbody>
 <?php
-    $par = false;
     foreach ($compositions as $composition) {
-    $par = !$par;
     if ($composition->hasImage) {
         $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=product&id=" . $composition->id;
     } else {
         $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=product";
     }
     ?>
-            <tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
+            <tr>
                     <td><img class="thumbnail" src="?<?php echo $imgSrc ?>" />
                     <td><?php echo $composition->label; ?></td>
                     <td class="edition">

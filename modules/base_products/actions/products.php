@@ -100,7 +100,6 @@ foreach ($products as $product) {
 <?php \Pasteque\tpl_pagination($totalProducts,$range,$start); ?>
 
 <?php
-$par = false;
 $archive = false;
 foreach ($categories as $category) {
     if (isset($prdCat[$category->id])) { ?>
@@ -118,14 +117,13 @@ foreach ($categories as $category) {
 <?php
         foreach ($prdCat[$category->id] as $product) {
             if ($product->visible) {
-                $par = !$par;
                 if ($product->hasImage) {
                     $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=product&id=" . $product->id;
                 } else {
                     $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=product";
                 }
 ?>
-    <tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
+    <tr>
         <td><img class="thumbnail" src="?<?php echo $imgSrc ?>" />
         <td><?php echo $product->reference; ?></td>
         <td><?php echo $product->label; ?></td>
@@ -170,11 +168,10 @@ foreach ($categories as $category) {
     </thead>
     <tbody>
 <?php
-        $par = false;
         foreach ($archivesCat[$category->id] as $product) {
             if (!$product->visible) {
-                $par = !$par;
 ?>
+<<<<<<< HEAD
     <tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
         <td><img class="thumbnail" src="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=product&id=<?php echo $product->id; ?>" />
         <td><?php echo $product->reference; ?></td>
@@ -183,6 +180,16 @@ foreach ($categories as $category) {
             <a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'product_edit', array('id' => $product->id)); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
         </td>
     </tr>
+=======
+	<tr>
+	    <td><img class="thumbnail" src="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=product&id=<?php echo $product->id; ?>" />
+		<td><?php echo $product->reference; ?></td>
+		<td><?php echo $product->label; ?></td>
+		<td class="edition">
+			<a href="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'product_edit', array('id' => $product->id)); ?>"><img src="<?php echo \Pasteque\get_template_url(); ?>img/edit.png" alt="<?php \pi18n('Edit'); ?>" title="<?php \pi18n('Edit'); ?>"></a>
+		</td>
+	</tr>
+>>>>>>> Get rid of par for odd/even, CSS RULES
 <?php
             }
         }

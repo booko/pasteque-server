@@ -269,10 +269,10 @@ th {
         border-right: none;
 	padding: 5px 20px;
 }
-tr {
+tbody tr:nth-child(even) {
 	background-color: #DDD;
 }
-tr.row-odd {
+tbody tr:nth-child(odd) {
 	background-color: #EEE;
 }
 table.report td {

@@ -47,10 +47,8 @@ $resources = $resSrv->getAll();
 	<tbody>
 <ul class="resources-list">
 <?php
-$par = FALSE;
-foreach ($resources as $res) {
-    $par = !$par; ?>
-	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
+foreach ($resources as $res) { ?>
+	<tr>
 		<td><?php echo $res->label; ?></td>
 		<td class="edition">
                     <?php \Pasteque\tpl_btn('btn-edition', \Pasteque\get_module_url_action(

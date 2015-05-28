@@ -57,15 +57,14 @@ $categories = \Pasteque\CategoriesService::getAll();
 	</thead>
 	<tbody>
 <?php
-function printCategory($printCategory, $level, &$par) {
-        $par = !$par;
+function printCategory($printCategory, $level) {
         if ($printCategory->hasImage) {
             $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=category&id=" . $printCategory->id;
         } else {
             $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=category";
         }
         ?>
-                <tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
+                <tr>
                         <td>
                         <?php
                         for($i=0;$i<$level;$i++) {
@@ -86,14 +85,13 @@ function printCategory($printCategory, $level, &$par) {
         $categories = \Pasteque\CategoriesService::getChildren($printCategory->id);
         $level++;
         foreach($categories as $childCategory) {
-            printCategory($childCategory, $level, $par);
+            printCategory($childCategory, $level);
         }
 }
 
-$par = false;
 foreach ($categories as $category) {
     if($category->parentId == "") {
-        printCategory($category, 0, $par); // we start with root categories. As the function is recursive, we don’t need more than this :-)
+        printCategory($category, 0); // we start with root categories. As the function is recursive, we don’t need more than this :-)
     }
 }
 ?>

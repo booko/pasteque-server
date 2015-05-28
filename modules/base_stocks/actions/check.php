@@ -170,7 +170,6 @@ if ($countedStock !== null) {
 <?php if ($countedStock !== null) { ?>
 <?php foreach ($categories as $category) {
     $printed = false;
-    $par = false;
     if (isset($prdCat[$category->id])) {
         foreach ($prdCat[$category->id] as $product) {
             $counted = 0;
@@ -182,7 +181,6 @@ if ($countedStock !== null) {
                 $actual = $levels[$product->id]->qty;
             }
             if ($counted !== $actual) {
-                $par = !$par;
                 if ($product->hasImage) {
                     $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=product&id=" . $product->id;
                 } else {
@@ -207,7 +205,7 @@ if ($countedStock !== null) {
 <?php
                 }
 ?>
-	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
+	<tr>
 	    <td><img class="thumbnail" src="?<?php echo $imgSrc ?>" />
 		<td><?php echo $product->reference; ?></td>
 		<td><?php echo $product->label; ?></td>
