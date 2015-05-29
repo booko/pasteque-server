@@ -145,47 +145,50 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
         break;    
     case 'pick':
         $model = $args['model'];
-        switch ($model) {
-        case 'Category':
-            $data = CategoriesService::getAll(false);
-            break;
-        case 'Provider':
-            $data = ProvidersService::getAll();
-            break;
-        case 'TaxCategory':
-            $data = TaxesService::getAll();
-            break;
-        case 'Tax':
-            $cats = TaxesService::getAll();
-            $data = array();
-            foreach ($cats as $cat) {
-                $data[] = $cat->getCurrentTax();
+        $data = $args['data'];
+        if ($model !== null) {
+            switch ($model) {
+            case 'Category':
+                $data = CategoriesService::getAll(false);
+                break;
+            case 'Provider':
+                $data = ProvidersService::getAll();
+                break;
+            case 'TaxCategory':
+                $data = TaxesService::getAll();
+                break;
+            case 'Tax':
+                $cats = TaxesService::getAll();
+                $data = array();
+                foreach ($cats as $cat) {
+                    $data[] = $cat->getCurrentTax();
+                }
+                break;
+            case 'CustTaxCat':
+                $data = CustTaxCatsService::getAll();
+                break;
+            case 'Role':
+                $data = RolesService::getAll();
+                break;
+            case 'Attribute':
+                $data = AttributesService::getAllAttrs();
+                break;
+            case 'AttributeSet':
+                $data = AttributesService::getAll();
+                break;
+            case 'Location':
+                $locSrv = new LocationsService();
+                $data = $locSrv->getAll();
+                break;
+            case 'DiscountProfile':
+                $profSrv = new DiscountProfilesService();
+                $data = $profSrv->getAll();
+                break;
+            case 'TariffArea':
+                $areaSrv = new TariffAreasService();
+                $data = $areaSrv->getAll();
+                break;
             }
-            break;
-        case 'CustTaxCat':
-            $data = CustTaxCatsService::getAll();
-            break;
-        case 'Role':
-            $data = RolesService::getAll();
-            break;
-        case 'Attribute':
-            $data = AttributesService::getAllAttrs();
-            break;
-        case 'AttributeSet':
-            $data = AttributesService::getAll();
-            break;
-        case 'Location':
-            $locSrv = new LocationsService();
-            $data = $locSrv->getAll();
-            break;
-        case 'DiscountProfile':
-            $profSrv = new DiscountProfilesService();
-            $data = $profSrv->getAll();
-            break;
-        case 'TariffArea':
-            $areaSrv = new TariffAreasService();
-            $data = $areaSrv->getAll();
-            break;
         }
         echo '<select id="' . esc_attr($form_id . '-' . $field)
                 . '" name="' . esc_attr($name) . '">';
@@ -194,12 +197,18 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
         }
         foreach ($data as $r) {
             $selected = "";
-            if ($object != NULL && ($object->{$field} == $r->id
-                    || (is_object($object->{$field}) && $object->{$field}->id == $r->id))) {
+            $r_id = $r->id;
+            $r_label = $r->label;
+            if ($model == null) {
+                $r_id = $r['id'];
+                $r_label = $r['label'];
+            }
+            if ($object != NULL && ($object->{$field} == $r_id
+                    || (is_object($object->{$field}) && $object->{$field}->id == $r_id))) {
                 $selected = ' selected="true"';
             }
-            echo '<option value="' . esc_attr($r->id) . '"' . $selected . '>'
-                    . esc_html($r->label) . '</option>';
+            echo '<option value="' . esc_attr($r_id) . '"' . $selected . '>'
+                    . esc_html($r_label) . '</option>';
         }
         echo "</select>\n";
         break;
