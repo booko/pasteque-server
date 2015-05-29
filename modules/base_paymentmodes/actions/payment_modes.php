@@ -25,8 +25,8 @@ namespace BasePaymentModes;
 $message = NULL;
 $error = NULL;
 $modeSrv = new \Pasteque\PaymentModesService();
-if (isset($_POST['delete-paymentmode'])) {
-    if ($modeSrv->delete($_POST['delete-paymentmode'])) {
+if (isset($_POST['toggle-paymentmode'])) {
+    if ($modeSrv->toggle($_POST['toggle-paymentmode'])) {
         $message = \i18n("Changes saved");
     } else {
         $error = \i18n("Unable to save changes");
@@ -41,12 +41,6 @@ $paymentModes = $modeSrv->getAll();
 
 <?php \Pasteque\tpl_msg_box($message, $error); ?>
 
-<?php \Pasteque\tpl_btn('btn', \Pasteque\get_module_url_action(PLUGIN_NAME, "paymentmode_edit"),
-        \i18n('Add a payment mode', PLUGIN_NAME), 'img/btn_add.png');?>
-
-<br />
-<br />
-
 <table cellpadding="0" cellspacing="0">
 	<thead>
 		<tr>
@@ -59,18 +53,25 @@ $paymentModes = $modeSrv->getAll();
 	<tbody>
 <?php
 foreach ($paymentModes as $paymentMode) {
+    if ($paymentMode->system) {
+        continue;
+    }
 ?>
 	<tr>
 		<td><?php echo $paymentMode->code; ?></td>
 		<td><?php echo $paymentMode->label; ?></td>
 		<td><?php echo $paymentMode->backLabel; ?></td>
 		<td class="edition">
-            <?php \Pasteque\tpl_btn("edition", \Pasteque\get_module_url_action(PLUGIN_NAME,
-                    'paymentmode_edit', array("id" => $paymentMode->id)), "",
-                    'img/edit.png', \i18n('Edit'), \i18n('Edit'));
-            ?>
-			<form action="<?php echo \Pasteque\get_current_url(); ?>" method="post"><?php \Pasteque\form_delete("paymentmode", $paymentMode->id, \Pasteque\get_template_url() . 'img/delete.png') ?></form>
-		</td>
+                    <form action="<?php echo \Pasteque\get_current_url(); ?>" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="toggle-paymentmode" value="<?php echo $paymentMode->id; ?>" />
+<?php
+    $action = \i18n("Enable");
+    if ($paymentMode->active === true)
+        $action = \i18n("Disable");
+?>
+                        <input type="submit" value="<?php echo $action; ?>" />
+                    </form>
+                </td>
 	</tr>
 <?php
 }
