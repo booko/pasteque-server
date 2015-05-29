@@ -62,6 +62,19 @@ if (isset($_GET['id'])) {
 else {
     $paymentMode = new \Pasteque\PaymentMode();
 }
+
+$possiblePaymentCodes = array(
+    array("id" => 'cash',           "label" => \i18n('Cash')),
+    array("id" => 'magcard',        "label" => \i18n('Credit Card')),
+    array("id" => 'cheque',         "label" => \i18n('Cheque'))
+    array("id" => 'prepaid',        "label" => \i18n('Prepaid')),
+    array("id" => 'paperin',        "label" => \i18n('Paper in')),
+    array("id" => 'credit_note',    "label" => \i18n('Credit note')),
+    array("id" => 'internet',       "label" => \i18n('Internet')),
+    array("id" => 'debt',           "label" => \i18n('Debt')),
+    array("id" => 'free',           "label" => \i18n('Free')),
+);
+
 ?>
 <h1><?php \pi18n("Edit a payment mode", PLUGIN_NAME); ?></h1>
 
@@ -69,16 +82,16 @@ else {
 
 <form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post" enctype="multipart/form-data">
     <?php \Pasteque\form_hidden("edit", $paymentMode, "id"); ?>
-	<?php \Pasteque\form_input("edit", "Payment mode", $paymentMode, "code", "string", array("required" => true)); ?>
-	<?php \Pasteque\form_input("edit", "Payment mode", $paymentMode, "label", "string", array("required" => true)); ?>
-	<?php \Pasteque\form_input("edit", "Payment mode", $paymentMode, "backLabel", "string", array("required" => true)); ?>
-	<?php \Pasteque\form_input("edit", "Payment mode", $paymentMode, "active", "boolean"); ?>
-	<?php \Pasteque\form_input("edit", "Payment mode", $paymentMode, "system", "boolean"); ?>
-	<?php \Pasteque\form_input("edit", "Payment mode", $paymentMode, "dispOrder", "numeric"); ?>
+    <?php \Pasteque\form_input("edit", "Payment mode", $paymentMode, "code", "pick", array("required" => true, "data" => $possiblePaymentCodes)); ?>
+    <?php \Pasteque\form_input("edit", "Payment mode", $paymentMode, "label", "string", array("required" => true)); ?>
+    <?php \Pasteque\form_input("edit", "Payment mode", $paymentMode, "backLabel", "string", array("required" => true)); ?>
+    <?php \Pasteque\form_input("edit", "Payment mode", $paymentMode, "active", "boolean"); ?>
+    <?php \Pasteque\form_input("edit", "Payment mode", $paymentMode, "system", "boolean"); ?>
+    <?php \Pasteque\form_input("edit", "Payment mode", $paymentMode, "dispOrder", "numeric"); ?>
 
-	<div class="row actions">
-		<?php \Pasteque\form_save(); ?>
-	</div>
+    <div class="row actions">
+        <?php \Pasteque\form_save(); ?>
+    </div>
 </form>
 <?php if ($paymentMode->id !== NULL) { ?>
 <form action="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'paymentmodes'); ?>" method="post">
