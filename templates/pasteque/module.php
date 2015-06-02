@@ -483,11 +483,29 @@ function tpl_form($type,$key,$data) {
         case 'select':
             $form .= "<select name=\"".$key."\" onchange=\"this.form.submit();\">\n";
             foreach($data as $d) {
-                $form .= "\t<option value=\"".$d->id."\"";
-                if($_GET[$key] == $d->id) {
-                    $form .= " selected";
+                switch($key) {
+                    case 'category':
+                        $form .= "\t<option value=\"".$d->id."\"";
+                        if($_GET[$key] == $d->id) {
+                            $form .= " selected";
+                        }
+                        $form .= ">".$d->label."</option>\n";
+                        break;
+                    case 'customer':
+                        $form .= "\t<option value=\"".$d->id."\"";
+                        if($_GET[$key] == $d->id) {
+                            $form .= " selected";
+                        }
+                        $form .= ">".$d->dispName."</option>\n";
+                        break;
+                    default:
+                        $form .= "\t<option value=\"".$d->id."\"";
+                        if($_GET[$key] == $d->id) {
+                            $form .= " selected";
+                        }
+                        $form .= ">".$d->label."</option>\n";
+                        break;
                 }
-                $form .= ">".$d->label."</option>\n";
             }
             $form .= "</select>\n";
             break;

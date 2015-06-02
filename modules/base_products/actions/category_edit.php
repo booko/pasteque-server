@@ -42,8 +42,8 @@ if (isset($_POST['id']) && isset($_POST['label'])) {
     if ($_POST['dispOrder'] !== "") {
         $dispOrder = intval($_POST['dispOrder']);
     }
-    $cat = \Pasteque\Category::__build($_POST['id'], $parent_id,
-            $_POST['label'], $img !== null, $dispOrder);
+    $cat = \Pasteque\Category::__build($_POST['id'], $_POST['reference'],
+            $parent_id, $_POST['label'], $img !== null, $dispOrder);
     if (\Pasteque\CategoriesService::updateCat($cat, $img)) {
         $message = \i18n("Changes saved");
     } else {
@@ -63,7 +63,7 @@ if (isset($_POST['id']) && isset($_POST['label'])) {
     if ($_POST['dispOrder'] !== "") {
         $dispOrder = intval($_POST['dispOrder']);
     }
-    $cat = new \Pasteque\Category($parent_id, $_POST['label'], $img, $dispOrder);
+    $cat = new \Pasteque\Category($_POST['reference'], $parent_id, $_POST['label'], $img, $dispOrder);
     $id = \Pasteque\CategoriesService::createCat($cat, $img);
     if ($id !== FALSE) {
         $message = \i18n("Category saved. <a href=\"%s\">Go to the category page</a>.", PLUGIN_NAME, \Pasteque\get_module_url_action(PLUGIN_NAME, 'category_edit', array('id' => $id)));
@@ -84,6 +84,7 @@ if (isset($_GET['id'])) {
 <form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post" enctype="multipart/form-data">
     <?php \Pasteque\form_hidden("edit", $category, "id"); ?>
 	<?php \Pasteque\form_input("edit", "Category", $category, "label", "string", array("required" => true)); ?>
+	<?php \Pasteque\form_input("edit", "Category", $category, "reference", "string", array("required" => false)); ?>
 	<?php \Pasteque\form_input("edit", "Category", $category, "parentId", "pick", array("model" => "Category", "nullable" => TRUE)); ?>
 	<?php \Pasteque\form_input("edit", "Category", $category, "dispOrder", "numeric"); ?>
 	<div class="row">

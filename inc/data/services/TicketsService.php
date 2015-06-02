@@ -125,6 +125,40 @@ class TicketsService {
         return $tickets;
     }
 
+    static function getTotal() {
+        $pdo = PDOBuilder::getPDO();
+        $sql = "SELECT COUNT(*) AS TOTAL "
+                . "FROM TICKETS AS T, RECEIPTS, CLOSEDCASH "
+                . "WHERE CLOSEDCASH.DATEEND IS NOT NULL "
+                . "AND CLOSEDCASH.MONEY = RECEIPTS.MONEY "
+                . "AND RECEIPTS.ID = T.ID "
+                . "ORDER BY T.TICKETID DESC";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
+
+    static function getAll() {
+        $tickets = array();
+        $pdo = PDOBuilder::getPDO();
+        $sql = "SELECT T.ID, T.TICKETID, T.TICKETTYPE, T.PERSON, T.CUSTOMER, "
+                . "T.STATUS, T.CUSTCOUNT, T.TARIFFAREA, T.DISCOUNTRATE, "
+                . "T.DISCOUNTPROFILE_ID, RECEIPTS.DATENEW, "
+                . "CLOSEDCASH.MONEY "
+                . "FROM TICKETS AS T, RECEIPTS, CLOSEDCASH "
+                . "WHERE CLOSEDCASH.DATEEND IS NOT NULL "
+                . "AND CLOSEDCASH.MONEY = RECEIPTS.MONEY "
+                . "AND RECEIPTS.ID = T.ID "
+                . "ORDER BY T.TICKETID DESC";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        while ($row = $stmt->fetch()) {
+            $ticket = TicketsService::buildTicket($row, $pdo);
+            $tickets[] = $ticket;
+        }
+        return $tickets;
+    }
+
     static function search($ticketId, $ticketType, $cashId, $dateStart,
             $dateStop, $customerId, $userId) {
         $tickets = array();
