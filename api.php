@@ -56,6 +56,7 @@ $result = $broker->run($action, $params);
 
 if ($api == "ImagesAPI") {
     // Special case of images api with binary data
+    header("Cache-Control: max-age=864000");
     echo($result);
 } else {
     header("Content type: application/json");
