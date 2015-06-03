@@ -18,9 +18,18 @@
 "Categories": "Categories",
 "Edit a category": "Édition d'une categorie",
 "Add a category": "Ajouter une catégorie",
-"%d categories": "%d categories",
+"%d categories": "%d catégories",
 "No category found": "Pas de categorie trouvée",
 "Category saved. <a href=\"%s\">Go to the category page</a>.": "Catégorie enregistrée. <a href=\"%s\">Aller à la page de la catégorie</a>.",
+
+"Providers": "Fournisseurs",
+"Edit a provider": "Éditer un fournisseur",
+"Import providers": "Importer des fournisseurs",
+"Add a provider": "Ajouter un fournisseur",
+"%d providers": "%d fournisseurs",
+"No provider found": "Pas de fournisseur trouvé",
+"Contact data": "Informations de contact",
+"Provider saved. <a href=\"%s\">Go to the provider page</a>.": "Fournisseur enregistré. <a href=\"%s\">Aller à la page du fournisseur</a>.",
 
 "Taxes": "Taxes",
 "Add a tax": "Ajouter une taxe",
@@ -52,5 +61,7 @@
 "On line %d: Tax category: '%s' doesn't exist": "À la ligne %d: La categorie de taxe: '%s' n'existe pas",
 
 "Reference": "Référence",
-"Quantity": "Quantité"
+"Quantity": "Quantité",
+
+"by category": "par catégorie"
 }

@@ -24,6 +24,7 @@
 "Generate": "Génerer",
 "Save": "Enregistrer",
 "Send": "Envoyer",
+"Search": "Rechercher",
 "Changes saved": "Modifications enregistrées",
 "Unable to save changes": "Impossible d'enregistrer les modifications",
 "Export": "Exporter",
@@ -48,6 +49,7 @@
 "Product.label": "Désignation",
 "Product.reference": "Référence",
 "Product.category": "Categorie",
+"Product.provider": "Fournisseur",
 "Product.dispOrder": "Ordre",
 "Product.barcode": "Code barre",
 "Product.taxCat": "TVA",
@@ -60,8 +62,27 @@
 "Product.attributeSet": "Jeu d'attributs",
 
 "Category.label": "Désignation",
+"Category.reference": "Référence",
 "Category.parent": "Parent",
 "Category.dispOrder": "Ordre",
+
+"Provider.label": "Nom",
+"Provider.dispOrder": "Ordre",
+"Provider.firstName": "Prénom",
+"Provider.lastName": "Nom",
+"Provider.email": "Courriel",
+"Provider.phone1": "Téléphone",
+"Provider.phone2": "GSM",
+"Provider.website": "Site web",
+"Provider.fax": "Fax",
+"Provider.addr1": "Adresse",
+"Provider.addr2": "Adresse",
+"Provider.zipCode": "Code postal",
+"Provider.city": "Ville",
+"Provider.region": "État/Région",
+"Provider.country": "Pays",
+"Provider.notes": "Notes",
+"Provider.visible": "Visible",
 
 "Composition.label": "Désignation",
 "Subgroup.label": "Désignation",
@@ -102,6 +123,7 @@
 "Customer.dispName": "Nom",
 "Customer.card": "Carte",
 "Customer.visible": "Actif",
+"Customer.expireDate": "Date d’expiration",
 "Customer.prepaid": "Solde pré-payé",
 "Customer.maxDebt": "Dette max",
 "Customer.currDebt": "Dette actuelle",
@@ -109,6 +131,7 @@
 "Customer.note": "Note",
 "Customer.custTax": "Catégorie de taxe",
 "Customer.discountProfile": "Profil de remise",
+"Customer.tariffArea": "Zone tarifaire",
 "Customer.firstName": "Prénom",
 "Customer.lastName": "Nom",
 "Customer.email": "Email",
@@ -151,6 +174,7 @@
 
 "TariffArea.label": "Désignation",
 "TariffArea.dispOrder": "Ordre",
+"TariffArea.notes": "Notes",
 
 "Resource.label": "Désignation",
 
@@ -169,5 +193,6 @@
 "debt": "Dette",
 "prepaid": "Pré-payé",
 
-"confirm": "Êtes-vous certain de vouloir faire ça ?"
+"confirm": "Êtes-vous certain de vouloir faire ça ?",
+"all": "Tout"
 }

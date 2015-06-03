@@ -27,17 +27,24 @@ class Payment {
     public $amount;
     public $currencyId;
     public $currencyAmount;
+    public $backType;
+    public $backAmount;
 
-    static function __build($id, $type, $amount, $currencyId, $currencyAmount) {
-        $payment = new Payment($type, $amount, $currencyId, $currencyAmount);
+    static function __build($id, $type, $amount, $currencyId, $currencyAmount,
+            $backType = null, $backAmount = null) {
+        $payment = new Payment($type, $amount, $currencyId, $currencyAmount,
+                $backType, $backAmount);
         $payment->id = $id;
         return $payment;
     }
 
-    function __construct($type, $amount, $currencyId, $currencyAmount) {
+    function __construct($type, $amount, $currencyId, $currencyAmount,
+            $backType = null, $backAmount = null) {
         $this->type = $type;
         $this->amount = $amount;
         $this->currencyId = $currencyId;
         $this->currencyAmount = $currencyAmount;
+        $this->backType = $backType;
+        $this->backAmount =  $backAmount;
     }
 }

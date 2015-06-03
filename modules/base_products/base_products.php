@@ -25,6 +25,7 @@ function init() {
     $MENU->addSection("catalog", "Catalog", PLUGIN_NAME);
     $MENU->registerModuleEntry("catalog", PLUGIN_NAME, "menu_tax.png", "Taxes", "taxes");
     $MENU->registerModuleEntry("catalog", PLUGIN_NAME, "menu_category.png", "Categories", "categories");
+    $MENU->registerModuleEntry("catalog", PLUGIN_NAME, "menu_category.png", "Providers", "providers");
     $MENU->registerModuleEntry("catalog", PLUGIN_NAME, "menu_product.png", "Products", "products");
     \Pasteque\register_i18n(PLUGIN_NAME);
 }

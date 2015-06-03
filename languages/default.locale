@@ -24,6 +24,7 @@
 "Generate": "Generate",
 "Save": "Save",
 "Send": "Send",
+"Search": "Search",
 "Changes saved": "Changes saved",
 "Unable to save changes": "Unable to save changes",
 "Export": "Export",
@@ -48,6 +49,7 @@
 "Product.label": "Name",
 "Product.reference": "Reference",
 "Product.category": "Category",
+"Product.provider": "Provider",
 "Product.dispOrder": "Order",
 "Product.barcode": "Barcode",
 "Product.taxCat": "VAT",
@@ -60,8 +62,28 @@
 "Product.attributeSet": "Attribute set",
 
 "Category.label": "Name",
+"Category.reference": "Reference",
 "Category.parent": "Parent",
 "Category.dispOrder": "Order",
+
+"Provider.label": "Name",
+"Provider.parent": "Parent",
+"Provider.dispOrder": "Order",
+"Provider.firstName": "First Name",
+"Provider.lastName": "Last Name",
+"Provider.email": "Email",
+"Provider.phone1": "Phone",
+"Provider.phone2": "GSM",
+"Provider.website": "Website",
+"Provider.fax": "Fax",
+"Provider.addr1": "Address",
+"Provider.addr2": "Address",
+"Provider.zipCode": "Zip Code",
+"Provider.city": "City",
+"Provider.region": "State",
+"Provider.country": "Country",
+"Provider.notes": "Notes",
+"Provider.visible": "Visible",
 
 "Composition.label": "Name",
 "Subgroup.label": "Name",
@@ -102,6 +124,7 @@
 "Customer.dispName": "Name",
 "Customer.card": "Card",
 "Customer.visible": "Active",
+"Customer.expireDate": "Expire date",
 "Customer.prepaid": "Prepayment",
 "Customer.maxDebt": "Max debt",
 "Customer.currDebt": "Current debt",
@@ -109,6 +132,7 @@
 "Customer.note": "Note",
 "Customer.custTax": "Tax category",
 "Customer.discountProfile": "Discount profile",
+"Customer.tariffArea": "Tariff area",
 "Customer.firstName": "First name",
 "Customer.lastName": "Last name",
 "Customer.email": "Email",
@@ -151,6 +175,7 @@
 
 "TariffArea.label": "Label",
 "TariffArea.dispOrder": "Order",
+"TariffArea.notes": "Notes",
 
 "Resource.label": "Label",
 
@@ -169,5 +194,6 @@
 "debt": "Debt",
 "prepaid": "Prepaid",
 
-"confirm": "Are you sure you want to do it ?"
+"confirm": "Are you sure you want to do it ?",
+"all": "All"
 }

@@ -24,17 +24,67 @@ class SharedTicket {
 
     public $id;
     public $label;
-    public $data;
+    public $customerId;
+    public $custCount;
+    public $tariffAreaId;
+    public $discountProfileId;
+    public $discountRate;
+    public $lines;
 
-    static function __build($id, $label, $data) {
-        $ticket = new SharedTicket($label, $data);
+    static function __build($id, $label, $customerId, $custCount, $tariffAreaId,
+            $discountProfileId, $discountRate) {
+        $ticket = new SharedTicket($label, $customerId, $custCount,
+                $tariffAreaId, $discountProfileId, $discountRate);
         $ticket->id = $id;
         return $ticket;
     }
 
-    public function __construct($label, $data) {
+    public function __construct($label, $customerId, $custCount, $tariffAreaId,
+            $discountProfileId, $discountRate) {
         $this->label = $label;
-        $this->data = $data;
+        $this->customerId = $customerId;
+        $this->custCount = $custCount;
+        $this->tariffAreaId = $tariffAreaId;
+        $this->discountProfileId = $discountProfileId;
+        $this->discountRate = $discountRate;
+        $this->lines = array();
     }
 
+    public function addProduct($sharedTicketLine) {
+        $this->lines[] = $sharedTicketLine;
+    }
+}
+
+class SharedTicketLines {
+
+    public $id;
+    public $sharedTicketId;
+    public $dispOrder;
+    public $productId;
+    public $taxId;
+    public $quantity;
+    public $discountRate;
+    public $price;
+    public $attributes;
+
+    public function __build($id, $sharedTicketId, $dispOrder, $productId,
+            $taxId, $quantity, $discountRate, $price, $attributes) {
+        $ticketLine = new SharedTicketLines($sharedTicketId, $dispOrder,
+                $productId, $taxId, $quantity, $discountRate, $price,
+                $attributes);
+        $ticketLine->id = $id;
+        return $ticketLine;
+    }
+
+    public function __construct($sharedTicketId, $dispOrder, $productId,
+            $taxId, $quantity, $discountRate, $price, $attributes) {
+        $this->sharedTicketId = $sharedTicketId;
+        $this->dispOrder = $dispOrder;
+        $this->productId = $productId;
+        $this->taxId = $taxId;
+        $this->quantity = $quantity;
+        $this->discountRate = $discountRate;
+        $this->price = $price;
+        $this->attributes = $attributes;
+    }
 }

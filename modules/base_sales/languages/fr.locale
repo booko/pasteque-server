@@ -9,6 +9,7 @@
 "Sales": "Ventes",
 "Sales report": "Détail",
 "Sales by product": "Ventes par produit",
+"Sales by provider": "Ventes par fournisseur",
 "Sales by category": "Ventes par catégorie",
 "Taxes report": "TVA collectée",
 "Product name": "Produit",
@@ -20,7 +21,7 @@
 "Tax amount": "TVA collectée",
 
 "Total w/o VAT": "Total HT",
-"Margin": "Marge totale",
+"Margin": "Marge",
 
 "CS report": "Synthèse",
 "Consolidated sales report": "Rapport de chiffre d'affaire",

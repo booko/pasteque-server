@@ -64,8 +64,27 @@ class TicketsService {
 
     private static function buildSharedTicket($dbRow, $pdo) {
         $db = DB::get();
-        return SharedTicket::__build($dbRow['ID'], $dbRow['NAME'],
-                $db->readBin($dbRow['CONTENT']));
+        $tkt = SharedTicket::__build($dbRow['ID'], $dbRow['NAME'],
+                $dbRow['CUSTOMER_ID'], $dbRow['CUSTCOUNT'],
+                $dbRow['TARIFFAREA_ID'],
+                $dbRow['DISCOUNTPROFILE_ID'], $dbRow['DISCOUNTRATE']);
+        $id = $dbRow['ID'];
+        // Get lines
+        $lines = array();
+        $lineSql = "SELECT * FROM SHAREDTICKETLINES WHERE "
+                . "SHAREDTICKET_ID = :id ORDER BY LINE";
+        $lineStmt = $pdo->prepare($lineSql);
+        $lineStmt->bindParam(":id", $id);
+        $lineStmt->execute();
+        while ($rowLine = $lineStmt->fetch()) {
+            $line = SharedTicketLines::__build($rowLine['ID'],
+                    $rowLine['SHAREDTICKET_ID'], $rowLine['LINE'],
+                    $rowLine['PRODUCT_ID'], $rowLine['TAX_ID'],
+                    $rowLine['QUANTITY'], $rowLine['DISCOUNTRATE'],
+                    $rowLine['PRICE'], $db->readBin($rowLine['ATTRIBUTES']));
+            $tkt->addProduct($line);
+        }
+        return $tkt;
     }
 
     static function get($id) {
@@ -94,6 +113,40 @@ class TicketsService {
                 . "CLOSEDCASH.MONEY "
                 . "FROM TICKETS AS T, RECEIPTS, CLOSEDCASH "
                 . "WHERE CLOSEDCASH.DATEEND IS NULL "
+                . "AND CLOSEDCASH.MONEY = RECEIPTS.MONEY "
+                . "AND RECEIPTS.ID = T.ID "
+                . "ORDER BY T.TICKETID DESC";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        while ($row = $stmt->fetch()) {
+            $ticket = TicketsService::buildTicket($row, $pdo);
+            $tickets[] = $ticket;
+        }
+        return $tickets;
+    }
+
+    static function getTotal() {
+        $pdo = PDOBuilder::getPDO();
+        $sql = "SELECT COUNT(*) AS TOTAL "
+                . "FROM TICKETS AS T, RECEIPTS, CLOSEDCASH "
+                . "WHERE CLOSEDCASH.DATEEND IS NOT NULL "
+                . "AND CLOSEDCASH.MONEY = RECEIPTS.MONEY "
+                . "AND RECEIPTS.ID = T.ID "
+                . "ORDER BY T.TICKETID DESC";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
+
+    static function getAll() {
+        $tickets = array();
+        $pdo = PDOBuilder::getPDO();
+        $sql = "SELECT T.ID, T.TICKETID, T.TICKETTYPE, T.PERSON, T.CUSTOMER, "
+                . "T.STATUS, T.CUSTCOUNT, T.TARIFFAREA, T.DISCOUNTRATE, "
+                . "T.DISCOUNTPROFILE_ID, RECEIPTS.DATENEW, "
+                . "CLOSEDCASH.MONEY "
+                . "FROM TICKETS AS T, RECEIPTS, CLOSEDCASH "
+                . "WHERE CLOSEDCASH.DATEEND IS NOT NULL "
                 . "AND CLOSEDCASH.MONEY = RECEIPTS.MONEY "
                 . "AND RECEIPTS.ID = T.ID "
                 . "ORDER BY T.TICKETID DESC";
@@ -282,8 +335,9 @@ class TicketsService {
         // Insert payments
         // Also check for prepayment debit and debt recovery
         $stmtPay = $pdo->prepare("INSERT INTO PAYMENTS (ID, RECEIPT, PAYMENT, "
-                . "TOTAL, CURRENCY, TOTALCURRENCY) VALUES (:id, :rcptId, "
-                . ":type, :amount, :currId, :currAmount)");
+                . "TOTAL, CURRENCY, TOTALCURRENCY, PAIRED_WITH) VALUES "
+                . "(:id, :rcptId, :type, :amount, :currId, :currAmount, "
+                . ":pair)");
         foreach ($ticket->payments as $payment) {
             $paymentId = md5(time() . rand());
             $stmtPay->bindParam(":id", $paymentId);
@@ -292,12 +346,33 @@ class TicketsService {
             $stmtPay->bindParam(":amount", $payment->amount);
             $stmtPay->bindParam(":currId", $payment->currencyId);
             $stmtPay->bindParam(":currAmount", $payment->currencyAmount);
+            $stmtPay->bindValue(":pair", null);
             if ($stmtPay->execute() === false) {
                 if ($newTransaction) {
                     $pdo->rollback();
                 }
                 return false;
             }
+            // Insert back payment if any
+            if ($payment->backType !== null) {
+                $backId = md5(time() . rand());
+                $currSrv = new CurrenciesService();
+                $defaultCurrencyId = $currSrv->getDefault()->id;
+                $stmtPay->bindParam(":id", $backId);
+                $stmtPay->bindParam(":type", $payment->backType);
+                $stmtPay->bindParam(":amount", $payment->backAmount);
+                $stmtPay->bindParam(":currId", $defaultCurrencyId);
+                $stmtPay->bindParam(":currAmount", $payment->backAmount);
+                $stmtPay->bindValue(":pair", $paymentId);
+                // :rcptId is already bound
+                if ($stmtPay->execute() === false) {
+                    if ($newTransaction) {
+                        $pdo->rollback();
+                    }
+                    return false;
+                }
+            }
+            // Check prepaid
             if ($payment->type == 'prepaid') {
                 $custSrv = new CustomersService();
                 $ok = $custSrv->addPrepaid($ticket->customerId,
@@ -549,9 +624,77 @@ class TicketsService {
 
     static function deleteSharedTicket($id) {
         $pdo = PDOBuilder::getPDO();
+        $newTransaction = !$pdo->inTransaction();
+        if ($newTransaction) {
+            $pdo->beginTransaction();
+        }
+        // Delete lines
+        $stmtLines = $pdo->prepare("DELETE FROM SHAREDTICKETLINES "
+                . "WHERE SHAREDTICKET_ID = :id");
+        $stmtLines->bindParam(":id", $id);
+        if ($stmtLines->execute() === false) {
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
+            return false;
+        }
+        // Delete ticket
         $stmt = $pdo->prepare("DELETE FROM SHAREDTICKETS WHERE ID = :id");
         $stmt->bindParam(":id", $id);
+        if ($stmt->execute() === false) {
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
+            return false;
+        }
+        if ($newTransaction) {
+            $pdo->commit();
+        }
+        return true;
+    }
+
+    /** Function to manage insert of shared ticket lines
+     * relatives to shared ticket
+     */
+    private static function createSharedTicketLine($sharedTicketId, $line) {
+        $pdo = PDOBuilder::getPDO();
+        $id = md5(time() . rand());
+        $stmt = $pdo->prepare("INSERT INTO SHAREDTICKETLINES (ID, "
+                . "SHAREDTICKET_ID, LINE, PRODUCT_ID, TAX_ID, QUANTITY, "
+                . "DISCOUNTRATE, PRICE, ATTRIBUTES) "
+                . "VALUES (:id, :sharedTicketId, :line, :productId, :taxId, "
+                . ":quantity, :discountRate, :price, :attributes)");
+        $stmt->bindParam(":id", $id);
+        $stmt->bindParam(":sharedTicketId", $sharedTicketId);
+        $stmt->bindParam(":line", $line->dispOrder);
+        $stmt->bindParam(":productId", $line->productId);
+        $stmt->bindParam(":taxId", $line->taxId);
+        $stmt->bindParam(":quantity", $line->quantity);
+        $stmt->bindParam(":discountRate", $line->discountRate);
+        $stmt->bindParam(":price", $line->price);
+        $stmt->bindParam(":attributes", $line->attributes, \PDO::PARAM_LOB);
         if ($stmt->execute() !== false) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /** Replace shared ticket lines by new ones.
+     * Should be called in transaction.
+     */
+    private static function manageSharedTicketLines($sharedTicketId, $lines) {
+        $pdo = PDOBuilder::getPDO();
+        $stmt = $pdo->prepare("DELETE FROM SHAREDTICKETLINES "
+                . "WHERE SHAREDTICKET_ID = :id");
+        $stmt->bindParam(":id", $sharedTicketId);
+        if ($stmt->execute() !== false) {
+            foreach ($lines as $line) {
+                if (TicketsService::createSharedTicketLine($sharedTicketId,
+                                $line) === false) {
+                    return false;
+                }
+            }
             return true;
         } else {
             return false;
@@ -559,35 +702,87 @@ class TicketsService {
     }
 
     /** Create a shared ticket, its id is always set. */
-    static function createSharedTicket($ticket) {
-        $pdo = PDOBuilder::getPDO();
-        $stmt = $pdo->prepare("INSERT INTO SHAREDTICKETS (ID, NAME, CONTENT) "
-                . "VALUES (:id, :label, :data)");
-        $stmt->bindParam(":id", $ticket->id);
-        $stmt->bindParam(":label", $ticket->label);
-        $stmt->bindParam(":data", $ticket->data, \PDO::PARAM_LOB);
-        if ($stmt->execute() !== false) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    static function updateSharedTicket($ticket) {
+    static function createSharedTicket($ticket, $lines) {
         if ($ticket->id === null) {
             return false;
         }
         $pdo = PDOBuilder::getPDO();
-        $stmt = $pdo->prepare("UPDATE SHAREDTICKETS SET NAME = :lbl, "
-                . "CONTENT = :content WHERE ID = :id");
+        $newTransaction = !$pdo->inTransaction();
+        if ($newTransaction) {
+            $pdo->beginTransaction();
+        }
+        $stmt = $pdo->prepare("INSERT INTO SHAREDTICKETS (ID, NAME, "
+                . "CUSTOMER_ID, CUSTCOUNT, TARIFFAREA_ID, DISCOUNTPROFILE_ID, "
+                . "DISCOUNTRATE) "
+                . "VALUES (:id, :label, :customerId, :custCount, "
+                . ":tariffAreaId, :discountProfileId, :discountRate)");
         $stmt->bindParam(":id", $ticket->id);
-        $stmt->bindParam(":lbl", $ticket->label);
-        $stmt->bindParam(":content", $ticket->data, \PDO::PARAM_LOB);
-        if ($stmt->execute() !== false) {
-            return true;
-        } else {
+        $stmt->bindParam(":label", $ticket->label);
+        $stmt->bindParam(":customerId", $ticket->customerId);
+        $stmt->bindParam(":custCount", $ticket->custCount);
+        $stmt->bindParam(":tariffAreaId", $ticket->tariffAreaId);
+        $stmt->bindParam(":discountProfileId", $ticket->discountProfileId);
+        $stmt->bindParam(":discountRate", $ticket->discountRate);
+        if ($stmt->execute() === false) {
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
             return false;
         }
+        // Insert lines
+        $ok = TicketsService::manageSharedTicketLines($ticket->id, $lines);
+        if ($ok === false) {
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
+            return false;
+        }
+        if ($newTransaction) {
+            $pdo->commit();
+        }
+        return true;
     }
 
+    static function updateSharedTicket($ticket, $lines) {
+        if ($ticket->id === null) {
+            return false;
+        }
+        $pdo = PDOBuilder::getPDO();
+        $newTransaction = !$pdo->inTransaction();
+        if ($newTransaction) {
+            $pdo->beginTransaction();
+        }
+        $stmt = $pdo->prepare("UPDATE SHAREDTICKETS SET NAME = :label, "
+                ." CUSTOMER_ID = :customerId, "
+                . " CUSTCOUNT = :custCount, "
+                ." TARIFFAREA_ID = :tariffAreaId, "
+                ." DISCOUNTPROFILE_ID = :discountProfileId, "
+                ." DISCOUNTRATE = :discountRate "
+                ." WHERE ID = :id");
+        $stmt->bindParam(":id", $ticket->id);
+        $stmt->bindParam(":label", $ticket->label);
+        $stmt->bindParam(":customerId", $ticket->customerId);
+        $stmt->bindParam(":custCount", $ticket->custCount);
+        $stmt->bindParam(":tariffAreaId", $ticket->tariffAreaId);
+        $stmt->bindParam(":discountProfileId", $ticket->discountProfileId);
+        $stmt->bindParam(":discountRate", $ticket->discountRate);
+        if ($stmt->execute() === false) {
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
+            return false;
+        }
+        // Update lines
+        $ok = TicketsService::manageSharedTicketLines($ticket->id, $lines);
+        if ($ok === false) {
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
+            return false;
+        }
+        if ($newTransaction) {
+            $pdo->commit();
+        }
+        return true;
+    }
 }

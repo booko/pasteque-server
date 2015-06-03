@@ -34,7 +34,8 @@ function dropDatabase() {
     $pdo = PDOBuilder::getPdo();
     if ($config['db_type'] == "mysql") {
         $sqls = array("DROP TABLE APPLICATIONS;", "DROP TABLE ROLES;",
-                "DROP TABLE PEOPLE;", "DROP TABLE RESOURCES;",
+               "DROP TABLE PEOPLE;", "DROP TABLE RESOURCES;",
+                "DROP TABLE PROVIDERS;",
                 "DROP TABLE DISCOUNTPROFILES;",
                 "DROP TABLE TAXCUSTCATEGORIES;", "DROP TABLE CUSTOMERS;",
                 "DROP TABLE CATEGORIES;", "DROP TABLE TAXCATEGORIES;",
@@ -47,17 +48,22 @@ function dropDatabase() {
                 "DROP TABLE TARIFFAREAS;", "DROP TABLE TARIFFAREAS_PROD;",
                 "DROP TABLE LOCATIONS;", "DROP TABLE STOCKDIARY;",
                 "DROP TABLE STOCKLEVEL;", "DROP TABLE STOCKCURRENT;",
+                "DROP TABLE STOCK_INVENTORY;", "DROP TABLE STOCK_INVENTORYITEM;",
                 "DROP TABLE CASHREGISTERS;",
                 "DROP TABLE CURRENCIES;", "DROP TABLE CLOSEDCASH;",
+                "DROP TABLE PAYMENTMODES;", "DROP TABLE PAYMENTMODES_RETURNS;",
+                "DROP TABLE PAYMENTMODES_VALUES;",
                 "DROP TABLE RECEIPTS;", "DROP TABLE TICKETS;",
                 "DROP TABLE TICKETLINES;",
                 "DROP TABLE PAYMENTS;", "DROP TABLE TAXLINES;",
                 "DROP TABLE FLOORS;", "DROP TABLE PLACES;",
                 "DROP TABLE RESERVATIONS;", "DROP TABLE RESERVATION_CUSTOMERS;",
-                "DROP TABLE THIRDPARTIES;", "DROP TABLE SHAREDTICKETS;");
+                "DROP TABLE THIRDPARTIES;", "DROP TABLE SHAREDTICKETS;",
+                "DROP TABLE SHAREDTICKETLINES;");
     } else if ($config['db_type'] == "postgresql") {
         $sqls = array("DROP TABLE APPLICATIONS;", "DROP TABLE ROLES;",
                 "DROP TABLE PEOPLE;", "DROP TABLE RESOURCES;",
+                "DROP TABLE PROVIDERS;",
                 "DROP SEQUENCE DISCOUNTPROFILES_ID_SEQ CASCADE;",
                 "DROP TABLE DISCOUNTPROFILES;",
                 "DROP TABLE TAXCUSTCATEGORIES;", "DROP TABLE CUSTOMERS;",
@@ -73,16 +79,23 @@ function dropDatabase() {
                 "DROP TABLE TARIFFAREAS;", "DROP TABLE TARIFFAREAS_PROD;",
                 "DROP TABLE LOCATIONS;", "DROP TABLE STOCKDIARY;",
                 "DROP TABLE STOCKLEVEL;", "DROP TABLE STOCKCURRENT;",
+                "DROP SEQUENCE STOCK_INVENTORY_ID_SEQ CASCADE;",
+                "DROP SEQUENCE STOCK_INVENTORYITEM_ID_SEQ;",
+                "DROP TABLE STOCK_INVENTORY;", "DROP TABLE STOCK_INVENTORYITEM;",
                 "DROP SEQUENCE CASHREGISTERS_ID_SEQ CASCADE",
                 "DROP TABLE CASHREGISTERS;",
                 "DROP SEQUENCE CURRENCIES_ID_SEQ CASCADE;",
                 "DROP TABLE CURRENCIES;", "DROP TABLE CLOSEDCASH;",
+                "DROP SEQUENCE PAYMENTMODES_ID_SEQ CASCADE;",
+                "DROP TABLE PAYMENTMODES;", "DROP TABLE PAYMENTMODES_RETURNS;",
+                "DROP TABLE PAYMENTMODES_VALUES;",
                 "DROP TABLE RECEIPTS;", "DROP TABLE TICKETS;",
                 "DROP TABLE TICKETLINES;",
                 "DROP TABLE PAYMENTS;", "DROP TABLE TAXLINES;",
                 "DROP TABLE FLOORS;", "DROP TABLE PLACES;",
                 "DROP TABLE RESERVATIONS;", "DROP TABLE RESERVATION_CUSTOMERS;",
-                "DROP TABLE THIRDPARTIES;", "DROP TABLE SHAREDTICKETS;");
+                "DROP TABLE THIRDPARTIES;", "DROP TABLE SHAREDTICKETS;",
+                "DROP TABLE SHAREDTICKETLINES;");
     }
     for ($i = count($sqls) - 1; $i >= 0; $i--) {
         if ($pdo->exec($sqls[$i]) === false) {

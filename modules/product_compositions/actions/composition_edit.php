@@ -189,7 +189,7 @@ if (isset($_GET['productId'])) {
         <div class="row">
         	<label for="listSubGr"><?php \pi18n("SubGroups", PLUGIN_NAME); ?></label>
             <select id="listSubGr" onchange="showSubgroup()"></select>
-        </div class="row">
+        </div>
         <div class="row">
             <label for="edit-sgName"><?php \pi18n('Subgroup.label'); ?></label>
             <input type="text" id="edit-sgName" onchange="javascript:editSubgroup();"/>
@@ -224,7 +224,7 @@ if (isset($_GET['productId'])) {
         <?php \Pasteque\form_save();?>
 </form>
 
-<?php \Pasteque\init_catalog("catalog", "catalog-picker", "productPicked",
+<?php \Pasteque\init_catalog_old("catalog", "catalog-picker", "productPicked",
         $categories, $products); ?>
 
 <script src="<?php echo \Pasteque\get_module_action(PLUGIN_NAME, "control.js")?>" type="text/javascript"></script>

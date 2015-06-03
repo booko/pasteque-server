@@ -50,3 +50,15 @@ function stdtimefstr($date) {
 function stdstrftime($time) {
     return strftime("%Y-%m-%d %H:%M:%S", $time);
 }
+
+function stddatefstr($date) {
+    if ($date != null) {
+        return timefstr("Y-m-d", $date);
+    } else {
+        return null;
+    }
+}
+
+function stdstrfdate($time) {
+    return strftime("%Y-%m-%d", $time);
+}

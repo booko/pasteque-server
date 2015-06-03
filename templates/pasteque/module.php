@@ -134,6 +134,7 @@ function __tpl_report_input($report, $values) {
         echo "&" . $param['param'] . "=" . $values[$param['param']];
     }
     echo "\">" . \i18n("Export") . "</a></div>\n";
+    echo "<br />\n";
     if(is_array($report->getParams()) && sizeof($report->getParams()) > 0) {
         // Input form
         echo "<form class=\"edit\" action=\"" . \Pasteque\get_current_url() . "\" "
@@ -417,6 +418,7 @@ function tpl_pagination($total,$range,$start=0) {
         return;
     }
     echo "<div class=\"pagination\">";
+    echo "<a href=\"".\Pasteque\get_current_url()."&range=all\">".\i18n('all')."</a>";
     if(isset($_GET["start"]) && $_GET["start"] != 0) {
         $url = __tpl_pagination_url($range,$_GET["start"]-$range);
         echo "<a class=\"prev_page\" href=\"".$url."\">«</a>";
@@ -473,4 +475,42 @@ function tpl_js_btn($class, $onclick, $label, $id = NULL, $image_btn = NULL, $al
     }
     $btn .= $label . "</a>";
     echo $btn;
+}
+
+function tpl_form($type,$key,$data) {
+    $form = "<form action=\"".\Pasteque\url_content()."\" method=\"get\">\n";
+    switch($type) {
+        case 'select':
+            $form .= "<select name=\"".$key."\" onchange=\"this.form.submit();\">\n";
+            foreach($data as $d) {
+                switch($key) {
+                    case 'category':
+                        $form .= "\t<option value=\"".$d->id."\"";
+                        if($_GET[$key] == $d->id) {
+                            $form .= " selected";
+                        }
+                        $form .= ">".$d->label."</option>\n";
+                        break;
+                    case 'customer':
+                        $form .= "\t<option value=\"".$d->id."\"";
+                        if($_GET[$key] == $d->id) {
+                            $form .= " selected";
+                        }
+                        $form .= ">".$d->dispName."</option>\n";
+                        break;
+                    default:
+                        $form .= "\t<option value=\"".$d->id."\"";
+                        if($_GET[$key] == $d->id) {
+                            $form .= " selected";
+                        }
+                        $form .= ">".$d->label."</option>\n";
+                        break;
+                }
+            }
+            $form .= "</select>\n";
+            break;
+    }
+    $form .= "<input type=\"hidden\" name=\"p\" value=\"".$_GET[PT::URL_ACTION_PARAM]."\" />\n";
+    $form .= "</form>\n";
+    echo $form;
 }

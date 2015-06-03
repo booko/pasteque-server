@@ -126,4 +126,27 @@ class CustomersAPITest extends \PHPUnit_Framework_TestCase {
     public function testAddPrepaid() {
         $this->markTestIncomplete();
     }
+
+    public function testCreate() {
+        $broker = new APIBroker(CustomersAPITest::API);
+        $srv = new CustomersService();
+        $cust = new Customer(null, "Cust", "It's me", "card", null, null, 12.0,
+                10.0, 5.0, stdtimefstr("2012-01-01 00:00:00"), "It's", "me",
+                "itsme@me.me", "012345", "23456", "11111", "Address1",
+                "Address2", "59000", "City", "Region", "France", "Note", true);
+        unset($cust->id);
+        $result = $broker->run("save", array("customer" => json_encode($cust)));
+        $this->assertEquals(APIResult::STATUS_CALL_OK, $result->status,
+                "Result status check failed");
+        $content = $result->content;
+        $id = $content['saved'][0];
+        $cust->id = $id;
+        $this->assertNotNull($content, "Result not found");
+        $read = $srv->get($id);
+        $this->checkCustEquality($cust, $read);
+    }
+
+    public function testCreateMultiple() {
+        $this->markTestIncomplete();
+    }
 }

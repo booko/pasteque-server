@@ -32,6 +32,7 @@ class CustomersService extends AbstractService {
             "CARD" => "card",
             "TAXCATEGORY" => "custTaxId",
             "DISCOUNTPROFILE_ID" => "discountProfileId",
+            "TARIFFAREA_ID" => "tariffAreaId",
             "PREPAID" => "prepaid",
             "MAXDEBT" => "maxDebt",
             "CURDEBT" => "currDebt",
@@ -49,20 +50,23 @@ class CustomersService extends AbstractService {
             "REGION" => "region",
             "COUNTRY" => "country",
             "NOTES" => "note",
-            "VISIBLE" => array("type" => DB::BOOL, "attr" => "visible")
+            "VISIBLE" => array("type" => DB::BOOL, "attr" => "visible"),
+            "EXPIREDATE" => array("type" => DB::DATE, "attr" => "expireDate")
     );
 
     protected function build($row, $pdo = null) {
         $db = DB::get();
         $cust = Customer::__build($row['ID'], $row['TAXID'], $row['SEARCHKEY'],
                 $row['NAME'], $row['CARD'], $row['TAXCATEGORY'],
-                $row['DISCOUNTPROFILE_ID'], $row['PREPAID'], $row['MAXDEBT'],
+                $row['DISCOUNTPROFILE_ID'], $row['TARIFFAREA_ID'],
+                $row['PREPAID'], $row['MAXDEBT'],
                 $row['CURDEBT'], $db->readDate($row['CURDATE']),
                 $row['FIRSTNAME'], $row['LASTNAME'], $row['EMAIL'],
                 $row['PHONE'], $row['PHONE2'], $row['FAX'],
                 $row['ADDRESS'], $row['ADDRESS2'], $row['POSTAL'],
                 $row['CITY'], $row['REGION'], $row['COUNTRY'],
-                $row['NOTES'], $db->readBool($row['VISIBLE']));
+                $row['NOTES'], $db->readBool($row['VISIBLE']),
+                $db->readDate($row['EXPIREDATE']));
         return $cust;
     }
 
@@ -74,10 +78,10 @@ class CustomersService extends AbstractService {
         if ($include_hidden) {
             $sql = "SELECT * FROM CUSTOMERS";
         } else {
-            $sql = "SELECT * FROM CUSTOMERS WHERE VISIBLE = " . $db->true();
+            $sql = "SELECT * FROM CUSTOMERS WHERE (EXPIREDATE IS NULL OR EXPIREDATE > NOW()) AND VISIBLE = " . $db->true();
         }
         foreach ($pdo->query($sql) as $dbCust) {
-            $cust = $this->build($dbCust);
+            $cust = CustomersService::build($dbCust);
             $customers[] = $cust;
         }
         return $customers;
@@ -94,6 +98,7 @@ class CustomersService extends AbstractService {
                 . "FROM CUSTOMERS AS C "
                 . "LEFT JOIN TICKETS ON TICKETS.CUSTOMER = C.ID "
                 . "WHERE C.VISIBLE = " . $db->true() . " "
+                . "AND (EXPIREDATE IS NULL OR EXPIREDATE > NOW()) "
                 . "GROUP BY C.ID "
                 . "ORDER BY Top10 DESC, C.NAME ASC "
                 . "LIMIT :limit";

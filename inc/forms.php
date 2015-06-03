@@ -147,7 +147,10 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
         $model = $args['model'];
         switch ($model) {
         case 'Category':
-            $data = CategoriesService::getAll();
+            $data = CategoriesService::getAll(false);
+            break;
+        case 'Provider':
+            $data = ProvidersService::getAll();
             break;
         case 'TaxCategory':
             $data = TaxesService::getAll();
@@ -178,6 +181,10 @@ function form_input($form_id, $class, $object, $field, $type, $args = array()) {
         case 'DiscountProfile':
             $profSrv = new DiscountProfilesService();
             $data = $profSrv->getAll();
+            break;
+        case 'TariffArea':
+            $areaSrv = new TariffAreasService();
+            $data = $areaSrv->getAll();
             break;
         }
         echo '<select id="' . esc_attr($form_id . '-' . $field)

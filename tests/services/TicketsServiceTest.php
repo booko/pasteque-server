@@ -69,14 +69,14 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $stmt->execute(array(":id" => "-1", ":name" => "Refill"));
         $cat = new Category(null, "Category", false, 1);
         $cat->id = CategoriesService::createCat($cat);
-        $prd = new Product("REF", "product", 1.0, $cat->id, 1,
+        $prd = new Product("REF", "product", 1.0, $cat->id, null, 1,
                 $taxCat->id, true, false, 0.5, $set->id);
         $prd->id = ProductsService::create($prd);
         $this->prd = $prd;
-        $prd2 = new Product("REF2", "product2", 2.0, $cat->id, 1,
+        $prd2 = new Product("REF2", "product2", 2.0, $cat->id, null, 1,
                 $taxCat2->id, true, false, 0.5, null);
         $prd2->id = ProductsService::create($prd2);
-        $prdRefill = new Product("REFILL", "Refill", 1.0, "-1", 1,
+        $prdRefill = new Product("REFILL", "Refill", 1.0, "-1", null, 1,
                 $taxCat->id, true, false);
         $prdRefill->id = ProductsService::create($prdRefill);
         $this->prd = $prd;
@@ -132,6 +132,8 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         // Restore database in its empty state
         $pdo = PDOBuilder::getPDO();
         if ($pdo->exec("DELETE FROM PAYMENTS") === false
+                || $pdo->exec("DELETE FROM SHAREDTICKETLINES") === false
+                || $pdo->exec("DELETE FROM SHAREDTICKETS") === false
                 || $pdo->exec("DELETE FROM TAXLINES") === false
                 || $pdo->exec("DELETE FROM TICKETLINES") === false
                 || $pdo->exec("DELETE FROM TICKETS") === false
@@ -159,7 +161,6 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
                 //|| $pdo->exec("DELETE FROM ROLES") === false
                 || $pdo->exec("DELETE FROM CURRENCIES") === false
                 || $pdo->exec("DELETE FROM CUSTOMERS") === false
-                || $pdo->exec("DELETE FROM SHAREDTICKETS") === false
                 || $pdo->exec("DELETE FROM DISCOUNTPROFILES") === false) {
             echo("[ERROR] Unable to restore db\n");
         }
@@ -446,6 +447,37 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $row = $stmtPmt->fetch();
         $this->assertNotEquals(false, $row, "No payment line found");
         $this->checkPaymentEquality($id, $payment, $row);
+        $row = $stmtPmt->fetch();
+        $this->assertFalse($row, "Too much payment lines found");
+        // Check stock
+        $level = StocksService::getLevel($this->prd->id, $this->location->id,
+                null);
+        $this->assertEquals(-1, $level->qty);
+    }
+
+    /** @depends testSaveLine */
+    public function testSaveBackPayment() {
+        $date = stdtimefstr("2013-01-01 00:00:00");
+        $line = new TicketLine(1, $this->prd, null, 1, 10, $this->tax);
+        $payment = new Payment("cash", 12, $this->currency->id, 14,
+                "cashback", -2);
+        $ticket = new Ticket(Ticket::TYPE_SELL, $this->user->id,
+                $date, array($line), array($payment),
+                $this->cash->id, null, 3);
+        $id = TicketsService::save($ticket, $this->location->id);
+        $this->assertNotEquals(false, $id, "Ticket save failed");
+        $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
+        // Check payment lines
+        $stmtPmt = $pdo->prepare("SELECT * FROM PAYMENTS ORDER BY TOTAL DESC");
+        $this->assertNotEquals($stmtPmt->execute(), false,
+                "Payment lines query failed");
+        $row = $stmtPmt->fetch();
+        $this->assertNotEquals(false, $row, "No payment line found");
+        $this->checkPaymentEquality($id, $payment, $row);
+        $row = $stmtPmt->fetch();
+        $refPmt = new Payment("cashback", -2, $this->currency->id, -2);
+        $this->checkPaymentEquality($id, $refPmt, $row);
         $row = $stmtPmt->fetch();
         $this->assertFalse($row, "Too much payment lines found");
         // Check stock
@@ -930,12 +962,22 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
     private function checkSharedTktEquality($ref, $read) {
         $this->assertEquals($ref->id, $read->id, "Id mismatch");
         $this->assertEquals($ref->label, $read->label, "Label mismatch");
-        $this->assertEquals($ref->data, $read->data, "Data mismatch");
+        $this->assertEquals($ref->customerId, $read->customerId,
+                "Customer id mismatch");
+        $this->assertEquals($ref->custCount, $read->custCount,
+                "Customer count mismatch");
+        $this->assertEquals($ref->tariffAreaId, $read->tariffAreaId,
+                "Tariff area id mismatch");
+        $this->assertEquals($ref->discountProfileId, $read->discountProfileId,
+                "Discount profile id mismatch");
+        $this->assertEquals($ref->discountRate, $read->discountRate,
+                "Discount rate id mismatch");
     }
 
     public function testCreateSharedTicket() {
-        $tkt = SharedTicket::__build("1", "Label", 0x87c9bc);
-        $this->assertTrue(TicketsService::createSharedTicket($tkt),
+        $tkt = SharedTicket::__build("1", "Label", $this->customer->id, 1,
+                $this->area->id, $this->discountProfile->id, 13.37);
+        $this->assertTrue(TicketsService::createSharedTicket($tkt, array()),
                 "Creation failed");
         $pdo = PDOBuilder::getPDO();
         $db = DB::get();
@@ -945,14 +987,55 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertNotEquals(false, $row, "Nothing found");
         $this->assertEquals($tkt->id, $row['ID'], "Id mismatch");
         $this->assertEquals($tkt->label, $row['NAME'], "Label mismatch");
-        $this->assertEquals($tkt->data, $db->readBin($row['CONTENT']),
-                "Data mismatch");
+        $this->assertEquals($tkt->customerId, $row['CUSTOMER_ID'],
+                "Customer id mismatch");
+        $this->assertEquals($tkt->tariffAreaId, $row['TARIFFAREA_ID'],
+                "Tariff area id mismatch");
+        $this->assertEquals($tkt->discountProfileId,
+                $row['DISCOUNTPROFILE_ID'], "Discount profile id mismatch");
+        $this->assertEquals($tkt->discountRate, $row['DISCOUNTRATE'],
+                "Discount rate mismatch");
+    }
+
+    private function createSharedTicketLines($sharedTicketId) {
+        $ret = array();
+        $ret[] = SharedTicketLines::__build(1, $sharedTicketId, 0,
+                $this->prd->id, $this->tax->id, 1, 0, 10.34, null);
+        $ret[] = SharedTicketLines::__build(2, $sharedTicketId, 1,
+                $this->prd2->id, $this->tax->id, 1, 0, 10.34, null);
+        return $ret;
+    }
+
+    /** @depends testCreateSharedTicket */
+    public function testCreateSharedTicketWithLines() {
+        $tkt = SharedTicket::__build("1", "Label", $this->customer->id, 1,
+                $this->area->id, $this->discountProfile->id, 13.37);
+        $lines = $this->createSharedTicketLines($tkt->id);
+        $this->assertTrue(TicketsService::createSharedTicket($tkt, $lines),
+                "Creation failed");
+        $pdo = PDOBuilder::getPDO();
+        $db = DB::get();
+        $stmt = $pdo->prepare("SELECT * FROM SHAREDTICKETS");
+        $this->assertNotEquals(false, $stmt->execute());
+        $row = $stmt->fetch();
+        $this->assertNotEquals(false, $row, "Nothing found");
+        $this->assertEquals($tkt->id, $row['ID'], "Id mismatch");
+        $this->assertEquals($tkt->label, $row['NAME'], "Label mismatch");
+        $this->assertEquals($tkt->customerId, $row['CUSTOMER_ID'],
+                "Customer id mismatch");
+        $this->assertEquals($tkt->tariffAreaId, $row['TARIFFAREA_ID'],
+                "Tariff area id mismatch");
+        $this->assertEquals($tkt->discountProfileId,
+                $row['DISCOUNTPROFILE_ID'], "Discount profile id mismatch");
+        $this->assertEquals($tkt->discountRate, $row['DISCOUNTRATE'],
+                "Discount rate mismatch");
     }
 
     /** @depends testCreateSharedTicket */
     public function testGetSharedTicket() {
-        $tkt = SharedTicket::__build("1", "Label", 0x87c9bc);
-        $this->assertTrue(TicketsService::createSharedTicket($tkt),
+        $tkt = SharedTicket::__build("2", "Label2", $this->customer->id, 1,
+                $this->area->id, $this->discountProfile->id, 13.37);
+        $this->assertTrue(TicketsService::createSharedTicket($tkt, array()),
                 "Creation failed");
         $read = TicketsService::getSharedTicket($tkt->id);
         $this->assertNotNull($read, "Nothing found");
@@ -966,10 +1049,12 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
 
     /** @depends testCreateSharedTicket */
     public function testGetAllSharedTickets() {
-        $tkt = SharedTicket::__build("1", "Label", 0x87c9bc);
-        TicketsService::createSharedTicket($tkt);
-        $tkt2 = SharedTicket::__build("2", "Label2", 0xc2d9fc);
-        TicketsService::createSharedTicket($tkt2);
+        $tkt = SharedTicket::__build("1", "Label", $this->customer->id, 1,
+                $this->area->id, $this->discountProfile->id, 13.37);
+        TicketsService::createSharedTicket($tkt, array());
+        $tkt2 = SharedTicket::__build("2", "Label2", $this->customer->id, 1,
+                $this->area->id, $this->discountProfile->id, 13.37);
+        TicketsService::createSharedTicket($tkt2, array());
         $read = TicketsService::getAllSharedTickets($tkt->id);
         $this->assertNotNull($read, "Nothing found");
         $this->assertTrue(is_array($read), "Content is not an array");
@@ -1002,8 +1087,9 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
      * @depends testGetInexistentSharedTicket
      */
     public function testDeleteSharedTicket() {
-        $tkt = SharedTicket::__build("1", "Label", 0x87c9bc);
-        TicketsService::createSharedTicket($tkt);
+        $tkt = SharedTicket::__build("1", "Label", $this->customer->id, 1,
+                $this->area->id, $this->discountProfile->id, 13.37);
+        TicketsService::createSharedTicket($tkt, array());
         $this->assertTrue(TicketsService::deleteSharedTicket($tkt->id),
                 "Delete failed");
         $this->assertNull(TicketsService::getSharedTicket($tkt->id),
@@ -1014,11 +1100,12 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
      * @depends testGetSharedTicket
      */
     public function testUpdateSharedTicket() {
-        $tkt = SharedTicket::__build("1", "Label", 0x87c9bc);
-        TicketsService::createSharedTicket($tkt);
+        $tkt = SharedTicket::__build("1", "Label", $this->customer->id, 1,
+                $this->area->id, $this->discountProfile->id, 13.37);
+        TicketsService::createSharedTicket($tkt, array());
         $tkt->label = "Edited";
         $tkt->data = 0x98bca8;
-        $this->assertTrue(TicketsService::updateSharedTicket($tkt),
+        $this->assertTrue(TicketsService::updateSharedTicket($tkt, array()),
                 "Update failed");
         $read = TicketsService::getSharedTicket($tkt->id);
         $this->checkSharedTktEquality($tkt, $read);

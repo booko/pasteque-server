@@ -34,7 +34,7 @@ class TicketsAPI extends APIService {
             return isset($this->params['ticket']);
         case 'save':
             return (isset($this->params['ticket'])
-                            || isset($this->params['tickets']))
+                    || isset($this->params['tickets']))
                     && isset($this->params['cashId']);
         case 'getOpen':
             return true;
@@ -56,16 +56,10 @@ class TicketsAPI extends APIService {
         switch ($this->action) {
         case 'getShared':
             $tkt = TicketsService::getSharedTicket($this->params['id']);
-            if ($tkt !== null) {
-                $tkt->data = \base64_encode($tkt->data);
-            }
             $this->succeed($tkt);
             break;
         case 'getAllShared':
             $tkts = TicketsService::getAllSharedTickets();
-            foreach ($tkts as $tkt) {
-                $tkt->data = \base64_encode($tkt->data);
-            }
             $this->succeed($tkts);
             break;
         case 'delShared':
@@ -74,9 +68,20 @@ class TicketsAPI extends APIService {
         case 'share':
             $json = json_decode($this->params['ticket']);
             $ticket = SharedTicket::__build($json->id, $json->label,
-                    \base64_decode($json->data));
-            if (TicketsService::createSharedTicket($ticket) === false) {
-                $this->succeed(TicketsService::updateSharedTicket($ticket));
+                    $json->customerId, $json->custCount, $json->tariffAreaId,
+                    $json->discountProfileId, $json->discountRate);
+            $lines = array();
+            foreach ($json->lines as $jsLine) {
+                // Get line info
+                $tktLine = new SharedTicketLines($ticket->id,
+						$jsLine->dispOrder, $jsLine->productId, $jsLine->taxId,
+						$jsLine->quantity, $jsLine->discountRate,
+						$jsLine->price, $jsLine->attributes);
+                $lines[] = $tktLine;
+            }
+            if (TicketsService::createSharedTicket($ticket, $lines) === false) {
+                $this->succeed(TicketsService::updateSharedTicket($ticket,
+                                $lines));
             } else {
                 $this->succeed(true);
             }
@@ -175,7 +180,7 @@ class TicketsAPI extends APIService {
                             $attrs->addAttrInst($attrVal);
                         }
                         $attrsId = TicketsService::createAttrSetInst($attrs);
-                        
+
                         if ($attrsId === false) {
                             $this->fail(new APIError("Unknown attributes"));
                             break;
@@ -211,8 +216,15 @@ class TicketsAPI extends APIService {
                         $currencyId = $jspay->currencyId;
                         $currencyAmount = $jspay->currencyAmount;
                     }
+                    $backType = null;
+                    $backAmount = null;
+                    if (property_exists($jspay, "back")
+                            && $jspay->back !== null) {
+                        $backType = $jspay->back->type;
+                        $backAmount = $jspay->back->amount;
+                    }
                     $payment = new Payment($type, $amount, $currencyId,
-                            $currencyAmount);
+                            $currencyAmount, $backType, $backAmount);
                     $payments[] = $payment;
                 }
                 $ticket = new Ticket($tktType, $userId, $date, $lines,
