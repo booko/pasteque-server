@@ -1,7 +1,7 @@
 <?php
-//    Pastèque Web back office, Static database module
+//    Pastèque Web back office, Dynamic database module
 //
-//    Copyright (C) 2013 Scil (http://scil.coop)
+//    Copyright (C) 2015 Scil (http://scil.coop)
 //
 //    This file is part of Pastèque.
 //

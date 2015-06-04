@@ -18,8 +18,17 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace PastequeLocalIdent {
+    function config() {
+        global $config;
+        return $config;
+    }
+}
+
 namespace Pasteque {
     require_once(dirname(__FILE__) . "/config.php");
+
+    $loginErrorMessage = NULL;
 
     function is_user_logged_in() {
         session_start();
@@ -34,6 +43,7 @@ namespace Pasteque {
     }
 
     function api_user_login() {
+        global $loginErrorMessage;
         $user = null;
         $pwd = null;
         if (isset($_POST['login'])) {
@@ -52,7 +62,7 @@ namespace Pasteque {
         $result = $stmt->fetchAll();
         if (count($result) != 1) {
             // Bouh, invalid user
-echo "hooo le pas beau";
+            $loginErrorMessage = \i18n("Invalid user or password");
             return false;
         }
         $userDbData = $result[0];
@@ -64,20 +74,31 @@ echo "hooo le pas beau";
             $_SESSION["user"] = $userDbData['user_id'];
             return true;
         } else {
-            echo "Vilain ! C'est pas ça le mot de passe... essaye chaussette ?";
+            $loginErrorMessage = \i18n("Invalid user or password");
             return false;
         }
     }
 
     function get_local_auth_database() {
-        global $config;
-        return new \PDO($config['local_ident_db_dsn'], $config['local_ident_db_username'], $config['local_ident_db_password']);
+        $config = \PastequeLocalIdent\config();
+        return new \PDO($config['db_dsn'], $config['db_username'], $config['db_password']);
     }
 
     function show_login_page() {
 	// Pasteque login page ?
-        echo "Haaaaaaa je sais pas faire !\n";
-        echo "<form method=\"POST\"><label for=\"login\">Login :</label><input name=\"login\" type=\"text\" /><br /><label for=\"password\">Password :</label><input name=\"password\" type=\"password\" /><br /><input type=\"submit\" /></form>";
+        tpl_open();
+        global $loginErrorMessage;
+        if ($loginErrorMessage != NULL) {
+            \Pasteque\tpl_msg_box($message, $loginErrorMessage);
+        }
+?>
+<form method="POST">
+    <label for="login">Login :</label><input name="login" type="text" /><br />
+    <label for="password">Password :</label><input name="password" type="password" /><br />
+    <input type="submit" />
+</form>
+<?php
+        tpl_close();
     }
 
     function get_user_id() {

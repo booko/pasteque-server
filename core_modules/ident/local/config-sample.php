@@ -1,7 +1,7 @@
 <?php
-//    Pastèque Web back office, WordPress ident module
+//    Pastèque Web back office, local ident module
 //
-//    Copyright (C) 2013 Scil (http://scil.coop)
+//    Copyright (C) 2015 Scil (http://scil.coop)
 //
 //    This file is part of Pastèque.
 //
@@ -18,14 +18,11 @@
 //    You should have received a copy of the GNU General Public License
 //    along with POS-Tech.  If not, see <http://www.gnu.org/licenses/>.
 
-// WordPress ident module
-// Use WordPress for login and user management.
-// You must put Pasteque back-office as a subdirectory of WordPress for
-// the login to work
+namespace PastequeLocalIdent;
 
-namespace WordPress;
+$config['db_dsn'] = 'mysql:host=...;dbname=...';
+$config['db_username'] = '...';
+$config['db_password'] = '...';
 
-// Base path of your WordPress
-$config['wordpress_base_path'] = "/<path>/<to>/<wordpress>";
 
 ?>
