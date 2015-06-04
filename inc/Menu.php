@@ -76,7 +76,7 @@ class Menu {
         $entry = new MenuEntry(MenuEntry::ACTION, "Home", "menu_home.png",
                 "home");
         $this->addEntry("general", $entry);
-        if (can_logout()) {
+        if (can_logout() && is_user_logged_in()) {
             $logout = new MenuEntry(MenuEntry::ACTION, "Logout",
                     "menu_logout.png", "logout");
             $this->addENtry("general", $logout);
