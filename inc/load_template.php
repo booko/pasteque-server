@@ -1,7 +1,7 @@
 <?php
 //    Pastèque Web back office
 //
-//    Copyright (C) 2013 Scil (http://scil.coop)
+//    Copyright (C) 2015 Scil (http://scil.coop)
 //
 //    This file is part of Pastèque.
 //
@@ -17,19 +17,16 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace Pasteque;
 
-// Load modules
-$modules = get_loaded_modules(get_user_id());
-foreach ($modules as $module) {
-    $module_file = PT::$ABSPATH . "/modules/" . $module . "/module.php";
-    if (file_exists($module_file)) {
-        require_once($module_file);
-    }
+// Load template
+if(!isset($config['template'])) {
+    die("No template given");
 }
+$tmpl_file = PT::$ABSPATH . "/templates/" . $config['template'] . "/module.php";
+if (!file_exists($tmpl_file) || !is_readable($tmpl_file)) {
+    die("Template not found");
+}
+require_once($tmpl_file);
 
-call_hooks("module_load");
-
-load_modules_i18n(detect_preferred_language());
-
-?>

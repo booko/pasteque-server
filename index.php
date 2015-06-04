@@ -32,6 +32,8 @@ function index_run() {
     tpl_close();
 }
 
+require_once(PT::$ABSPATH . "/inc/load_template.php");
+
 // Check user authentication
 if (!is_user_logged_in()) {
     show_login_page();
