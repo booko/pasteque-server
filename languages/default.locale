@@ -62,6 +62,7 @@
 "Product.attributeSet": "Attribute set",
 
 "Category.label": "Name",
+"Category.reference": "Reference",
 "Category.parent": "Parent",
 "Category.dispOrder": "Order",
 

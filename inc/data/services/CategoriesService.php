@@ -1,29 +1,30 @@
 <?php
-//    POS-Tech API
+//    Pastèque API
 //
-//    Copyright (C) 2012 Scil (http://scil.coop)
+//    Copyright (C) 2012-2015 Scil (http://scil.coop)
+//    Cédric Houbart, Philippe Pary
 //
-//    This file is part of POS-Tech.
+//    This file is part of Pastèque.
 //
-//    POS-Tech is free software: you can redistribute it and/or modify
+//    Pastèque is free software: you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
 //    the Free Software Foundation, either version 3 of the License, or
 //    (at your option) any later version.
 //
-//    POS-Tech is distributed in the hope that it will be useful,
+//    Pastèque is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //    GNU General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
-//    along with POS-Tech.  If not, see <http://www.gnu.org/licenses/>.
+//    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Pasteque;
 
 class CategoriesService {
 
     private static function buildDBCat($db_cat) {
-        return Category::__build($db_cat['ID'], $db_cat['PARENTID'],
+        return Category::__build($db_cat['ID'], $db_cat['REFERENCE'], $db_cat['PARENTID'],
                 $db_cat['NAME'], $db_cat['IMAGE'] !== null,
                 $db_cat['DISPORDER']);
     }
@@ -86,7 +87,7 @@ class CategoriesService {
         }
         return null;
     }
-    
+
     static function getImage($id) {
         $pdo = PDOBuilder::getPDO();
         $db = DB::get();
@@ -105,13 +106,15 @@ class CategoriesService {
             return false;
         }
         $pdo = PDOBuilder::getPDO();
-        $sql = "UPDATE CATEGORIES SET NAME = :name, PARENTID = :pid, "
+        $sql = "UPDATE CATEGORIES SET REFERENCE = :reference, NAME = :name, PARENTID = :pid, "
                 . "DISPORDER = :order";
         if ($image !== "") {
             $sql .= ", IMAGE = :img";
         }
         $sql .= " WHERE ID = :id";
         $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(":reference", $cat->reference);
+        $stmt->bindParam(":name", $cat->label);
         $stmt->bindParam(":name", $cat->label);
         $stmt->bindParam(":pid", $cat->parentId);
         $stmt->bindParam(":id", $cat->id);
@@ -129,9 +132,10 @@ class CategoriesService {
     static function createCat($cat, $image = null) {
         $pdo = PDOBuilder::getPDO();
         $id = md5(time() . rand());
-        $sql = "INSERT INTO CATEGORIES (ID, NAME, PARENTID, DISPORDER, IMAGE) "
-                . "VALUES (:id, :name, :pid, :order, :img)";
+        $sql = "INSERT INTO CATEGORIES (ID, REFERENCE, NAME, PARENTID, DISPORDER, IMAGE) "
+                . "VALUES (:id, :reference, :name, :pid, :order, :img)";
         $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(":reference", $cat->reference);
         $stmt->bindParam(":name", $cat->label);
         $stmt->bindParam(":pid", $cat->parentId);
         $stmt->bindParam(":id", $id);

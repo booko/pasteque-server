@@ -62,6 +62,7 @@
 "Product.attributeSet": "Jeu d'attributs",
 
 "Category.label": "Désignation",
+"Category.reference": "Référence",
 "Category.parent": "Parent",
 "Category.dispOrder": "Ordre",
 

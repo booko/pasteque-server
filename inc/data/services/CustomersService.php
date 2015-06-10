@@ -81,7 +81,7 @@ class CustomersService extends AbstractService {
             $sql = "SELECT * FROM CUSTOMERS WHERE (EXPIREDATE IS NULL OR EXPIREDATE > NOW()) AND VISIBLE = " . $db->true();
         }
         foreach ($pdo->query($sql) as $dbCust) {
-            $cust = $this->build($dbCust);
+            $cust = CustomersService::build($dbCust);
             $customers[] = $cust;
         }
         return $customers;
