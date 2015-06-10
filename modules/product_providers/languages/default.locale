@@ -1,0 +1,39 @@
+{
+"Providers": "Providers",
+"Edit a provider": "Edit a provider",
+"Import providers": "Import providers",
+"Add a provider": "Add a provider",
+"%d providers": "%d providers",
+"No provider found": "No provider found",
+"Contact data": "Contact data",
+"Provider saved. <a href=\"%s\">Go to the provider page</a>.": "Provider saved. <a href=\"%s\">Go to the provider page</a>.",
+
+"Sales by provider": "Sales by provider",
+
+"Payments": "Payments",
+"cash": "Cash",
+"magcard": "Magcard",
+"cheque": "Cheque",
+"paper": "Paper",
+"free":" Free",
+
+"Taxes report": "Taxes report",
+"Product name": "Product",
+"Category name": "Category",
+"Units": "Units",
+"Sell": "Sell price",
+"Tax name": "Tax",
+"Tax base": "Base",
+"Tax amount": "Tax amount",
+
+"Total w/o VAT": "Total (without VAT)",
+"Margin": "Margin",
+
+"CS report": "Summary",
+"Consolidated sales report": "Consolidated sales report",
+"Tickets": "Tickets",
+"Average": "Average",
+"Real CS": "Real CS",
+"Theo CS": "Theoric CS",
+"Theo SCS": "Theoric CS (no tax)"
+}

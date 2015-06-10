@@ -1,7 +1,8 @@
 <?php
 //    Pastèque Web back office, Products module
 //
-//    Copyright (C) 2013 Scil (http://scil.coop)
+//    Copyright (C) 2015 Scil (http://scil.coop)
+//    Philippe Pary
 //
 //    This file is part of Pastèque.
 //
@@ -18,16 +19,9 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace BaseProducts;
+namespace ProductProviders;
 
-function init() {
-    global $MENU;
-    $MENU->addSection("catalog", "Catalog", PLUGIN_NAME);
-    $MENU->registerModuleEntry("catalog", PLUGIN_NAME, "menu_tax.png", "Taxes", "taxes");
-    $MENU->registerModuleEntry("catalog", PLUGIN_NAME, "menu_category.png", "Categories", "categories");
-    $MENU->registerModuleEntry("catalog", PLUGIN_NAME, "menu_product.png", "Products", "products");
-    \Pasteque\register_i18n(PLUGIN_NAME);
-}
-\Pasteque\hook("module_load", __NAMESPACE__ . "\init");
+const PLUGIN_NAME = "product_providers";
 
+require_once(dirname(__FILE__) . "/product_providers.php");
 ?>
