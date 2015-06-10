@@ -1,0 +1,40 @@
+{
+"Providers": "Fournisseurs",
+"Edit a provider": "Éditer un fournisseur",
+"Import providers": "Importer des fournisseurs",
+"Add a provider": "Ajouter un fournisseur",
+"%d providers": "%d fournisseurs",
+"No provider found": "Pas de fournisseur trouvé",
+"Contact data": "Informations de contact",
+"Provider saved. <a href=\"%s\">Go to the provider page</a>.": "Fournisseur enregistré. <a href=\"%s\">Aller à la page du fournisseur</a>.",
+
+"Payments": "Paiements",
+"cash": "Espèces",
+"magcard": "Carte bleue",
+"cheque": "Chèque",
+"paper": "Coupon",
+"free": "Offert",
+
+"Sales": "Ventes",
+"Sales report": "Détail",
+"Sales by provider": "Ventes par fournisseur",
+"Taxes report": "TVA collectée",
+"Product name": "Produit",
+"Category name": "Categorie",
+"Units": "Quantité",
+"Sell": "Prix HT",
+"Tax name": "TVA",
+"Tax base": "Base",
+"Tax amount": "TVA collectée",
+
+"Total w/o VAT": "Total HT",
+"Margin": "Marge",
+
+"CS report": "Synthèse",
+"Consolidated sales report": "Rapport de chiffre d'affaire",
+"Tickets": "Tickets",
+"Average": "Panier moyen",
+"Real CS": "Encaissement",
+"Theo CS": "CA TTC",
+"Theo SCS": "CA HT"
+}

@@ -1,7 +1,8 @@
 <?php
-//    Pastèque Web back office
+//    Pastèque Web back office, Products module
 //
-//    Copyright (C) 2013 Scil (http://scil.coop)
+//    Copyright (C) 2015 Scil (http://scil.coop)
+//    Philippe Pary
 //
 //    This file is part of Pastèque.
 //
@@ -18,15 +19,17 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace Pasteque;
+namespace ProductProviders;
 
-class PT {
-    public static $ABSPATH;
-    const DB_LEVEL = "6";
-    const VERSION = "6.1";
-
-    const URL_ACTION_PARAM = "p";
-    const URL_REPORT_PARAM = "r";
-    const URL_DATESTART_PARAM = "start";
-    const URL_DATESTOP_PARAM = "stop";
+function init() {
+    global $MENU;
+    $MENU->addSection("catalog", "Catalog", PLUGIN_NAME);
+    $MENU->registerModuleEntry("catalog", PLUGIN_NAME, "menu_category.png", "Providers", "providers");
+    $MENU->addSection("sales", "Sales", PLUGIN_NAME);
+    $MENU->registerModuleReport("sales", PLUGIN_NAME, "menu_product_sales.png", "Sales by provider", "sales_by_provider_report");
+    \Pasteque\register_i18n(PLUGIN_NAME);
 }
+\Pasteque\hook("module_load", __NAMESPACE__ . "\init");
+
+?>
+

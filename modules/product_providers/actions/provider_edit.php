@@ -20,7 +20,7 @@
 
 // provider_edit action
 
-namespace BaseProducts;
+namespace ProductProviders;
 
 $message = NULL;
 $error = NULL;

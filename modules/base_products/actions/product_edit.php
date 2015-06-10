@@ -25,12 +25,16 @@ namespace BaseProducts;
 $stocks = FALSE;
 $discounts = FALSE;
 $attributes = FALSE;
+$providers = FALSE;
 $modules = \Pasteque\get_loaded_modules(\Pasteque\get_user_id());
 if (in_array("product_discounts", $modules)) {
     $discounts = TRUE;
 }
 if (in_array("product_attributes", $modules)) {
     $attributes = TRUE;
+}
+if (in_array("product_providers", $modules)) {
+    $providers = TRUE;
 }
 
 $message = NULL;
@@ -157,7 +161,11 @@ if ($stocks === TRUE && $product != NULL) {
 	<legend><?php \pi18n("Display", PLUGIN_NAME); ?></legend>
 	<?php \Pasteque\form_input("edit", "Product", $product, "label", "string", array("required" => true)); ?>
 	<?php \Pasteque\form_input("edit", "Product", $product, "categoryId", "pick", array("model" => "Category")); ?>
-	<?php \Pasteque\form_input("edit", "Product", $product, "providerId", "pick", array("model" => "Provider")); ?>
+	<?php
+        if($providers === TRUE) {
+            \Pasteque\form_input("edit", "Product", $product, "providerId", "pick", array("model" => "Provider"));
+        }
+        ?>
 	<div class="row">
 		<label for="image"><?php \pi18n("Image"); ?></label>
 		<div style="display:inline-block">

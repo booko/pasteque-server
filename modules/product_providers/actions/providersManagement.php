@@ -1,6 +1,6 @@
 <?php
 
-namespace BaseProducts;
+namespace ProductProviders;
 
 // open csv return null if the file selected had not extension "csv"
 // or user not selected file
