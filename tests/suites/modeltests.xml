@@ -1,18 +1,18 @@
 <phpunit>
 	<testsuites>
 		<testsuite name="models">
-			<file>models/CashTest.php</file>
-			<file>models/CurrencyTest.php</file>
-			<file>models/TaxesTest.php</file>
-			<file>models/CashRegisterTest.php</file>
-			<file>models/CustomerTest.php</file>
-			<file>models/ProviderTest.php</file>
-			<file>models/PlaceTest.php</file>
-			<file>models/FloorTest.php</file>
-			<file>models/AttributeTest.php</file>
-			<file>models/SharedTicketTest.php</file>
-			<file>models/DiscountProfile.php</file>
-                        <file>models/PaymentModeTest.php</file>
+			<file>../models/CashTest.php</file>
+			<file>../models/CurrencyTest.php</file>
+			<file>../models/TaxesTest.php</file>
+			<file>../models/CashRegisterTest.php</file>
+			<file>../models/CustomerTest.php</file>
+			<file>../models/ProviderTest.php</file>
+			<file>../models/PlaceTest.php</file>
+			<file>../models/FloorTest.php</file>
+			<file>../models/AttributeTest.php</file>
+			<file>../models/SharedTicketTest.php</file>
+			<file>../models/DiscountProfile.php</file>
+                        <file>../models/PaymentModeTest.php</file>
 		</testsuite>
 	</testsuites>
 </phpunit>

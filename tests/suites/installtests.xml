@@ -1,7 +1,7 @@
 <phpunit>
 	<testsuites>
 		<testsuite name="database">
-			<file>install/InstallDbTest.php</file>
+			<file>../install/InstallDbTest.php</file>
 		</testsuite>
 	</testsuites>
 </phpunit>

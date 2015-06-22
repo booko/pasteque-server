@@ -1,28 +1,28 @@
 <phpunit>
 	<testsuites>
 		<testsuite name="api">
-			<file>install.php</file>
-			<file>api/APIEngineTest.php</file>
-			<file>api/VersionAPITest.php</file>
-			<file>api/CashesAPITest.php</file>
-			<file>api/CategoriesAPITest.php</file>
-			<file>api/CashRegistersAPITest.php</file>
-			<file>api/DiscountProfilesAPITest.php</file>
-			<file>api/CustomersAPITest.php</file>
-			<file>api/AttributesAPITest.php</file>
-			<file>api/UsersAPITest.php</file>
-			<file>api/RolesAPITest.php</file>
-			<file>api/CurrenciesAPITest.php</file>
-			<file>api/TaxesAPITest.php</file>
-			<file>api/TariffAreasAPITest.php</file>
-			<file>api/PlacesAPITest.php</file>
-			<file>api/ProductsAPITest.php</file>
-			<file>api/ResourcesAPITest.php</file>
-			<file>api/LocationsAPITest.php</file>
-			<file>api/StocksAPITest.php</file>
-			<file>api/CompositionsAPITest.php</file>
-			<file>api/TicketsAPITest.php</file>
-			<file>clear.php</file>
+			<file>../install.php</file>
+			<file>../api/APIEngineTest.php</file>
+			<file>../api/VersionAPITest.php</file>
+			<file>../api/CashesAPITest.php</file>
+			<file>../api/CategoriesAPITest.php</file>
+			<file>../api/CashRegistersAPITest.php</file>
+			<file>../api/DiscountProfilesAPITest.php</file>
+			<file>../api/CustomersAPITest.php</file>
+			<file>../api/AttributesAPITest.php</file>
+			<file>../api/UsersAPITest.php</file>
+			<file>../api/RolesAPITest.php</file>
+			<file>../api/CurrenciesAPITest.php</file>
+			<file>../api/TaxesAPITest.php</file>
+			<file>../api/TariffAreasAPITest.php</file>
+			<file>../api/PlacesAPITest.php</file>
+			<file>../api/ProductsAPITest.php</file>
+			<file>../api/ResourcesAPITest.php</file>
+			<file>../api/LocationsAPITest.php</file>
+			<file>../api/StocksAPITest.php</file>
+			<file>../api/CompositionsAPITest.php</file>
+			<file>../api/TicketsAPITest.php</file>
+			<file>../clear.php</file>
 		</testsuite>
 	</testsuites>
 </phpunit>
