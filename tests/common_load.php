@@ -63,7 +63,8 @@ function dropDatabase() {
                 "DROP TABLE SHAREDTICKETLINES;");
     } else if ($config['db_type'] == "postgresql") {
         $sqls = array("DROP TABLE APPLICATIONS;", "DROP TABLE ROLES;",
-                "DROP TABLE PEOPLE;", "DROP TABLE RESOURCES;",
+                "DROP TABLE ORDERS;",  "DROP TABLE ORDERLINES", "DROP TABLE TARIFFAREAS",  
+            "DROP TABLE PEOPLE;", "DROP TABLE RESOURCES;",
                 "DROP TABLE PROVIDERS;",
                 "DROP SEQUENCE DISCOUNTPROFILES_ID_SEQ CASCADE;",
                 "DROP TABLE DISCOUNTPROFILES;",
