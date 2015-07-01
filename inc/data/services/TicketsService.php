@@ -160,7 +160,7 @@ class TicketsService {
     }
 
     static function search($ticketId, $ticketType, $cashId, $dateStart,
-            $dateStop, $customerId, $userId) {
+            $dateStop, $customerId, $userId, $limit) {
         $tickets = array();
         $pdo = PDOBuilder::getPDO();
         $db = DB::get();
@@ -197,6 +197,9 @@ class TicketsService {
             $sql .= " AND " . implode(" AND ", $conds);
         }
         $sql .= " ORDER BY T.TICKETID DESC";
+        if ($number !== null) {
+            $sql .= " LIMIT :number OFFSET 0";
+        }
         $stmt = $pdo->prepare($sql);
         if ($ticketId !== null) {
             $stmt->bindParam(":ticketId", $ticketId);
@@ -218,6 +221,10 @@ class TicketsService {
         }
         if ($userId !== null) {
             $stmt->bindParam(":userId", $userId);
+        }
+        if ($limit !== null) {
+            settype($limit, "int");
+            $stmt->bindParam(":limit", $limit, \PDO::PARAM_INT);
         }
         $stmt->execute();
         while ($row = $stmt->fetch()) {

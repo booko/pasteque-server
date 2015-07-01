@@ -45,7 +45,8 @@ class TicketsAPI extends APIService {
                     || $this->isParamSet("dateStart")
                     || $this->isParamSet("dateStop")
                     || $this->isParamSet("customerId")
-                    || $this->isParamSet("userId"));
+                    || $this->isParamSet("userId")
+                    || $this->isParamSet("limit"));
         case 'delete':
             return $this->isParamSet("id");
         }
@@ -93,7 +94,8 @@ class TicketsAPI extends APIService {
             $this->succeed(TicketsService::search($this->getParam("ticketId"),
                     $this->getParam("ticketType"), $this->getParam("cashId"),
                     $this->getParam("dateStart"), $this->getParam("dateStop"),
-                    $this->getParam("customerId"), $this->getParam("userId")));
+                    $this->getParam("customerId"), $this->getParam("userId"),
+                    $this->getParam("limit")));
             break;
         case 'delete':
             if (!TicketsService::delete($this->getParam("id"))) {
