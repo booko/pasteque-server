@@ -149,6 +149,10 @@ class CustomersService extends AbstractService {
     public function create($model) {
         // This is a copy of AbstractService->create but with explicit id
         $model->id = md5(time() . rand());
+        // TODO: Move this when customer gets created
+        if (!isset($model->visible) || $model->visible == null) {
+            $model->visible = 1;
+        }
         $dbData = static::unbuild($model);
         $pdo = PDOBuilder::getPDO();
         $dbFields = array_keys(static::$fieldMapping); // Copy
