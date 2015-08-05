@@ -31,20 +31,26 @@ $database       = \Pasteque\get_db_name($user_id);
 $dbport = \Pasteque\get_db_port($user_id);
 
 // Looking for an existing file (we do only allow one dump per day)
+// Filename scheme is pasteque-[date]-[database]-[randomstring].sql.gz
+// randomstring is for security, to make URL unfindable
+// Tip: create a firewall rule to ban bruteforce on this randomstring
 $dir = opendir("cache");
 while(($f = readdir($dir)) != false) {
-    if(preg_match("/pasteque-" . date("Ymd") . "-" . $database . "-.*.sql.gz/",$f) == 1) {
+    if(preg_match("/pasteque-[0-9]{8}-" . $database . "-.[a-z0-9]*.sql.gz/",$f) == 1) {
+        // old file's name (old date, old random string)
         $filename = "cache/" . $f;
         if(time() - filemtime($filename) > 86400) {
-            $cmd = "rm cache/" . $filename;
+            $cmd = "rm " . $filename;
             exec($cmd);
+            // new file's name (new date, new random string)
+            $filename       = "cache/pasteque-" . date("Ymd") . "-" . $database . "-" . md5(time() . rand(0,getrandmax())) . ".sql.gz";
             $cmd = "mysqldump -u " . $dbuser . " --password=" . $dbpasswd . " " . $database ." --port=" . $dbport . "|gzip -c > " . $filename;
             exec($cmd);
         }
         break;
     }
 }
-// We didn’t find a file, we generate one with a little obfuscation for security
+// We didn’t find a file, we generate one
 if($filename == "") {
     $filename       = "cache/pasteque-" . date("Ymd") . "-" . $database . "-" . md5(time() . rand(0,getrandmax())) . ".sql.gz";
     $cmd = "mysqldump -u " . $dbuser . " --password=" . $dbpasswd . " " . $database ." --port=" . $dbport . "|gzip -c > " . $filename;
