@@ -19,6 +19,12 @@
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
 //////////////////
+//  Debug mode  //
+//////////////////
+
+$config['debug'] = false;
+
+//////////////////
 // Core modules //
 //////////////////
 // Don't forget to set the configuration file in each module if it has one.

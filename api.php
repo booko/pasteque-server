@@ -24,12 +24,14 @@ namespace Pasteque;
 require_once(__DIR__ . "/inc/constants.php");
 PT::$ABSPATH = __DIR__; // Base path. Also to check if a call
                          // originates from api.php
-
 // Load
 require_once(PT::$ABSPATH . "/inc/load.php");
 require_once(PT::$ABSPATH . "/inc/load_api.php");
 
 if (isset($_GET[PT::URL_ACTION_PARAM])) {
+    if($config['debug'] === true) {
+        trigger_error(serialize($_GET));
+    }
     $api = $_GET[PT::URL_ACTION_PARAM];
     $params = $_GET;
     if (isset($_GET['action'])) {
@@ -39,6 +41,9 @@ if (isset($_GET[PT::URL_ACTION_PARAM])) {
     }
 } else {
     if (isset($_POST[PT::URL_ACTION_PARAM])) {
+        if($config['debug'] === true) {
+            trigger_error(serialize($_POST));
+        }
         $api = $_POST[PT::URL_ACTION_PARAM];
         $params = $_POST;
         if (isset($_POST['action'])) {
