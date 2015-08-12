@@ -144,6 +144,7 @@ class TicketsAPI extends APIService {
                     $this->fail(new APIError("Unable to decode ticket"));
                     break;
                 }
+                $ticketId = $jsonTkt->ticketId;
                 $userId = $jsonTkt->userId;
                 $customerId = $jsonTkt->customerId;
                 $date = $jsonTkt->date;
@@ -232,32 +233,32 @@ class TicketsAPI extends APIService {
                 $ticket = new Ticket($tktType, $userId, $date, $lines,
                         $payments, $cashId, $customerId, $custCount,
                         $tariffAreaId, $discountRate, $discountProfileId);
+                $ticket->ticketId = $ticketId;
                 if (isset($jsonTkt->id)) {
                     // Ticket edit
-                    $id = $jsonTkt->id;
+                    $ticket->id = $jsonTkt->id;
                     //Check if cash is still opened
                     $oldTicket = TicketsService::get($id);
-                    $cashSrv = new CashesService();
-                    $cash = $cashSrv->get($oldTicket->cashId);
-                    if ($cash->isClosed()) {
-                        $this->fail(new APIError("Cannot edit a ticket from "
-                                        . "a closed cash"));
-                        break;
-                    }
-                    // Merge some data from old ticket
-                    $ticket->id = $id;
-                    $ticket->ticketId = $oldTicket->ticketId;
-                    // Delete the old ticket and recreate
-                    if (TicketsService::delete($oldTicket->id)
-                            && TicketsService::save($ticket, $locationId)) {
-                        $successes++;
-                    } else {
-                        $this->fail(new APIError("Unable to edit ticket"));
-                        break;
+                    if($oldTicket != null) {
+                        $cashSrv = new CashesService();
+                        $cash = $cashSrv->get($oldTicket->cashId);
+                        if ($cash->isClosed()) {
+                            $this->fail(new APIError("Cannot edit a ticket from "
+                                            . "a closed cash"));
+                            break;
+                        }
+                        // Delete the old ticket and recreate
+                        if (TicketsService::delete($oldTicket->id)
+                                && TicketsService::save($ticket, $locationId)) {
+                            $successes++;
+                        } else {
+                            $this->fail(new APIError("Unable to edit ticket"));
+                            break;
+                        }
                     }
                 } else {
                     // New ticket
-                    if (TicketsService::save($ticket, $locationId)) {
+                    if (TicketsService::save($ticket)) {
                         $successes++;
                     } else {
                         $this->fail(new APIError("Unable to save ticket"));
