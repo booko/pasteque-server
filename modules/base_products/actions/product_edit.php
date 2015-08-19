@@ -149,7 +149,7 @@ if ($stocks === TRUE && $product != NULL) {
 	<?php \Pasteque\form_input("edit", "Product", $product, "label", "string", array("required" => true)); ?>
 	<?php \Pasteque\form_input("edit", "Product", $product, "categoryId", "pick", array("model" => "Category")); ?>
 	<?php
-        if($providers === TRUE) {
+        if($providers) {
             \Pasteque\form_input("edit", "Product", $product, "providerId", "pick", array("model" => "Provider"));
         }
         ?>

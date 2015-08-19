@@ -52,7 +52,8 @@ class Product {
         return $prd;
     }
 
-    function __construct($ref, $label, $priceSell, $categoryId, $providerId, $dispOrder,
+    function __construct($ref, $label, $priceSell, $categoryId, $providerId,
+            $dispOrder,
             $taxCatId, $visible, $scaled, $priceBuy = null,
             $attributeSetId = null, $barcode = null, $hasImage = false,
             $discountEnabled = false, $discountRate = 0.0) {

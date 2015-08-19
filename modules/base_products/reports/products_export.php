@@ -20,15 +20,16 @@
 
 namespace BaseProducts;
 
-$sql = "SELECT REFERENCE as reference, "
+$sql = "SELECT PRODUCTS.REFERENCE as reference, "
             . "PRODUCTS.NAME AS label, "
-            . "CODE AS barcode, "
-            . "PRICEBUY AS price_buy, "
-            . "ISSCALE+0 AS scaled, "
-            . "DISCOUNTENABLED+0 AS discount_enabled, "
-            . "DISCOUNTRATE AS discount_rate, "
+            . "PRODUCTS.CODE AS barcode, "
+            . "PRODUCTS.PRICEBUY AS price_buy, "
+            . "PRODUCTS.ISSCALE+0 AS scaled, "
+            . "PRODUCTS.DISCOUNTENABLED+0 AS discount_enabled, "
+            . "PRODUCTS.DISCOUNTRATE AS discount_rate, "
             . "ROUND(PRODUCTS.PRICESELL*(1+TAXES.RATE),2) AS sellVat, "
             . "CATEGORIES.NAME AS category, "
+            . "PROVIDERS.NAME AS provider, "
             . "TAXCATEGORIES.NAME AS tax_cat, "
             . "STOCKLEVEL.STOCKSECURITY as stock_min, "
             . "STOCKLEVEL.STOCKMAXIMUM as stock_max, "
@@ -36,18 +37,19 @@ $sql = "SELECT REFERENCE as reference, "
             . "PRODUCTS_CAT.CATORDER as disp_order"
         . " FROM PRODUCTS "
         . " LEFT JOIN CATEGORIES ON CATEGORIES.ID = PRODUCTS.CATEGORY "
+        . " LEFT JOIN PROVIDERS ON PROVIDERS.ID = PRODUCTS.PROVIDER "
         . " LEFT JOIN PRODUCTS_CAT ON PRODUCTS_CAT.PRODUCT = PRODUCTS.ID "
         . " LEFT JOIN TAXCATEGORIES ON PRODUCTS.TAXCAT = TAXCATEGORIES.ID "
         . " LEFT JOIN TAXES ON TAXCATEGORIES.ID = TAXES.CATEGORY "
         . " LEFT JOIN STOCKLEVEL ON PRODUCTS.ID = STOCKLEVEL.PRODUCT "
         . " LEFT JOIN STOCKCURRENT ON PRODUCTS.ID = STOCKCURRENT.PRODUCT "
         . " WHERE PRODUCTS.DELETED = 0 "
-        . " ORDER BY PRODUCTS.NAME";
+        . " ORDER BY TAXES.VALIDFROM DESC, PRODUCTS.NAME";
 
 $fields = array("label","reference","sellVat","tax_cat",
-   "category","barcode","price_buy","scaled","disp_order",
-   "discount_enabled","discount_rate", "stock_min", 
-   "stock_max", "stock_current");
+   "category","provider","barcode","price_buy","scaled",
+   "disp_order","discount_enabled","discount_rate",
+   "stock_min","stock_max", "stock_current");
 $headers = $fields;
 
 $report = new \Pasteque\Report(PLUGIN_NAME, "products_export",

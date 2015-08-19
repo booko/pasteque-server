@@ -38,7 +38,7 @@ function report_csv($module, $name, $values) {
             foreach ($report->getFields() as $field) {
                 $data = init_data($report, $data, $line, $field);
             }
-            fputcsv($output, $data);
+            fputcsv($output, $data,";");
         }
     } else {
         while ($line = $reportRun->fetch()) {

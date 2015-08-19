@@ -1,22 +1,23 @@
 <?php
-//    POS-Tech API
+//    Pastèque API
 //
-//    Copyright (C) 2012 Scil (http://scil.coop)
+//    Copyright (C) 2015 Scil (http://scil.coop)
+//    Cédric Houbart, Philippe Pary
 //
-//    This file is part of POS-Tech.
+//    This file is part of Pastèque.
 //
-//    POS-Tech is free software: you can redistribute it and/or modify
+//    Pastèque is free software: you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
 //    the Free Software Foundation, either version 3 of the License, or
 //    (at your option) any later version.
 //
-//    POS-Tech is distributed in the hope that it will be useful,
+//    Pastèque is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //    GNU General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
-//    along with POS-Tech.  If not, see <http://www.gnu.org/licenses/>.
+//    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Pasteque;
 
@@ -75,9 +76,9 @@ class TicketsAPI extends APIService {
             foreach ($json->lines as $jsLine) {
                 // Get line info
                 $tktLine = new SharedTicketLines($ticket->id,
-						$jsLine->dispOrder, $jsLine->productId, $jsLine->taxId,
-						$jsLine->quantity, $jsLine->discountRate,
-						$jsLine->price, $jsLine->attributes);
+                        $jsLine->dispOrder, $jsLine->productId, $jsLine->taxId,
+                        $jsLine->quantity, $jsLine->discountRate,
+                        $jsLine->price, $jsLine->attributes);
                 $lines[] = $tktLine;
             }
             if (TicketsService::createSharedTicket($ticket, $lines) === false) {
@@ -192,6 +193,9 @@ class TicketsAPI extends APIService {
                         $attrsId = null;
                     }
                     $product = ProductsService::get($productId);
+                    if ($product === null) {
+                        $product = new Product($productId,$productId,$productId,null,null,null,$taxId,true,false);
+                    }
                     $tax = TaxesService::getTax($taxId);
                     if ($tax == null) {
                         $this->fail(new APIError("Unknown tax"));

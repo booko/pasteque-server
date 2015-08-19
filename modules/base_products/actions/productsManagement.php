@@ -19,7 +19,8 @@ function init_csv() {
             'category', 'tax_cat');
 
     $optionKey = array('price_buy', 'visible', 'scaled', 'disp_order',
-            'discount_rate', 'discount_enabled', 'stock_min', 'stock_max');
+            'discount_rate', 'discount_enabled', 'stock_min',
+            'provider', 'stock_max');
 
     $csv = new \Pasteque\Csv($_FILES['csv']['tmp_name'], $key, $optionKey,
             PLUGIN_NAME);
@@ -31,6 +32,7 @@ function init_csv() {
     $csv->setEmptyStringValue("visible", true);
     $csv->setEmptyStringValue("scaled", false);
     $csv->setEmptyStringValue("disp_order", null);
+    $csv->setEmptyStringValue("provider", null);
     return $csv;
 }
 
@@ -128,13 +130,16 @@ function readProductLine($line, $category, $taxCat) {
     } else {
         $scaled = false;
     }
+    if (isset($line['provider'])) {
+        $provider = \Pasteque\ProvidersService::getByName($line['provider']);
+    }
     if (isset($line['disp_order'])) {
         $dispOrder = $line['disp_order'];
     } else {
         $dispOrder = null;
     }
     $product = new \Pasteque\Product($line['reference'], $line['label'],
-            $priceSell, $category->id, $dispOrder,
+            $priceSell, $category->id, $provider->id, $dispOrder,
             $taxCat->id, $visible, $scaled);
     if (isset($line['barcode'])) {
         $product->barcode = $line['barcode'];
@@ -188,6 +193,9 @@ function manage_stock_level($id, $array) {
 function mergeProduct($old, $new) {
     if (!isset($new->barcode)) {
         $new->barcode = $old->barcode;
+    }
+    if (!isset($new->providerId)) {
+        $new->providerId = $old->providerId;
     }
     if (!isset($new->price_buy)) {
         $new->priceBuy = $old->priceBuy;
