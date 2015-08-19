@@ -1,22 +1,23 @@
 <?php
-//    POS-Tech API
+//    Pastèque API
 //
-//    Copyright (C) 2012 Scil (http://scil.coop)
+//    Copyright (C) 2012-2015 Scil (http://scil.coop)
+//    Cédrci Houbart, Philippe Pary
 //
-//    This file is part of POS-Tech.
+//    This file is part of Pastèque.
 //
-//    POS-Tech is free software: you can redistribute it and/or modify
+//    Pastèque is free software: you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
 //    the Free Software Foundation, either version 3 of the License, or
 //    (at your option) any later version.
 //
-//    POS-Tech is distributed in the hope that it will be useful,
+//    Pastèque is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //    GNU General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
-//    along with POS-Tech.  If not, see <http://www.gnu.org/licenses/>.
+//    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Pasteque;
 
@@ -74,6 +75,16 @@ class CashRegistersService extends AbstractService {
         $sql = "UPDATE CASHREGISTERS SET NEXTTICKETID = (NEXTTICKETID + 1) "
                 . "WHERE ID = :id";
         $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(":id", $cashId);
+        $stmt->execute();
+    }
+
+    public function setNextTicketId($nextTicketId,$cashId) {
+        $pdo = PDOBuilder::getPDO();
+        $sql = "UPDATE CASHREGISTERS SET NEXTTICKETID =  :nextTicketId "
+                . "WHERE ID = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(":nextTicketId", $nextTicketId);
         $stmt->bindParam(":id", $cashId);
         $stmt->execute();
     }

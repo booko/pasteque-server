@@ -274,6 +274,8 @@ class TicketsAPI extends APIService {
             $ret = ($successes == $ticketsCount);
             if ($ret === true) {
                 if ($pdo->commit()) {
+                    $ticketId++;
+                    $cashRegSrv->setNextTicketId($ticketId,$cash->cashRegisterId);
                     $this->succeed(array("saved" => $ticketsCount));
                 } else {
                     $this->fail(APIError::$ERR_GENERIC);
