@@ -51,7 +51,7 @@ if (isset($_POST['id'])) {
         $taxCat->addTax($tax);
     }
     // new tax rate?
-    if (isset($_POST['label-new']) && isset($_POST['rate-new'])) {
+    if (isset($_POST['label-new']) && $_POST['label-new'] != "" && isset($_POST['rate-new']) && $_POST['rate-new'] != "") {
         if (!isset($_POST['startDate-new']) || $_POST['startDate-new'] == "") {
             $start = \time();
         } else {
