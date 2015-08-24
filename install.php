@@ -34,14 +34,14 @@ function show_install() {
     tpl_open();
 ?><h1><?php \pi18n("Installation"); ?></h1>
 <form action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
-	<label for="install"><?php \pi18n("Pays"); ?>
-	<select id="install" name="install">
-		<option value="belgique">Belgique</option>
-		<option value="france">France</option>
-		<option value="luxembourg">Luxembourg</option>
-		<option value="united_kingdom">United Kingdom</option>
-	</select>
-	<?php \Pasteque\form_send(); ?>
+    <label for="install"><?php \pi18n("Pays"); ?>
+    <select id="install" name="install">
+        <option value="belgique">Belgique</option>
+        <option value="france">France</option>
+        <option value="luxembourg">Luxembourg</option>
+        <option value="united_kingdom">United Kingdom</option>
+    </select>
+    <?php \Pasteque\form_send(); ?>
 </form>
 <?php
     tpl_close();
@@ -54,13 +54,13 @@ function show_update($dbVer) {
 <form action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
     <?php form_value_hidden("update", "update", $dbVer); ?>
     <label for="country"><?php \pi18n("Pays"); ?>
-	<select id="country" name="country">
-		<option value="belgique">Belgique</option>
-		<option value="france">France</option>
-		<option value="luxembourg">Luxembourg</option>
-		<option value="united_kingdom">United Kingdom</option>
-	</select>
-	<?php \Pasteque\form_send(); ?>
+    <select id="country" name="country">
+        <option value="belgique">Belgique</option>
+        <option value="france">France</option>
+        <option value="luxembourg">Luxembourg</option>
+        <option value="united_kingdom">United Kingdom</option>
+    </select>
+    <?php \Pasteque\form_send(); ?>
 </form>
 <?php
     tpl_close();

@@ -17,7 +17,6 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
-
 // Index is the entry point for everything.
 namespace Pasteque;
 

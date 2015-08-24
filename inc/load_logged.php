@@ -17,7 +17,6 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
-
 namespace Pasteque;
 
 // Load template
@@ -37,6 +36,7 @@ foreach ($modules as $module) {
         require_once($module_file);
     }
 }
+
 call_hooks("module_load");
 
 load_modules_i18n(detect_preferred_language());

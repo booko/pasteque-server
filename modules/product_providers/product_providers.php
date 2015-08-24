@@ -18,7 +18,6 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
-
 namespace ProductProviders;
 
 function init() {
@@ -29,7 +28,7 @@ function init() {
     $MENU->registerModuleReport("sales", PLUGIN_NAME, "menu_product_sales.png", "Sales by provider", "sales_by_provider_report");
     \Pasteque\register_i18n(PLUGIN_NAME);
 }
+
 \Pasteque\hook("module_load", __NAMESPACE__ . "\init");
 
 ?>
-
