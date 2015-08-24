@@ -56,7 +56,7 @@ if (isset($_POST['id'])) {
         $discountRate = $_POST['discountRate'];
     }
     $cmp = \Pasteque\Composition::__build($_POST['id'], $_POST['reference'],
-            $_POST['label'], $_POST['realsell'], $catId, $dispOrder,
+            $_POST['label'], $_POST['realsell'], $catId, null, $dispOrder,
             $taxCatId, $visible, $scaled, $_POST['priceBuy'], null,
             $_POST['barcode'], $img != null,
             $discountEnabled, $discountRate);
@@ -85,7 +85,7 @@ if (isset($_POST['id'])) {
         $discountRate = $_POST['discountRate'];
     }
     $cmp = new \Pasteque\Product($_POST['reference'], $_POST['label'],
-            $_POST['realsell'], $catId, $dispOrder, $taxCatId,
+            $_POST['realsell'], $catId, null, $dispOrder, $taxCatId,
             $visible, $scaled, $_POST['priceBuy'], null, $_POST['barcode'],
             $img !== null, $discountEnabled, $discountRate);
     $cmp->groups = parseSubgroups($_POST['subgroupData'], $products);
@@ -123,26 +123,26 @@ if (isset($_GET['productId'])) {
 
 <form class="edit" id="data-compo" method="post" onsubmit="return submitData();" action="<?php echo \Pasteque\get_current_url();?>" enctype="multipart/form-data">
 <div>
-	<div id="composition" class="row">
-	<fieldset>
+    <div id="composition" class="row">
+    <fieldset>
         <legend>Composition</legend>
         <?php \Pasteque\form_hidden("edit", $composition, "id"); ?>
         <fieldset>
         <legend><?php \pi18n("Display", PLUGIN_NAME); ?></legend>
         <?php \Pasteque\form_input("edit", "Product", $composition, "label", "string", array("required" => true)); ?>
-		<div class="row">
-			<label for="image"><?php \pi18n("Image"); ?></label>
-			<div style="display:inline-block">
-				<input type="hidden" id="clearImage" name="clearImage" value="0" />
-				<?php if ($composition !== null && $composition->hasImage === true) { ?>
-				<img id="img" class="image-preview" src="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=product&id=<?php echo $composition->id; ?>" />
-				<a class="btn" id="clear" href="" onClick="javascript:clearImage(); return false;"><?php \pi18n("Delete"); ?></a>
-				<a class="btn" style="display:none" id="restore" href="" onClick="javascript:restoreImage(); return false;"><?php \pi18n("Restore"); ?></a><br />
-				<?php } ?>
-				<input id="image" type="file" name="image" />
-			</div>
-		</div>
-	<?php \Pasteque\form_input("edit", "Product", $composition, "visible", "boolean"); ?>
+        <div class="row">
+        <label for="image"><?php \pi18n("Image"); ?></label>
+        <div style="display:inline-block">
+        <input type="hidden" id="clearImage" name="clearImage" value="0" />
+        <?php if ($composition !== null && $composition->hasImage === true) { ?>
+            <img id="img" class="image-preview" src="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=product&id=<?php echo $composition->id; ?>" />
+                <a class="btn" id="clear" href="" onClick="javascript:clearImage(); return false;"><?php \pi18n("Delete"); ?></a>
+                <a class="btn" style="display:none" id="restore" href="" onClick="javascript:restoreImage(); return false;"><?php \pi18n("Restore"); ?></a><br />
+                <?php } ?>
+                <input id="image" type="file" name="image" />
+                </div>
+                </div>
+                <?php \Pasteque\form_input("edit", "Product", $composition, "visible", "boolean"); ?>
         <?php \Pasteque\form_input("edit", "Product", $composition, "dispOrder", "numeric"); ?>
         </fieldset>
         <fieldset>
@@ -224,47 +224,47 @@ if (isset($_GET['productId'])) {
         <?php \Pasteque\form_save();?>
 </form>
 
-<?php \Pasteque\init_catalog_old("catalog", "catalog-picker", "productPicked",
+<?php \Pasteque\init_catalog("catalog", "catalog-picker", "productPicked",
         $categories, $products); ?>
 
 <script src="<?php echo \Pasteque\get_module_action(PLUGIN_NAME, "control.js")?>" type="text/javascript"></script>
 
 <script type="text/javascript">
 
-	var tax_rates = new Array();
+var tax_rates = new Array();
 <?php foreach ($taxes as $tax) {
     echo "\ttax_rates[\"" . \Pasteque\esc_js($tax->id) . "\"] = " . $tax->getCurrentTax()->rate . ";\n";
 } ?>
 
 
-updateSellPrice = function() {
-		var sellvat = jQuery("#sellvat").val();
-		var rate = tax_rates[jQuery("#edit-taxCatId").val()];
-		var sell = sellvat / (1 + rate);
-		jQuery("#realsell").val(sell);
-		jQuery("#sell").val(sell.toFixed(2));
-		updateMargin();
-	}
-updateSellVatPrice = function() {
-		// Update sellvat price
-		var sell = jQuery("#sell").val();
-		var rate = tax_rates[jQuery("#edit-taxCatId").val()];
-		var sellvat = sell * (1 + rate);
-		// Round to 2 decimals and refresh sell price to avoid unrounded payments
-		sellvat = sellvat.toFixed(2);
-		jQuery("#sellvat").val(sellvat);
-		updateSellPrice();
-		updateMargin();
-	}
-updateMargin = function() {
-		var sell = jQuery("#realsell").val();
-		var buy = jQuery("#edit-priceBuy").val();
-		var ratio = sell / buy - 1;
-		var margin = (ratio * 100).toFixed(2) + "%";
-		var rate = (sell / buy).toFixed(2);
-		jQuery("#margin").val(margin + "\t\t" + rate);
-	}
-	updateMargin();
+    updateSellPrice = function() {
+                    var sellvat = jQuery("#sellvat").val();
+                    var rate = tax_rates[jQuery("#edit-taxCatId").val()];
+                    var sell = sellvat / (1 + rate);
+                    jQuery("#realsell").val(sell);
+                    jQuery("#sell").val(sell.toFixed(2));
+                    updateMargin();
+            }
+    updateSellVatPrice = function() {
+                    // Update sellvat price
+                    var sell = jQuery("#sell").val();
+                    var rate = tax_rates[jQuery("#edit-taxCatId").val()];
+                    var sellvat = sell * (1 + rate);
+                    // Round to 2 decimals and refresh sell price to avoid unrounded payments
+                    sellvat = sellvat.toFixed(2);
+                    jQuery("#sellvat").val(sellvat);
+                    updateSellPrice();
+                    updateMargin();
+            }
+    updateMargin = function() {
+                    var sell = jQuery("#realsell").val();
+                    var buy = jQuery("#edit-priceBuy").val();
+                    var ratio = sell / buy - 1;
+                    var margin = (ratio * 100).toFixed(2) + "%";
+                    var rate = (sell / buy).toFixed(2);
+                    jQuery("#margin").val(margin + "\t\t" + rate);
+            }
+    updateMargin();
 
     /**Replace ',' by '.' and call function 'fonction'
      * @param id the id of HTML input element
@@ -285,52 +285,52 @@ updateMargin = function() {
 
     jQuery("#edit-discountRate").change(function() {changeVal(this.id, updateMargin);});
 
-	clearImage = function() {
-		jQuery("#img").hide();
-		jQuery("#clear").hide();
-		jQuery("#restore").show();
-		jQuery("#clearImage").val(1);
-	}
-	restoreImage = function() {
-		jQuery("#img").show();
-		jQuery("#clear").show();
-		jQuery("#restore").hide();
-		jQuery("#clearImage").val(0);
-	}
+    clearImage = function() {
+        jQuery("#img").hide();
+        jQuery("#clear").hide();
+        jQuery("#restore").show();
+        jQuery("#clearImage").val(1);
+    }
+    restoreImage = function() {
+        jQuery("#img").show();
+        jQuery("#clear").show();
+        jQuery("#restore").hide();
+        jQuery("#clearImage").val(0);
+    }
 
     updateBarcode = function() {
-		var barcode = jQuery("#barcode").val();
-		var src = "?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=barcode&code=" + barcode;
-		jQuery("#barcodeImg").attr("src", src);
-	}
+        var barcode = jQuery("#barcode").val();
+        var src = "?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=barcode&code=" + barcode;
+        jQuery("#barcodeImg").attr("src", src);
+    }
 
-	updateBarcode();
-	jQuery("#barcode").change(updateBarcode);
+    updateBarcode();
+    jQuery("#barcode").change(updateBarcode);
     generateBarcode = function() {
-		var first = Math.floor(Math.random() * 9) + 1;
-		var code = new Array();
-		code.push(first);
-		for (var i = 0; i < 11; i++) {
-			var num = Math.floor(Math.random() * 10);
-			code.push(num);
-		}
-		var checksum = 0;
-		for (var i = 0; i < code.length; i++) {
-			var weight = 1;
-			if (i % 2 == 1) {
-				weight = 3;
-			}
-			checksum = checksum + weight * code[i];
-		}
-		checksum = checksum % 10;
-		if (checksum != 0) {
-			checksum = 10 - checksum;
-		}
-		code.push(checksum);
-		var barcode = code.join("");
-		jQuery("#barcode").val(barcode);
-		updateBarcode();
-	}
+        var first = Math.floor(Math.random() * 9) + 1;
+        var code = new Array();
+        code.push(first);
+        for (var i = 0; i < 11; i++) {
+            var num = Math.floor(Math.random() * 10);
+            code.push(num);
+        }
+        var checksum = 0;
+        for (var i = 0; i < code.length; i++) {
+            var weight = 1;
+            if (i % 2 == 1) {
+                weight = 3;
+            }
+            checksum = checksum + weight * code[i];
+        }
+        checksum = checksum % 10;
+        if (checksum != 0) {
+            checksum = 10 - checksum;
+        }
+        code.push(checksum);
+        var barcode = code.join("");
+        jQuery("#barcode").val(barcode);
+        updateBarcode();
+    }
 
     /** Add all product contain in the category */
     addAllPrd = function() {

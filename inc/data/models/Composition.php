@@ -28,23 +28,24 @@ class Composition extends Product {
         $this->groups[] = $group;
     }
 
-    static function __build($id, $reference, $label, $priceSell, $categoryId,
+    static function __build($id, $ref, $label, $priceSell, $categoryId, $providerId,
             $dispOrder, $taxCatId, $visible, $scaled, $priceBuy = null,
             $attributeSetId = null, $barcode = null, $hasImage = false,
             $discountEnabled = false, $discountRate = 0.0) {
-        $compo = new Composition($reference, $label, $priceSell, $categoryId,
-                $dispOrder, $taxCatId, $visible, $scaled, $priceBuy,
-                $attributeSetId, $barcode, $hasImage, $discountEnabled,
-                $discountRate);
+        $compo = new Composition($ref, $label, $priceSell, $categoryId, $providerId,
+                $dispOrder,
+                $taxCatId, $visible, $scaled, $priceBuy,
+                $attributeSetId, $barcode, $hasImage,
+                $discountEnabled, $discountRate);
         $compo->id = $id;
         return $compo;
     }
-    
-    function __construct($reference, $label, $priceSell, $categoryId,
+
+    function __construct($ref, $label, $priceSell, $categoryId, $providerId,
             $dispOrder, $taxCatId, $visible, $scaled, $priceBuy,
             $attributeSetId, $barcode, $hasImage, $discountEnabled,
             $discountRate) {
-        parent::__construct($reference, $label, $priceSell, $categoryId, null,
+        parent::__construct($ref, $label, $priceSell, $categoryId, $providerId,
                 $dispOrder, $taxCatId, $visible, $scaled, $priceBuy,
                 $attributeSetId, $barcode, $hasImage, $discountEnabled,
                 $discountRate);

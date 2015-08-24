@@ -24,21 +24,21 @@ function tpl_open() {
 ?><!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title><?php \pi18n("Pastèque"); ?></title>
-	<link rel="icon" type="image/png" href="templates/pt2.0/img/icon.png" />
-	<link rel="stylesheet" type="text/css" href="<?php echo get_template_url(); ?>/style.css" />
-	<link rel="stylesheet" type="text/css" href="<?php echo get_template_url(); ?>/catalog.css" />
-	<link rel="stylesheet" type="text/css" href="<?php echo get_template_url(); ?>/stock.css" />
-	<link rel="stylesheet" type="text/css" href="<?php echo get_template_url(); ?>/js/pepper-grinder/jquery-ui-1.10.4.custom.css" />
-	<script type="text/javascript" src="<?php echo get_template_url(); ?>/js/jquery-1.9.1.min.js"></script>
-	<script type="text/javascript" src="<?php echo get_template_url(); ?>/js/jquery-ui-1.10.4.custom.min.js"></script>
-	<script type="text/javascript" src="<?php echo get_template_url(); ?>/js/jquery-tablesorter.min.js"></script>
-	<script type="text/javascript" src="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=js&id=js/pasteque.js.php"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title><?php \pi18n("Pastèque"); ?></title>
+    <link rel="icon" type="image/png" href="templates/pt2.0/img/icon.png" />
+    <link rel="stylesheet" type="text/css" href="<?php echo get_template_url(); ?>/style.css" />
+    <link rel="stylesheet" type="text/css" href="<?php echo get_template_url(); ?>/catalog.css" />
+    <link rel="stylesheet" type="text/css" href="<?php echo get_template_url(); ?>/stock.css" />
+    <link rel="stylesheet" type="text/css" href="<?php echo get_template_url(); ?>/js/pepper-grinder/jquery-ui-1.10.4.custom.css" />
+    <script type="text/javascript" src="<?php echo get_template_url(); ?>/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="<?php echo get_template_url(); ?>/js/jquery-ui-1.10.4.custom.min.js"></script>
+    <script type="text/javascript" src="<?php echo get_template_url(); ?>/js/jquery-tablesorter.min.js"></script>
+    <script type="text/javascript" src="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=js&id=js/pasteque.js.php"></script>
 </head>
 <body>
 <div id="header">
-	<div id="version"><a href="" onclick="showAbout();return false;"><?php echo \i18n("About"); ?></a></div>
+    <div id="version"><a href="" onclick="showAbout();return false;"><?php echo \i18n("About"); ?></a></div>
 </div>
 <?php tpl_menu(); ?>
 
@@ -48,7 +48,7 @@ function tpl_open() {
 
 function tpl_close() {
 ?>
-	<div style="clear:both"></div>
+    <div style="clear:both"></div>
 </div>
 <div id="footer"><?php \pi18n("Copyright"); ?></div>
 </body>
@@ -56,7 +56,7 @@ function tpl_close() {
 }
 
 function tpl_404() {
-?>	<h1>ERREUR 404</h1>
+?>    <h1>ERREUR 404</h1>
 <?php
 }
 

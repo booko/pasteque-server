@@ -32,18 +32,16 @@ else {
 <p><?php \pi18n("%d compositions", PLUGIN_NAME, count($compositions)); ?></p>
 
 <table cellpadding="0" cellspacing="0">
-	<thead>
-		<tr>
-			<th></th>
-			<th><?php \pi18n("Composition.label"); ?></th>
-			<th></th>
-		</tr>
-	</thead>
-	<tbody>
-	</tbody>
-</table>
+    <thead>
+        <tr>
+            <th></th>
+            <th><?php \pi18n("Composition.label"); ?></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
 <?php
-    $par = FALSE;
+    $par = false;
     foreach ($compositions as $composition) {
     $par = !$par;
     if ($composition->hasImage) {
@@ -67,3 +65,5 @@ else {
     }
 }
 ?>
+    </tbody>
+</table>

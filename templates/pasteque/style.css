@@ -377,7 +377,22 @@ table.report td {
 
 .twitter-feed {
     float: right;
-    margin: 5px 15px
+    margin: 5px 15px;
+    width: 250px;
+}
+
+@media (max-width: 800px) {
+    .twitter-feed {
+        float: right;
+        margin: 5px 15px;
+        width: 150px;
+    }
+}
+
+@media (max-width: 680px) {
+    .twitter-feed {
+        display: none;
+    }
 }
 
 @font-face {

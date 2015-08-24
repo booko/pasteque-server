@@ -144,180 +144,180 @@ if ($stocks === TRUE && $product != NULL) {
 
 <form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post" enctype="multipart/form-data">
     <?php \Pasteque\form_hidden("edit", $product, "id"); ?>
-	<fieldset>
-	<legend><?php \pi18n("Display", PLUGIN_NAME); ?></legend>
-	<?php \Pasteque\form_input("edit", "Product", $product, "label", "string", array("required" => true)); ?>
-	<?php \Pasteque\form_input("edit", "Product", $product, "categoryId", "pick", array("model" => "Category")); ?>
-	<?php
+    <fieldset>
+    <legend><?php \pi18n("Display", PLUGIN_NAME); ?></legend>
+    <?php \Pasteque\form_input("edit", "Product", $product, "label", "string", array("required" => true)); ?>
+    <?php \Pasteque\form_input("edit", "Product", $product, "categoryId", "pick", array("model" => "Category")); ?>
+    <?php
         if($providers) {
             \Pasteque\form_input("edit", "Product", $product, "providerId", "pick", array("model" => "Provider"));
         }
         ?>
-	<div class="row">
-		<label for="image"><?php \pi18n("Image"); ?></label>
-		<div style="display:inline-block">
-			<input type="hidden" id="clearImage" name="clearImage" value="0" />
-		<?php if ($product !== null && $product->hasImage === true) { ?>
-			<img id="img" class="image-preview" src="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=product&id=<?php echo $product->id; ?>" />
-			<a class="btn" id="clear" href="" onClick="javascript:clearImage(); return false;"><?php \pi18n("Delete"); ?></a>
-			<a class="btn" style="display:none" id="restore" href="" onClick="javascript:restoreImage(); return false;"><?php \pi18n("Restore"); ?></a><br />
-		<?php } ?>
-			<input id="image" type="file" name="image" />
-		</div>
-	</div>
-	<?php \Pasteque\form_input("edit", "Product", $product, "visible", "boolean"); ?>
+    <div class="row">
+        <label for="image"><?php \pi18n("Image"); ?></label>
+        <div style="display:inline-block">
+            <input type="hidden" id="clearImage" name="clearImage" value="0" />
+        <?php if ($product !== null && $product->hasImage === true) { ?>
+            <img id="img" class="image-preview" src="?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=product&id=<?php echo $product->id; ?>" />
+            <a class="btn" id="clear" href="" onClick="javascript:clearImage(); return false;"><?php \pi18n("Delete"); ?></a>
+            <a class="btn" style="display:none" id="restore" href="" onClick="javascript:restoreImage(); return false;"><?php \pi18n("Restore"); ?></a><br />
+        <?php } ?>
+            <input id="image" type="file" name="image" />
+        </div>
+    </div>
+    <?php \Pasteque\form_input("edit", "Product", $product, "visible", "boolean"); ?>
     <?php \Pasteque\form_input("edit", "Product", $product, "dispOrder", "numeric"); ?>
-	</fieldset>
-	<fieldset>
-	<legend><?php \pi18n("Price", PLUGIN_NAME); ?></legend>
-	<?php \Pasteque\form_input("edit", "Product", $product, "scaled", "boolean", array("default" => FALSE)); ?>
-	<?php \Pasteque\form_input("edit", "Product", $product, "taxCatId", "pick", array("model" => "TaxCategory")); ?>
-	<div class="row">
-		<label for="sellvat"><?php \pi18n("Sell price + taxes", PLUGIN_NAME); ?></label>
-		<input id="sellvat" type="numeric" name="selltax" value="<?php echo $vatprice; ?>" />
-	</div>
-	<div class="row">
-		<label for="sell"><?php \pi18n("Product.priceSell"); ?></label>
-		<input type="hidden" id="realsell" name="realsell" <?php if ($product != NULL) echo 'value="' . $product->priceSell. '"'; ?> />
-		<input id="sell" type="numeric" name="sell" value="<?php echo $price; ?>" readonly="true" />
-	</div>
-	<?php \Pasteque\form_input("edit", "Product", $product, "priceBuy", "numeric"); ?>
-	<div class="row">
-		<label for="margin"><?php \pi18n("Margin", PLUGIN_NAME); ?></label>
-		<input id="margin" type="numeric" disabled="true" />
-	</div>
+    </fieldset>
+    <fieldset>
+    <legend><?php \pi18n("Price", PLUGIN_NAME); ?></legend>
+    <?php \Pasteque\form_input("edit", "Product", $product, "scaled", "boolean", array("default" => FALSE)); ?>
+    <?php \Pasteque\form_input("edit", "Product", $product, "taxCatId", "pick", array("model" => "TaxCategory")); ?>
+    <div class="row">
+        <label for="sellvat"><?php \pi18n("Sell price + taxes", PLUGIN_NAME); ?></label>
+        <input id="sellvat" type="numeric" name="selltax" value="<?php echo $vatprice; ?>" />
+    </div>
+    <div class="row">
+        <label for="sell"><?php \pi18n("Product.priceSell"); ?></label>
+        <input type="hidden" id="realsell" name="realsell" <?php if ($product != NULL) echo 'value="' . $product->priceSell. '"'; ?> />
+        <input id="sell" type="numeric" name="sell" value="<?php echo $price; ?>" readonly="true" />
+    </div>
+    <?php \Pasteque\form_input("edit", "Product", $product, "priceBuy", "numeric"); ?>
+    <div class="row">
+        <label for="margin"><?php \pi18n("Margin", PLUGIN_NAME); ?></label>
+        <input id="margin" type="numeric" disabled="true" />
+    </div>
     <?php if ($discounts) { ?>
     <?php \Pasteque\form_input("edit", "Product", $product, "discountEnabled", "boolean", array("default" => FALSE)); ?>
     <?php \Pasteque\form_input("edit", "Product", $product, "discountRate", "numeric"); ?>
     <?php } ?>
-	</fieldset>
-	<fieldset>
-	<legend><?php \pi18n("Referencing", PLUGIN_NAME); ?></legend>
-	<?php \Pasteque\form_input("edit", "Product", $product, "reference", "string", array("required" => true)); ?>
-	<div class="row">
-		<label for="barcode"><?php \pi18n("Product.barcode"); ?></label>
-		<div style="display:inline-block; max-width:65%;">
-			<img id="barcodeImg" src="" />
-			<input id="barcode" type="text" name="barcode" <?php if ($product != NULL) echo 'value="' . $product->barcode . '"'; ?> />
-			<a class="btn" href="" onClick="javascript:generateBarcode(); return false;"><?php \pi18n("Generate"); ?></a>
-		</div>
-	</div>
-	<?php if ($attributes) { ?>
-	<?php \Pasteque\form_input("edit", "Product", $product, "attributeSetId", "pick", array("model" => "AttributeSet", "nullable" => true)); ?>
-	<?php } ?>
-	</fieldset>
+    </fieldset>
+    <fieldset>
+    <legend><?php \pi18n("Referencing", PLUGIN_NAME); ?></legend>
+    <?php \Pasteque\form_input("edit", "Product", $product, "reference", "string", array("required" => true)); ?>
+    <div class="row">
+        <label for="barcode"><?php \pi18n("Product.barcode"); ?></label>
+        <div style="display:inline-block; max-width:65%;">
+            <img id="barcodeImg" src="" />
+            <input id="barcode" type="text" name="barcode" <?php if ($product != NULL) echo 'value="' . $product->barcode . '"'; ?> />
+            <a class="btn" href="" onClick="javascript:generateBarcode(); return false;"><?php \pi18n("Generate"); ?></a>
+        </div>
+    </div>
+    <?php if ($attributes) { ?>
+    <?php \Pasteque\form_input("edit", "Product", $product, "attributeSetId", "pick", array("model" => "AttributeSet", "nullable" => true)); ?>
+    <?php } ?>
+    </fieldset>
 
-	<div class="row actions">
-		<?php \Pasteque\form_save(); ?>
-	</div>
+    <div class="row actions">
+        <?php \Pasteque\form_save(); ?>
+    </div>
 </form>
 
 <script type="text/javascript">
-	var tax_rates = new Array();
+    var tax_rates = new Array();
 <?php foreach ($taxes as $tax) {
-	echo "\ttax_rates['" . $tax->id . "'] = " . $tax->getCurrentTax()->rate . ",\n";
+    echo "\ttax_rates['" . $tax->id . "'] = " . $tax->getCurrentTax()->rate . ",\n";
 } ?>
 
-	updateSellPrice = function() {
-		var sellvat = jQuery("#sellvat").val();
-		var rate = tax_rates[jQuery("#edit-taxCatId").val()];
-		var sell = sellvat / (1 + rate);
-		jQuery("#realsell").val(sell);
-		jQuery("#sell").val(sell.toFixed(2));
-		updateMargin();
-	}
-	updateSellVatPrice = function() {
-		// Update sellvat price
-		var sell = jQuery("#sell").val();
-		var rate = tax_rates[jQuery("#edit-taxCatId").val()];
-		var sellvat = sell * (1 + rate);
-		// Round to 2 decimals and refresh sell price to avoid unrounded payments
-		sellvat = sellvat.toFixed(2);
-		jQuery("#sellvat").val(sellvat);
-		updateSellPrice();
-		updateMargin();
-	}
-	updateMargin = function() {
-		var sell = jQuery("#realsell").val();
-		var buy = jQuery("#edit-priceBuy").val();
-		var ratio = sell / buy - 1;
-		var margin = (ratio * 100).toFixed(2) + "%";
-		var rate = (sell / buy).toFixed(2);
-		jQuery("#margin").val(margin + "\t\t" + rate);
-	}
-	updateMargin();
+    updateSellPrice = function() {
+        var sellvat = jQuery("#sellvat").val();
+        var rate = tax_rates[jQuery("#edit-taxCatId").val()];
+        var sell = sellvat / (1 + rate);
+        jQuery("#realsell").val(sell);
+        jQuery("#sell").val(sell.toFixed(2));
+        updateMargin();
+    }
+    updateSellVatPrice = function() {
+        // Update sellvat price
+        var sell = jQuery("#sell").val();
+        var rate = tax_rates[jQuery("#edit-taxCatId").val()];
+        var sellvat = sell * (1 + rate);
+        // Round to 2 decimals and refresh sell price to avoid unrounded payments
+        sellvat = sellvat.toFixed(2);
+        jQuery("#sellvat").val(sellvat);
+        updateSellPrice();
+        updateMargin();
+    }
+    updateMargin = function() {
+        var sell = jQuery("#realsell").val();
+        var buy = jQuery("#edit-priceBuy").val();
+        var ratio = sell / buy - 1;
+        var margin = (ratio * 100).toFixed(2) + "%";
+        var rate = (sell / buy).toFixed(2);
+        jQuery("#margin").val(margin + "\t\t" + rate);
+    }
+    updateMargin();
 
-	jQuery("#sellvat").change(function() {
-		var val = jQuery(this).val().replace(",", ".");
-		jQuery(this).val(val);
-		updateSellPrice();
-	});
-	jQuery("#edit-taxCatId").change(function() {
-		var val = jQuery(this).val().replace(",", ".");
-		jQuery(this).val(val);
-		updateSellPrice()
-	});
-	jQuery("#sell").change(function() {
-		var val = jQuery(this).val().replace(",", ".");
-		jQuery(this).val(val);
-		updateSellVatPrice()
-	});
-	jQuery("#edit-priceBuy").change(function() {
-		var val = jQuery(this).val().replace(",", ".");
-		jQuery(this).val(val);
-		updateMargin()
-	});
-	jQuery("#edit-discountRate").change(function() {
-		var val = jQuery(this).val().replace(",", ".");
-		jQuery(this).val(val);
-		updateMargin()
-	});
+    jQuery("#sellvat").change(function() {
+        var val = jQuery(this).val().replace(",", ".");
+        jQuery(this).val(val);
+        updateSellPrice();
+    });
+    jQuery("#edit-taxCatId").change(function() {
+        var val = jQuery(this).val().replace(",", ".");
+        jQuery(this).val(val);
+        updateSellPrice()
+    });
+    jQuery("#sell").change(function() {
+        var val = jQuery(this).val().replace(",", ".");
+        jQuery(this).val(val);
+        updateSellVatPrice()
+    });
+    jQuery("#edit-priceBuy").change(function() {
+        var val = jQuery(this).val().replace(",", ".");
+        jQuery(this).val(val);
+        updateMargin()
+    });
+    jQuery("#edit-discountRate").change(function() {
+        var val = jQuery(this).val().replace(",", ".");
+        jQuery(this).val(val);
+        updateMargin()
+    });
 
-	clearImage = function() {
-		jQuery("#img").hide();
-		jQuery("#clear").hide();
-		jQuery("#restore").show();
-		jQuery("#clearImage").val(1);
-	}
-	restoreImage = function() {
-		jQuery("#img").show();
-		jQuery("#clear").show();
-		jQuery("#restore").hide();
-		jQuery("#clearImage").val(0);
-	}
+    clearImage = function() {
+        jQuery("#img").hide();
+        jQuery("#clear").hide();
+        jQuery("#restore").show();
+        jQuery("#clearImage").val(1);
+    }
+    restoreImage = function() {
+        jQuery("#img").show();
+        jQuery("#clear").show();
+        jQuery("#restore").hide();
+        jQuery("#clearImage").val(0);
+    }
 
-	updateBarcode = function() {
-		var barcode = jQuery("#barcode").val();
-		var src = "?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=barcode&code=" + barcode;
-		jQuery("#barcodeImg").attr("src", src);
-	}
-	updateBarcode();
+    updateBarcode = function() {
+        var barcode = jQuery("#barcode").val();
+        var src = "?<?php echo \Pasteque\PT::URL_ACTION_PARAM; ?>=img&w=barcode&code=" + barcode;
+        jQuery("#barcodeImg").attr("src", src);
+    }
+    updateBarcode();
 
-	jQuery("#barcode").change(updateBarcode);
+    jQuery("#barcode").change(updateBarcode);
 
-	generateBarcode = function() {
-		var first = Math.floor(Math.random() * 9) + 1;
-		var code = new Array();
-		code.push(first);
-		for (var i = 0; i < 11; i++) {
-			var num = Math.floor(Math.random() * 10);
-			code.push(num);
-		}
-		var checksum = 0;
-		for (var i = 0; i < code.length; i++) {
-			var weight = 1;
-			if (i % 2 == 1) {
-				weight = 3;
-			}
-			checksum = checksum + weight * code[i];
-		}
-		checksum = checksum % 10;
-		if (checksum != 0) {
-			checksum = 10 - checksum;
-		}
-		code.push(checksum);
-		var barcode = code.join("");
-		jQuery("#barcode").val(barcode);
-		updateBarcode();
-	}
+    generateBarcode = function() {
+        var first = Math.floor(Math.random() * 9) + 1;
+        var code = new Array();
+        code.push(first);
+        for (var i = 0; i < 11; i++) {
+            var num = Math.floor(Math.random() * 10);
+            code.push(num);
+        }
+        var checksum = 0;
+        for (var i = 0; i < code.length; i++) {
+            var weight = 1;
+            if (i % 2 == 1) {
+                weight = 3;
+            }
+            checksum = checksum + weight * code[i];
+        }
+        checksum = checksum % 10;
+        if (checksum != 0) {
+            checksum = 10 - checksum;
+        }
+        code.push(checksum);
+        var barcode = code.join("");
+        jQuery("#barcode").val(barcode);
+        updateBarcode();
+    }
 </script>
