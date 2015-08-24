@@ -61,6 +61,7 @@ $report->setDefaultinput("stop", time() - (time() % 86400) + 86400);
 
 $report->setGrouping("PROVNAME");
 $report->addSubTotal("TOTAL",\Pasteque\Report::TOTAL_SUM);
+$report->addSubTotal("TAXEDTOTAL",\Pasteque\Report::TOTAL_SUM);
 $report->addSubTotal("MARGIN",\Pasteque\Report::TOTAL_SUM);
 $report->addFilter("DATESTART", "\Pasteque\stdtimefstr");
 $report->addFilter("DATESTART", "\i18nDatetime");
