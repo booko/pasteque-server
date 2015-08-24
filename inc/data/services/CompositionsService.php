@@ -31,6 +31,7 @@ class CompositionsService {
         $db = DB::get();
         $compo = Composition::__build($prd['ID'], $prd['REFERENCE'],
                 $prd['NAME'], $prd['PRICESELL'], $prd['CATEGORY'],
+                $dpPrd['PROVIDER'],
                 $prd['CATORDER'], $prd['TAXCAT'], $prd['PRODUCT'] != null,
                 $db->readBool($prd['ISSCALE']), $prd['PRICEBUY'],
                 $prd['ATTRIBUTESET_ID'], $prd['CODE'], $prd['IMAGE'] !== null,
