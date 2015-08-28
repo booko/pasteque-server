@@ -98,7 +98,7 @@ require_once(PT::$ABSPATH . "/inc/data/models/TaxAmount.php");
 require_once(PT::$ABSPATH . "/inc/data/models/TaxCat.php");
 require_once(PT::$ABSPATH . "/inc/data/models/SharedTicket.php");
 require_once(PT::$ABSPATH . "/inc/data/models/Ticket.php");
-
+require_once(PT::$ABSPATH . "/inc/data/models/TicketLine.php");
 require_once(PT::$ABSPATH . "/inc/data/models/CashMovement.php");
 require_once(PT::$ABSPATH . "/inc/data/models/DiscountProfile.php");
 require_once(PT::$ABSPATH . "/inc/data/models/Discount.php");
