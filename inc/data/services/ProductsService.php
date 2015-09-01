@@ -181,7 +181,7 @@ class ProductsService {
         $stmt = $pdo->prepare("SELECT * FROM PRODUCTS, PRODUCTS_CAT WHERE "
                 . "PRODUCTS.ID = PRODUCTS_CAT.PRODUCT AND DELETED = "
                 . $db->false() . " AND PRODUCTS.CATEGORY = :cat "
-                . "ORDER BY CATORDER");
+                . "ORDER BY CATORDER, NAME");
         $stmt->bindParam(":cat", $categoryId, \PDO::PARAM_STR);
         if ($stmt->execute()) {
             $prds = array();
