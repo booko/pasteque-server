@@ -84,6 +84,12 @@ namespace Pasteque {
         return new \PDO($config['db_dsn'], $config['db_username'], $config['db_password']);
     }
 
+    function local_hash_password($password) {
+        require_once 'PasswordHash.php';
+        $hasher = new \PasswordHash(8, TRUE);
+        return $hasher->HashPassword($password);
+    }
+
     function show_login_page() {
 	// Pasteque login page ?
         tpl_open();
