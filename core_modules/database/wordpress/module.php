@@ -24,7 +24,7 @@ namespace WordPressDB {
     \WordPress\loadWP($config['wordpress_base_path']);
     $data = NULL;
     function getInfo($uid) {
-        if (!isset($data) && $data == NULL) {
+        if ($data == NULL) {
             $wpdb = $GLOBALS['wpdb'];
             global $config;
             $sql = $wpdb->prepare('SELECT * FROM ' . $config['wordpress_table']

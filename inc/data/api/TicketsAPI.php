@@ -75,7 +75,7 @@ class TicketsAPI extends APIService {
             $lines = array();
             foreach ($json->lines as $jsLine) {
                 // Get line info
-                $tktLine = new SharedTicketLines($ticket->ticketId,
+                $tktLine = new SharedTicketLines($ticket->id,
                         $jsLine->dispOrder, $jsLine->productId, $jsLine->taxId,
                         $jsLine->quantity, $jsLine->discountRate,
                         $jsLine->price, $jsLine->attributes);
