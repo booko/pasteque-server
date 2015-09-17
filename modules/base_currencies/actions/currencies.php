@@ -52,18 +52,16 @@ $currencies = $currSrv->getAll();
 	</thead>
 	<tbody>
 <?php
-$par = FALSE;
 foreach ($currencies as $currency) {
-$par = !$par;
 ?>
-	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
+	<tr>
 		<td><?php echo $currency->label; ?></td>
 		<td><?php
 if ($currency->isMain) {
     \pi18n("Main", PLUGIN_NAME);
 } else {
     echo($currency->rate);
-} ?>
+} ?></td>
 		<td class="edition">
             <?php \Pasteque\tpl_btn("edition", \Pasteque\get_module_url_action(PLUGIN_NAME,
                     'currency_edit', array("id" => $currency->id)), "",

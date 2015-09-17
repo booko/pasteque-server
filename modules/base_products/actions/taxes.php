@@ -52,11 +52,9 @@ $taxes = \Pasteque\TaxesService::getAll();
 	</thead>
 	<tbody>
 <?php
-$par = FALSE;
 foreach ($taxes as $tax) {
-$par = !$par;
 ?>
-	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
+	<tr>
 		<td><?php echo $tax->label; ?></td>
 		<td class="edition">
                     <?php \Pasteque\tpl_btn('btn-edition', \Pasteque\get_module_url_action(

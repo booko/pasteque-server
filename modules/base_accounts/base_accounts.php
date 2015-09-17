@@ -1,7 +1,7 @@
 <?php
-//    Pastèque Web back office
+//    Pastèque Web back office, Payment modes module
 //
-//    Copyright (C) 2013 Scil (http://scil.coop)
+//    Copyright (C) 2015 Scil (http://scil.coop)
 //
 //    This file is part of Pastèque.
 //
@@ -17,19 +17,14 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Pastèque.  If not, see <http://www.gnu.org/licenses/>.
-namespace Pasteque;
 
-// Load modules
-$modules = get_loaded_modules(get_user_id());
-foreach ($modules as $module) {
-    $module_file = PT::$ABSPATH . "/modules/" . $module . "/module.php";
-    if (file_exists($module_file)) {
-        require_once($module_file);
-    }
+namespace BaseAccounts;
+
+function init() {
+    global $MENU;
+    $MENU->registerModuleEntry("general", PLUGIN_NAME, "menu_register.png", "Register account", "register");
+    \Pasteque\register_i18n(PLUGIN_NAME);
 }
-
-call_hooks("module_load");
-
-load_modules_i18n(detect_preferred_language());
+\Pasteque\hook("module_load", __NAMESPACE__ . "\init");
 
 ?>

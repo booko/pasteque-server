@@ -166,6 +166,28 @@ class PaymentModesService extends AbstractService {
         }
     }
 
+    public function toggle($id) {
+        $pdo = PDOBuilder::getPdo();
+        $newTransaction = !$pdo->inTransaction();
+        if ($newTransaction) {
+            $pdo->beginTransaction();
+        }
+        $stmt = $pdo->prepare("UPDATE PAYMENTMODES SET ACTIVE=NOT(ACTIVE) WHERE ID = :id;");
+        $stmt->bindValue(":id", $id);
+        if ($stmt->execute() === false) {
+            if ($newTransaction) {
+                $pdo->rollback();
+            }
+            return false;
+        }
+        if ($newTransaction) {
+            $pdo->commit();
+        }
+ 
+        return true;
+    }
+
+
     static function getImage($id) {
         $pdo = PDOBuilder::getPDO();
         $db = DB::get();

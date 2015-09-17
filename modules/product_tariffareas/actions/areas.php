@@ -53,11 +53,9 @@ $areas = $srv->getAll();
 	</thead>
 	<tbody>
 <?php
-$par = false;
 foreach ($areas as $area) {
-$par = !$par;
 ?>
-	<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
+	<tr>
 		<td><?php echo $area->label; ?></td>
 		<td class="edition">
             <?php \Pasteque\tpl_btn("edition", \Pasteque\get_module_url_action(PLUGIN_NAME,

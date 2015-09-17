@@ -71,7 +71,6 @@ foreach ($levels as $level) {
 <?php
 }
 
-$par = false;
 foreach ($categories as $category) {
     if (isset($prdCat[$category->id])) {
         // Category header ?>
@@ -96,7 +95,6 @@ foreach ($categories as $category) {
                 continue;
             }
             // Level lines
-            $par = !$par;
             $prdRef = "";
             $prdLabel = "";
             $imgSrc = "";
@@ -135,7 +133,7 @@ foreach ($categories as $category) {
                 $max = \i18n("Undefined");
             }
             ?>
-		<tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
+		<tr>
                  <td><img class="thumbnail" src="?<?php echo \Pasteque\esc_attr($imgSrc); ?>" />
                  <td><?php echo \Pasteque\esc_html($prdRef); ?></td>
                  <td><?php echo \Pasteque\esc_html($prdLabel); ?></td>

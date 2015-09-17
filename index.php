@@ -32,9 +32,25 @@ function index_run() {
     tpl_close();
 }
 
+require_once(PT::$ABSPATH . "/inc/load_template.php");
+
 // Check user authentication
 if (!is_user_logged_in()) {
-    show_login_page();
+    $module = "base_accounts";
+    $module_file = PT::$ABSPATH . "/modules/" . $module . "/module.php";
+    if (file_exists($module_file)) {
+        require_once($module_file);
+    }
+    call_hooks("module_load");
+
+    load_modules_i18n(detect_preferred_language());
+
+    // Some specific actions can be done with no login
+    if (isset($_GET[PT::URL_ACTION_PARAM]) && ($_GET[PT::URL_ACTION_PARAM] == "modules/base_accounts/actions/register") || ($_GET[PT::URL_ACTION_PARAM] == "modules/base_accounts/actions/validate")) {
+        index_run();
+    } else {
+        show_login_page();
+    }
 } else {
     require_once(PT::$ABSPATH . "/inc/load_logged.php");
     // Check install if not trying to logout

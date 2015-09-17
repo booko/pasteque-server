@@ -45,7 +45,7 @@ if (isset($_POST['id']) && isset($_POST['label'])) {
             $_POST['format'], $_POST['rate'], $isMain, $isActive);
     $id = $currSrv->create($curr);
     if ($id !== FALSE) {
-        $message = \i18n("Currency saved. <a href=\"%s\">Go to the currecy page</a>.", PLUGIN_NAME, \Pasteque\get_module_url_action(PLUGIN_NAME, 'currency_edit', array('id' => $id)));
+        $message = \i18n("Currency saved. <a href=\"%s\">Go to the currency page</a>.", PLUGIN_NAME, \Pasteque\get_module_url_action(PLUGIN_NAME, 'currency_edit', array('id' => $id)));
     } else {
         $error = \i18n("Unable to save changes");
     }
@@ -57,7 +57,6 @@ if (isset($_GET['id'])) {
 }
 else {
     $currency = new \Pasteque\Currency();
-    echo $currency->format;
 }
 ?>
 <h1><?php \pi18n("Edit a currency", PLUGIN_NAME); ?></h1>
@@ -79,7 +78,7 @@ else {
 		<?php \Pasteque\form_save(); ?>
 	</div>
 </form>
-<?php if ($currency !== NULL) { ?>
+<?php if ($currency->id !== NULL) { ?>
 <form action="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'currencies'); ?>" method="post">
     <?php \Pasteque\form_delete("cat", $currency->id); ?>
 </form>

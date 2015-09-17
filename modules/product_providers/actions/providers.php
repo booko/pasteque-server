@@ -57,15 +57,14 @@ $providers = \Pasteque\providersService::getAll();
 	</thead>
 	<tbody>
 <?php
-function printprovider($printprovider, $level, &$par) {
-        $par = !$par;
+function printprovider($printprovider, $level) {
         if ($printprovider->hasImage) {
             $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=provider&id=" . $printprovider->id;
         } else {
             $imgSrc = \Pasteque\PT::URL_ACTION_PARAM . "=img&w=provider";
         }
         ?>
-                <tr class="row-<?php echo $par ? 'par' : 'odd'; ?>">
+                <tr>
                         <td>
                         <?php
                         for($i=0;$i<$level;$i++) {
@@ -85,9 +84,8 @@ function printprovider($printprovider, $level, &$par) {
         <?php
 }
 
-$par = false;
 foreach ($providers as $provider) {
-    printprovider($provider, 0, $par);
+    printprovider($provider, 0);
 }
 ?>
 	</tbody>
