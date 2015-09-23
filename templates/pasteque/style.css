@@ -200,6 +200,15 @@ form.edit fieldset legend {
 	font-weight: bold;
 	margin-left: 20px;
 }
+form.edit label {
+	display: inline-block;
+	width: 27%;
+	margin-left: 3%;
+}
+form.edit input,
+form.edit select {
+	width: 65%;
+}
 
 .edit .row {
 	width: 600px;

@@ -60,7 +60,12 @@ namespace WordPressID {
 
 namespace Pasteque {
     function is_user_logged_in() {
-    	return \WordPressID\logged_in();
+        if(\WordPressID\logged_in() != true) {
+            return api_user_login();
+        }
+        else {
+            return true;
+        }
     }
     function api_user_login() {
         $user = null;
