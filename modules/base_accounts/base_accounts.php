@@ -21,9 +21,11 @@
 namespace BaseAccounts;
 
 function init() {
-    global $MENU;
-    $MENU->registerModuleEntry("general", PLUGIN_NAME, "menu_register.png", "Register account", "register");
-    \Pasteque\register_i18n(PLUGIN_NAME);
+        global $MENU;
+        if(!\Pasteque\is_user_logged_in()) {
+        $MENU->registerModuleEntry("general", PLUGIN_NAME, "menu_register.png", "Register account", "register");
+        }
+        \Pasteque\register_i18n(PLUGIN_NAME);
 }
 \Pasteque\hook("module_load", __NAMESPACE__ . "\init");
 

@@ -62,7 +62,7 @@ namespace Pasteque {
         $result = $stmt->fetchAll();
         if (count($result) != 1) {
             // Bouh, invalid user
-            $loginErrorMessage = \i18n("Invalid user or password");
+            $loginErrorMessage = \i18n("Unavailable user");
             return false;
         }
         $userDbData = $result[0];
@@ -98,10 +98,10 @@ namespace Pasteque {
             \Pasteque\tpl_msg_box($message, $loginErrorMessage);
         }
 ?>
-<form method="POST">
+<form class="edit" method="POST">
     <label for="login">Login :</label><input name="login" type="text" /><br />
     <label for="password">Password :</label><input name="password" type="password" /><br />
-    <input type="submit" />
+    <input style="margin:10px; width:auto; margin-left: 27%;" type="submit" />
 </form>
 <?php
         tpl_close();

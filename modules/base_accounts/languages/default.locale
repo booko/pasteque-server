@@ -1,9 +1,14 @@
 {
-"Currencies": "Currencies",
-
-"Add a currency": "Add a currency",
-"Main": "Ref.",
-"Edit a currency": "Edit a currency",
-
-"Currency saved, <a href=\"%s\">Go to the currency page</a>.": "Currency saved, <a href=\"%s\">Go to the currency page</a>."
+"Register account":     "Register account",
+"Register a new account":     "Register a new account",
+"login":        "Login",
+"first_name":   "Fist name",
+"last_name":    "Last name",
+"email":        "E-mail",
+"website":      "Website",
+"contract":     "<a href=\"http://my.pasteque.coop/conditions-dutilisation-dun-compte-pasteque-serveur/\">I accept the terms of use</a>",
+"usage_coffeeshop":     "Bar/Café/Restaurant usage",
+"subscribe_newsletter": "Newsletter subscription",
+"password":     "Password",
+"confirm_password":     "Confirm password"
 }

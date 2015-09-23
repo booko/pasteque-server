@@ -1,9 +1,14 @@
 {
-"Currencies": "Devises",
-
-"Add a currency": "Ajouter une devise",
-"Main": "Ref.",
-"Edit a currency": "Édition d'une devise",
-
-"Currency saved. <a href=\"%s\">Go to the currecy page</a>.": "Devise enregistrée, <a href=\"%s\">Aller à la page de la devise</a>."
+"Register account":     "Créer un compte",
+"Register a new account":     "Créer un nouveau compte",
+"login":        "Identifiant",
+"first_name":   "Prénom",
+"last_name":    "Nom",
+"email":        "Adresse mail",
+"website":      "Site web",
+"contract":     "<a href=\"http://my.pasteque.coop/conditions-dutilisation-dun-compte-pasteque-serveur/\">J’accepte les conditions d’utilisation</a>",
+"usage_coffeeshop":     "Usage pour Bar/Café/Restaurant",
+"subscribe_newsletter": "Inscription à la liste de diffusion",
+"password":     "Mot de passe",
+"confirm_password":     "Confirmez le mot de passe"
 }

@@ -25,12 +25,12 @@ namespace DynamicDB {
         global $data;
         if ($data == NULL) {
             $dbh = \Pasteque\get_local_auth_database();
-            $stmt = $dbh->prepare('SELECT * FROM pasteque_databases WHERE user_id = (SELECT id FROM pasteque_users WHERE user_id = :user_id)');
+            $stmt = $dbh->prepare('SELECT * FROM pasteque_databases WHERE user_id = :user_id');
             $stmt->bindParam(':user_id', $uid);
             $stmt->execute();
             $result = $stmt->fetchAll();
             if (count($result) != 1) {
-                die("hard - $uid");
+                die("No database found for " . $uid);
             }
             $data = $result[0];
         }
