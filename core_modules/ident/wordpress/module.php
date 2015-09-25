@@ -1,7 +1,8 @@
 <?php
 //    Pastèque Web back office, WordPress ident module
 //
-//    Copyright (C) 2013 Scil (http://scil.coop)
+//    Copyright (C) 2013-2015 Scil (http://scil.coop)
+//      Cédric Houbart, Philippe Pary
 //
 //    This file is part of Pastèque.
 //
