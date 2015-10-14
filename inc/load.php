@@ -136,6 +136,9 @@ require_once(PT::$ABSPATH . "/inc/data/services/ResourcesService.php");
 require_once(PT::$ABSPATH . "/inc/data/services/CurrenciesService.php");
 require_once(PT::$ABSPATH . "/inc/data/services/CashRegistersService.php");
 require_once(PT::$ABSPATH . "/inc/data/services/InventoriesService.php");
+require_once(PT::$ABSPATH . "/inc/data/validation/load.php");
+require_once(PT::$ABSPATH . "/inc/data/validation/validators/price.php");
+require_once(PT::$ABSPATH . "/inc/data/parsing/load.php");
 require_once(PT::$ABSPATH . "/inc/Csv.php");
 require_once(PT::$ABSPATH . "/inc/catalog.php");
 

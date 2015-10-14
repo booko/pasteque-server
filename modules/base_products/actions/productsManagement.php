@@ -4,7 +4,6 @@ namespace BaseProducts;
 // open csv return null if the file selected had not extension "csv"
 // or user not selected file
 function init_csv() {
-
     if ($_FILES['csv']['tmp_name'] === NULL) {
         return NULL;
     }
@@ -19,8 +18,7 @@ function init_csv() {
             'category', 'tax_cat');
 
     $optionKey = array('price_buy', 'visible', 'scaled', 'disp_order',
-            'discount_rate', 'discount_enabled', 'stock_min',
-            'provider', 'stock_max');
+            'discount_rate', 'discount_enabled', 'stock_min', 'stock_max');
 
     $csv = new \Pasteque\Csv($_FILES['csv']['tmp_name'], $key, $optionKey,
             PLUGIN_NAME);
@@ -32,7 +30,6 @@ function init_csv() {
     $csv->setEmptyStringValue("visible", true);
     $csv->setEmptyStringValue("scaled", false);
     $csv->setEmptyStringValue("disp_order", null);
-    $csv->setEmptyStringValue("provider", null);
     return $csv;
 }
 
@@ -47,8 +44,8 @@ function initArray($key, $tab) {
     }
     return $array;
 }
-function import_csv($csv) {
 
+function import_csv($csv) {
     $error = 0;
     $create = 0;
     $update = 0;
@@ -58,13 +55,17 @@ function import_csv($csv) {
         //init optionnal values
         $AllKeyPossible = array_merge($csv->getKeys(), $csv->getOptionalKeys());
         $tab = initArray($AllKeyPossible, $tab);
+        
+        $product_errors = validateLine($tab, $csv->getCurrentLineNumber());
+        $error_mess = array_merge($product_errors, $error_mess);
 
         //check
         $category = \Pasteque\CategoriesService::getByName($tab['category']);
+        $provider = \Pasteque\ProvidersService::getByName($tab['provider']);
         $taxCat = \Pasteque\TaxesService::getByName($tab['tax_cat']);
 
-        if ($taxCat && $category) {
-            $prod = readProductLine($tab, $category, $taxCat);
+        if (count($product_errors) === 0) {
+            $prod = readProductLine($tab, $category, $provider, $taxCat);
             $product_exist = \Pasteque\ProductsService::getByRef($prod->reference);
             if ($product_exist !== null ) {
                 // update product
@@ -99,16 +100,6 @@ function import_csv($csv) {
         } else {
             // Missing category or tax category
             $error++;
-            if (!$category) {
-                $error_mess[] = \i18n("On line %d "
-                        . "category: '%s' doesn't exist", PLUGIN_NAME,
-                        $csv->getCurrentLineNumber(), $tab['category']);
-            }
-            if (!$taxCat) {
-                $error_mess[] = \i18n("On line %d: "
-                        . "Tax category: '%s' doesn't exist", PLUGIN_NAME,
-                        $csv->getCurrentLineNumber(), $tab['tax_cat']);
-            }
         }
     }
 
@@ -117,21 +108,84 @@ function import_csv($csv) {
     return array($message, $error_mess);
 }
 
+function validateLine(&$tab, $line)
+{
+    $error_mess = array();
+    
+    //check category & provider
+    $category = \Pasteque\CategoriesService::getByName($tab['category']);
+    $provider = \Pasteque\ProvidersService::getByName($tab['provider']);
+    $taxCat = \Pasteque\TaxesService::getByName($tab['tax_cat']);
+    
+    if (!$category) {
+        $error_mess[] = \i18n("On line %d "
+                . "category: '%s' doesn't exist", PLUGIN_NAME,
+                $line, $tab['category']);
+    }
+    if (!$taxCat) {
+        $error_mess[] = \i18n("On line %d: "
+                . "Tax category: '%s' doesn't exist", PLUGIN_NAME,
+                $line, $tab['tax_cat']);
+    }
+    
+    $fieldsToCheck = array('barcode', 'price_buy', 'scaled', 'sellVat',
+        'discount_enabled');
+    foreach($fieldsToCheck as $field) {
+        if (trim($tab[$field]) != '') {
+            try {
+                switch ($field) {
+                    //parsing & validation of EAN
+                    case 'barcode':
+                        $barcode = \Pasteque\Parsing\parseEAN($tab[$field]);
+                        if (\Pasteque\Validation\validateEAN($barcode)) {
+                            $tab[$field] = $barcode;
+                        }
+                        break;
+                    //parsing & validation of price
+                    case 'price_buy':
+                    case 'sellVat':
+                        $price = \Pasteque\Parsing\parsePrice($tab[$field]);
+                        if (\Pasteque\Validation\validatePrice($price)) {
+                            $tab[$field] = $price;
+                        }
+                        break;
+                    case 'scaled':
+                    case 'discount_enabled':
+                        $boolean = \Pasteque\Parsing\parseBoolean($tab[$field]);
+                        if (\Pasteque\Validation\validateBoolean($boolean)) {
+                            $tab[$field] = $boolean;
+                        }
+                    break;
+                    default:
+                        continue;
+                }
+            } catch (\Pasteque\Parsing\ParsingException $ex) {
+                $error_mess[] = \i18n("On line %d ", PLUGIN_NAME, $line).": ".
+                        $ex->getI18nMessage();
+            } catch (\Pasteque\Validation\ValidationException $ex) {
+                $error_mess[] = \i18n("On line %d ", PLUGIN_NAME, $line).": ".
+                        $ex->getI18nMessage();
+            }
+        }
+        
+    }
+    
+    return $error_mess;
+    
+}
+
 // add to product values not obligatory may be present in array
-function readProductLine($line, $category, $taxCat) {
+function readProductLine($line, $category, $provider, $taxCat) {
     $priceSell =  $line['sellVat'] / ( 1 + $taxCat->getCurrentTax()->rate);
     if (isset($line['visible'])) {
         $visible = $line['visible'];
     } else {
         $visible = true;
     }
-    if (isset($line['scaled']) && ($line['scaled'] !== 1 || $line['scaled'] !== true)) {
+    if (isset($line['scaled']) && ($line['scaled'] == 1 || $line['scaled'] == true)) {
         $scaled = $line['scaled'];
     } else {
         $scaled = false;
-    }
-    if (isset($line['provider'])) {
-        $provider = \Pasteque\ProvidersService::getByName($line['provider']);
     }
     if (isset($line['disp_order'])) {
         $dispOrder = $line['disp_order'];
@@ -164,26 +218,26 @@ function readProductLine($line, $category, $taxCat) {
  */
 function manage_stock_level($id, $array) {
     $level = \Pasteque\StocksService::getLevel($id, "0", null);
-    $min = null;
+    $security = null;
     $max = null;
     if (isset($array['stock_min'])) {
-        $min = $array['stock_min'];
+        $security = $array['stock_min'];
     }
     if (isset($array['stock_max'])) {
         $max = $array['stock_max'];
     }
-    if ($level !== null) {
+    if ($level->security != null || $level->max != null) {
         // Update existing level
-        if ($min !== null) {
-            $level->security = $min;
+        if ($security !== null) {
+            $level->security = $security;
         }
         if ($max !== null) {
             $level->max = $max;
         }
         return \Pasteque\StocksService::updateLevel($level);
-    } else {
+    } elseif($security != null || $max !== null) {
         // Create a new level
-        $level = new \Pasteque\StockLevel($id, "0", null, $min, $max);
+        $level = new \Pasteque\StockLevel($id, "0", null, $security, $max);
         return \Pasteque\StocksService::createLevel($level);
     }
 }
@@ -194,10 +248,7 @@ function mergeProduct($old, $new) {
     if (!isset($new->barcode)) {
         $new->barcode = $old->barcode;
     }
-    if (!isset($new->providerId)) {
-        $new->providerId = $old->providerId;
-    }
-    if (!isset($new->price_buy)) {
+    if (!isset($new->priceBuy)) {
         $new->priceBuy = $old->priceBuy;
     }
     if (!isset($new->hasImage)) {
@@ -239,21 +290,30 @@ if (isset($_FILES['csv'])) {
 }
 ?>
 
+                
 
-<h1><?php \pi18n("Import products from csv file", PLUGIN_NAME); ?></h1>
-
-<?php \Pasteque\tpl_msg_box($message, $error); ?>
-
-<form class="edit" method="post" action="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'productsManagement');?>" enctype="multipart/form-data">
-    <div class="row">
-        <label for='csv' >
-            <?php \pi18n("File", PLUGIN_NAME) ?>:
-        </label>
-            <input type="file" name="csv">
+<div class="container_scroll">
+    <div class="stick_row stickem-container">
+        <div id="content_liste" class="grid_9">
+            <div class="blc_content">
+                <div class="blc_ti">
+                    <h1><?php \pi18n("Import products from csv file", PLUGIN_NAME); ?></h1>
+                </div>
+                <?php \Pasteque\tpl_msg_box($message, $error); ?>
+                <form class="edit" method="post" action="<?php echo \Pasteque\get_module_url_action(PLUGIN_NAME, 'productsManagement');?>" enctype="multipart/form-data">
+                    <div class="row">
+                        <label for='csv' >
+                            <?php \pi18n("File", PLUGIN_NAME) ?>:
+                        </label>
+                            <input type="file" name="csv">
+                    </div>
+                    <div class="row actions">
+                        <button class="btn-send" type="submit" id="<?php \pi18n("send", PLUGIN_NAME)?>" name="<?php \pi18n("send", PLUGIN_NAME)?>" >
+                            <?php \pi18n("send", PLUGIN_NAME)?>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-    <div class="row actions">
-        <button class="btn-send" type="submit" id="envoyer" name="envoyer" >
-            <?php \pi18n("send", PLUGIN_NAME)?>
-        </button>
-    </div>
-</form>
+</div>

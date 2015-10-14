@@ -964,8 +964,6 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($ref->label, $read->label, "Label mismatch");
         $this->assertEquals($ref->customerId, $read->customerId,
                 "Customer id mismatch");
-        $this->assertEquals($ref->custCount, $read->custCount,
-                "Customer count mismatch");
         $this->assertEquals($ref->tariffAreaId, $read->tariffAreaId,
                 "Tariff area id mismatch");
         $this->assertEquals($ref->discountProfileId, $read->discountProfileId,
@@ -975,7 +973,7 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testCreateSharedTicket() {
-        $tkt = SharedTicket::__build("1", "Label", $this->customer->id, 1,
+        $tkt = SharedTicket::__build("1", "Label", $this->customer->id,
                 $this->area->id, $this->discountProfile->id, 13.37);
         $this->assertTrue(TicketsService::createSharedTicket($tkt, array()),
                 "Creation failed");
@@ -1000,15 +998,15 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
     private function createSharedTicketLines($sharedTicketId) {
         $ret = array();
         $ret[] = SharedTicketLines::__build(1, $sharedTicketId, 0,
-                $this->prd->id, $this->tax->id, 1, 0, 10.34, null);
-        $ret[] = SharedTicketLines::__build(2, $sharedTicketId, 1,
-                $this->prd2->id, $this->tax->id, 1, 0, 10.34, null);
+                $this->prd->id, 1, 0.1, 10.34, null);
+        $ret[] = SharedTicketLines::__build(2, $sharedTicketId, 0,
+                $this->prd2->id, 1, 0.1, 10.34, null);
         return $ret;
     }
 
     /** @depends testCreateSharedTicket */
     public function testCreateSharedTicketWithLines() {
-        $tkt = SharedTicket::__build("1", "Label", $this->customer->id, 1,
+        $tkt = SharedTicket::__build("1", "Label", $this->customer->id,
                 $this->area->id, $this->discountProfile->id, 13.37);
         $lines = $this->createSharedTicketLines($tkt->id);
         $this->assertTrue(TicketsService::createSharedTicket($tkt, $lines),
@@ -1033,7 +1031,7 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
 
     /** @depends testCreateSharedTicket */
     public function testGetSharedTicket() {
-        $tkt = SharedTicket::__build("2", "Label2", $this->customer->id, 1,
+        $tkt = SharedTicket::__build("2", "Label2", $this->customer->id,
                 $this->area->id, $this->discountProfile->id, 13.37);
         $this->assertTrue(TicketsService::createSharedTicket($tkt, array()),
                 "Creation failed");
@@ -1049,10 +1047,10 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
 
     /** @depends testCreateSharedTicket */
     public function testGetAllSharedTickets() {
-        $tkt = SharedTicket::__build("1", "Label", $this->customer->id, 1,
+        $tkt = SharedTicket::__build("1", "Label", $this->customer->id,
                 $this->area->id, $this->discountProfile->id, 13.37);
         TicketsService::createSharedTicket($tkt, array());
-        $tkt2 = SharedTicket::__build("2", "Label2", $this->customer->id, 1,
+        $tkt2 = SharedTicket::__build("2", "Label2", $this->customer->id,
                 $this->area->id, $this->discountProfile->id, 13.37);
         TicketsService::createSharedTicket($tkt2, array());
         $read = TicketsService::getAllSharedTickets($tkt->id);
@@ -1087,7 +1085,7 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
      * @depends testGetInexistentSharedTicket
      */
     public function testDeleteSharedTicket() {
-        $tkt = SharedTicket::__build("1", "Label", $this->customer->id, 1,
+        $tkt = SharedTicket::__build("1", "Label", $this->customer->id,
                 $this->area->id, $this->discountProfile->id, 13.37);
         TicketsService::createSharedTicket($tkt, array());
         $this->assertTrue(TicketsService::deleteSharedTicket($tkt->id),
@@ -1100,7 +1098,7 @@ class TicketsServiceTest extends \PHPUnit_Framework_TestCase {
      * @depends testGetSharedTicket
      */
     public function testUpdateSharedTicket() {
-        $tkt = SharedTicket::__build("1", "Label", $this->customer->id, 1,
+        $tkt = SharedTicket::__build("1", "Label", $this->customer->id,
                 $this->area->id, $this->discountProfile->id, 13.37);
         TicketsService::createSharedTicket($tkt, array());
         $tkt->label = "Edited";
