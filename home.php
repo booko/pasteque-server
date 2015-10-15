@@ -30,6 +30,12 @@ require_once("lib/simplepie_1.3.1.compiled.php");
 
 <h1><?php \pi18n("Main title"); ?></h1>
 
+<p style="float:left; margin:5px;">
+    <a href="https://play.google.com/store/apps/details?id=fr.pasteque.client.vanilla">
+        <img alt="Get it on Google Play" src="https://developer.android.com/images/brand/en_generic_rgb_wo_45.png" />
+     </a>
+</p>
+
 <p><?php \pi18n("Introduction"); ?></p>
 
 <h2><?php \pi18n("Download"); ?></h2>
