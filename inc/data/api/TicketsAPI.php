@@ -164,6 +164,7 @@ class TicketsAPI extends APIService {
                     } else {
                         $productId = null;
                     }
+                    $productLabel = $jsLine->productLabel;
                     $quantity = $jsLine->quantity;
                     $price = $jsLine->price;
                     $taxId = $jsLine->taxId;
@@ -203,7 +204,7 @@ class TicketsAPI extends APIService {
                     }
                     $newLine = new TicketLine($number, $product,
                             $attrsId, $quantity, $price, $tax,
-                            $lineDiscountRate);
+                                              $lineDiscountRate, $productLabel);
                     $lines[] = $newLine;
                 }
                 if (count($lines) != count($jsonTkt->lines)) {

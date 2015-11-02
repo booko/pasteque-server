@@ -32,18 +32,20 @@ class TicketLine {
     public $discountRate;
     /** XML attribute field */
     public $attributes;
+    public $productLabel;
 
     /** Constructor must take full product and tax objects to build
      * xml attributes. Only the id is then kept.
      */
     function __construct($line, $product, $attrSetInstId, $quantity, $price,
-            $tax, $discountRate = 0.0) {
+                         $tax, $discountRate = 0.0, $productLabel = null) {
         $this->dispOrder = $line;
         $this->attrSetInstId = $attrSetInstId;
         $this->quantity = $quantity;
         $this->price = $price;
         $this->taxId = $tax->id;
         $this->discountRate = $discountRate;
+        $this->productLabel = $productLabel;
         if ($product !== null) {
             $this->productId = $product->id;
             $this->createAttributes($product, $tax);

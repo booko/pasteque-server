@@ -291,8 +291,8 @@ class TicketsService {
         // Also check for prepayments refill
         $stmtLines = $pdo->prepare("INSERT INTO TICKETLINES (TICKET, LINE, "
                 . "PRODUCT, ATTRIBUTESETINSTANCE_ID, UNITS, PRICE, TAXID, "
-                . "DISCOUNTRATE, ATTRIBUTES) VALUES (:id, :line, :prdId, "
-                . ":attrSetInstId, :qty, :price, :taxId, :discRate, :attrs)");
+                . "DISCOUNTRATE, ATTRIBUTES, PRODUCTLABEL) VALUES (:id, :line, :prdId, "
+                . ":attrSetInstId, :qty, :price, :taxId, :discRate, :attrs, :prdLab)");
         foreach ($ticket->lines as $line) {
             $fullDiscount = $discountRate + $line->discountRate;
             $discountPrice = $line->price * (1.0 - $fullDiscount);
@@ -305,6 +305,7 @@ class TicketsService {
             $stmtLines->bindParam(":taxId", $line->taxId);
             $stmtLines->bindParam(":discRate", $line->discountRate);
             $stmtLines->bindParam(":attrs", $line->attributes);
+            $stmtLines->bindParam(":prdLab", $line->productLabel);
             if ($stmtLines->execute() === false) {
                 if ($newTransaction) {
                     $pdo->rollback();
