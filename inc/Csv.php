@@ -93,8 +93,11 @@ class Csv {
         $this->currentLineNumber++;
         // Get separator
         $this->sep = substr($this->line, -1, 1);
-        if (!$this->sep || $this->sep === " " ) {
-            $this->errors[] = \i18n("Separator not defined");
+        if (!$this->sep || $this->sep === " " || $this->sep == "e") {
+            $this->errors[] = \i18n("Separator not defined or bad separator");
+            if (isset($this->sep)) {
+                $this->errors[] = \i18n("Found separator: ") . " " . $this->sep;
+            }
             $this->close();
             return false;
         }
@@ -112,6 +115,7 @@ class Csv {
             }
             else {
                 $this->errors[] = \i18n("Unidentified character set");
+                $this->errors[] = $check;
                 $this->close();
                 return false;
             }
