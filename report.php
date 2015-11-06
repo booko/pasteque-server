@@ -30,7 +30,7 @@ function report_csv($module, $name, $values) {
     $output = fopen("php://output", "rb+");
 
     if (!$report->isGrouping()) {
-        fputcsv($output,array("Pastèque"),";");
+        fputcsv($output,array("Pastèque",""),";");
         $line = $report->getHeaders();
         fputcsv($output, $line,";");
         while ($line = $reportRun->fetch() ) {
