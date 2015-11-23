@@ -58,6 +58,10 @@ foreach ($levels as $level) {
 ?>
 <h1><?php \pi18n("Inventory", PLUGIN_NAME); ?></h1>
 
+<?php \Pasteque\tpl_msg_box($message, $error); ?>
+
+<?php \Pasteque\tpl_btn('btn-export ', \Pasteque\get_report_url(PLUGIN_NAME, "inventory"),\i18n('Export inventory', PLUGIN_NAME), 'img/btn_add.png'); ?>
+
 <?php if ($multilocations) {
     // Location picker ?>
 <form class="edit" action="<?php echo \Pasteque\get_current_url(); ?>" method="post">
