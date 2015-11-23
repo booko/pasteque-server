@@ -48,7 +48,12 @@ class ProductsAPI extends APIService {
             }
             break;
         case 'getAll':
-            $this->succeed(ProductsService::getAll(true));
+            if (isset($this->params['all']) && in_array($this->params['all'],array(true, 1))) {
+                $this->succeed(ProductsService::getAll(true));
+            }
+            else {
+                $this->succeed(ProductsService::getAll());
+            }
             break;
         case 'getCategory':
             $this->succeed(ProductsService::getByCategory($this->params['id']));

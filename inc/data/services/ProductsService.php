@@ -81,7 +81,7 @@ class ProductsService {
         return $stmt->fetchColumn();
     }
 
-    static function getAll($include_hidden = FALSE) {
+    static function getAll($include_hidden = false) {
         $prds = array();
         $pdo = PDOBuilder::getPDO();
         $db = DB::get();
@@ -91,7 +91,7 @@ class ProductsService {
                     . "PRODUCTS_CAT.PRODUCT = PRODUCTS.ID";
         } else {
             $sql = "SELECT * FROM PRODUCTS LEFT JOIN PRODUCTS_CAT ON "
-                    . "PRODUCTS.ID = PRODUCTS_CAT.PRODUCT AND DELETED = "
+                    . "PRODUCTS.ID = PRODUCTS_CAT.PRODUCT WHERE DELETED = "
                     . $db->false();
         }
         $sql .= " ORDER BY CATORDER, NAME";
